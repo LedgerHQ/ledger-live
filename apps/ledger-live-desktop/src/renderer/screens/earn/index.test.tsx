@@ -9,6 +9,7 @@ import {
   NATIVE_STAKE_POSITION_INPUT_KEY,
   NATIVE_STAKE_POSITION_INPUT_VALUE,
 } from "@features/flow-stake-position";
+import { useEarnAppLifecycleMonitoring } from "~/renderer/analytics/useEarnAppLifecycleMonitoring";
 import { useDeepLinkListener } from "./useDeepLinkListener";
 import Earn from ".";
 
@@ -27,6 +28,9 @@ jest.mock("@ledgerhq/live-common/wallet-api/LocalLiveAppProvider/index", () => (
 jest.mock("./useDeepLinkListener", () => ({
   useDeepLinkListener: jest.fn(),
 }));
+jest.mock("~/renderer/analytics/useEarnAppLifecycleMonitoring", () => ({
+  useEarnAppLifecycleMonitoring: jest.fn(),
+}));
 jest.mock("~/renderer/components/WebPlatformPlayer", () => ({
   __esModule: true,
   default: (props: unknown) => mockWebPlatformPlayer(props),
@@ -36,6 +40,7 @@ const mockedUseRemoteLiveAppManifest = jest.mocked(useRemoteLiveAppManifest);
 const mockedUseRemoteLiveAppContext = jest.mocked(useRemoteLiveAppContext);
 const mockedUseLocalLiveAppManifest = jest.mocked(useLocalLiveAppManifest);
 const mockedUseDeepLinkListener = jest.mocked(useDeepLinkListener);
+const mockedUseEarnAppLifecycleMonitoring = jest.mocked(useEarnAppLifecycleMonitoring);
 
 const manifest = {
   id: "earn-manifest-id",
@@ -422,5 +427,22 @@ describe("Earn screen", () => {
 
     expect(lastCall.inputs.uiVersion).toBe("v4");
     expect(lastCall.inputs.lw40enabled).toBe("true");
+  });
+
+  it("monitors the lifecycle of the manifest it renders", () => {
+    render(<Earn />, {
+      initialState: withFlagOverrides({
+        ptxEarnLiveApp: { enabled: true, params: { manifest_id: "earn-manifest-id" } },
+      }),
+    });
+
+    expect(mockedUseEarnAppLifecycleMonitoring).toHaveBeenLastCalledWith("earn-manifest-id");
+  });
+
+  it("monitors nothing while no manifest resolves", () => {
+    mockedUseRemoteLiveAppManifest.mockReturnValue(undefined);
+    render(<Earn />);
+
+    expect(mockedUseEarnAppLifecycleMonitoring).toHaveBeenLastCalledWith(undefined);
   });
 });

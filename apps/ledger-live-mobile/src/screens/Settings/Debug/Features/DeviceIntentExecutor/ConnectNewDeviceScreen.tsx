@@ -105,6 +105,7 @@ export default function DebugConnectNewDeviceScreen() {
   if (isMounted) {
     return (
       <LoggedConnectNewDevice
+        sourceFlow="debug"
         onMount={onMount}
         onUnmount={onUnmount}
         delays={delays}

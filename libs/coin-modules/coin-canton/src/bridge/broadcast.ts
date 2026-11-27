@@ -9,6 +9,6 @@ export const broadcast = async (
   { account, signedOperation }: BroadcastArg<Account>,
 ): Promise<Operation> => {
   const { operation, signature } = signedOperation;
-  const hash = await broadcastLogic(getCurrencyContext(context, account.currency), signature);
+  const hash = await broadcastLogic(await getCurrencyContext(context, account.currency), signature);
   return patchOperationWithHash(operation, hash);
 };

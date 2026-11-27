@@ -853,7 +853,7 @@ export class SwapPage extends WebViewAppPage {
 
   @step("Retrieve the minimum swap amount")
   async getMinimumAmount(accountFrom: Account, accountTo: Account) {
-    const amount = await getMinimumSwapAmount(accountFrom, accountTo);
+    const amount = await getMinimumSwapAmount({ accountFrom, accountTo });
     return amount ? Number.parseFloat(amount.toFixed(6)).toString() : "";
   }
 
@@ -877,7 +877,7 @@ export class SwapPage extends WebViewAppPage {
 
   @step("Expect TwoStepApproval screen to be displayed")
   async expectTwoStepApprovalScreen() {
-    await this.verifyElementIsVisible(this.giveApprovalButton);
+    await this.verifyElementIsVisible(this.giveApprovalButton, APPROVAL_PROCESSING_TIMEOUT);
   }
 
   @step("Click Give Approval button")

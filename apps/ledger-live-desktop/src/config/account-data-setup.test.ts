@@ -2,7 +2,6 @@ import { configureStore, isAction, type Middleware } from "@reduxjs/toolkit";
 import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
 import { genAccount } from "@ledgerhq/ledger-wallet-framework/mocks/account";
 import { fromLegacyAccount } from "@ledgerhq/live-common/account/accountDescriptor";
-import { computeAccountUUID } from "@domain/entity-account-descriptor";
 import { AccountIdSchema, accountsSlice } from "@domain/entity-account";
 import {
   accountDataExtra,
@@ -11,10 +10,25 @@ import {
 } from "@domain/api-account-data";
 import { accountUUID, descriptor, sourceIdOf } from "@domain/api-account-data/testing";
 import { accountDataRequested } from "@domain/entity-account-data";
+import type { Account } from "@ledgerhq/types-live";
+import type { AccountDescriptor } from "@domain/entity-account-descriptor";
+import { mockAddressAccountDescriptor } from "@domain/entity-account-descriptor/schema.mock";
 import reducers from "~/renderer/reducers";
 import { removeAccount, replaceAccounts } from "~/renderer/actions/accounts";
-import { connectAccounts, type AccountDataObserver } from "./account-data-setup";
+import { prepareCurrency } from "~/renderer/bridge/cache";
+import { computeAccountUUID } from "@domain/entity-account/schema.mock";
+import {
+  addDiscoveredAccounts,
+  connectAccounts,
+  type AccountDataObserver,
+} from "./account-data-setup";
 import type * as SetupModule from "./account-data-setup";
+
+type SyncArgs = [AccountDescriptor, unknown, unknown, unknown];
+const mockSyncDetached = jest.fn<Promise<Account>, SyncArgs>();
+jest.mock("@ledgerhq/live-common/account-data/full-sync/syncDetached", () => ({
+  syncDetached: (...args: SyncArgs) => mockSyncDetached(...args),
+}));
 
 const mockReadCounter = jest.fn(async () => 5);
 const mockReadBalance = jest.fn(async () => []);
@@ -40,13 +54,13 @@ const { selectAccountEntries, selectAccountUUIDByLegacyId } = accountsSlice.getS
   (state: ReturnType<typeof reducers>) => state.accountEntries,
 );
 
-function setup() {
+function setup({ connected = true } = {}) {
   const store = configureStore({
     reducer: reducers,
     middleware: getDefaultMiddleware =>
       getDefaultMiddleware({ serializableCheck: false, immutableCheck: false }),
   });
-  connectAccounts(store);
+  if (connected) connectAccounts(store);
   return store;
 }
 
@@ -68,6 +82,110 @@ describe("connectAccounts", () => {
     expect(selectAccountUUIDByLegacyId(store.getState(), AccountIdSchema.parse(polygon.id))).toBe(
       computeAccountUUID(fromLegacyAccount(polygon)),
     );
+  });
+});
+
+const add = (
+  store: ReturnType<typeof setup>,
+  accounts: Parameters<typeof addDiscoveredAccounts>[0],
+) => addDiscoveredAccounts(accounts, store.getState, store.dispatch);
+
+describe("addDiscoveredAccounts", () => {
+  const cardanoResources = {
+    externalCredentials: [],
+    internalCredentials: [],
+    delegation: undefined,
+    utxos: [],
+    protocolParams: {},
+  };
+  const cardano: Account = Object.assign(
+    genAccount("cardano-discovered", { currency: getCryptoCurrencyById("cardano") }),
+    { cardanoResources },
+  );
+  const bitcoin = genAccount("bitcoin-discovered", { currency: getCryptoCurrencyById("bitcoin") });
+
+  beforeEach(() => mockSyncDetached.mockReset());
+
+  it("adds the account its family's sync built, with the family's resources", async () => {
+    mockSyncDetached.mockResolvedValue(cardano);
+    const store = setup();
+    const discovered = fromLegacyAccount(cardano);
+
+    await add(store, [{ descriptor: discovered }]);
+
+    expect(mockSyncDetached).toHaveBeenCalledWith(
+      discovered,
+      { prepareCurrency, blacklistedTokenIds: expect.any(Array) },
+      undefined,
+      undefined,
+    );
+    expect(store.getState().accounts).toEqual([expect.objectContaining({ cardanoResources })]);
+  });
+
+  it("syncs each account with the context its completion gave", async () => {
+    const discovered = mockAddressAccountDescriptor();
+    const context = { viewKey: "secret" };
+    mockSyncDetached.mockRejectedValue(new Error("not under test"));
+
+    await expect(add(setup(), [{ descriptor: discovered, context }])).rejects.toThrow(
+      "not under test",
+    );
+
+    expect(mockSyncDetached).toHaveBeenCalledWith(
+      discovered,
+      expect.anything(),
+      undefined,
+      context,
+    );
+  });
+
+  it("adds the synced accounts and reports the ones whose sync failed", async () => {
+    const bitcoinNetwork = fromLegacyAccount(bitcoin).network;
+    mockSyncDetached.mockImplementation(async discovered =>
+      discovered.network === bitcoinNetwork ? bitcoin : Promise.reject(new Error("network down")),
+    );
+    const store = setup();
+
+    await expect(
+      add(store, [
+        { descriptor: fromLegacyAccount(cardano) },
+        { descriptor: fromLegacyAccount(bitcoin) },
+      ]),
+    ).rejects.toThrow("1 of 2 not synced: Error: network down");
+
+    expect(store.getState().accounts).toEqual([expect.objectContaining({ id: bitcoin.id })]);
+  });
+
+  it("keeps a held account the accounts slice misses instead of replacing it", async () => {
+    mockSyncDetached.mockResolvedValue({ ...bitcoin, operationsCount: 0 });
+    const store = setup({ connected: false });
+    const held = { ...bitcoin, operationsCount: 42 };
+    store.dispatch({ type: "INIT_ACCOUNTS", payload: { accounts: [held], accountsUserData: [] } });
+
+    await add(store, [{ descriptor: fromLegacyAccount(bitcoin) }]);
+
+    expect(store.getState().accounts).toEqual([expect.objectContaining({ operationsCount: 42 })]);
+  });
+
+  it("does not add an account the store got meanwhile under another address casing", async () => {
+    const checksummed = "0x71C7656EC7ab88b098defB751B7401B5f6d8976F";
+    const held: Account = {
+      ...genAccount("ethereum-held", { currency: getCryptoCurrencyById("ethereum") }),
+      id: `js:2:ethereum:${checksummed}:`,
+      freshAddress: checksummed,
+    };
+    const synced: Account = {
+      ...held,
+      id: `js:2:ethereum:${checksummed.toLowerCase()}:`,
+      freshAddress: checksummed.toLowerCase(),
+    };
+    mockSyncDetached.mockResolvedValue(synced);
+    const store = setup();
+    store.dispatch({ type: "INIT_ACCOUNTS", payload: { accounts: [held], accountsUserData: [] } });
+
+    await add(store, [{ descriptor: fromLegacyAccount(synced) }]);
+
+    expect(store.getState().accounts).toEqual([expect.objectContaining({ id: held.id })]);
   });
 });
 

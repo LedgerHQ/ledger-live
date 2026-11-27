@@ -5,7 +5,13 @@ import type {
 } from "@ledgerhq/coin-module-framework/api/index";
 import { InvalidParameterError } from "@ledgerhq/coin-module-framework/errors";
 import { getLedgerEnd, getOperations, isGatewayEnabled } from "../../network/gateway";
-import { createMockContext, createMockOperationView } from "../../test/fixtures";
+import {
+  configOfCall,
+  createMockCoinConfigValue,
+  createMockContext,
+  createMockOperationView,
+  createSwitchingContext,
+} from "../../test/fixtures";
 import type { OperationView } from "../../types/gateway";
 import { decodeDescendingCursor } from "../cursor";
 import { listOperations } from "../listOperations";
@@ -309,6 +315,21 @@ describe("listOperations", () => {
   });
 
   describe("newest first", () => {
+    it("reads every page of a window by the configured page size", async () => {
+      const rows = rowsAt([10, 20]);
+      fakeGateway({ rows, ledgerEnd: 100 });
+      const paged = createMockContext(
+        createMockCoinConfigValue({
+          gateway: { ...createMockCoinConfigValue().gateway, maxTxQuery: 1 },
+        }),
+      );
+
+      const page = await listOperations(paged, PARTY, { minHeight: 0, order: "desc" });
+
+      expect(page.items.map(op => op.id)).toEqual(newestFirstIds(rows));
+      expect(mockedGetOperations.mock.calls.map(([, , options]) => options?.limit)).toEqual([1, 1]);
+    });
+
     it("stops at minHeight", async () => {
       fakeGateway({ rows: rowsAt([10, 20, 30, 40]), ledgerEnd: 100 });
 
@@ -358,6 +379,23 @@ describe("listOperations", () => {
       await expect(listOperations(context, PARTY, { minHeight: 0, order: "desc" })).rejects.toThrow(
         "does not advance",
       );
+    });
+  });
+
+  describe("one config snapshot", () => {
+    const first = createMockCoinConfigValue({ gatewayUrl: "https://a.example", nodeId: "a" });
+    const later = createMockCoinConfigValue({ gatewayUrl: "https://b.example", nodeId: "b" });
+
+    it.each(["asc", "desc"] as const)("reads every %s page under the first config", async order => {
+      const switching = createSwitchingContext(first, later);
+      fakeGateway({ rows: rowsAt(range(1, 5)), ledgerEnd: 10 });
+
+      await listOperations(switching, PARTY, { minHeight: 0, order, limit: 2 });
+
+      expect(switching.config).toHaveBeenCalledTimes(1);
+      const calls = [...mockedGetLedgerEnd.mock.calls, ...mockedGetOperations.mock.calls];
+      expect(calls.length).toBeGreaterThan(1);
+      for (const call of calls) expect(await configOfCall(call)).toBe(first);
     });
   });
 });

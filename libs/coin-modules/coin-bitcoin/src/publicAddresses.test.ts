@@ -13,7 +13,6 @@ const SUPPORTED_BITCOIN_COINS = [
   "qtum",
   "bitcoin_gold",
   "komodo",
-  "zencash",
   "bitcoin_testnet",
   "bitcoin_regtest",
 ];

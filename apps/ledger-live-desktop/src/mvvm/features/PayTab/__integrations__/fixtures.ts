@@ -1,6 +1,8 @@
-import type { TokenAccount } from "@ledgerhq/types-live";
+import type { Account, TokenAccount } from "@ledgerhq/types-live";
+import { AccountIdSchema, accountsSlice, legacyAccountsSynced } from "@domain/entity-account";
+import { computeAccountUUID } from "@domain/entity-account/schema.mock";
+import { fromLegacyAccount } from "@ledgerhq/live-common/account/accountDescriptor";
 import { TokenCurrencySchema } from "@domain/entity-currency-token";
-import type { InitializationInput } from "LLD/components/DeviceIntentExecutor";
 import {
   BTC_ACCOUNT,
   ETH_ACCOUNT,
@@ -23,10 +25,28 @@ export const tourSeenState = {
   payCardFeatureTour: { ...payCardFeatureTourInitialState, hasSeenFeatureTour: true },
 };
 
+/** The account model's entries of legacy accounts, as the app syncs them. */
+export function toAccountEntries(accounts: readonly Account[]) {
+  return accountsSlice.reducer(
+    undefined,
+    legacyAccountsSynced(
+      accounts.map(account => {
+        const descriptor = fromLegacyAccount(account);
+        return {
+          accountUUID: computeAccountUUID(descriptor),
+          descriptor,
+          legacyId: AccountIdSchema.parse(account.id),
+        };
+      }),
+    ),
+  );
+}
+
 export const fundedState = {
   ...onboardedState,
   ...tourSeenState,
   accounts: [BTC_ACCOUNT, ETH_ACCOUNT_WITH_USDC],
+  accountEntries: toAccountEntries([BTC_ACCOUNT, ETH_ACCOUNT_WITH_USDC]),
 };
 
 export const newSendFlowEnabledState = {
@@ -42,8 +62,6 @@ export const defaultPayStablecoins: PayStablecoins = {
   isLoading: false,
   isError: false,
 };
-
-export const INIT_INPUT = { appName: "Ethereum" } as InitializationInput;
 
 export const USDC_TOKEN = ETH_ACCOUNT_WITH_USDC.subAccounts![0] as TokenAccount;
 

@@ -21,7 +21,11 @@ import { DEVICE_TAGS } from "tests/utils/tagsUtils";
 const app: AppInfos = AppInfos.EXCHANGE;
 
 const swapEntryPoint = {
-  swap: new Swap(Account.BTC_NATIVE_SEGWIT_1, Account.ETH_1, "0.0006"),
+  swap: new Swap({
+    accountToDebit: Account.BTC_NATIVE_SEGWIT_1,
+    accountToCredit: Account.ETH_1,
+    amount: "0.0006",
+  }),
 };
 
 test.describe("Swap - entry points", () => {
@@ -119,7 +123,11 @@ test.describe("Swap - entry points", () => {
 
       await app.mainNavigation.openTargetFromMainNavigation("home");
       const minAmount = await app.swap.getMinimumAmount(accountToCredit, accountToDebit);
-      const blacklistedSwap = new Swap(accountToCredit, accountToDebit, minAmount);
+      const blacklistedSwap = new Swap({
+        accountToDebit: accountToCredit,
+        accountToCredit: accountToDebit,
+        amount: minAmount,
+      });
       await performSwapUntilQuoteSelectionStep({ app, swap: blacklistedSwap, minAmount });
       const provider = await app.swap.selectExchangeWithoutKyc();
       await app.swap.clickExchangeButton(provider.name);
@@ -217,7 +225,11 @@ for (const { fromAccount, toAccount, xrayTicket } of swapMax) {
 
         const amountToSend = await app.swap.getAmountToSend();
         const provider = await app.swap.selectExchangeWithoutKyc();
-        const swap = new Swap(fromAccount, toAccount, amountToSend);
+        const swap = new Swap({
+          accountToDebit: fromAccount,
+          accountToCredit: toAccount,
+          amount: amountToSend,
+        });
 
         await app.swap.clickExchangeButton(provider.name);
         await app.speculos.verifyAmountsAndAcceptSwap(swap, amountToSend);
@@ -229,7 +241,11 @@ for (const { fromAccount, toAccount, xrayTicket } of swapMax) {
 
 test.describe("Swap - history", () => {
   const swapHistory = {
-    swap: new Swap(Account.SOL_1, Account.ETH_1, "0.07"),
+    swap: new Swap({
+      accountToDebit: Account.SOL_1,
+      accountToCredit: Account.ETH_1,
+      amount: "0.07",
+    }),
     xrayTicket: "B2CQA-602, B2CQA-604",
     provider: SwapProvider.EXODUS,
     swapId: "wQ90NrWdvJz5dA4",

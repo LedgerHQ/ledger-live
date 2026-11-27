@@ -106,12 +106,15 @@ describe("getTransactionStatus", () => {
       operationHash: "0xhash",
       createdAt: new Date("2026-01-02T03:04:05.000Z").getTime(),
     });
-    expect(mockedFetchTransactionSwapStatus).toHaveBeenCalledWith({
-      provider: "lifi",
-      swapId: "swap-1",
-      transactionId: "0xhash",
-      operationId: "operation-id",
-    });
+    expect(mockedFetchTransactionSwapStatus).toHaveBeenCalledWith(
+      {
+        provider: "lifi",
+        swapId: "swap-1",
+        transactionId: "0xhash",
+        operationId: "operation-id",
+      },
+      expect.any(String),
+    );
   });
 
   it("uses provider fallback when swap history cannot resolve the swap", async () => {
@@ -135,11 +138,33 @@ describe("getTransactionStatus", () => {
       receiveStatus: "pending",
       finalAmount: undefined,
     });
-    expect(mockedFetchTransactionSwapStatus).toHaveBeenCalledWith({
-      provider: "changelly_v2",
-      swapId: "swap-1",
-      transactionId: undefined,
-    });
+    expect(mockedFetchTransactionSwapStatus).toHaveBeenCalledWith(
+      {
+        provider: "changelly_v2",
+        swapId: "swap-1",
+        transactionId: undefined,
+      },
+      undefined,
+    );
+  });
+
+  it("sends the network of the swap entry's account before its operation is synced", async () => {
+    mockedGetCompleteSwapHistory.mockResolvedValueOnce([]);
+    mockedFetchTransactionSwapStatus.mockResolvedValueOnce(undefined);
+    const account = {
+      ...makeAccount("from"),
+      swapHistory: [{ provider: "oneinchfusion", swapId: "swap-1" }],
+    } as unknown as Account;
+
+    await getTransactionStatus(
+      { swapId: "swap-1", provider: "oneinchfusion" },
+      { accounts: [account] },
+    );
+
+    expect(mockedFetchTransactionSwapStatus).toHaveBeenCalledWith(
+      expect.objectContaining({ provider: "oneinchfusion", swapId: "swap-1" }),
+      "from-currency",
+    );
   });
 
   it("sends operation identifiers for MoonPay trade status requests", async () => {
@@ -157,12 +182,15 @@ describe("getTransactionStatus", () => {
 
     await getTransactionStatus({ swapId: "swap-1" }, { accounts: [makeAccount("from")] });
 
-    expect(mockedFetchTransactionSwapStatus).toHaveBeenCalledWith({
-      provider: "moonpay_trade",
-      swapId: "swap-1",
-      transactionId: "0xhash",
-      operationId: "operation-id",
-    });
+    expect(mockedFetchTransactionSwapStatus).toHaveBeenCalledWith(
+      {
+        provider: "moonpay_trade",
+        swapId: "swap-1",
+        transactionId: "0xhash",
+        operationId: "operation-id",
+      },
+      expect.any(String),
+    );
   });
 
   it("keeps unknown remote status as a first-class status", async () => {

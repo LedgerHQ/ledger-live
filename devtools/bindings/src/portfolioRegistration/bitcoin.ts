@@ -1,4 +1,4 @@
-import { NetworkIdSchema } from "@domain/entity-account-descriptor";
+import { NetworkIdSchema } from "@domain/entity-network";
 import type { PortfolioRegistrationStrategy } from "./types";
 
 const BITCOIN = NetworkIdSchema.parse("bitcoin");

@@ -1,5 +1,5 @@
-import type { AccountUUID } from "@domain/entity-account-descriptor";
 import type { CryptoOrTokenCurrencyId } from "@domain/entity-currency";
+import type { AccountUUID } from "@domain/entity-account";
 
 export type ReceiveVerifyHintState = Readonly<{
   hasSeenReceiveVerifyHint: boolean;

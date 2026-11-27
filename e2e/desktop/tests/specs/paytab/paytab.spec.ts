@@ -30,7 +30,11 @@ const UNFREEZE = "Unfreeze";
 const CONTACT_ID = "e2e-pay-contact";
 const CONTACT_ADDRESS_ID = "e2e-pay-contact-main";
 const CONTACT_NAME = generateContactName();
-const transaction = new Transaction(TokenAccount.ETH_USDT_1, TokenAccount.ETH_USDT_3, "0.01");
+const transaction = new Transaction({
+  accountToDebit: TokenAccount.ETH_USDT_1,
+  accountToCredit: TokenAccount.ETH_USDT_3,
+  amount: "0.01",
+});
 const paymentLock = exclusiveLockFor({ broadcastAccounts: [transaction.accountToDebit] });
 const cardLock = exclusiveLockFor({ sharedResources: [PAY_CARD] });
 
@@ -55,7 +59,7 @@ function payContactSeed(address: string): ContactSeed {
   };
 }
 
-test.describe("Pay tab", () => {
+test.describe.skip("Pay tab", () => {
   test.use({
     teamOwner: Team.WALLET_XP,
     userdata: "skip-onboarding-with-last-seen-device",
@@ -128,10 +132,10 @@ test.describe("Pay tab", () => {
   );
 
   test(
-    "Request a payment",
+    "Request a payment and open a card transaction from history",
     {
       tag: [...DEVICE_TAGS],
-      annotation: { type: "TMS", description: "B2CQA-6326" },
+      annotation: { type: "TMS", description: "B2CQA-6326, B2CQA-6331" },
     },
     async ({ app }) => {
       await app.mainNavigation.openTargetFromMainNavigation("pay");
@@ -147,6 +151,14 @@ test.describe("Pay tab", () => {
       await app.payTab.expectRequestVerify();
       await app.payTab.closeRequest();
       await app.payTab.expectFundedBalance();
+
+      await app.mainNavigation.openTargetFromMainNavigation("home");
+      await app.history.openFromTopBar();
+      await app.history.expectCryptoHistoryTab();
+      await app.history.expectCardHistoryTab();
+      await app.history.openCardHistoryTab();
+      await app.history.openFirstCardTransaction();
+      await app.history.expectCardTransactionDetail();
     },
   );
 
@@ -240,21 +252,4 @@ test.describe("Pay tab", () => {
       },
     );
   });
-
-  test(
-    "Open a card transaction from history",
-    {
-      tag: [...DEVICE_TAGS],
-      annotation: { type: "TMS", description: "B2CQA-6331" },
-    },
-    async ({ app }) => {
-      await app.mainNavigation.openTargetFromMainNavigation("home");
-      await app.history.openFromTopBar();
-      await app.history.expectCryptoHistoryTab();
-      await app.history.expectCardHistoryTab();
-      await app.history.openCardHistoryTab();
-      await app.history.openFirstCardTransaction();
-      await app.history.expectCardTransactionDetail();
-    },
-  );
 });

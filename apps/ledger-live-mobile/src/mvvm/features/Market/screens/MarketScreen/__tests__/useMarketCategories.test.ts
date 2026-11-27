@@ -16,8 +16,8 @@ jest.mock("@react-navigation/native", () => {
   };
 });
 
-jest.mock("@ledgerhq/live-common/market/state-manager/api", () => ({
-  ...jest.requireActual("@ledgerhq/live-common/market/state-manager/api"),
+jest.mock("@domain/api-market-trending-categories", () => ({
+  ...jest.requireActual("@domain/api-market-trending-categories"),
   useGetTrendingCategoriesQuery: () => ({ data: undefined }),
 }));
 

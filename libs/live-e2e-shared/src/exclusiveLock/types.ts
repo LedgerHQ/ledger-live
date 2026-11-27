@@ -12,10 +12,16 @@ export type StoredLock = {
   readonly ageMs: number;
 };
 
+export type LockReplaceOptions = {
+  readonly key: string;
+  readonly record: LockRecord;
+  readonly etag: string;
+};
+
 export type LockStore = {
   read(key: string): Promise<StoredLock | undefined>;
   create(key: string, record: LockRecord): Promise<string | undefined>;
-  replace(key: string, record: LockRecord, etag: string): Promise<string | undefined>;
+  replace(options: LockReplaceOptions): Promise<string | undefined>;
 };
 
 export type Lease = {

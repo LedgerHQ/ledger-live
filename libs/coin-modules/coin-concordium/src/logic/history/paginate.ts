@@ -23,9 +23,8 @@ export async function paginateOperations(
     for (const item of page.items) items.push(item);
 
     // The only terminator. A page can be empty and still have more behind it:
-    // `items` holds what parsed, and this family keeps three transaction types
-    // out of dozens, so a page of contract calls yields nothing while the
-    // cursor still points at older rows.
+    // `items` holds what cost or moved something, so a page of validator events
+    // or sponsored calls yields nothing while the cursor still points at older rows.
     if (!page.next) return items;
 
     // A `from` the proxy cannot parse is ignored rather than rejected, so a bad

@@ -42,9 +42,9 @@ function AddTokenFlow() {
         name={ScreenName.XrpAddTokenSelectToken}
         component={SelectToken}
         options={{
-          headerLeft: renderBackButton,
-          headerTitle: t("xrp.addToken.steps.token.title"),
-          headerRight: renderCloseButton,
+          headerShown: false,
+          gestureEnabled: false,
+          animation: "fade",
         }}
       />
       <Stack.Screen

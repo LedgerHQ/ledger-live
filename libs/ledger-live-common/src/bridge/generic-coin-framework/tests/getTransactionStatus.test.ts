@@ -580,7 +580,7 @@ describe("genericGetTransactionStatus", () => {
     const readIntent = () => validateIntent.mock.calls[0][1];
 
     beforeEach(() => {
-      mockGetBridgeApi.mockResolvedValue({ computeIntentType: nearBridge.computeIntentType });
+      mockGetBridgeApi.mockResolvedValue({ computeIntentType: nearBridge().computeIntentType });
     });
 
     it.each([

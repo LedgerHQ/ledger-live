@@ -1,5 +1,5 @@
 import type { Portfolio } from "@domain/api-account-portfolio";
-import type { AccountUUID } from "@domain/entity-account-descriptor";
+import type { AccountUUID } from "@domain/entity-account";
 import type { PortfolioActivity, PortfolioOutcome, PortfolioSourceSnapshot } from "../types";
 
 const MAX_ACTIVITY = 200;

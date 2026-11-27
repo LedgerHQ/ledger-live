@@ -44,6 +44,7 @@ function model(
     closeLabel: "Close",
     showDeviceList: true,
     unlockSheet: null,
+    languagePrompt: null,
     onConnected: jest.fn(),
     onClose: jest.fn(),
     onDeviceNotFound: jest.fn(),

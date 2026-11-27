@@ -1,5 +1,6 @@
 import { useMemo } from "react";
 import type { Account } from "@ledgerhq/types-live";
+import { isSwapDisabledForFamily } from "@ledgerhq/live-common/account/index";
 import { useFetchCurrencyAll } from "@ledgerhq/live-common/exchange/swap/hooks/index";
 import { useFeatureFlaggedCurrencies } from "@features/platform-currencies";
 import { resolveSwapConsole } from "@features/flow-account-detail-hero";
@@ -21,6 +22,7 @@ export function useAccountSwapConsole(account: Account | undefined): boolean | u
   }, [account, blacklistedTokenIds, deactivatedCurrencyIds, swappableIds]);
 
   if (!account) return undefined;
+  if (isSwapDisabledForFamily(account.currency.family)) return false;
   const isCurrencySupported = !deactivatedCurrencyIds.has(account.currency.id);
   if (isCurrencySupported && !isResolved) return undefined;
   return resolveSwapConsole("desktop", { isCurrencySupported, isSwapAvailable });

@@ -260,7 +260,6 @@ export const createMockMarketItemResponse = (
   allTimeLow: 67.81,
   allTimeLowDate: "2013-07-06T00:00:00.000Z",
   fullyDilutedValuation: 1050000000000,
-  sparkline: [48000, 49000, 50000, 51000, 50500],
   ledgerIds: ["bitcoin"],
   updatedAt: new Date().toISOString(),
   ...overrides,

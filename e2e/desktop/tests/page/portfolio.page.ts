@@ -9,6 +9,7 @@ import { Currency } from "@ledgerhq/live-e2e-shared/enum/Currency";
 import type { SoftExpectMatcher } from "tests/utils/softExpect";
 
 type QuickActionButton = "receive" | "buy" | "sell" | "send";
+type ServiceEntryPoint = "perps" | "borrow" | "predictions";
 
 export class PortfolioPage extends AppPage {
   private readonly historyButton = this.page.getByTestId("topbar-action-button-history");
@@ -44,6 +45,10 @@ export class PortfolioPage extends AppPage {
   private readonly stocksSectionHeader = this.page.getByTestId("stocks-section-header-button");
   private readonly borrowEntryPoint = this.page.getByTestId("portfolio-borrow-entry-point");
   private readonly borrowEntryCtaButton = this.page.getByTestId("portfolio-borrow-entry-point-cta");
+  private readonly perpsEntryPoint = this.page.getByTestId("portfolio-perps-subheader-row");
+
+  private readonly servicesEntryPoint = (service: ServiceEntryPoint) =>
+    this.page.getByTestId(`portfolio-services-entry-point-${service}`);
 
   private getExpectedCounterValuePattern(counterValue: string): RegExp {
     const countervalueAliases: Record<string, RegExp> = {
@@ -326,8 +331,25 @@ export class PortfolioPage extends AppPage {
     await expect(this.borrowEntryPoint).toBeVisible();
   }
 
+  @step("Expect the $0 services entry point to be visible")
+  async expectServicesEntryPointVisible(service: ServiceEntryPoint) {
+    const entryPoint = this.servicesEntryPoint(service);
+    await entryPoint.scrollIntoViewIfNeeded();
+    await expect(entryPoint).toBeVisible();
+  }
+
+  @step("Click the $0 services entry point")
+  async clickServicesEntryPoint(service: ServiceEntryPoint) {
+    await this.servicesEntryPoint(service).click();
+  }
+
   @step("Click borrow entry point")
   async clickBorrowEntryPoint() {
     await this.borrowEntryCtaButton.click();
+  }
+
+  @step("Click perps entry point")
+  async clickPerpsEntryPoint() {
+    await this.perpsEntryPoint.click();
   }
 }

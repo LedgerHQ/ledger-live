@@ -60,18 +60,30 @@ describe("resolveEmptyState", () => {
 });
 
 describe("resolveAccountHeroAvailability", () => {
-  const support = { isCurrencySupported: true, isSendSupported: false, isReceiveSupported: true };
+  const transferSupport = {
+    isCurrencySupported: true,
+    isSendSupported: false,
+    isReceiveSupported: true,
+  };
+  const byAction = { buy: ["eth"], sell: [], swap: ["eth"], earn: [] };
 
   it("makes an action available when one asset of the account supports it", () => {
     expect(
-      resolveAccountHeroAvailability({ buy: ["eth"], sell: [], swap: ["eth"], earn: [] }, support),
+      resolveAccountHeroAvailability(byAction, { ...transferSupport, isSwapSupported: true }),
     ).toEqual({
-      ...support,
+      ...transferSupport,
       isBuyAvailable: true,
       isSellAvailable: false,
       isSwapAvailable: true,
       isEarnAvailable: false,
     });
+  });
+
+  it("hides swap when the account family does not support it, even if assets are swappable", () => {
+    expect(
+      resolveAccountHeroAvailability(byAction, { ...transferSupport, isSwapSupported: false })
+        .isSwapAvailable,
+    ).toBe(false);
   });
 });
 

@@ -5,4 +5,4 @@ const testConfig = {
   tags: ["@NanoSP", "@LNS", "@NanoX", "@Stax", "@Flex", "@NanoGen5"],
 };
 
-runUserCanAccessLedgerSupportTest(testConfig.tmsLinks, testConfig.tags);
+runUserCanAccessLedgerSupportTest(testConfig);

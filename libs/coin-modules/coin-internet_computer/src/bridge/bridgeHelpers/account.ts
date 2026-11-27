@@ -25,10 +25,10 @@ import { NeuronsData } from "../../types/neuron";
 
 /** The account shape reader, reaching the node `resolveHost` names; it is resolved once per call. */
 export const buildGetAccountShape =
-  (resolveHost: () => string): GetAccountShape<ICPAccount> =>
+  (resolveHost: () => Promise<string>): GetAccountShape<ICPAccount> =>
   async info => {
     const { currency, derivationMode, rest = {}, initialAccount } = info;
-    const host = resolveHost();
+    const host = await resolveHost();
     const publicKey = reconciliatePublicKey(rest.publicKey, initialAccount);
     invariant(publicKey, "publicKey is required");
 

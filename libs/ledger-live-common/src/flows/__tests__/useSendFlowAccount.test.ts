@@ -51,7 +51,6 @@ const mockAccount: Account = {
   balance: BigInt(100000000),
   spendableBalance: BigInt(100000000),
   name: "Bitcoin Account",
-  starred: false,
   used: true,
   seedIdentifier: "seed-1",
   freshAddress: "bc1q...",
@@ -75,7 +74,6 @@ const mockTokenAccount: TokenAccount = {
   operations: [],
   pendingOperations: [],
   operationsCount: 5,
-  starred: false,
   creationDate: new Date(),
 } as unknown as TokenAccount;
 
@@ -92,7 +90,6 @@ const mockParentAccount: Account = {
   balance: BigInt(1000000000000000000),
   spendableBalance: BigInt(1000000000000000000),
   name: "Ethereum Account",
-  starred: false,
   used: true,
   seedIdentifier: "seed-1",
   freshAddress: "0x...",

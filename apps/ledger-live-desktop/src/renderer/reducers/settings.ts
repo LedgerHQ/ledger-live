@@ -31,10 +31,9 @@ import {
   LanguageIdsNotFeatureFlagged,
   Languages,
   Locale,
-  OFAC_LOCALES,
 } from "~/config/languages";
 import { getAppLocale } from "~/helpers/systemLocale";
-import regionsByKey from "~/renderer/screens/settings/sections/General/regions.json";
+import { isRegionLocale, toAllowedRegionLocale } from "@features/flow-settings-general";
 import { State } from ".";
 import {
   PURGE_EXPIRED_ANONYMOUS_USER_NOTIFICATIONS,
@@ -97,7 +96,6 @@ export type SettingsState = {
   hideSmallValueTokenOperations: boolean;
   sidebarCollapsed: boolean;
   discreetMode: boolean;
-  starredAccountIds?: string[];
   blacklistedTokenIds: string[];
   deepLinkUrl: string | undefined | null;
   lastSeenCustomImage: {
@@ -691,16 +689,13 @@ export const languageSelector = (state: State): Language => {
   return getInitialLanguageAndLocale().language;
 };
 
-const isValidRegionLocale = (locale: string) => {
-  return Object.hasOwn(regionsByKey, locale);
-};
 const localeFallbackToLanguageSelector = (
   state: State,
 ): {
   locale: string;
 } => {
   const { language, locale, region } = state.settings;
-  const localeWithoutOFAC = locale && OFAC_LOCALES.includes(locale) ? "en-US" : locale;
+  const localeWithoutOFAC = locale && toAllowedRegionLocale(locale);
   if (!localeWithoutOFAC && language) {
     /*
       Handle settings data saved with the old logic, where the region settings'
@@ -709,11 +704,11 @@ const localeFallbackToLanguageSelector = (
         e.g: for "fr-BE" we would only save {region: "BE"}
     */
     const potentialLocale = region ? `${language}-${region}` : language;
-    if (isValidRegionLocale(potentialLocale))
+    if (isRegionLocale(potentialLocale))
       return {
         locale: potentialLocale,
       };
-  } else if (localeWithoutOFAC && isValidRegionLocale(localeWithoutOFAC))
+  } else if (localeWithoutOFAC && isRegionLocale(localeWithoutOFAC))
     return {
       locale: localeWithoutOFAC,
     };

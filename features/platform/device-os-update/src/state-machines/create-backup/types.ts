@@ -17,6 +17,8 @@ export type CreateBackupStateMachineInput = {
 export type CreateBackupStateMachineContext = CreateBackupStateMachineInput & {
   lastSentState: CreateBackupState | null;
   lastAction: CreateBackupStateMachineLastAction | null;
+  /** An unexplained recovery happened since the last successful action. */
+  hasUnexplainedRecovery: boolean;
   existingBackup: DeviceBackup | undefined;
   backup: Backup | null;
   error: unknown;

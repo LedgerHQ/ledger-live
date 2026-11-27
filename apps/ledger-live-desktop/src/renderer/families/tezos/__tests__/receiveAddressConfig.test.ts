@@ -1,4 +1,3 @@
-import { mockAddressAccountDescriptor } from "@domain/entity-account-descriptor/schema.mock";
 import { mockReceiveFamilyConfigInput } from "@features/flow-receive/types.mock";
 import type { TezosAccount } from "@ledgerhq/live-common/families/tezos/types";
 import { receiveAddressConfig } from "../receiveAddressConfig";
@@ -14,7 +13,6 @@ const operation = (type: "DELEGATE" | "IN", date: Date) => ({
 
 const tezosInput = (legacyAccount?: TezosAccount) =>
   mockReceiveFamilyConfigInput<TezosAccount>({
-    descriptor: mockAddressAccountDescriptor({ network: "tezos", path: "m/44h/1729h/0h/0h" }),
     asset: { id: "tezos" },
     legacyAccount,
   });

@@ -1,7 +1,14 @@
 import BigNumber from "bignumber.js";
 import { UnexpectedGetBalanceError } from "@ledgerhq/coin-module-framework/errors";
 import { CurrencyRegionRestrictedError } from "../../../errors";
-import type { StakingDelegation, StakingResources, StakingUnbonding } from "@ledgerhq/types-live";
+import type {
+  Account,
+  Operation,
+  StakingDelegation,
+  StakingResources,
+  StakingUnbonding,
+} from "@ledgerhq/types-live";
+import { withAccountBalances } from "@ledgerhq/ledger-wallet-framework/account/balances";
 import { genericGetAccountShape } from "../getAccountShape";
 import { extractBalances } from "../utils";
 import { setCryptoAssetsStore } from "@ledgerhq/ledger-wallet-framework/cryptoAssetsStore";
@@ -16,8 +23,10 @@ jest.mock("@ledgerhq/ledger-wallet-framework/account/index", () => ({
 }));
 
 const mergeOpsMock = jest.fn();
+const mergeOpsKeepingOlderMock = jest.fn((...args: any[]) => mergeOpsMock(...args));
 jest.mock("@ledgerhq/ledger-wallet-framework/bridge/jsHelpers", () => ({
   mergeOps: (...args: any[]) => mergeOpsMock(...args),
+  mergeOpsKeepingOlder: (...args: any[]) => mergeOpsKeepingOlderMock(...args),
 }));
 
 const listOperationsMock = jest.fn();
@@ -5599,6 +5608,1694 @@ describe("genericGetAccountShape", () => {
       expect(shape.operations).toEqual([
         expect.objectContaining({ type: "FEES", value: new BigNumber(1601) }),
       ]);
+    });
+  });
+
+  describe("balance pool rows", () => {
+    const network = "mainnet";
+    const currency = { id: "tezos", name: "Tezos" };
+    const native = { type: "native" as const };
+    const position = (uid: string, amount: bigint) => ({
+      uid,
+      address: "tz1pools",
+      state: "active" as const,
+      asset: native,
+      amount,
+    });
+
+    beforeEach(() => {
+      getSyncHashMock.mockReturnValue("sync-hash");
+      listOperationsMock.mockResolvedValue({ items: [], next: undefined });
+      buildSubAccountsMock.mockReturnValue([]);
+      lastBlockMock.mockResolvedValue({ height: 0 });
+      mergeOpsMock.mockImplementation((_old: any[], newOps: any[]) => newOps ?? []);
+      cleanedOperationMock.mockImplementation((op: any) => op);
+      inferSubOperationsMock.mockReturnValue([]);
+    });
+
+    const shapeFor = async (balances: unknown[], bridgeApi: Record<string, unknown> = {}) => {
+      getBalanceMock.mockResolvedValue(balances);
+      getBridgeApiMock.mockImplementationOnce(() => ({ ...defaultBridgeApi(), ...bridgeApi }));
+      const getShape = genericGetAccountShape(network, currency.id);
+      return getShape(
+        { address: "tz1pools", initialAccount: undefined, currency, derivationMode: "" } as any,
+        { paginationConfig: {} as any },
+      );
+    };
+
+    test("leaves balances undefined for a module without pool rows", async () => {
+      extractBalanceMock.mockReturnValue({ value: 100n, locked: 10n });
+
+      const result = await shapeFor([{ value: 100n, locked: 10n, asset: native }]);
+
+      expect(result).toHaveProperty("balances", undefined);
+      expect(result.balance).toEqual(new BigNumber(100));
+      expect(result.spendableBalance).toEqual(new BigNumber(90));
+    });
+
+    test("sums the pool rows into the totals and puts them on the shape", async () => {
+      const result = await shapeFor([
+        { value: 60n, locked: 5n, asset: native, pool: "public" },
+        { value: 40n, locked: 40n, asset: native, pool: "shielded", private: true },
+      ]);
+
+      expect(result.balance).toEqual(new BigNumber(100));
+      expect(result.spendableBalance).toEqual(new BigNumber(55));
+      expect(result.balances).toEqual([
+        { value: new BigNumber(60), locked: new BigNumber(5), pool: "public" },
+        { value: new BigNumber(40), locked: new BigNumber(40), pool: "shielded", private: true },
+      ]);
+      expect(extractBalanceMock).not.toHaveBeenCalled();
+    });
+
+    test("keeps an untagged public row next to a private row", async () => {
+      const result = await shapeFor([
+        { value: 60n, asset: native },
+        { value: 40n, asset: native, private: true },
+      ]);
+
+      expect(result.balance).toEqual(new BigNumber(100));
+      expect(result.balances).toEqual([
+        { value: new BigNumber(60) },
+        { value: new BigNumber(40), private: true },
+      ]);
+
+      const account = withAccountBalances({ ...result, id: "acc" } as unknown as Account, {
+        account: result.balances,
+      });
+      expect(account.balances).toEqual(result.balances);
+    });
+
+    test("keeps stake rows out of the totals unless the family partitions, then folds them into the public row", async () => {
+      const stake = {
+        value: 30n,
+        locked: 30n,
+        asset: native,
+        stake: position("delegation-tz1pools", 30n),
+      };
+      const rows = [{ value: 70n, asset: native, pool: "public" }, stake];
+
+      const inside = await shapeFor(rows, { usesStakingPositions: true });
+      expect(inside.balance).toEqual(new BigNumber(70));
+      expect(inside.balances).toEqual([{ value: new BigNumber(70), pool: "public" }]);
+
+      const partitioned = await shapeFor(rows, {
+        usesStakingPositions: true,
+        partitionsNativeBalance: true,
+      });
+      expect(partitioned.balance).toEqual(new BigNumber(100));
+      expect(partitioned.spendableBalance).toEqual(new BigNumber(70));
+      const folded = [{ value: new BigNumber(100), locked: new BigNumber(30), pool: "public" }];
+      expect(partitioned.balances).toEqual(folded);
+
+      const account = withAccountBalances({ ...partitioned, id: "acc" } as unknown as Account, {
+        account: partitioned.balances,
+      });
+      expect(account.balances).toEqual(folded);
+    });
+  });
+
+  describe("syncsHistoryOnStateChange", () => {
+    const network = "mainnet";
+    const currency = { id: "near", name: "NEAR" };
+    const NOW = 1_700_000_000_000;
+    const MINUTE = 60 * 1000;
+    const nativeBalance = (value: bigint) => [{ asset: { type: "native" }, value, locked: 0n }];
+    const coreOp = (hash: string, height: number) => ({
+      hash,
+      type: "IN",
+      tx: { failed: false, block: { height } },
+      height,
+    });
+    const storedAccount = (overrides: Record<string, unknown> = {}) => ({
+      blockHeight: 50,
+      syncHash: "sync-hash",
+      spendableBalance: new BigNumber(100),
+      operations: [
+        {
+          id: "h1",
+          hash: "h1",
+          accountId: "accId",
+          type: "IN",
+          blockHeight: 42,
+          date: new Date(42_000),
+        },
+      ],
+      pendingOperations: [],
+      subAccounts: [],
+      stakingPositions: [{ delegate: "pool-a" }, { delegate: "pool-b" }, {}],
+      ...overrides,
+    });
+    const sync = (initialAccount: any) =>
+      genericGetAccountShape(network, "local")(
+        { address: "addr1", currency, derivationMode: "", initialAccount } as any,
+        { paginationConfig: {} as any },
+      );
+    // What the next sync finds stored: the shape merged over the account, as `makeSync` does.
+    const persist = (account: any, shape: any) => ({ ...account, ...shape });
+    const useBridge = (overrides: Record<string, unknown> = {}) =>
+      getBridgeApiMock.mockImplementation(() => ({
+        ...defaultBridgeApi(),
+        syncsHistoryOnStateChange: true,
+        ...overrides,
+      }));
+    let now = NOW;
+
+    beforeEach(() => {
+      listOperationsMock.mockReset();
+      getBalanceMock.mockReset();
+      getValidatorsMock.mockReset();
+      const { mergeOps: realMergeOps, mergeOpsKeepingOlder: realMergeOpsKeepingOlder } =
+        jest.requireActual("@ledgerhq/ledger-wallet-framework/bridge/jsHelpers");
+      mergeOpsMock.mockImplementation(realMergeOps);
+      mergeOpsKeepingOlderMock.mockImplementation(realMergeOpsKeepingOlder);
+      mergeSubAccountsMock.mockImplementation((_old: any[], newSub: any[]) => newSub ?? []);
+      cleanedOperationMock.mockImplementation((op: any) => op);
+      buildSubAccountsMock.mockReturnValue([]);
+      inferSubOperationsMock.mockReturnValue([]);
+      getSyncHashMock.mockReturnValue("sync-hash");
+      extractBalanceMock.mockImplementation((balances: any[]) =>
+        balances.find(b => b.asset.type === "native"),
+      );
+      lastBlockMock.mockResolvedValue({ height: 1000 });
+      listOperationsMock.mockResolvedValue({ items: [] });
+      adaptCoreOperationToLiveOperationMock.mockImplementation((_accId: string, op: any) => ({
+        id: op.hash,
+        accountId: "accId",
+        hash: op.hash,
+        type: op.type,
+        blockHeight: op.height,
+        date: op.date ?? new Date(op.height * 1000),
+        extra: {},
+        senders: [],
+        recipients: op.recipients ?? [],
+      }));
+      resolveOperationHistoryBoundMock.mockReturnValue({ maxOperations: undefined });
+      now = NOW;
+      jest.spyOn(Date, "now").mockImplementation(() => now);
+      useBridge();
+    });
+
+    afterEach(() => {
+      jest.restoreAllMocks();
+      getBridgeApiMock.mockImplementation(defaultBridgeApi);
+    });
+
+    it("compares a spendable balance above 1e21 digit by digit, not in exponent notation", async () => {
+      // 20 NEAR in yoctoNEAR: `BigNumber#toString` prints it as 2.0191168751804952e+25.
+      getBalanceMock.mockResolvedValue(nativeBalance(20191168751804952100000000n));
+
+      const result = await sync(
+        storedAccount({ spendableBalance: new BigNumber("20191168751804952100000000") }),
+      );
+
+      expect(getBalanceMock).toHaveBeenCalledTimes(1);
+      expect(listOperationsMock).not.toHaveBeenCalled();
+      expect(result.historyRecheck).toBeUndefined();
+    });
+
+    it("reads the balance once, without listing, and leaves the history alone when the spendable balance is unchanged", async () => {
+      getBalanceMock.mockResolvedValue(nativeBalance(100n));
+
+      const result = await sync(storedAccount());
+
+      expect(getBalanceMock).toHaveBeenCalledTimes(1);
+      expect(getBalanceMock).toHaveBeenCalledWith(expect.anything(), "addr1", {
+        knownValidatorIds: ["pool-a", "pool-b"],
+        listValidators: false,
+      });
+      expect(listOperationsMock).not.toHaveBeenCalled();
+      expect(result.operations?.map(op => op.hash)).toEqual(["h1"]);
+      expect(result.historyRecheck).toBeUndefined();
+    });
+
+    it("reads the balance again with the listing, and the history from the watermark, when the spendable balance changed", async () => {
+      getBalanceMock
+        .mockResolvedValueOnce(nativeBalance(150n))
+        .mockResolvedValueOnce(nativeBalance(160n));
+      listOperationsMock.mockResolvedValueOnce({ items: [coreOp("h2", 45)] });
+
+      const result = await sync(storedAccount());
+
+      expect(getBalanceMock).toHaveBeenCalledTimes(2);
+      expect(getBalanceMock.mock.calls[1][2]).toEqual({
+        knownValidatorIds: ["pool-a", "pool-b"],
+        listValidators: true,
+      });
+      expect(result.balance?.toString()).toBe("160");
+      expect(listOperationsMock.mock.calls[0][2].minHeight).toBe(43);
+      expect(result.operations?.map(op => op.hash)).toEqual(["h2", "h1"]);
+    });
+
+    it("reads the history but does not list the validators while the account's own operation is pending", async () => {
+      // The fee, then the gas refunds of later blocks, move the balance at each pending sync.
+      getBalanceMock.mockResolvedValue(nativeBalance(150n));
+      listOperationsMock.mockResolvedValueOnce({ items: [coreOp("h2", 45)] });
+      const pending = { hash: "h2", type: "OUT", date: new Date(NOW) } as unknown as Operation;
+
+      const result = await sync(storedAccount({ pendingOperations: [pending] }));
+
+      expect(getBalanceMock).toHaveBeenCalledTimes(1);
+      expect(getBalanceMock.mock.calls[0][2].listValidators).toBe(false);
+      expect(listOperationsMock).toHaveBeenCalledTimes(1);
+      expect(result.operations?.map(op => op.hash)).toEqual(["h2", "h1"]);
+    });
+
+    it("takes a rise the family names a gas refund as explained, listing nothing and owing no read", async () => {
+      // The refund of the account's own transaction lands in a later block than the transaction.
+      getBalanceMock.mockResolvedValue(nativeBalance(105n));
+      const isGasRefund = jest.fn().mockReturnValue(true);
+
+      useBridge({ isGasRefund });
+      const result = await sync(storedAccount());
+
+      expect(isGasRefund).toHaveBeenCalledWith(5n, expect.any(Array), "addr1", expect.any(Number));
+      expect(getBalanceMock).toHaveBeenCalledTimes(1);
+      expect(getBalanceMock.mock.calls[0][2].listValidators).toBe(false);
+      expect(result.historyRecheck).toBeUndefined();
+    });
+
+    it("replaces the stored row of a transaction read again under another type", async () => {
+      // Listed before its outcome, the transaction was stored as a FEES row; settled, it reads as IN.
+      getBalanceMock.mockResolvedValue(nativeBalance(150n));
+      listOperationsMock.mockResolvedValueOnce({ items: [coreOp("h2", 45)] });
+      const provisional = {
+        id: "h2-FEES",
+        hash: "h2",
+        accountId: "accId",
+        type: "FEES",
+        blockHeight: 45,
+        date: new Date(45_000),
+      };
+      const stored = storedAccount();
+
+      const result = await sync({ ...stored, operations: [provisional, ...stored.operations] });
+
+      expect(result.operations?.map(op => [op.hash, op.type])).toEqual([
+        ["h2", "IN"],
+        ["h1", "IN"],
+      ]);
+    });
+
+    it("keeps the unexplained window for a rise the family does not name a refund", async () => {
+      getBalanceMock.mockResolvedValue(nativeBalance(105n));
+
+      useBridge({ isGasRefund: () => false });
+      const result = await sync(storedAccount());
+
+      expect(result.historyRecheck?.reason).toBe("unexplained");
+    });
+
+    it("keeps an unexplained window already open when a gas refund lands", async () => {
+      getBalanceMock.mockResolvedValue(nativeBalance(105n));
+      useBridge({ isGasRefund: () => true });
+      const since = NOW - 5 * MINUTE;
+      const open = { reason: "unexplained", since, spendableBalance: "100", minHeight: 43 };
+
+      const result = await sync(storedAccount({ historyRecheck: open }));
+
+      expect(result.historyRecheck).toEqual({
+        reason: "unexplained",
+        since,
+        spendableBalance: "105",
+        minHeight: 43,
+      });
+    });
+
+    it("owes the last pool listing when a gas refund lands as an unexplained window expires", async () => {
+      getBalanceMock.mockResolvedValue(nativeBalance(105n));
+      useBridge({ isGasRefund: () => true });
+      const open = { reason: "unexplained", since: NOW - 61 * MINUTE, spendableBalance: "100" };
+
+      const result = await sync(storedAccount({ historyRecheck: open }));
+
+      expect(result.historyRecheck).toEqual({ reason: "pools", listing: true });
+    });
+
+    it("keeps the window a failed read interrupted when a gas refund lands on the retry", async () => {
+      // unexplained, then a failed read that kept the window's start, then a refund on the retry.
+      getBalanceMock.mockResolvedValue(nativeBalance(105n));
+      useBridge({ isGasRefund: () => true });
+      const since = NOW - 5 * MINUTE;
+      const failed = {
+        reason: "failed",
+        since,
+        spendableBalance: "100",
+        failedSince: NOW - MINUTE,
+        minHeight: 43,
+      };
+
+      const result = await sync(storedAccount({ historyRecheck: failed }));
+
+      expect(result.historyRecheck).toEqual({
+        reason: "unexplained",
+        since,
+        spendableBalance: "105",
+        minHeight: 43,
+      });
+    });
+
+    it("reads the history when the spendable balance is zero and the stored total is unknown", async () => {
+      getBalanceMock.mockResolvedValue(nativeBalance(0n));
+
+      const result = await sync(storedAccount({ spendableBalance: new BigNumber(0) }));
+
+      expect(getBalanceMock).toHaveBeenCalledTimes(2);
+      expect(listOperationsMock).toHaveBeenCalledTimes(1);
+      expect(result.historyRecheck).toEqual({
+        reason: "unexplained",
+        since: NOW,
+        spendableBalance: "0",
+        balance: "0",
+      });
+    });
+
+    it("rechecks a total that moved under a zero spendable balance, and restarts on a new total", async () => {
+      const zeroSpendable = (value: bigint) => [
+        { asset: { type: "native" }, value, locked: value },
+      ];
+      getBalanceMock.mockResolvedValue(zeroSpendable(500n));
+      const account = storedAccount({
+        spendableBalance: new BigNumber(0),
+        balance: new BigNumber(400),
+      });
+
+      const moved = await sync(account);
+      expect(listOperationsMock).toHaveBeenCalledTimes(1);
+      expect(moved.historyRecheck).toEqual({
+        reason: "unexplained",
+        since: NOW,
+        spendableBalance: "0",
+        balance: "500",
+      });
+
+      listOperationsMock.mockClear();
+      now = NOW + 10 * 60 * 1000;
+      const recheck = await sync(persist(account, moved));
+      expect(listOperationsMock).toHaveBeenCalledTimes(1);
+      expect(recheck.historyRecheck).toEqual(moved.historyRecheck);
+
+      getBalanceMock.mockResolvedValue(zeroSpendable(600n));
+      now = NOW + 20 * 60 * 1000;
+      const again = await sync(persist(account, recheck));
+      expect(again.historyRecheck).toMatchObject({ since: NOW + 20 * 60 * 1000, balance: "600" });
+    });
+
+    it("reads the history without listing when an operation is pending, with an unchanged balance", async () => {
+      getBalanceMock.mockResolvedValue(nativeBalance(100n));
+
+      await sync(storedAccount({ pendingOperations: [{ id: "pending" }] }));
+
+      expect(getBalanceMock).toHaveBeenCalledTimes(1);
+      expect(getBalanceMock.mock.calls[0][2]).toEqual({
+        knownValidatorIds: ["pool-a", "pool-b"],
+        listValidators: false,
+      });
+      expect(listOperationsMock).toHaveBeenCalledTimes(1);
+    });
+
+    it.each([
+      [{ reason: "confirm" }],
+      [{ reason: "unexplained", since: Date.now(), spendableBalance: "100" }],
+    ])("reads the history without listing on a %p read", async historyRecheck => {
+      getBalanceMock.mockResolvedValue(nativeBalance(100n));
+
+      await sync(storedAccount({ historyRecheck }));
+
+      expect(getBalanceMock).toHaveBeenCalledTimes(1);
+      expect(getBalanceMock.mock.calls[0][2]).toEqual({
+        knownValidatorIds: ["pool-a", "pool-b"],
+        listValidators: false,
+      });
+      expect(listOperationsMock).toHaveBeenCalledTimes(1);
+    });
+
+    describe("a history read that fails", () => {
+      it("keeps the stored operations and marks the history as failed, then reads it again on the next sync", async () => {
+        getBalanceMock.mockResolvedValue(nativeBalance(150n));
+        listOperationsMock.mockRejectedValueOnce(new Error("indexer down"));
+        const account = storedAccount();
+
+        const failed = await sync(account);
+
+        expect(failed.operations?.map(op => op.hash)).toEqual(["h1"]);
+        expect(failed.balance?.toString()).toBe("150");
+        // The balance changed: the failure opens the window an empty retry keeps reading in.
+        expect(failed.historyRecheck).toEqual({
+          reason: "failed",
+          since: expect.any(Number),
+          spendableBalance: "150",
+          failedSince: NOW,
+        });
+
+        listOperationsMock.mockClear();
+        getBalanceMock.mockClear();
+        const retried = await sync(persist(account, failed));
+
+        expect(listOperationsMock).toHaveBeenCalledTimes(1);
+        expect(listOperationsMock.mock.calls[0][2].minHeight).toBe(43);
+        expect(getBalanceMock).toHaveBeenCalledTimes(2);
+        expect(retried.historyRecheck).toEqual({
+          reason: "unexplained",
+          since: failed.historyRecheck?.since,
+          spendableBalance: "150",
+        });
+      });
+
+      it("marks a failure on an unchanged balance without a window, and clears it after a read", async () => {
+        getBalanceMock.mockResolvedValue(nativeBalance(100n));
+        listOperationsMock.mockRejectedValueOnce(new Error("indexer down"));
+        const account = storedAccount({ pendingOperations: [{ id: "pending" }] });
+
+        const failed = await sync(account);
+        expect(failed.historyRecheck).toEqual({ reason: "failed", failedSince: NOW });
+
+        const retried = await sync(persist(account, { ...failed, pendingOperations: [] }));
+        expect(retried).toHaveProperty("historyRecheck", undefined);
+      });
+
+      it.each([
+        ["a new account", undefined],
+        ["an account stored without operation", storedAccount({ blockHeight: 0, operations: [] })],
+      ])("fails the sync of %s", async (_name, initialAccount) => {
+        getBalanceMock.mockResolvedValue(nativeBalance(150n));
+        listOperationsMock.mockRejectedValue(new Error("indexer down"));
+
+        await expect(sync(initialAccount)).rejects.toThrow("indexer down");
+        expect(getBalanceMock).toHaveBeenCalledTimes(1);
+      });
+    });
+
+    describe("a changed state that brings no operation", () => {
+      const unexplained = (since: number, spendableBalance: string) => ({
+        reason: "unexplained",
+        since,
+        spendableBalance,
+      });
+
+      it("marks it unexplained, reads it again within the hour, and stops after", async () => {
+        getBalanceMock.mockResolvedValue(nativeBalance(150n));
+        const account = storedAccount();
+
+        const first = await sync(account);
+        expect(first.historyRecheck).toEqual(unexplained(NOW, "150"));
+
+        now = NOW + 10 * MINUTE;
+        listOperationsMock.mockClear();
+        const second = await sync(persist(account, first));
+        expect(listOperationsMock).toHaveBeenCalledTimes(1);
+        expect(second.historyRecheck).toEqual(unexplained(NOW, "150"));
+
+        now = NOW + 61 * MINUTE;
+        listOperationsMock.mockClear();
+        const third = await sync(persist(account, second));
+        expect(listOperationsMock).toHaveBeenCalledTimes(1);
+        // Nothing was found in the hour: the pools are listed once more, the history is not read.
+        expect(third.historyRecheck).toEqual({ reason: "pools", listing: true });
+
+        listOperationsMock.mockClear();
+        getBalanceMock.mockClear();
+        const fourth = await sync(persist(account, third));
+        expect(listOperationsMock).not.toHaveBeenCalled();
+        expect(getBalanceMock).toHaveBeenCalledTimes(2);
+        expect(getBalanceMock.mock.calls[1][2].listValidators).toBe(true);
+        expect(fourth.historyRecheck).toBeUndefined();
+      });
+
+      it("restarts the hour when the spendable balance changes again", async () => {
+        getBalanceMock.mockResolvedValue(nativeBalance(150n));
+        const account = storedAccount();
+        const first = await sync(account);
+
+        now = NOW + 30 * MINUTE;
+        getBalanceMock.mockResolvedValue(nativeBalance(200n));
+        const second = await sync(persist(account, first));
+
+        expect(second.historyRecheck).toEqual(unexplained(NOW + 30 * MINUTE, "200"));
+      });
+
+      it("keeps the hour running through a failed read", async () => {
+        getBalanceMock.mockResolvedValue(nativeBalance(150n));
+        const account = storedAccount();
+        const first = await sync(account);
+
+        now = NOW + 5 * MINUTE;
+        listOperationsMock.mockRejectedValueOnce(new Error("indexer down"));
+        const failed = await sync(persist(account, first));
+        expect(failed.historyRecheck).toEqual({
+          reason: "failed",
+          since: NOW,
+          spendableBalance: "150",
+          failedSince: NOW + 5 * MINUTE,
+        });
+
+        now = NOW + 10 * MINUTE;
+        const retried = await sync(persist(account, failed));
+        expect(retried.historyRecheck).toEqual(unexplained(NOW, "150"));
+      });
+    });
+
+    it("confirms once after the history brings a new operation, then clears the mark", async () => {
+      getBalanceMock.mockResolvedValue(nativeBalance(150n));
+      listOperationsMock.mockResolvedValueOnce({ items: [coreOp("h2", 45)] });
+      const account = storedAccount();
+
+      const first = await sync(account);
+      expect(first.historyRecheck).toEqual({ reason: "confirm", minHeight: 43 });
+
+      // The confirmation reads the same range again: the indexer may add more at 43 to 45.
+      listOperationsMock.mockClear();
+      const second = await sync(persist(account, first));
+      expect(listOperationsMock).toHaveBeenCalledTimes(1);
+      expect(listOperationsMock.mock.calls[0][2].minHeight).toBe(43);
+      expect(second.historyRecheck).toBeUndefined();
+
+      listOperationsMock.mockClear();
+      await sync(persist(account, second));
+      expect(listOperationsMock).not.toHaveBeenCalled();
+    });
+
+    it("only reads once more when the app did not save a cleared mark", async () => {
+      getBalanceMock.mockResolvedValue(nativeBalance(150n));
+      listOperationsMock.mockResolvedValueOnce({ items: [coreOp("h2", 45)] });
+      const account = storedAccount();
+      const first = await sync(account);
+      const second = await sync(persist(account, first));
+      expect(second.historyRecheck).toBeUndefined();
+
+      // Clearing the mark changed nothing else, so the app kept the first sync: after a restart,
+      // the stored mark is the older one. It reads the same range again and ends the same way.
+      listOperationsMock.mockClear();
+      const replayed = await sync(persist(account, first));
+      expect(listOperationsMock).toHaveBeenCalledTimes(1);
+      expect(listOperationsMock.mock.calls[0][2].minHeight).toBe(43);
+      expect(replayed.historyRecheck).toBeUndefined();
+      expect(replayed.operations?.map(({ hash }) => hash)).toEqual(
+        second.operations?.map(({ hash }) => hash),
+      );
+      expect(replayed.balance).toEqual(second.balance);
+    });
+
+    it("confirms again when the confirmation read brings another new operation", async () => {
+      getBalanceMock.mockResolvedValue(nativeBalance(150n));
+      listOperationsMock.mockResolvedValueOnce({ items: [coreOp("h2", 45)] });
+      const account = storedAccount();
+
+      const first = await sync(account);
+      expect(first.historyRecheck).toEqual({ reason: "confirm", minHeight: 43 });
+
+      listOperationsMock.mockResolvedValueOnce({ items: [coreOp("h3", 46)] });
+      const second = await sync(persist(account, first));
+      expect(second.historyRecheck).toEqual({ reason: "confirm", minHeight: 43 });
+
+      listOperationsMock.mockClear();
+      const third = await sync(persist(account, second));
+      expect(listOperationsMock).toHaveBeenCalledTimes(1);
+      expect(third.historyRecheck).toBeUndefined();
+    });
+
+    it("probes a known pool a new staking call names while the read shows no position for it", async () => {
+      getBalanceMock.mockResolvedValue(nativeBalance(150n));
+      listOperationsMock.mockResolvedValueOnce({
+        items: [
+          {
+            ...coreOp("h2", 45),
+            type: "STAKE",
+            recipients: ["pool-a"],
+            date: new Date(NOW - 60_000),
+          },
+        ],
+      });
+
+      const result = await sync(storedAccount());
+
+      expect(result.historyRecheck).toMatchObject({
+        validatorIds: ["pool-a"],
+        validatorsSince: NOW,
+      });
+    });
+
+    it("reads on the node the pool a new staking operation names, on the confirmation read", async () => {
+      // pool-a, already known, shows its position: only pool-c is a candidate.
+      getBalanceMock.mockResolvedValue([
+        ...nativeBalance(150n),
+        {
+          asset: { type: "native" },
+          value: 7n,
+          stake: { delegate: "pool-a", amount: 7n, state: "active" },
+        },
+      ]);
+      listOperationsMock.mockResolvedValueOnce({
+        items: [
+          {
+            ...coreOp("h2", 45),
+            type: "STAKE",
+            recipients: ["pool-c"],
+            date: new Date(NOW - 60_000),
+          },
+          {
+            ...coreOp("h3", 44),
+            type: "STAKE",
+            recipients: ["pool-a"],
+            date: new Date(NOW - 60_000),
+          },
+        ],
+      });
+      const account = storedAccount();
+
+      const first = await sync(account);
+      expect(first.historyRecheck).toEqual({
+        reason: "confirm",
+        minHeight: 43,
+        validatorIds: ["pool-c"],
+        validatorsSince: NOW,
+      });
+
+      getBalanceMock.mockClear();
+      const second = await sync(persist(account, first));
+      expect(getBalanceMock).toHaveBeenCalledTimes(1);
+      expect(getBalanceMock.mock.calls[0][2]).toEqual({
+        knownValidatorIds: ["pool-a", "pool-b", "pool-c"],
+        listValidators: false,
+      });
+      // The mocked read shows no position for it yet: it stays a candidate, with no history read.
+      expect(second.historyRecheck).toEqual({
+        reason: "pools",
+        validatorIds: ["pool-c"],
+        validatorsSince: NOW,
+      });
+    });
+
+    it("keeps a confirmation's range when the balance moves again before it", async () => {
+      getBalanceMock.mockResolvedValue(nativeBalance(170n));
+      const account = storedAccount({ historyRecheck: { reason: "confirm", minHeight: 43 } });
+
+      const moved = await sync(account);
+      expect(listOperationsMock.mock.calls[0][2].minHeight).toBe(43);
+      expect(moved.historyRecheck).toEqual({
+        reason: "unexplained",
+        since: NOW,
+        spendableBalance: "170",
+        minHeight: 43,
+      });
+
+      listOperationsMock.mockClear();
+      now = NOW + 10 * 60 * 1000;
+      const recheck = await sync(persist(account, moved));
+      expect(listOperationsMock.mock.calls[0][2].minHeight).toBe(43);
+      expect(recheck.historyRecheck).toEqual({ ...moved.historyRecheck });
+    });
+
+    it("keeps a confirmation's range through a failed read and the window it opens", async () => {
+      getBalanceMock.mockResolvedValue(nativeBalance(170n));
+      listOperationsMock.mockRejectedValueOnce(new Error("indexer down"));
+      const account = storedAccount({ historyRecheck: { reason: "confirm", minHeight: 43 } });
+
+      const failed = await sync(account);
+      expect(failed.historyRecheck).toEqual({
+        reason: "failed",
+        since: NOW,
+        spendableBalance: "170",
+        minHeight: 43,
+        failedSince: NOW,
+      });
+
+      listOperationsMock.mockClear();
+      const retried = await sync(persist(account, failed));
+      expect(listOperationsMock.mock.calls[0][2].minHeight).toBe(43);
+      expect(retried.historyRecheck).toEqual({
+        reason: "unexplained",
+        since: NOW,
+        spendableBalance: "170",
+        minHeight: 43,
+      });
+    });
+
+    it("keeps the range of a failed confirmation for its retry", async () => {
+      getBalanceMock.mockResolvedValue(nativeBalance(100n));
+      listOperationsMock.mockRejectedValueOnce(new Error("indexer down"));
+      const account = storedAccount({ historyRecheck: { reason: "confirm", minHeight: 40 } });
+
+      const failed = await sync(account);
+      expect(listOperationsMock.mock.calls[0][2].minHeight).toBe(40);
+      expect(failed.historyRecheck).toEqual({ reason: "failed", minHeight: 40, failedSince: NOW });
+
+      listOperationsMock.mockClear();
+      const retried = await sync(persist(account, failed));
+      expect(listOperationsMock.mock.calls[0][2].minHeight).toBe(40);
+      expect(retried).toHaveProperty("historyRecheck", undefined);
+    });
+
+    it("reads the stored pools alone when a candidate is unreadable, retries it for an hour, then drops it", async () => {
+      getBalanceMock.mockImplementation(async (_ctx, _addr, options) => {
+        if (options?.knownValidatorIds?.includes("not-a-pool.near")) throw new Error("no pool");
+        return nativeBalance(100n);
+      });
+      const account = storedAccount({
+        historyRecheck: { reason: "confirm", minHeight: 43, validatorIds: ["not-a-pool.near"] },
+      });
+
+      const first = await sync(account);
+
+      // The joint read, the candidate alone, then the stored pools.
+      expect(getBalanceMock).toHaveBeenCalledTimes(3);
+      expect(getBalanceMock.mock.calls[2][2]).toEqual({
+        knownValidatorIds: ["pool-a", "pool-b"],
+        listValidators: false,
+      });
+      expect(first.balance?.toString()).toBe("100");
+      // A timeout looks the same as a contract that is no pool: tried again on the next syncs.
+      // No history is read for it: only the candidate is read on the node, for an hour.
+      expect(first.historyRecheck).toEqual({
+        reason: "pools",
+        validatorIds: ["not-a-pool.near"],
+        validatorsSince: NOW,
+      });
+
+      getBalanceMock.mockClear();
+      now = NOW + 30 * 60 * 1000;
+      const retried = await sync(persist(account, first));
+      expect(getBalanceMock.mock.calls[0][2].knownValidatorIds).toContain("not-a-pool.near");
+      expect(retried.historyRecheck).toEqual(first.historyRecheck);
+
+      now = NOW + 61 * 60 * 1000;
+      const dropped = await sync(persist(account, retried));
+      expect(dropped).toHaveProperty("historyRecheck", undefined);
+    });
+
+    it("keeps an unreadable candidate in a failed or confirmation mark", async () => {
+      getBalanceMock.mockImplementation(async (_ctx, _addr, options) => {
+        if (options?.knownValidatorIds?.includes("pool-c")) throw new Error("timeout");
+        return nativeBalance(100n);
+      });
+      const account = storedAccount({
+        historyRecheck: { reason: "confirm", minHeight: 43, validatorIds: ["pool-c"] },
+      });
+
+      listOperationsMock.mockRejectedValueOnce(new Error("indexer down"));
+      const failed = await sync(account);
+      expect(failed.historyRecheck).toEqual({
+        reason: "failed",
+        minHeight: 43,
+        validatorIds: ["pool-c"],
+        validatorsSince: NOW,
+        failedSince: NOW,
+      });
+
+      listOperationsMock.mockResolvedValueOnce({ items: [coreOp("h2", 45)] });
+      const confirmed = await sync(account);
+      expect(confirmed.historyRecheck).toEqual({
+        reason: "confirm",
+        minHeight: 43,
+        validatorIds: ["pool-c"],
+        validatorsSince: NOW,
+      });
+    });
+
+    it("keeps a candidate that becomes readable on a retry", async () => {
+      let timeouts = 2;
+      getBalanceMock.mockImplementation(async (_ctx, _addr, options) => {
+        if (options?.knownValidatorIds?.includes("pool-c") && timeouts-- > 0)
+          throw new Error("timeout");
+        return nativeBalance(100n);
+      });
+      const account = storedAccount({
+        historyRecheck: { reason: "confirm", minHeight: 43, validatorIds: ["pool-c"] },
+      });
+
+      const first = await sync(account);
+      expect(first.historyRecheck?.validatorIds).toEqual(["pool-c"]);
+
+      getBalanceMock.mockClear();
+      await sync(persist(account, first));
+      expect(getBalanceMock.mock.calls[0][2]).toEqual({
+        knownValidatorIds: ["pool-a", "pool-b", "pool-c"],
+        listValidators: false,
+      });
+    });
+
+    it("carries candidates it did not read through a sync from scratch after a cleared cache", async () => {
+      getBalanceMock.mockResolvedValue(nativeBalance(150n));
+      const cleared = storedAccount({
+        blockHeight: 0,
+        operations: [],
+        historyRecheck: { reason: "pools", validatorIds: ["pool-c"], validatorsSince: NOW },
+      });
+
+      const result = await sync(cleared);
+
+      // From scratch: the full read lists the pools and names the stored ones, not the candidate.
+      expect(getBalanceMock.mock.calls[0][2]).toEqual({
+        knownValidatorIds: ["pool-a", "pool-b"],
+        listValidators: true,
+      });
+      expect(result.historyRecheck).toMatchObject({
+        validatorIds: ["pool-c"],
+        validatorsSince: NOW,
+      });
+
+      getBalanceMock.mockClear();
+      await sync(persist(cleared, { ...result, blockHeight: 50 }));
+      expect(getBalanceMock.mock.calls[0][2].knownValidatorIds).toContain("pool-c");
+    });
+
+    it("keeps a readable candidate pool when another candidate is no pool", async () => {
+      getBalanceMock.mockImplementation(async (_ctx, _addr, options) => {
+        if (options?.knownValidatorIds?.includes("not-a-pool.near")) throw new Error("no pool");
+        return nativeBalance(100n);
+      });
+
+      await sync(
+        storedAccount({
+          historyRecheck: {
+            reason: "confirm",
+            minHeight: 43,
+            validatorIds: ["pool-c", "not-a-pool.near"],
+          },
+        }),
+      );
+
+      const lastCall = getBalanceMock.mock.calls.at(-1);
+      expect(lastCall?.[2]).toEqual({
+        knownValidatorIds: ["pool-a", "pool-b", "pool-c"],
+        listValidators: false,
+      });
+    });
+
+    it("does not take the recipient of a failed staking operation as a pool", async () => {
+      getBalanceMock.mockResolvedValue(nativeBalance(150n));
+      adaptCoreOperationToLiveOperationMock.mockImplementationOnce((_accId: string, op: any) => ({
+        id: op.hash,
+        accountId: "accId",
+        hash: op.hash,
+        type: op.type,
+        blockHeight: op.height,
+        date: new Date(op.height * 1000),
+        extra: {},
+        senders: [],
+        recipients: op.recipients,
+        hasFailed: true,
+      }));
+      listOperationsMock.mockResolvedValueOnce({
+        items: [{ ...coreOp("h2", 45), type: "STAKE", recipients: ["not-a-pool.near"] }],
+      });
+
+      const result = await sync(storedAccount());
+
+      expect(result.historyRecheck).toEqual({ reason: "confirm", minHeight: 43 });
+    });
+
+    it("names no candidate for a staking call more than an hour old", async () => {
+      getBalanceMock.mockResolvedValue(nativeBalance(150n));
+      listOperationsMock.mockResolvedValueOnce({
+        items: [
+          {
+            ...coreOp("h2", 45),
+            type: "STAKE",
+            recipients: ["pool-c"],
+            date: new Date(NOW - 2 * 60 * 60 * 1000),
+          },
+        ],
+      });
+
+      const result = await sync(storedAccount());
+
+      expect(result.historyRecheck?.validatorIds).toBeUndefined();
+    });
+
+    it("names a candidate for a recent staking call read by a sync from scratch", async () => {
+      getBalanceMock.mockResolvedValue(nativeBalance(150n));
+      listOperationsMock.mockResolvedValueOnce({
+        items: [
+          {
+            ...coreOp("h2", 45),
+            type: "STAKE",
+            recipients: ["pool-c"],
+            date: new Date(NOW - 60_000),
+          },
+        ],
+      });
+
+      const result = await sync(undefined);
+
+      expect(result.historyRecheck?.validatorIds).toEqual(["pool-c"]);
+    });
+
+    it("removes a stored incoming row the confirmation now reads as failed", async () => {
+      getBalanceMock.mockResolvedValue(nativeBalance(100n));
+      const account = storedAccount({ historyRecheck: { reason: "confirm", minHeight: 42 } });
+      listOperationsMock.mockResolvedValueOnce({
+        items: [{ ...coreOp("h1", 42), tx: { hash: "h1", failed: true, block: { height: 42 } } }],
+      });
+
+      const result = await sync(account);
+
+      expect(result.operations).toEqual([]);
+    });
+
+    it("stores an operation the confirmation reads below every stored one, then ends", async () => {
+      getBalanceMock.mockResolvedValue(nativeBalance(100n));
+      const late = { ...coreOp("h0", 40), date: new Date(40_000) };
+      const account = storedAccount({ historyRecheck: { reason: "confirm", minHeight: 40 } });
+
+      listOperationsMock.mockResolvedValueOnce({ items: [late] });
+      const first = await sync(account);
+      expect(first.operations?.map(({ hash }) => hash)).toEqual(["h1", "h0"]);
+
+      listOperationsMock.mockResolvedValueOnce({ items: [late] });
+      const second = await sync(persist(account, first));
+      expect(second.operations?.map(({ hash }) => hash)).toEqual(["h1", "h0"]);
+      expect(second).toHaveProperty("historyRecheck", undefined);
+    });
+
+    it("names a candidate for a recent staking call already stored when it syncs from scratch", async () => {
+      getBalanceMock.mockResolvedValue(nativeBalance(150n));
+      const call = {
+        ...coreOp("h2", 45),
+        type: "STAKE",
+        recipients: ["pool-c"],
+        date: new Date(NOW - 60_000),
+      };
+      listOperationsMock.mockResolvedValueOnce({ items: [call] });
+
+      // The other bridge stored the call, then cleared the sync hash.
+      const result = await sync(
+        storedAccount({
+          syncHash: "",
+          operations: [
+            {
+              id: "h2",
+              hash: "h2",
+              accountId: "accId",
+              type: "DELEGATE",
+              blockHeight: 45,
+              date: call.date,
+            },
+          ],
+        }),
+      );
+
+      expect(result.historyRecheck?.validatorIds).toEqual(["pool-c"]);
+    });
+
+    it("confirms from the lowest operation whose outcome is missing after a sync from scratch", async () => {
+      useBridge({ isOperationSettled: (op: any) => op.hash !== "h-low" });
+      getBalanceMock.mockResolvedValue(nativeBalance(150n));
+      listOperationsMock.mockResolvedValueOnce({
+        items: [coreOp("h-high", 100), coreOp("h-low", 99)],
+      });
+
+      const result = await sync(undefined);
+
+      expect(result.historyRecheck).toMatchObject({ reason: "confirm", minHeight: 99 });
+    });
+
+    it("takes the pool a staking call named from the family, whatever the operation type", async () => {
+      useBridge({
+        getStakingCallValidatorId: (op: any) => (op.hash === "h2" ? "pool-d" : undefined),
+      });
+      getBalanceMock.mockResolvedValue(nativeBalance(150n));
+      listOperationsMock.mockResolvedValueOnce({
+        items: [{ ...coreOp("h2", 45), type: "OUT", date: new Date(NOW - 60_000) }],
+      });
+
+      const result = await sync(storedAccount());
+
+      expect(result.historyRecheck).toEqual({
+        reason: "confirm",
+        minHeight: 43,
+        validatorIds: ["pool-d"],
+        validatorsSince: NOW,
+      });
+    });
+
+    it("takes the known validators from the family when it keeps them elsewhere too", async () => {
+      useBridge({ getKnownValidatorIds: () => ["pool-a", "pool-legacy"] });
+      getBalanceMock.mockResolvedValue(nativeBalance(100n));
+
+      await sync(storedAccount());
+
+      expect(getBalanceMock.mock.calls[0][2]).toEqual({
+        knownValidatorIds: ["pool-a", "pool-legacy"],
+        listValidators: false,
+      });
+    });
+
+    it("opens the window when the balance moved again before the confirmation read", async () => {
+      getBalanceMock.mockResolvedValue(nativeBalance(170n));
+
+      const result = await sync(storedAccount({ historyRecheck: { reason: "confirm" } }));
+
+      expect(listOperationsMock).toHaveBeenCalledTimes(1);
+      expect(result.historyRecheck).toEqual({
+        reason: "unexplained",
+        since: expect.any(Number),
+        spendableBalance: "170",
+      });
+    });
+
+    it("asks for the confirmation read after a sync from scratch that returned operations", async () => {
+      getBalanceMock.mockResolvedValue(nativeBalance(150n));
+      listOperationsMock.mockResolvedValueOnce({ items: [coreOp("h2", 45)] });
+
+      const withOperations = await sync(undefined);
+      // Not the whole history again: from the newest operation it found.
+      expect(withOperations.historyRecheck).toEqual({ reason: "confirm", minHeight: 45 });
+      expect(getBalanceMock).toHaveBeenCalledTimes(1);
+      expect(getBalanceMock.mock.calls[0][2]).toBeUndefined();
+
+      const empty = await sync(undefined);
+      expect(empty.historyRecheck).toBeUndefined();
+    });
+
+    it("takes the regular path for a balance that holds another asset", async () => {
+      getBalanceMock.mockResolvedValue([
+        ...nativeBalance(100n),
+        { asset: { type: "token", assetReference: "ref" }, value: 5n },
+      ]);
+
+      const result = await sync(storedAccount());
+
+      expect(listOperationsMock).toHaveBeenCalledTimes(1);
+      expect(result).not.toHaveProperty("historyRecheck");
+    });
+
+    it.each([[undefined], [{}]])(
+      "leaves a family without the flag as it is (balance options %p)",
+      async balanceOptions => {
+        useBridge({ syncsHistoryOnStateChange: undefined, balanceOptions });
+        getBalanceMock.mockResolvedValue(nativeBalance(100n));
+
+        const result = await sync(storedAccount());
+
+        expect(getBalanceMock).toHaveBeenCalledTimes(1);
+        expect(getBalanceMock).toHaveBeenCalledWith(expect.anything(), "addr1", balanceOptions);
+        expect(listOperationsMock).toHaveBeenCalledTimes(1);
+        expect(result).not.toHaveProperty("historyRecheck");
+      },
+    );
+
+    it("completes the sync when the validator listing is refused", async () => {
+      useBridge({ stakingSupported: true });
+      getValidatorsMock.mockRejectedValue(new Error("Request failed with status code 429"));
+      getBalanceMock.mockResolvedValue(nativeBalance(150n));
+      listOperationsMock.mockResolvedValueOnce({ items: [coreOp("h2", 45)] });
+
+      const result = await sync(storedAccount());
+
+      expect(result.balance?.toString()).toBe("150");
+      expect(result.operations?.map(op => op.hash)).toEqual(["h2", "h1"]);
+    });
+
+    describe("the first sync of an account the legacy sync left", () => {
+      // The legacy sync stores no sync hash.
+      const legacyAccount = () => storedAccount({ syncHash: "" });
+
+      it("keeps the stored operations when the history read fails, and starts over next time", async () => {
+        getBalanceMock.mockResolvedValue(nativeBalance(100n));
+        listOperationsMock.mockRejectedValue(new Error("429"));
+
+        const result = await sync(legacyAccount());
+
+        expect(result.operations?.map(({ hash }) => hash)).toEqual(["h1"]);
+        expect(result.syncHash).toBe("");
+        expect(result.historyRecheck).toMatchObject({ reason: "failed", failedSince: NOW });
+      });
+
+      it("fails once the reads have failed for an hour", async () => {
+        getBalanceMock.mockResolvedValue(nativeBalance(100n));
+        listOperationsMock.mockRejectedValue(new Error("429"));
+        const account = legacyAccount();
+        const first = await sync(account);
+
+        now = NOW + 60 * MINUTE;
+        await expect(sync(persist(account, first))).rejects.toThrow("429");
+      });
+
+      it("rebuilds the history from scratch once a read passes", async () => {
+        getBalanceMock.mockResolvedValue(nativeBalance(100n));
+        listOperationsMock.mockRejectedValueOnce(new Error("429"));
+        const account = legacyAccount();
+        const first = await sync(account);
+
+        listOperationsMock.mockResolvedValueOnce({ items: [coreOp("h2", 45)] });
+        const second = await sync(persist(account, first));
+
+        expect(listOperationsMock.mock.calls[1][2].minHeight).toBe(0);
+        expect(second.operations?.map(({ hash }) => hash)).toEqual(["h2"]);
+        expect(second.syncHash).toBe("sync-hash");
+      });
+
+      it("names no pool rather than requiring the listing when it held none", async () => {
+        getBalanceMock.mockResolvedValue(nativeBalance(100n));
+        listOperationsMock.mockResolvedValueOnce({ items: [] });
+
+        await sync(storedAccount({ syncHash: "", stakingPositions: [] }));
+
+        expect(getBalanceMock.mock.calls[0][2]).toEqual({
+          knownValidatorIds: [],
+          listValidators: true,
+        });
+      });
+
+      it("keeps a strict listing on a sync from scratch of an account it synced itself", async () => {
+        getBalanceMock.mockResolvedValue(nativeBalance(100n));
+        listOperationsMock.mockResolvedValueOnce({ items: [] });
+
+        await sync(storedAccount({ syncHash: "old-version", stakingPositions: [] }));
+
+        expect(getBalanceMock.mock.calls[0][2]).toBeUndefined();
+      });
+
+      it("still fails a sync from scratch of an account it synced itself", async () => {
+        getBalanceMock.mockResolvedValue(nativeBalance(100n));
+        listOperationsMock.mockRejectedValue(new Error("429"));
+
+        await expect(sync(storedAccount({ syncHash: "old-version" }))).rejects.toThrow("429");
+      });
+    });
+
+    describe("an account stored without operations", () => {
+      const emptyAccount = (overrides: Record<string, unknown> = {}) =>
+        storedAccount({
+          blockHeight: 0,
+          operations: [],
+          balance: new BigNumber(0),
+          spendableBalance: new BigNumber(0),
+          stakingPositions: [],
+          lastSyncDate: new Date(1_700_000_000_000),
+          ...overrides,
+        });
+
+      it("is not synced from scratch while it holds nothing, and reads no history", async () => {
+        getBalanceMock.mockResolvedValue(nativeBalance(0n));
+        listOperationsMock.mockRejectedValue(new Error("indexer down"));
+
+        const result = await sync(emptyAccount());
+
+        expect(getBalanceMock).toHaveBeenCalledTimes(1);
+        expect(getBalanceMock.mock.calls[0][2]).toEqual({
+          knownValidatorIds: [],
+          listValidators: false,
+        });
+        expect(listOperationsMock).not.toHaveBeenCalled();
+        expect(result.operations).toEqual([]);
+        expect(result.historyRecheck).toBeUndefined();
+      });
+
+      it("is synced from scratch after a cleared cache, which resets the last sync to the epoch", async () => {
+        getBalanceMock.mockResolvedValue(nativeBalance(0n));
+        listOperationsMock.mockResolvedValueOnce({ items: [coreOp("h2", 45)] });
+
+        const result = await sync(emptyAccount({ lastSyncDate: new Date(0) }));
+
+        expect(listOperationsMock).toHaveBeenCalledTimes(1);
+        expect(listOperationsMock.mock.calls[0][2].minHeight).toBe(0);
+        expect(result.operations?.map(op => op.hash)).toEqual(["h2"]);
+      });
+
+      it("is synced from scratch when it has no last sync date at all", async () => {
+        getBalanceMock.mockResolvedValue(nativeBalance(0n));
+        listOperationsMock.mockResolvedValueOnce({ items: [] });
+
+        await sync(emptyAccount({ lastSyncDate: undefined }));
+
+        expect(listOperationsMock).toHaveBeenCalledTimes(1);
+      });
+
+      it("is synced from scratch once it holds funds, with the regular balance read", async () => {
+        getBalanceMock.mockResolvedValue(nativeBalance(150n));
+        listOperationsMock.mockResolvedValueOnce({ items: [coreOp("h2", 45)] });
+
+        const result = await sync(emptyAccount());
+
+        expect(getBalanceMock).toHaveBeenCalledTimes(2);
+        expect(getBalanceMock.mock.calls[1][2]).toBeUndefined();
+        expect(listOperationsMock.mock.calls[0][2].minHeight).toBe(0);
+        expect(result.operations?.map(op => op.hash)).toEqual(["h2"]);
+      });
+
+      it("names its stored pools in the full read after a cleared cache", async () => {
+        getBalanceMock.mockResolvedValue(nativeBalance(0n));
+        listOperationsMock.mockResolvedValueOnce({ items: [] });
+
+        await sync(
+          emptyAccount({ lastSyncDate: new Date(0), stakingPositions: [{ delegate: "pool-a" }] }),
+        );
+
+        expect(getBalanceMock).toHaveBeenCalledTimes(1);
+        expect(getBalanceMock.mock.calls[0][2]).toEqual({
+          knownValidatorIds: ["pool-a"],
+          listValidators: true,
+        });
+      });
+
+      it("names its stored pools in the full read once it holds funds", async () => {
+        getBalanceMock.mockResolvedValue(nativeBalance(150n));
+        listOperationsMock.mockResolvedValueOnce({ items: [] });
+
+        await sync(emptyAccount({ stakingPositions: [{ delegate: "pool-a" }] }));
+
+        expect(getBalanceMock.mock.calls[1][2]).toEqual({
+          knownValidatorIds: ["pool-a"],
+          listValidators: true,
+        });
+      });
+
+      it("keeps its empty history when a read after a restart fails while it still holds nothing", async () => {
+        getBalanceMock.mockResolvedValue(nativeBalance(0n));
+        listOperationsMock.mockRejectedValue(new Error("503"));
+
+        // A restart restores the last sync date as the epoch.
+        const result = await sync(emptyAccount({ lastSyncDate: new Date(0) }));
+
+        expect(result.operations).toEqual([]);
+        expect(result.historyRecheck).toMatchObject({ reason: "failed", failedSince: NOW });
+      });
+
+      it("names no pool rather than requiring the listing after a restart", async () => {
+        getBalanceMock.mockResolvedValue(nativeBalance(0n));
+        listOperationsMock.mockResolvedValueOnce({ items: [] });
+
+        await sync(emptyAccount({ lastSyncDate: new Date(0) }));
+
+        expect(getBalanceMock.mock.calls[0][2]).toEqual({
+          knownValidatorIds: [],
+          listValidators: true,
+        });
+      });
+
+      it("keeps tolerating the outage on the next syncs while the listing and history are down", async () => {
+        // coin-near fails the balance read on a failed listing unless the known pools are named.
+        getBalanceMock.mockImplementation(async (_ctx, _address, options) => {
+          if (options?.knownValidatorIds === undefined) throw new Error("listing 503");
+          return nativeBalance(0n);
+        });
+        listOperationsMock.mockRejectedValue(new Error("503"));
+        const account = emptyAccount({ lastSyncDate: new Date(0) });
+        const first = await sync(account);
+        expect(first.syncHash).toBe("sync-hash");
+
+        // The sync stamps the last sync date.
+        now = NOW + 10 * MINUTE;
+        const second = await sync({ ...persist(account, first), lastSyncDate: new Date(NOW) });
+        // A restart again restores the last sync date as the epoch.
+        now = NOW + 20 * MINUTE;
+        const third = await sync({ ...persist(account, second), lastSyncDate: new Date(0) });
+
+        expect(third.operations).toEqual([]);
+        expect(third.historyRecheck).toMatchObject({ reason: "failed", failedSince: NOW });
+      });
+
+      it("fails when a read after a restart fails past the hour", async () => {
+        getBalanceMock.mockResolvedValue(nativeBalance(0n));
+        listOperationsMock.mockRejectedValue(new Error("503"));
+        const account = emptyAccount({ lastSyncDate: new Date(0) });
+        const first = await sync(account);
+
+        now = NOW + 60 * MINUTE;
+        await expect(sync(persist(account, first))).rejects.toThrow("503");
+      });
+
+      it("fails when the history of an account that holds funds cannot be read", async () => {
+        getBalanceMock.mockResolvedValue(nativeBalance(150n));
+        listOperationsMock.mockRejectedValue(new Error("indexer down"));
+
+        await expect(sync(emptyAccount())).rejects.toThrow("indexer down");
+      });
+
+      it("is still synced from scratch when its stored balance is unknown", async () => {
+        getBalanceMock.mockResolvedValue(nativeBalance(0n));
+        const { balance: _balance, ...withoutBalance } = emptyAccount() as Record<string, unknown>;
+
+        await sync(withoutBalance);
+
+        expect(listOperationsMock).toHaveBeenCalledTimes(1);
+        expect(listOperationsMock.mock.calls[0][2].minHeight).toBe(0);
+      });
+    });
+
+    describe("a zero spendable balance", () => {
+      const locked = (value: bigint) => [{ asset: { type: "native" }, value, locked: value }];
+      const fullyStaked = () =>
+        storedAccount({ spendableBalance: new BigNumber(0), balance: new BigNumber(5) });
+
+      it("reads one balance and no history when the total did not move", async () => {
+        getBalanceMock.mockResolvedValue(locked(5n));
+
+        const result = await sync(fullyStaked());
+
+        expect(getBalanceMock).toHaveBeenCalledTimes(1);
+        expect(listOperationsMock).not.toHaveBeenCalled();
+        expect(result.historyRecheck).toBeUndefined();
+      });
+
+      it("lists the validators and reads the history when the total moved", async () => {
+        getBalanceMock.mockResolvedValue(locked(6n));
+
+        await sync(fullyStaked());
+
+        expect(getBalanceMock).toHaveBeenCalledTimes(2);
+        expect(getBalanceMock.mock.calls[1][2].listValidators).toBe(true);
+        expect(listOperationsMock).toHaveBeenCalledTimes(1);
+      });
+    });
+
+    describe("a stored mark when the flag is off", () => {
+      it("clears the mark, so a later switch back starts clean", async () => {
+        useBridge({ syncsHistoryOnStateChange: false });
+        getBalanceMock.mockResolvedValue(nativeBalance(100n));
+
+        const result = await sync(
+          storedAccount({ historyRecheck: { reason: "confirm", minHeight: 43 } }),
+        );
+
+        expect(result).toHaveProperty("historyRecheck", undefined);
+      });
+
+      it("writes no mark key when none is stored", async () => {
+        useBridge({ syncsHistoryOnStateChange: false });
+        getBalanceMock.mockResolvedValue(nativeBalance(100n));
+
+        const result = await sync(storedAccount());
+
+        expect(result).not.toHaveProperty("historyRecheck");
+      });
+    });
+
+    describe("a first read that turns out not to fit", () => {
+      it("reads the balance again with the family's options when another asset shows", async () => {
+        useBridge({ balanceOptions: {} });
+        getBalanceMock
+          .mockResolvedValueOnce([
+            ...nativeBalance(100n),
+            { asset: { type: "token", assetReference: "ref" }, value: 5n },
+          ])
+          .mockResolvedValue(nativeBalance(100n));
+
+        await sync(storedAccount());
+
+        expect(getBalanceMock).toHaveBeenCalledTimes(2);
+        expect(getBalanceMock.mock.calls[0][2]).toEqual({
+          knownValidatorIds: ["pool-a", "pool-b"],
+          listValidators: false,
+        });
+        expect(getBalanceMock.mock.calls[1][2]).toEqual({});
+      });
+    });
+
+    describe("candidate validators", () => {
+      const pools = (extra: Record<string, unknown> = {}) => ({
+        reason: "pools",
+        validatorIds: ["pool-c"],
+        validatorsSince: NOW,
+        ...extra,
+      });
+      const withStake = (delegate: string) => [
+        ...nativeBalance(100n),
+        { asset: { type: "native" }, value: 7n, stake: { delegate, amount: 7n, state: "active" } },
+      ];
+
+      it("keeps a candidate that shows no position for an hour, reading no history and listing nothing", async () => {
+        getBalanceMock.mockResolvedValue(nativeBalance(100n));
+        const account = storedAccount({ historyRecheck: pools() });
+
+        now = NOW + 30 * MINUTE;
+        const result = await sync(account);
+
+        expect(getBalanceMock).toHaveBeenCalledTimes(1);
+        expect(getBalanceMock.mock.calls[0][2]).toEqual({
+          knownValidatorIds: ["pool-a", "pool-b", "pool-c"],
+          listValidators: false,
+        });
+        expect(listOperationsMock).not.toHaveBeenCalled();
+        expect(result.historyRecheck).toEqual(pools());
+      });
+
+      it("drops the candidate once the hour has passed", async () => {
+        getBalanceMock.mockResolvedValue(nativeBalance(100n));
+
+        now = NOW + 61 * MINUTE;
+        const result = await sync(storedAccount({ historyRecheck: pools() }));
+
+        expect(result).toHaveProperty("historyRecheck", undefined);
+      });
+
+      it("starts a fresh hour when a new pool joins a waiting candidate", async () => {
+        useBridge({
+          getStakingCallValidatorId: (op: any) => (op.hash === "h2" ? "pool-d" : undefined),
+        });
+        getBalanceMock.mockResolvedValue(nativeBalance(150n));
+        const account = storedAccount({ historyRecheck: pools() });
+
+        now = NOW + 59 * MINUTE;
+        listOperationsMock.mockResolvedValueOnce({
+          items: [{ ...coreOp("h2", 45), type: "OUT", date: new Date(now - MINUTE) }],
+        });
+        const joined = await sync(account);
+        expect(joined.historyRecheck).toMatchObject({
+          validatorIds: ["pool-d", "pool-c"],
+          validatorsSince: NOW + 59 * MINUTE,
+        });
+
+        // Both are still read past the first candidate's hour.
+        now = NOW + 61 * MINUTE;
+        getBalanceMock.mockClear();
+        const retried = await sync(persist(account, joined));
+        expect(getBalanceMock.mock.calls[0][2].knownValidatorIds).toEqual(
+          expect.arrayContaining(["pool-c", "pool-d"]),
+        );
+        expect(retried.historyRecheck).toMatchObject({
+          validatorIds: expect.arrayContaining(["pool-c", "pool-d"]),
+          validatorsSince: NOW + 59 * MINUTE,
+        });
+      });
+
+      it("ends the mark when the candidate shows its position", async () => {
+        getBalanceMock.mockResolvedValue(withStake("pool-c"));
+
+        const result = await sync(storedAccount({ historyRecheck: pools() }));
+
+        expect(listOperationsMock).not.toHaveBeenCalled();
+        expect(result).toHaveProperty("historyRecheck", undefined);
+      });
+
+      it("does not take a call to a pool the account already holds as a candidate", async () => {
+        getBalanceMock.mockResolvedValue(nativeBalance(150n));
+        listOperationsMock.mockResolvedValueOnce({
+          items: [{ ...coreOp("h2", 45), type: "STAKE", recipients: ["pool-a"] }],
+        });
+
+        const result = await sync(storedAccount());
+
+        expect(result.historyRecheck).toEqual({ reason: "confirm", minHeight: 43 });
+      });
+
+      it("reads a pool that is no longer held once, then stops reading it", async () => {
+        useBridge({ usesStakingPositions: true });
+        getBalanceMock.mockResolvedValue(nativeBalance(100n));
+        const account = storedAccount();
+
+        const first = await sync(account);
+        expect((first as { stakingPositions?: unknown[] }).stakingPositions).toEqual([]);
+
+        getBalanceMock.mockClear();
+        await sync(persist(account, first));
+        expect(getBalanceMock.mock.calls[0][2]).toEqual({
+          knownValidatorIds: [],
+          listValidators: false,
+        });
+      });
+
+      it("updates the positions of a rewarded pool without listing or reading the history", async () => {
+        useBridge({ usesStakingPositions: true });
+        getBalanceMock.mockResolvedValue(withStake("pool-a"));
+
+        const result = await sync(storedAccount());
+
+        expect(getBalanceMock).toHaveBeenCalledTimes(1);
+        expect(listOperationsMock).not.toHaveBeenCalled();
+        expect(
+          (result as { stakingPositions?: { amount: BigNumber }[] }).stakingPositions?.map(p =>
+            p.amount.toString(),
+          ),
+        ).toEqual(["7"]);
+      });
+    });
+
+    describe("a call relayed by another account", () => {
+      it("owes one pool listing, which the next sync makes without reading the history", async () => {
+        useBridge({ needsValidatorListing: (op: any) => op.hash === "h2" });
+        getBalanceMock.mockResolvedValue(nativeBalance(150n));
+        listOperationsMock.mockResolvedValueOnce({ items: [coreOp("h2", 45)] });
+        const account = storedAccount();
+
+        const first = await sync(account);
+        expect(first.historyRecheck).toEqual({ reason: "confirm", minHeight: 43, listing: true });
+
+        getBalanceMock.mockClear();
+        listOperationsMock.mockClear();
+        const second = await sync(
+          persist(account, { ...first, historyRecheck: { reason: "pools", listing: true } }),
+        );
+        expect(getBalanceMock).toHaveBeenCalledTimes(2);
+        expect(getBalanceMock.mock.calls[1][2].listValidators).toBe(true);
+        expect(listOperationsMock).not.toHaveBeenCalled();
+        expect(second).toHaveProperty("historyRecheck", undefined);
+      });
+    });
+
+    describe("an operation read before its outcome is indexed", () => {
+      const unsettled = (hash: string) => hash === "h2";
+
+      it("is read again from the same range until its outcome shows", async () => {
+        useBridge({ isOperationSettled: (op: any) => !unsettled(op.hash) });
+        getBalanceMock.mockResolvedValue(nativeBalance(100n));
+        listOperationsMock.mockResolvedValue({ items: [coreOp("h2", 45)] });
+        const account = storedAccount({ historyRecheck: { reason: "confirm", minHeight: 43 } });
+
+        const first = await sync(account);
+        expect(first.historyRecheck).toEqual({
+          reason: "confirm",
+          minHeight: 43,
+          unsettledSince: NOW,
+        });
+
+        now = NOW + 10 * MINUTE;
+        listOperationsMock.mockClear();
+        const second = await sync(persist(account, first));
+        expect(listOperationsMock.mock.calls[0][2].minHeight).toBe(43);
+        expect(second.historyRecheck).toEqual({
+          reason: "confirm",
+          minHeight: 43,
+          unsettledSince: NOW,
+        });
+
+        useBridge({ isOperationSettled: () => true });
+        const third = await sync(persist(account, second));
+        expect(third).toHaveProperty("historyRecheck", undefined);
+      });
+
+      it("keeps when it first saw the missing outcome through a failed read", async () => {
+        useBridge({ isOperationSettled: (op: any) => !unsettled(op.hash) });
+        getBalanceMock.mockResolvedValue(nativeBalance(100n));
+        // The operation was stored when it was first read without its outcome.
+        const firstRead = storedAccount();
+        const account = storedAccount({
+          operations: [
+            { ...firstRead.operations[0], id: "h2", hash: "h2", blockHeight: 45 },
+            ...firstRead.operations,
+          ],
+          historyRecheck: { reason: "confirm", minHeight: 43, unsettledSince: NOW },
+        });
+
+        now = NOW + 30 * MINUTE;
+        listOperationsMock.mockRejectedValueOnce(new Error("indexer down"));
+        const failed = await sync(account);
+        expect(failed.historyRecheck).toMatchObject({ reason: "failed", unsettledSince: NOW });
+
+        now = NOW + 40 * MINUTE;
+        listOperationsMock.mockResolvedValue({ items: [coreOp("h2", 45)] });
+        const retried = await sync(persist(account, failed));
+        expect(retried.historyRecheck).toMatchObject({ reason: "confirm", unsettledSince: NOW });
+
+        now = NOW + 61 * MINUTE;
+        const expired = await sync(persist(account, retried));
+        expect(expired).toHaveProperty("historyRecheck", undefined);
+      });
+
+      it("is not read again once the hour has passed", async () => {
+        useBridge({ isOperationSettled: () => false });
+        getBalanceMock.mockResolvedValue(nativeBalance(100n));
+        listOperationsMock.mockResolvedValue({ items: [coreOp("h1", 42)] });
+
+        now = NOW + 61 * MINUTE;
+        const result = await sync(
+          storedAccount({
+            historyRecheck: { reason: "confirm", minHeight: 43, unsettledSince: NOW },
+          }),
+        );
+
+        expect(result).toHaveProperty("historyRecheck", undefined);
+      });
+
+      it("starts a fresh hour when another operation is read without its outcome", async () => {
+        useBridge({ isOperationSettled: (op: any) => op.hash !== "h2" && op.hash !== "h3" });
+        getBalanceMock.mockResolvedValue(nativeBalance(150n));
+        const account = storedAccount({
+          historyRecheck: { reason: "confirm", minHeight: 43, unsettledSince: NOW },
+        });
+
+        now = NOW + 59 * MINUTE;
+        listOperationsMock.mockResolvedValue({ items: [coreOp("h3", 46), coreOp("h2", 45)] });
+        const result = await sync(account);
+
+        expect(result.historyRecheck).toMatchObject({
+          reason: "confirm",
+          unsettledSince: NOW + 59 * MINUTE,
+        });
+      });
+    });
+
+    describe("a confirmation read", () => {
+      it("catches an operation indexed late at the watermark height", async () => {
+        getBalanceMock.mockResolvedValue(nativeBalance(150n));
+        listOperationsMock.mockResolvedValueOnce({ items: [coreOp("h2", 45)] });
+        const account = storedAccount();
+
+        const first = await sync(account);
+        expect(first.historyRecheck).toEqual({ reason: "confirm", minHeight: 43 });
+
+        listOperationsMock.mockClear();
+        listOperationsMock.mockResolvedValueOnce({ items: [coreOp("h2", 45), coreOp("h3", 43)] });
+        const second = await sync(persist(account, first));
+
+        expect(listOperationsMock.mock.calls[0][2].minHeight).toBe(43);
+        expect(second.operations?.map(op => op.hash)).toEqual(["h2", "h3", "h1"]);
+      });
+
+      it("replaces the stored history by the range it walked when the walk hits the bound", async () => {
+        resolveOperationHistoryBoundMock.mockReturnValue({ maxOperations: 2 });
+        getBalanceMock.mockResolvedValue(nativeBalance(100n));
+        listOperationsMock.mockResolvedValueOnce({
+          items: [coreOp("h5", 47), coreOp("h4", 46)],
+          next: "c1",
+        });
+
+        const result = await sync(
+          storedAccount({ historyRecheck: { reason: "confirm", minHeight: 43 } }),
+        );
+
+        expect(listOperationsMock.mock.calls[0][2].minHeight).toBe(43);
+        expect(result.operations?.map(op => op.hash)).toContain("h5");
+        expect(result.operations?.map(op => op.hash)).not.toContain("h1");
+      });
+    });
+
+    describe("a history read that keeps failing", () => {
+      const failing = { reason: "failed", failedSince: NOW };
+
+      it("is tolerated inside the hour, keeping when it first failed", async () => {
+        getBalanceMock.mockResolvedValue(nativeBalance(100n));
+        listOperationsMock.mockRejectedValue(new Error("indexer down"));
+
+        now = NOW + 59 * MINUTE;
+        const result = await sync(storedAccount({ historyRecheck: failing }));
+
+        expect(result.operations?.map(op => op.hash)).toEqual(["h1"]);
+        expect(result.historyRecheck).toEqual({ reason: "failed", failedSince: NOW });
+      });
+
+      it("fails the sync after the hour, leaving the stored account as it was", async () => {
+        getBalanceMock.mockResolvedValue(nativeBalance(100n));
+        listOperationsMock.mockRejectedValue(new Error("indexer down"));
+
+        now = NOW + 61 * MINUTE;
+
+        await expect(sync(storedAccount({ historyRecheck: failing }))).rejects.toThrow(
+          "indexer down",
+        );
+      });
     });
   });
 });

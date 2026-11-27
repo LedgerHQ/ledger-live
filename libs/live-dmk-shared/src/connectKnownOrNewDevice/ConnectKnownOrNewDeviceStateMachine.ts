@@ -217,6 +217,7 @@ const createConnectKnownOrNewDeviceStateMachine = <
     },
     guards: {
       isPaused: ({ context }) => context.isPaused,
+      hasOnAddNewDevice: ({ context }) => context.onAddNewDevice !== undefined,
       tappedDeviceHasStatus: ({ context }, params: { key: string; status: DeviceListItemStatus }) =>
         findEntry(context.deviceList, params.key)?.status === params.status,
       selectedDeviceIsAvailable: ({ context }) =>
@@ -354,6 +355,9 @@ const createConnectKnownOrNewDeviceStateMachine = <
       },
       onNewDeviceConnected: ({ context }, params: { result: DeviceConnectionResult }) => {
         context.onConnected(params.result);
+      },
+      callOnAddNewDevice: ({ context }) => {
+        context.onAddNewDevice?.(context.deviceList.length > 0);
       },
       failWithConnectNewDeviceError: (_, params: { error: unknown }) => {
         throw params.error;
@@ -523,6 +527,7 @@ const createConnectKnownOrNewDeviceStateMachine = <
           ],
           [EventTypes.UserTapsAddNewDevice]: [
             { guard: "isPaused" },
+            { guard: "hasOnAddNewDevice", actions: "callOnAddNewDevice" },
             { target: "ConnectNewDevice" },
           ],
           [EventTypes.Pause]: { actions: ["pauseDiscovery", "emitDiscovering"] },
@@ -566,6 +571,7 @@ const createConnectKnownOrNewDeviceStateMachine = <
           },
           [EventTypes.UserTapsAddNewDevice]: [
             { guard: "isPaused" },
+            { guard: "hasOnAddNewDevice", target: "Discovering", actions: "callOnAddNewDevice" },
             { target: "ConnectNewDevice" },
           ],
           [EventTypes.UserClosesWaitingForDevice]: { target: "Discovering" },

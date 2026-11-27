@@ -11,6 +11,7 @@ export type OrchestratorRunPhase =
 
 /** The last OS version the device will target, shown before the user starts the update. */
 export type WhatsNew = {
+  name: string;
   version: string;
   notes: string | null;
 };

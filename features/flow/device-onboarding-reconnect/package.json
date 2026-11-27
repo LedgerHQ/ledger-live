@@ -1,6 +1,6 @@
 {
   "name": "@features/flow-device-onboarding-reconnect",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "private": true,
   "description": "Reconnecting and reconnect-failed sheets shown over the device onboarding screens when the device disconnects",
   "main": "src/index.ts",

@@ -1,0 +1,84 @@
+name: "Restore from the startup-perf cache"
+description: "Looks a key up in the mobile E2E builds' S3 cache, downloads it, checks it is whole and publishes it as the run's artifact"
+# Needs the cache credentials in the job's environment (aws-actions/configure-aws-credentials).
+# Best-effort: give the calling step continue-on-error and a timeout; restored is then not "true".
+inputs:
+  key:
+    description: "The cache key"
+    required: true
+  path:
+    description: "The directory the entry holds, relative to the workspace, as the save action uploaded it"
+    required: true
+  check:
+    description: "A bash condition, run in that directory, that holds only when the download is whole and the one wanted"
+    required: true
+  artifact:
+    description: "The artifact to publish it as: the one its job would have uploaded"
+    required: true
+  region:
+    description: "The cache bucket's region"
+    required: true
+outputs:
+  restored:
+    description: "true once it is published as the artifact"
+    value: ${{ steps.result.outputs.restored }}
+runs:
+  using: composite
+  steps:
+    - name: Look it up
+      id: exists
+      continue-on-error: true
+      uses: LedgerHQ/ledger-live/tools/actions/composites/cache/exists@develop
+      with:
+        key: ${{ inputs.key }}
+        accessKey: ${{ env.AWS_ACCESS_KEY_ID }}
+        secretKey: ${{ env.AWS_SECRET_ACCESS_KEY }}
+        sessionToken: ${{ env.AWS_SESSION_TOKEN }}
+        bucket: ll-nx-cache
+        region: ${{ inputs.region }}
+
+    - name: Download it
+      id: download
+      if: ${{ steps.exists.outputs.cache-hit == 'true' }}
+      continue-on-error: true
+      uses: LedgerHQ/ledger-live/tools/actions/composites/cache/download@develop
+      with:
+        key: ${{ inputs.key }}
+        accessKey: ${{ env.AWS_ACCESS_KEY_ID }}
+        secretKey: ${{ env.AWS_SECRET_ACCESS_KEY }}
+        sessionToken: ${{ env.AWS_SESSION_TOKEN }}
+        bucket: ll-nx-cache
+        region: ${{ inputs.region }}
+
+    # A download that failed partway may have left part of the entry: only a whole one counts.
+    - name: Check it
+      id: check
+      if: ${{ steps.download.outcome == 'success' }}
+      shell: bash
+      env:
+        ENTRY: ${{ inputs.path }}
+        CHECK: ${{ inputs.check }}
+      run: |
+        if (cd "$ENTRY" 2>/dev/null && bash -c "$CHECK"); then
+          echo "whole=true" >> "$GITHUB_OUTPUT"
+        else
+          echo "::warning::The cached $ENTRY is not the one wanted or not whole: it is made again"
+        fi
+
+    - name: Publish it
+      id: upload
+      if: ${{ steps.check.outputs.whole == 'true' }}
+      continue-on-error: true
+      uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f # v6.0.0
+      with:
+        name: ${{ inputs.artifact }}
+        path: ${{ inputs.path }}/
+        retention-days: 7
+
+    - name: Result
+      id: result
+      if: ${{ always() }}
+      shell: bash
+      env:
+        RESTORED: ${{ steps.upload.outcome == 'success' }}
+      run: echo "restored=$RESTORED" >> "$GITHUB_OUTPUT"

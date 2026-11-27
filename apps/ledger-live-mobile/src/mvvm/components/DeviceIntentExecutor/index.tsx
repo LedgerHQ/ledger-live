@@ -26,7 +26,6 @@ import { useDeviceIntentExecutorViewModel } from "./useDeviceIntentExecutorViewM
 export { buildDeviceInitializationInput } from "./ContextInitializer/utils/buildDeviceInitializationInput";
 export type { InitializationInput } from "./types";
 export { ContinueOnDevice } from "./components/DeviceGenericStates/ContinueOnDevice";
-export { UserRefusedOnDevice } from "./components/DeviceGenericStates/UserRefusedOnDevice";
 export type { SourceFlow } from "./utils/DeviceIntentTrackingContext";
 
 type Props<JobState, Input, ExtraProps, Result = undefined> = Omit<
@@ -97,6 +96,8 @@ export function DeviceIntentExecutor<JobState, Input, ExtraProps, Result = undef
         <DeviceIntentExecutorHeaderContext.Provider value={headerContextValue}>
           <BottomSheetScrollView
             contentContainerStyle={{ paddingBottom: bottomInset + 16 }}
+            stickyHeaderIndices={hasHeaderOverride ? undefined : [0]}
+            bounces={false}
             showsVerticalScrollIndicator={false}
           >
             {!hasHeaderOverride && <BottomSheetHeader density="expanded" />}

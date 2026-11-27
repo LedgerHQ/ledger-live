@@ -27,6 +27,24 @@ describe("Karaoke", () => {
     expect(screen.queryByText("Last.")).toBeNull();
   });
 
+  it("should report each tap with what now shows, the final last", async () => {
+    const user = userEvent.setup();
+    const onAdvance = jest.fn();
+    render(
+      <Karaoke.Root phrases={["First.", "Last."]} tapLabel="Tap" onAdvance={onAdvance}>
+        <Karaoke.Sequence />
+        <Karaoke.Final>
+          <Text>Final screen</Text>
+        </Karaoke.Final>
+      </Karaoke.Root>,
+    );
+
+    await user.press(screen.getByTestId(karaokeTestIds.advance));
+    await user.press(screen.getByTestId(karaokeTestIds.advance));
+
+    expect(onAdvance.mock.calls).toEqual([[1], [2]]);
+  });
+
   it("should move the glow to the bottom once the action replaces the tap hint", async () => {
     const user = userEvent.setup();
     render(

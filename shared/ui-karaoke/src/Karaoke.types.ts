@@ -8,6 +8,8 @@ export type KaraokeRootProps = Readonly<{
   tapLabel: string;
   /** Replaces the tap hint on the last phrase, and keeps the sequence on screen. */
   action?: ReactNode;
+  /** Runs on each tap with the index of what now shows: `phrases.length` means `Final`. */
+  onAdvance?: (shownIndex: number) => void;
   testID?: string;
   /** Sequence, Final, then anything that must sit above the tap area (a close bar). */
   children: ReactNode;

@@ -1,29 +1,23 @@
 import { UpdateIncorrectHash, UpdateIncorrectSig } from "../../errors";
 import * as sslHelper from "./sslHelper";
+
 type Opts = {
-  filename: string;
-  computeHash: () => Promise<string>;
+  files: UpdateFile[];
   getNextKey: (a?: string | null) => Promise<string>;
   getNextKeySignature: (a: string) => Promise<Buffer>;
   getHashFile: () => Promise<string>;
   getHashFileSignature: () => Promise<Buffer>;
 };
+export type UpdateFile = { filename: string; sha512Hex: string };
 export default function createAppUpdater(opts: Opts): {
   verify: () => Promise<void>;
 } {
-  const {
-    filename,
-    computeHash,
-    getNextKey,
-    getNextKeySignature,
-    getHashFile,
-    getHashFileSignature,
-  } = opts;
+  const { files, getNextKey, getNextKeySignature, getHashFile, getHashFileSignature } = opts;
 
   // main logic:
   // - fetch hashFile + its signature
   // - verify signature
-  // - compare hash with update hash
+  // - compare the hash of every update file with the hash file
   // throw if any step fail.
   async function verify() {
     const [hashFile, hashFileSignature, key] = await Promise.all([
@@ -32,15 +26,18 @@ export default function createAppUpdater(opts: Opts): {
       getNextKey(),
     ]);
     await verifyHashFileSignature(hashFile, hashFileSignature, key);
-    await compareHash(hashFile);
+    compareHashes(hashFile);
   }
 
-  // compute the update hash and compare it to the hash located in hash file
-  async function compareHash(hashFile: string) {
-    const computedHash = await computeHash();
-    const hashFromFile = extractHashFromHashFile(hashFile, filename);
-    if (hashFromFile !== computedHash) {
-      throw new UpdateIncorrectHash(computedHash);
+  // every update file must have its hash in the hash file
+  function compareHashes(hashFile: string) {
+    if (files.length === 0) {
+      throw new UpdateIncorrectHash();
+    }
+    for (const { filename, sha512Hex } of files) {
+      if (!sha512Hex || extractHashFromHashFile(hashFile, filename) !== sha512Hex) {
+        throw new UpdateIncorrectHash(sha512Hex);
+      }
     }
   }
 

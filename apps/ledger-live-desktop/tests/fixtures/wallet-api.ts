@@ -305,15 +305,6 @@ export const expectedCurrencyList = [
   },
   {
     type: "CryptoCurrency",
-    id: "zencash",
-    ticker: "ZEN",
-    name: "Horizen",
-    family: "bitcoin",
-    color: "#152f5c",
-    decimals: 8,
-  },
-  {
-    type: "CryptoCurrency",
     id: "bitcoin_testnet",
     ticker: "BTC",
     name: "Bitcoin Testnet",

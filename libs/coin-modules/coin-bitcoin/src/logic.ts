@@ -111,9 +111,6 @@ export const bchToCashaddrAddressWithoutPrefix = (recipient: string): string =>
   recipient ? recipient.substring(recipient.indexOf(":") + 1) : recipient;
 
 export const perCoinLogic: Partial<Record<string, CoinLogic>> = {
-  zencash: {
-    hasExtraData: true, // FIXME (legacy) investigate why we need this here and drop
-  },
   komodo: {
     hasExtraData: true,
     hasExpiryHeight: true,

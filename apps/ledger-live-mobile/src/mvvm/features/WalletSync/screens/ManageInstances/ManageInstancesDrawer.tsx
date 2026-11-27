@@ -1,5 +1,7 @@
 import React, { useCallback } from "react";
 import QueuedDrawer from "LLM/components/QueuedDrawer";
+import { useFeature } from "@features/platform-feature-flags";
+import { LedgerSyncBottomSheet } from "../Activation/LedgerSyncBottomSheet";
 
 import GenericErrorView from "~/components/GenericErrorView";
 import { Flex, InfiniteLoader } from "@ledgerhq/native-ui";
@@ -26,6 +28,8 @@ const ManageInstancesDrawer = ({
     handleClose();
     manageKeyHook.openDrawer();
   }, [manageKeyHook, handleClose]);
+
+  const isLumenSheet = useFeature("lwmLedgerSyncDie")?.enabled === true;
 
   const getScene = () => {
     if (isError) {
@@ -60,6 +64,18 @@ const ManageInstancesDrawer = ({
       );
     }
   };
+
+  if (isLumenSheet) {
+    return (
+      <LedgerSyncBottomSheet
+        isOpen={isDrawerVisible}
+        onClose={handleClose}
+        testID="wallet-sync-manage-instances-sheet"
+      >
+        {getScene()}
+      </LedgerSyncBottomSheet>
+    );
+  }
 
   return (
     <QueuedDrawer isRequestingToBeOpened={isDrawerVisible} onClose={handleClose}>

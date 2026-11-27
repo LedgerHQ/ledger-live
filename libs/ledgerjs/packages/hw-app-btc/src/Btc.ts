@@ -283,7 +283,7 @@ export default class Btc {
    * For each UTXO included in your transaction, create a transaction object from the raw serialized version of the transaction used in this UTXO.
    * @param transactionHex a raw hexadecimal serialized transaction
    * @param isSegwitSupported is a boolean indicating if the segwit is supported
-   * @param hasExtraData is a boolean (komodo, zencash and zcash include extraData in their transactions, others don't)
+   * @param hasExtraData is a boolean (komodo and zcash include extraData in their transactions, others don't)
    * @param additionals list of additionnal options
    * @return the transaction object deserialized from the raw hexadecimal transaction
    * @example

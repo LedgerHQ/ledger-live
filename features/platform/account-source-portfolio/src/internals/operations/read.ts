@@ -1,8 +1,9 @@
 import type { UpdatesPage } from "@domain/api-account-portfolio";
 import type { CryptoOrTokenCurrencyId } from "@domain/entity-currency";
 import type { AccountOperationsQuery } from "@domain/entity-account-operation";
-import { currencyIdFromNetwork, type AccountDescriptor } from "@domain/entity-account-descriptor";
+import type { AccountDescriptor } from "@domain/entity-account-descriptor";
 import type { PortfolioId } from "@domain/entity-client-identity";
+import { currencyIdFromNetwork } from "@domain/entity-network";
 import type { PortfolioClient } from "../../client";
 import { isEvmAccount } from "../../evm";
 import { orCancelled } from "../cancellation";

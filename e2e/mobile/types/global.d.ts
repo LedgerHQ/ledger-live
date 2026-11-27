@@ -62,7 +62,6 @@ declare global {
   var getAccountAddress: typeof import("@ledgerhq/live-e2e-shared/cliCommandsUtils").getAccountAddress;
   var liveDataCommand: typeof import("@ledgerhq/live-e2e-shared/cliCommandsUtils").liveDataCommand;
   var liveDataWithAddressCommand: typeof import("@ledgerhq/live-e2e-shared/cliCommandsUtils").liveDataWithAddressCommand;
-  var liveDataWithParentAddressCommand: typeof import("@ledgerhq/live-e2e-shared/cliCommandsUtils").liveDataWithParentAddressCommand;
   var liveDataWithRecipientAddressCommand: typeof import("@ledgerhq/live-e2e-shared/cliCommandsUtils").liveDataWithRecipientAddressCommand;
   var parseTokenAllowanceCliOutput: typeof import("@ledgerhq/live-e2e-shared/cliCommandsUtils").parseTokenAllowanceCliOutput;
   var isTokenAllowanceSufficientCommand: typeof import("@ledgerhq/live-e2e-shared/cliCommandsUtils").isTokenAllowanceSufficientCommand;

@@ -3,6 +3,7 @@ import React from "react";
 import { Trans } from "react-i18next";
 import { getMainAccount } from "@ledgerhq/live-common/account/index";
 import { formatCurrencyUnit } from "@ledgerhq/live-common/currencies/index";
+import { getReleasedReserve } from "@ledgerhq/live-common/families/xrp/tokens";
 import { formatAddress } from "@ledgerhq/live-common/utils/addressUtils";
 import { TrackScreen } from "@shared/analytics-react";
 import { useOpenSendFlow } from "LLD/features/Send/hooks/useOpenSendFlow";
@@ -13,7 +14,6 @@ import Button from "~/renderer/components/Button";
 import ErrorBanner from "~/renderer/components/ErrorBanner";
 import Text from "~/renderer/components/Text";
 import { localeSelector } from "~/renderer/reducers/settings";
-import { getReleasedReserve } from "../../utils";
 import type { StepProps } from "../types";
 import { Row, StepReviewFooter } from "./StepReview";
 

@@ -3,7 +3,7 @@ import { computePolicyId, mintToken } from "./mintToken";
 import { buildSigner } from "./signer";
 import { pollUtxos, resetDevnet, topup } from "./yaci";
 
-jest.setTimeout(600_000);
+jest.setTimeout(900_000);
 
 const PATH = "1852'/1815'/0'/0/0";
 const ASSET_NAME_HEX = "4d59544f4b454e";

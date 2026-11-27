@@ -13,6 +13,10 @@ import { useReceiveNoahEntry } from "../Noah/useNoahEntryPoint";
 import { useReceiveOptionsDrawerController } from "./useReceiveOptionsDrawerController";
 import { useReceiveRoute } from "./hooks/useReceiveRoute";
 
+/**
+ * Kept for the receive verify-address step, not wired yet (PayTab has its own copy).
+ * @public
+ */
 export { VerifyAddressExecutorLWM } from "./verifyAddressIntent/VerifyAddressExecutorLWM";
 
 type Props = {

@@ -1,6 +1,7 @@
 import { Device } from "@ledgerhq/live-common/hw/actions/types";
 import { DeviceInfo, FirmwareUpdateContext, SeedOriginType } from "@ledgerhq/types-live";
 import { ScreenName } from "~/const";
+import type { UpdateStep } from "~/screens/FirmwareUpdate";
 import { FirmwareUpdateProps } from "~/screens/FirmwareUpdate";
 
 export type SyncOnboardingStackParamList = {
@@ -12,6 +13,10 @@ export type SyncOnboardingStackParamList = {
   [ScreenName.SyncOnboardingCompletion]: {
     device: Device;
     seedConfiguration?: SeedOriginType;
+  };
+  [ScreenName.SyncOnboardingOsUpdate]: {
+    device: Device;
+    onBackFromUpdate: (updateState: UpdateStep) => void;
   };
   [ScreenName.FirmwareUpdate]: {
     deviceInfo?: DeviceInfo | null;

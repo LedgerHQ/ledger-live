@@ -1,9 +1,9 @@
 import type { Account } from "@ledgerhq/types-live";
 import { DEFAULT_ACCOUNT_DATA_MAX_AGE } from "@domain/api-account-data";
 import { CryptoOrTokenCurrencyIdSchema } from "@domain/entity-currency";
-import { computeAccountUUID } from "@domain/entity-account-descriptor";
 import { getCryptoCurrencyById } from "@ledgerhq/ledger-wallet-framework/currencies";
 import BigNumber from "bignumber.js";
+import { computeAccountUUID } from "@domain/entity-account/schema.mock";
 import { genAccount } from "../../mock/account";
 import { createFixtureTokenAccount } from "../../mock/fixtures/cryptoCurrencies";
 import { fromLegacyAccount } from "../../account/accountDescriptor";

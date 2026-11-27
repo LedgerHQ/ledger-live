@@ -7,8 +7,4 @@ const testConfig = {
   tags: ["@NanoSP", "@LNS", "@NanoX", "@Stax", "@Flex", "@NanoGen5"],
 };
 
-runUserCanSelectCounterValueToDisplayAmountInLedgerLive(
-  testConfig.account,
-  testConfig.tmsLinks,
-  testConfig.tags,
-);
+runUserCanSelectCounterValueToDisplayAmountInLedgerLive(testConfig);

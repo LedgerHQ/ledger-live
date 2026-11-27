@@ -22,6 +22,8 @@ export type RestoreBackupStateMachineInput = {
 export type RestoreBackupStateMachineContext = RestoreBackupStateMachineInput & {
   lastSentState: RestoreBackupState | null;
   lastProgress: number;
+  /** An unexplained recovery happened since the last successful action. */
+  hasUnexplainedRecovery: boolean;
   backup: DeviceBackup | undefined;
   restoreResult: RestoreBackupDAOutput | undefined;
   error: unknown;

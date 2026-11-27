@@ -2,34 +2,23 @@ import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
 import { getEnv } from "@shared/env";
 import { log } from "@ledgerhq/logs";
 import {
-  MarketAssetChartDataRequestParams,
-  MarketCoinDataChart,
   MarketCurrencyData,
   MarketCurrencyRequestParams,
   MarketItemPerformer,
   MarketItemResponse,
 } from "../utils/types";
-import { getChartRangeSegment, getRange } from "../utils";
+import { getRange } from "../utils";
 import { buildMarketListParams, getNextMarketListPage } from "../utils/marketListQueryArg";
-import { REFETCH_TIME_ONE_MINUTE, BASIC_REFETCH, ONE_DAY } from "../utils/timers";
+import { REFETCH_TIME_ONE_MINUTE, BASIC_REFETCH } from "../utils/timers";
 import {
-  GlobalMarketData,
-  GlobalMarketDataRequestParams,
-  GlobalMarketDataResponseSchema,
-  MarketChartApiResponseSchema,
   MarketDataTags,
-  SupportedChartCounterCurrenciesSchema,
   MarketListQueryArg,
   MarketPerformersQueryParams,
   MarketsByLedgerIdsQueryParams,
-  MarketTrendingCategory,
-  TrendingCategoriesResponseSchema,
   TrendingCurrenciesResponseSchema,
   TrendingPerformersQueryParams,
 } from "./types";
 import { currencyFormatter, format, formatPerformer } from "../utils/currencyFormatter";
-
-const MAX_TRENDING_CATEGORIES = 5;
 
 // /v3/markets only accepts these pageSize values.
 const ALLOWED_MARKET_PAGE_SIZES = [1, 5, 20, 50] as const;
@@ -107,10 +96,6 @@ export const marketApi = createApi({
   tagTypes: [
     MarketDataTags.Performers,
     MarketDataTags.CurrencyData,
-    MarketDataTags.ChartData,
-    MarketDataTags.ChartCounterCurrencies,
-    MarketDataTags.GlobalData,
-    MarketDataTags.TrendingCategories,
     MarketDataTags.TrendingPerformers,
     MarketDataTags.MarketList,
   ],
@@ -197,99 +182,6 @@ export const marketApi = createApi({
         response?.[0] ? format(response[0]) : undefined,
       keepUnusedDataFor: (REFETCH_TIME_ONE_MINUTE * BASIC_REFETCH) / 1000,
     }),
-    getAssetChartData: build.query<MarketCoinDataChart, MarketAssetChartDataRequestParams>({
-      query: ({ id, counterCurrency, range = "24h" }) => ({
-        url: `/v3/markets/chart/${getChartRangeSegment(range)}/${encodeURIComponent(id ?? "")}`,
-        params: { to: counterCurrency },
-      }),
-      providesTags: [MarketDataTags.ChartData],
-      transformResponse: (response: unknown, _meta, { range = "24h" }): MarketCoinDataChart => {
-        const result = MarketChartApiResponseSchema.safeParse(response);
-
-        if (!result.success) {
-          log("market", "Invalid chart data response schema:", {
-            errors: result.error.issues,
-          });
-          throw new Error(
-            `[Market API] Chart data schema validation failed: ${result.error.issues
-              .map(e => `${e.path.join(".")}: ${e.message}`)
-              .join(", ")}`,
-          );
-        }
-
-        return { [range]: result.data.values };
-      },
-      keepUnusedDataFor: REFETCH_TIME_ONE_MINUTE / 1000,
-    }),
-    getSupportedChartCounterCurrencies: build.query<string[], void>({
-      query: () => "/v3/supported/markets/chart/to",
-      providesTags: [MarketDataTags.ChartCounterCurrencies],
-      transformResponse: (response: unknown): string[] => {
-        const result = SupportedChartCounterCurrenciesSchema.safeParse(response);
-
-        if (!result.success) {
-          log("market", "Invalid supported chart counter currencies response schema:", {
-            errors: result.error.issues,
-          });
-          throw new Error(
-            `[Market API] Chart counter currencies schema validation failed: ${result.error.issues
-              .map(e => `${e.path.join(".")}: ${e.message}`)
-              .join(", ")}`,
-          );
-        }
-
-        return result.data;
-      },
-      keepUnusedDataFor: ONE_DAY / 1000,
-    }),
-    getGlobalMarketData: build.query<GlobalMarketData, GlobalMarketDataRequestParams>({
-      query: ({ counterCurrency }) => ({
-        url: "/v3/markets/global",
-        params: { to: counterCurrency },
-      }),
-      providesTags: [MarketDataTags.GlobalData],
-      transformResponse: (response: unknown): GlobalMarketData => {
-        const result = GlobalMarketDataResponseSchema.safeParse(response);
-
-        if (!result.success) {
-          log("market", "Invalid global market data response schema:", {
-            errors: result.error.issues,
-          });
-          throw new Error(
-            `[Market API] Global market data schema validation failed: ${result.error.issues
-              .map(e => `${e.path.join(".")}: ${e.message}`)
-              .join(", ")}`,
-          );
-        }
-
-        return {
-          marketCap: result.data.marketCap,
-          changePercentage24h: result.data.percentageChanges["1d"] * 100,
-        };
-      },
-      keepUnusedDataFor: (REFETCH_TIME_ONE_MINUTE * BASIC_REFETCH) / 1000,
-    }),
-    getTrendingCategories: build.query<MarketTrendingCategory[], void>({
-      query: () => ({ url: "/v3/categories/trending" }),
-      providesTags: [MarketDataTags.TrendingCategories],
-      transformResponse: (response: unknown): MarketTrendingCategory[] => {
-        const result = TrendingCategoriesResponseSchema.safeParse(response);
-
-        if (!result.success) {
-          log("market", "Invalid trending categories response schema:", {
-            errors: result.error.issues,
-          });
-          throw new Error(
-            `[Market API] Trending categories schema validation failed: ${result.error.issues
-              .map(e => `${e.path.join(".")}: ${e.message}`)
-              .join(", ")}`,
-          );
-        }
-
-        return result.data.slice(0, MAX_TRENDING_CATEGORIES);
-      },
-      keepUnusedDataFor: (REFETCH_TIME_ONE_MINUTE * BASIC_REFETCH) / 1000,
-    }),
     getTrendingPerformers: build.query<MarketItemPerformer[], TrendingPerformersQueryParams>({
       async queryFn({ counterCurrency }, _api, _extra, fetchWithBQ) {
         const trendingResult = await fetchWithBQ("/v3/currencies/trending");
@@ -345,9 +237,5 @@ export const {
   useGetMarketPerformersQuery,
   useGetMarketsByLedgerIdsQuery,
   useGetCurrencyDataQuery,
-  useGetAssetChartDataQuery,
-  useGetSupportedChartCounterCurrenciesQuery,
-  useGetGlobalMarketDataQuery,
-  useGetTrendingCategoriesQuery,
   useGetTrendingPerformersQuery,
 } = marketApi;

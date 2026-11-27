@@ -32,6 +32,8 @@ export interface Measurement {
 
 interface PlatformJobs {
   build: string;
+  /** The accounts snapshot's job: skipped when the cache had the snapshot. */
+  snapshot?: string;
   measure: string;
 }
 
@@ -90,9 +92,6 @@ const markOf = (verdict: string): Mark => {
   return isFailingVerdict(verdict) ? "❌" : "✅";
 };
 
-const worstOf = (marks: Mark[]): Mark =>
-  (["❌", "⚠️"] as const).find(mark => marks.includes(mark)) ?? "✅";
-
 /** The verdict, or which side of the threshold B − A probably is when its interval holds it. */
 function headlineOf(verdict: string, thresholdMs: string): string {
   if (!isInconclusiveVerdict(verdict)) return verdict;
@@ -101,7 +100,7 @@ function headlineOf(verdict: string, thresholdMs: string): string {
     : `Probably within ${thresholdMs} ms`;
 }
 
-// The value the manual check reads; the other measure shows only when its verdict differs.
+// The value the manual check reads, and the only measure.
 const SHOWN_MEASURE = "Debug screen";
 
 function scenarioLine(
@@ -110,20 +109,12 @@ function scenarioLine(
   rows: ResultRow[],
   { thresholdMs, pairs }: Pick<RunReport, "thresholdMs" | "pairs">,
 ): Line {
-  const kindOf = (row: ResultRow) =>
-    `${markOf(row.verdict)} ${headlineOf(row.verdict, thresholdMs).split(":")[0]}`;
-  const resultOf = (row: ResultRow) =>
-    `${markOf(row.verdict)} ${escaped(headlineOf(row.verdict, thresholdMs))} · B − A ${differenceOf(row, pairs)}`;
-  const shown = rows.find(row => row.measure.startsWith(SHOWN_MEASURE)) ?? rows[0];
-  const shownMeasure = shown.measure === SHOWN_MEASURE ? "" : ` (${escaped(shown.measure)})`;
-  const others = rows
-    .filter(row => row !== shown && kindOf(row) !== kindOf(shown))
-    .map(row => ` · ${escaped(row.measure)}: ${resultOf(row)}`);
+  const row = rows.find(r => r.measure === SHOWN_MEASURE) ?? rows[0];
   const label = `${platform.emoji} ${platform.name} · ${escaped(scenario)}`;
   return {
-    mark: worstOf(rows.map(row => markOf(row.verdict))),
-    failing: rows.some(row => isFailingVerdict(row.verdict)),
-    text: `${label} : ${resultOf(shown)}${shownMeasure}${others.join("")}`,
+    mark: markOf(row.verdict),
+    failing: isFailingVerdict(row.verdict),
+    text: `${label} : ${markOf(row.verdict)} ${escaped(headlineOf(row.verdict, thresholdMs))} · B − A ${differenceOf(row, pairs)}`,
   };
 }
 
@@ -167,6 +158,13 @@ function platformLines(report: RunReport, platform: (typeof PLATFORMS)[number]):
     ];
   }
   if (jobs.build !== "success") return [];
+  if (UNFINISHED.has(jobs.snapshot ?? "")) {
+    return [
+      failure(
+        `${platform.emoji} ${platform.name} : ❌ the accounts snapshot could not be made, so nothing was measured`,
+      ),
+    ];
+  }
   const scenarioLines = report.scenarios.map(scenario => {
     const rows = report.rows.filter(r => r.platform === platform.key && r.scenario === scenario);
     if (rows.length) {
@@ -352,8 +350,16 @@ export function reportOf(env: NodeJS.ProcessEnv, { rows, measurements }: Results
     runUrl: env.RUN_URL ?? "",
     jobs: {
       plan: env.PLAN ?? "",
-      android: { build: env.ANDROID_BUILD ?? "", measure: env.ANDROID_MEASURE ?? "" },
-      ios: { build: env.IOS_BUILD ?? "", measure: env.IOS_MEASURE ?? "" },
+      android: {
+        build: env.ANDROID_BUILD ?? "",
+        snapshot: env.ANDROID_SNAPSHOT ?? "",
+        measure: env.ANDROID_MEASURE ?? "",
+      },
+      ios: {
+        build: env.IOS_BUILD ?? "",
+        snapshot: env.IOS_SNAPSHOT ?? "",
+        measure: env.IOS_MEASURE ?? "",
+      },
     },
     rows,
     measurements,

@@ -1,0 +1,34 @@
+# Network hosts
+
+wallet-cli calls the hosts below over HTTPS. In a sandbox that allows only listed hosts, allow the required hosts of the commands you run. A command run outside the sandbox (SKILL.md, Host sandbox) is not limited by its allowlist.
+
+| Host | Commands | Required |
+|---|---|---|
+| `explorers.api.live.ledger.com` | `account discover`, `balances`, `operations`, `receive`, `send` and `swap execute` on Ethereum and Bitcoin accounts; `earn` on Ethereum accounts | yes |
+| `solana.coin.ledger.com` | the same commands on Solana accounts | yes |
+| `global.api.prd.ledger.com` | token lists (`/cal`): `account discover`, `balances`, `operations`, `send`, `assets`, `swap`, `earn positions`, `agent-intent send` and `swap`. Agent Intent (`/agent-intent`, `/keycloak`): every `agent-intent` command that has Network = yes in SKILL.md, except `sync` | yes |
+| `swap.ledger.com` | `swap`, `agent-intent swap` | yes |
+| `earn.api.live.ledger.com` | `earn` | yes for `earn`; optional for `balances` and `operations` on Solana accounts |
+| `trustchain.api.live.ledger.com` (HTTPS and WebSocket) | `ring init`, `encrypt`, `decrypt`, `destroy`; `agent-intent` enroll, recover, `sync` and the authenticated commands | yes; optional for `swap quote` and `execute` (API auth key) |
+| `cloud-sync.api.live.ledger.com` | `agent-intent sync` | yes |
+| `manager.api.live.ledger.com`, `scriptrunner.api.live.ledger.com` (WebSocket) | `genuine-check`; other device commands when the device must open or install an app | yes |
+| `api.segment.io` | every command (analytics) | no: a block costs at most 2.5 s |
+
+`session`, `skill`, `ring keys` and `agent-intent list`, `show` and `wait` call no host but `api.segment.io`. The Agent Intent review links open on `app.agents.ledger.com` in the human's browser; wallet-cli itself never calls it. Resolving an ENS name (SKILL.md) calls the human's Ethereum RPC (`ETH_RPC_URL`), not a wallet-cli host.
+
+Staging and test networks call other hosts: `agent-intent --environment staging` uses `global.api.stg.ledger-test.com`, `trustchain-backend.api.aws.stg.ldg-tech.com` and `cloud-sync-backend.api.aws.stg.ldg-tech.com`; Solana devnet and testnet use `api.devnet.solana.com` and `api.testnet.solana.com`. `SWAP_API_BASE` and `EARN_API_BASE_URL` replace `swap.ledger.com` and `earn.api.live.ledger.com`; the Solana validator lists of `earn` stay on `earn.api.live.ledger.com` unless `SOLANA_VALIDATORS_URL` and `SOLANA_VALIDATOR_APY_URL` replace them.
+
+## A blocked host
+
+A request that does not get through names its host:
+
+- human output, on stderr: `Could not reach <host>. If wallet-cli runs in a sandbox, allow <host> in its network allowlist.` when the host never answered, or `The request to <host> was refused (HTTP 403). If wallet-cli runs in a sandbox, allow <host> in its network allowlist.` when the sandbox refused it. `<host> did not answer in time (<code>).` is a timeout: a slow host or network, or a sandbox that drops blocked requests instead of refusing them. `The TLS certificate of <host> is not trusted (<code>).` means something on the way, such as a proxy that inspects TLS, presented a certificate wallet-cli does not trust: no allowlist change fixes that, so tell the human and do not ask to allow the host.
+- `--output json`: `error.host` and `error.hint`, next to the usual `message`. `error.hint` is the stderr sentence above: read it, not `error.host` alone, to tell a block from a timeout or a certificate.
+
+Four failures name no host yet: `agent-intent` errors name the Agent Intent service, not its host; `swap quote` says `No quotes available: noQuotes` when `swap.ledger.com` is blocked; `swap execute` with a token (`--from` or `--to` such as `ethereum/erc20/usd__coin`) fails without a hint when `global.api.prd.ledger.com` is blocked; a token list request (`/cal`) that hangs ends in `Timed out after 30000 ms`. In a sandbox, check the hosts of that command in the table above.
+
+A timeout (`did not answer in time`, `Timed out after 30000 ms`) may or may not be a block: when the host is in the table for this command and the human has not confirmed it is allowed, ask them once; once they have, report the timeout and do not ask again.
+
+Tell the human which host to allow and in which sandbox setting, and re-run once they have; a blocked host fails the same way every time. The exception is a failure after the human approved on the device: follow [errors.md](errors.md) before any re-run.
+
+A 403 can come from the host itself, too: when the human says the host is already allowed, handle it as the command's own error ([errors.md](errors.md)). `Request to <host> failed with HTTP <status>.` usually means the host answered: the sandbox let it through, so handle it the same way. A `Could not reach <host>` for a host the human says is allowed comes from the network outside the sandbox (DNS, a firewall), not from the sandbox: tell the human and do not ask again. For HTTP 407, the proxy asks for credentials: tell the human to put them in the proxy URL (`HTTPS_PROXY=http://user:password@proxy:port`) or to let the host through without them, and do not retry until they have.

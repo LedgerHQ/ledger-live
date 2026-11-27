@@ -1,5 +1,29 @@
 # @features/flow-pay-feature-tour
 
+## 0.11.0
+
+### Minor Changes
+
+- [#24817](https://github.com/LedgerHQ/ledger-live/pull/24817) [`7fffee2`](https://github.com/LedgerHQ/ledger-live/commit/7fffee2e21d1a9b056d026bd2ff50431a1b2793a) Thanks [@deepyjr](https://github.com/deepyjr)! - Make the Pay onboarding, feature tour and bank transfer key tables verifiable by the i18n key check
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @features/platform-feature-flags@0.13.1
+  - @features/platform-pay-analytics@0.4.1
+
+## 0.11.0-next.0
+
+### Minor Changes
+
+- [#24817](https://github.com/LedgerHQ/ledger-live/pull/24817) [`7fffee2`](https://github.com/LedgerHQ/ledger-live/commit/7fffee2e21d1a9b056d026bd2ff50431a1b2793a) Thanks [@deepyjr](https://github.com/deepyjr)! - Make the Pay onboarding, feature tour and bank transfer key tables verifiable by the i18n key check
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @features/platform-feature-flags@0.13.1-next.0
+  - @features/platform-pay-analytics@0.4.1-next.0
+
 ## 0.10.0
 
 ### Minor Changes
@@ -241,26 +265,6 @@
 
 - Updated dependencies [[`de19b3e`](https://github.com/LedgerHQ/ledger-live/commit/de19b3e4e56a0c28fcc1a3ca929059e84fc7bebf)]:
   - @shared/ui-queued-bottom-sheet@0.4.0
-  - @shared/i18n@0.2.0
-
-## 0.5.1-next.0
-
-### Patch Changes
-
-- Updated dependencies [[`de19b3e`](https://github.com/LedgerHQ/ledger-live/commit/de19b3e4e56a0c28fcc1a3ca929059e84fc7bebf)]:
-  - @shared/ui-queued-bottom-sheet@0.4.0-next.0
-  - @shared/i18n@0.2.0
-
-## 0.5.0
-
-### Minor Changes
-
-- [#21373](https://github.com/LedgerHQ/ledger-live/pull/21373) [`d54d191`](https://github.com/LedgerHQ/ledger-live/commit/d54d19127a958bb0ac8c9c479bba716ce67041ff) Thanks [@tonykhaov](https://github.com/tonykhaov)! - Update the Pay feature tour copy, icons, and hero to match mockups (LIVE-36497).
-
-### Patch Changes
-
-- Updated dependencies [[`3ea6abc`](https://github.com/LedgerHQ/ledger-live/commit/3ea6abc7a12a27650caf47551e328ab38c9308d6)]:
-  - @shared/ui-queued-bottom-sheet@0.3.0
   - @shared/i18n@0.2.0
 
 <!-- changelog-pruned: older entries were removed to keep this file small. Full history is in `git log -p CHANGELOG.md` and in the GitHub release for each version. -->

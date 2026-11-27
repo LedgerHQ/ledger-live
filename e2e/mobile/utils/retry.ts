@@ -1,12 +1,28 @@
 import { INTERVAL, TIMEOUT } from "@e2e/utils/timeouts";
 
-export async function retryUntilTimeout<T>(
-  fn: (signal: AbortSignal) => Promise<T>,
-  timeout = TIMEOUT.xxlarge,
-  interval = INTERVAL.short,
-  options: { cancellable?: boolean; messageOnError?: string } = {},
-): Promise<T> {
-  const cancellable = options.cancellable ?? false;
+type RetryUntilTimeoutOptions<T> = {
+  fn: (signal: AbortSignal) => Promise<T>;
+  timeout?: number;
+  interval?: number;
+  cancellable?: boolean;
+  messageOnError?: string;
+};
+
+type CancellableAttemptOptions<T> = {
+  fn: (signal: AbortSignal) => Promise<T>;
+  controller: AbortController;
+  deadline: number;
+  timeout: number;
+};
+
+export async function retryUntilTimeout<T>(options: RetryUntilTimeoutOptions<T>): Promise<T> {
+  const {
+    fn,
+    timeout = TIMEOUT.xxlarge,
+    interval = INTERVAL.short,
+    cancellable = false,
+    messageOnError,
+  } = options;
   const start = Date.now();
   const deadline = start + timeout;
   let lastError: unknown;
@@ -16,7 +32,7 @@ export async function retryUntilTimeout<T>(
 
     try {
       return cancellable
-        ? await runCancellableAttempt(fn, controller, deadline, timeout)
+        ? await runCancellableAttempt({ fn, controller, deadline, timeout })
         : await fn(controller.signal);
     } catch (err) {
       lastError = err;
@@ -35,7 +51,7 @@ export async function retryUntilTimeout<T>(
         ? lastError
         : JSON.stringify(lastError);
 
-  const headline = options.messageOnError ?? `[retryUntilTimeout] Timed out after ${timeout}ms`;
+  const headline = messageOnError ?? `[retryUntilTimeout] Timed out after ${timeout}ms`;
   throw new Error([`❌ ${headline}`, `🧪 ${errMsg}`].join("\n"));
 }
 
@@ -45,12 +61,8 @@ export async function retryUntilTimeout<T>(
  * is left with a no-op catch so its eventual settlement can't surface as an unhandled
  * rejection later, during teardown or the next attempt.
  */
-async function runCancellableAttempt<T>(
-  fn: (signal: AbortSignal) => Promise<T>,
-  controller: AbortController,
-  deadline: number,
-  timeout: number,
-): Promise<T> {
+async function runCancellableAttempt<T>(options: CancellableAttemptOptions<T>): Promise<T> {
+  const { fn, controller, deadline, timeout } = options;
   let timer: ReturnType<typeof setTimeout> | undefined;
   const attempt = Promise.resolve().then(() => fn(controller.signal));
   attempt.catch(() => {});

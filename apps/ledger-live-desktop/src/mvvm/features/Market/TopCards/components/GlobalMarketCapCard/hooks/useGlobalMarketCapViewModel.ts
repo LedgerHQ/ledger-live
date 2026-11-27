@@ -1,9 +1,12 @@
 import { useSelector } from "LLD/hooks/redux";
-import { useGlobalMarketData } from "@ledgerhq/live-common/market/hooks/useMarketDataProvider";
+import { useGetGlobalMarketDataQuery } from "@domain/api-market-index-global";
 import { useUsdToFiatRate } from "@features/platform-market-countervalues";
 import counterValueFormatter from "@ledgerhq/live-common/market/utils/countervalueFormatter";
 import { counterValueCurrencySelector, localeSelector } from "~/renderer/reducers/settings";
 import { track } from "@shared/analytics";
+
+/** Polling cadence of the global market cap card: 3 minutes. */
+const GLOBAL_MARKET_CAP_REFRESH_INTERVAL_MS = 180_000;
 
 export const useGlobalMarketCapViewModel = () => {
   const counterValueCurrency = useSelector(counterValueCurrencySelector);
@@ -12,7 +15,10 @@ export const useGlobalMarketCapViewModel = () => {
   const locale = useSelector(localeSelector);
 
   // /v3/markets/global currently returns a USD-denominated market cap regardless of `to`.
-  const { data, isLoading, isError } = useGlobalMarketData({ counterCurrency: "usd" });
+  const { data, isLoading, isError } = useGetGlobalMarketDataQuery(
+    { counterCurrency: "usd" },
+    { pollingInterval: GLOBAL_MARKET_CAP_REFRESH_INTERVAL_MS },
+  );
   const { rate, status: rateStatus } = useUsdToFiatRate(counterCurrency);
 
   const onClick = () => {

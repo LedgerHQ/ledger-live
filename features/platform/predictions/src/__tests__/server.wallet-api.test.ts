@@ -1,6 +1,12 @@
 import { WalletAPIServer } from "@ledgerhq/wallet-api-server";
+import {
+  PLACE_ORDER_SIGNED_AT_MS,
+  PLACE_ORDER_TYPED_DATA,
+} from "../__fixtures__/placeOrderTypedData";
 import type { PredictionsBindingAnswer } from "../binding";
-import { PredictionsBindingSignerMismatch } from "../errors";
+import { PredictionsBindingSignerMismatch, PredictionsOrderSignerMismatch } from "../errors";
+import type { PredictionsOrderAnswer } from "../order";
+import type { PredictionsTypedData } from "../typedData";
 import { handlers, type PredictionsUiHooks } from "../server";
 
 type RpcErrorAnswer = { error: { code: number; data?: unknown } };
@@ -15,6 +21,8 @@ function setup() {
     "intro.markSeen": jest.fn(),
     "binding.sign": jest.fn<Promise<PredictionsBindingAnswer>, [string]>(),
     "binding.reportSetup": jest.fn(),
+    "order.sign": jest.fn<Promise<PredictionsOrderAnswer>, [string, PredictionsTypedData]>(),
+    "order.report": jest.fn(),
   };
   const predictionsHandlers = handlers({ uiHooks });
   const answers: string[] = [];
@@ -39,7 +47,8 @@ function setup() {
   };
   const onboard = (params: unknown) => call("custom.predictions.onboard", params);
   const bindAccount = (params: unknown) => call("custom.predictions.bindAccount", params);
-  return { uiHooks, onboard, bindAccount };
+  const signOrder = (params: unknown) => call("custom.predictions.signOrder", params);
+  return { uiHooks, onboard, bindAccount, signOrder };
 }
 
 describe("custom.predictions.onboard through the Wallet API server", () => {
@@ -80,6 +89,86 @@ describe("custom.predictions.bindAccount through the Wallet API server", () => {
     jest.mocked(uiHooks["binding.sign"]).mockRejectedValueOnce(error);
 
     const answer = await bindAccount({ accountId: "wallet-account-id" });
+
+    expect(answer.error.data).toMatchObject({ data: { name: error.name } });
+  });
+});
+
+const ORDER_DISPLAY = { marketTitle: "Fed decision in December?", outcomeLabel: "Yes" };
+
+describe("custom.predictions.signOrder through the Wallet API server", () => {
+  beforeEach(() => jest.spyOn(Date, "now").mockReturnValue(PLACE_ORDER_SIGNED_AT_MS));
+  afterEach(() => jest.restoreAllMocks());
+
+  it("answers typed data that isn't a place order with INVALID_PARAMS, without showing the prompt", async () => {
+    const { uiHooks, signOrder } = setup();
+
+    const answer = await signOrder({
+      accountId: "wallet-account-id",
+      display: ORDER_DISPLAY,
+      typedData: JSON.stringify({
+        ...PLACE_ORDER_TYPED_DATA,
+        domain: { ...PLACE_ORDER_TYPED_DATA.domain, name: "Permit2" },
+      }),
+    });
+
+    expect(answer.error.code).toBe(-32602);
+    expect(uiHooks["order.sign"]).not.toHaveBeenCalled();
+  });
+
+  it.each([
+    ["an amount that isn't a whole number", { amount: "1.5" }],
+    ["a slippage that isn't a number", { slippage: "abc" }],
+  ])("answers %s with INVALID_PARAMS, without showing the prompt", async (_case, message) => {
+    const { uiHooks, signOrder } = setup();
+
+    const answer = await signOrder({
+      accountId: "wallet-account-id",
+      display: ORDER_DISPLAY,
+      typedData: JSON.stringify({
+        ...PLACE_ORDER_TYPED_DATA,
+        message: { ...PLACE_ORDER_TYPED_DATA.message, ...message },
+      }),
+    });
+
+    expect(answer.error.code).toBe(-32602);
+    expect(uiHooks["order.sign"]).not.toHaveBeenCalled();
+  });
+
+  it.each([
+    ["has expired", PLACE_ORDER_SIGNED_AT_MS / 1000 - 60],
+    ["expires more than 300 s ahead", PLACE_ORDER_SIGNED_AT_MS / 1000 + 301],
+  ])(
+    "answers an order that %s with INVALID_PARAMS, without showing the prompt",
+    async (_case, expiration) => {
+      const { uiHooks, signOrder } = setup();
+
+      const answer = await signOrder({
+        accountId: "wallet-account-id",
+        display: ORDER_DISPLAY,
+        typedData: JSON.stringify({
+          ...PLACE_ORDER_TYPED_DATA,
+          message: { ...PLACE_ORDER_TYPED_DATA.message, expiration: String(expiration) },
+        }),
+      });
+
+      expect(answer.error.code).toBe(-32602);
+      expect(uiHooks["order.sign"]).not.toHaveBeenCalled();
+    },
+  );
+
+  it.each([
+    Object.assign(new Error("User refused"), { name: "UserRefusedOnDevice" }),
+    new PredictionsOrderSignerMismatch("Signed by someone else"),
+  ])("keeps the name of a failed order signature in the answer (%s)", async error => {
+    const { uiHooks, signOrder } = setup();
+    jest.mocked(uiHooks["order.sign"]).mockRejectedValueOnce(error);
+
+    const answer = await signOrder({
+      accountId: "wallet-account-id",
+      display: ORDER_DISPLAY,
+      typedData: JSON.stringify(PLACE_ORDER_TYPED_DATA),
+    });
 
     expect(answer.error.data).toMatchObject({ data: { name: error.name } });
   });

@@ -260,21 +260,17 @@ export const fetchTxns = async (
   startBlockHeight: bigint,
   stopBlockHeight = BigInt(0),
 ): Promise<TransactionWithId[]> => {
-  if (startBlockHeight <= stopBlockHeight) {
+  if (startBlockHeight < stopBlockHeight) {
     return [];
   }
 
   const { transactions } = await fetchTxnsPage(host, address, startBlockHeight);
-  if (transactions.length === 0) {
-    return [];
+  const oldestId = transactions.at(-1)?.id;
+  if (oldestId === undefined || oldestId <= stopBlockHeight) {
+    return transactions;
   }
 
-  const nextTxns = await fetchTxns(
-    host,
-    address,
-    transactions.at(-1)?.id ?? BigInt(0),
-    stopBlockHeight,
-  );
+  const nextTxns = await fetchTxns(host, address, oldestId, stopBlockHeight);
 
   return [...transactions, ...nextTxns];
 };

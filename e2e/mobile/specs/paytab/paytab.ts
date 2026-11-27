@@ -18,6 +18,7 @@ import {
   FF_PAY_TAB,
 } from "@e2e/utils/featureFlagUtils";
 import type { PartialFeatures } from "@shared/feature-flags";
+import type { TestMetaOptions } from "@e2e/models/testOptions";
 import { declareBroadcastAccounts, declareSharedResources } from "@e2e/helpers/exclusiveLock";
 
 const ALL_STABLECOINS = "All stablecoins";
@@ -28,7 +29,11 @@ const CARD_TRANSACTION_STATUS = /^(Confirmed|Pending|Declined|Reverted)$/;
 const CONTACT_ID = "e2e-pay-contact";
 const CONTACT_ADDRESS_ID = "e2e-pay-contact-main";
 const CONTACT_NAME = generateContactName();
-const transaction = new Transaction(TokenAccount.ETH_USDT_1, TokenAccount.ETH_USDT_3, "0.01");
+const transaction = new Transaction({
+  accountToDebit: TokenAccount.ETH_USDT_1,
+  accountToCredit: TokenAccount.ETH_USDT_3,
+  amount: "0.01",
+});
 const { currency } = transaction.accountToDebit;
 
 async function initPayTabApp(featureFlags?: PartialFeatures) {
@@ -66,7 +71,8 @@ function payContactSeed(address: string): ContactSeed {
   };
 }
 
-export function runPayBalanceAndDepositTest(tmsLinks: string[], tags: string[]) {
+export function runPayBalanceAndDepositTest(options: TestMetaOptions) {
+  const { tmsLinks, tags } = options;
   describe("Pay tab", () => {
     beforeAll(async () => {
       await initPayTabApp();
@@ -117,7 +123,8 @@ export function runPayBalanceAndDepositTest(tmsLinks: string[], tags: string[]) 
   });
 }
 
-export function runPayRequestTest(tmsLinks: string[], tags: string[]) {
+export function runPayRequestTest(options: TestMetaOptions) {
+  const { tmsLinks, tags } = options;
   describe("Pay tab", () => {
     beforeAll(async () => {
       await initPayTabApp();
@@ -144,7 +151,8 @@ export function runPayRequestTest(tmsLinks: string[], tags: string[]) {
   });
 }
 
-export function runPayNewPaymentTest(tmsLinks: string[], tags: string[]) {
+export function runPayNewPaymentTest(options: TestMetaOptions) {
+  const { tmsLinks, tags } = options;
   declareBroadcastAccounts(transaction.accountToDebit);
   describe("Pay tab", () => {
     beforeAll(async () => {
@@ -176,7 +184,8 @@ export function runPayNewPaymentTest(tmsLinks: string[], tags: string[]) {
   });
 }
 
-export function runPayContactTest(tmsLinks: string[], tags: string[]) {
+export function runPayContactTest(options: TestMetaOptions) {
+  const { tmsLinks, tags } = options;
   declareBroadcastAccounts(transaction.accountToDebit);
   describe("Pay tab", () => {
     beforeAll(async () => {
@@ -211,7 +220,8 @@ export function runPayContactTest(tmsLinks: string[], tags: string[]) {
   });
 }
 
-export function runPayFreezeTest(tmsLinks: string[], tags: string[]) {
+export function runPayFreezeTest(options: TestMetaOptions) {
+  const { tmsLinks, tags } = options;
   declareSharedResources(PAY_CARD);
   describe("Pay tab", () => {
     beforeAll(async () => {
@@ -250,7 +260,8 @@ export function runPayFreezeTest(tmsLinks: string[], tags: string[]) {
   });
 }
 
-export function runPayCardHistoryTest(tmsLinks: string[], tags: string[]) {
+export function runPayCardHistoryTest(options: TestMetaOptions) {
+  const { tmsLinks, tags } = options;
   describe("Pay tab", () => {
     beforeAll(async () => {
       await initPayTabApp();

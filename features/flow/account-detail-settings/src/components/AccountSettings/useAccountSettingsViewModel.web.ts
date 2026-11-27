@@ -13,12 +13,14 @@ export type AccountSettingsViewModel = Readonly<{
   onConfirmName: (name: string) => void;
   onConfirmRemove: () => void;
   explorerUrl?: string;
+  onManageAssets?: () => void;
 }>;
 
 export function useAccountSettingsViewModel<TAccount extends AccountSettingsAccount>(
   account: TAccount,
   adapter: AccountSettingsAdapter<TAccount>,
   onClose: () => void,
+  onManageAssets?: () => void,
 ): AccountSettingsViewModel {
   const {
     isNameEditDisabled,
@@ -41,6 +43,15 @@ export function useAccountSettingsViewModel<TAccount extends AccountSettingsAcco
     removeAccount(account);
     onClose();
   }, [account, removeAccount, onClose]);
+
+  const handleManageAssets = useMemo(() => {
+    if (!onManageAssets) return undefined;
+
+    return () => {
+      onClose();
+      onManageAssets();
+    };
+  }, [onClose, onManageAssets]);
 
   const advancedLogs = useMemo<AdvancedLogsContentProps>(
     () => ({
@@ -67,5 +78,6 @@ export function useAccountSettingsViewModel<TAccount extends AccountSettingsAcco
     onConfirmName,
     onConfirmRemove,
     explorerUrl: getAccountExplorerUrl(account),
+    onManageAssets: handleManageAssets,
   };
 }

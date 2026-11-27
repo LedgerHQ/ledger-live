@@ -25,6 +25,7 @@ jest.mock("@devtools/shell", () => ({
 }));
 
 jest.mock("@devtools/bindings", () => ({
+  AccountRedactionProvider: ({ children }: { children: React.ReactNode }) => children,
   useFeatureFlagsToolProps: () => ({ marker: "ff-props" }),
   usePayCardToolProps: () => ({ marker: "pay-card-props" }),
   useEnvDevToolProps: () => ({ marker: "env-props" }),
@@ -59,6 +60,15 @@ jest.mock("@devtools/bindings", () => ({
   }),
   useAppConfigToolProps: () => ({ marker: "app-config-props" }),
   useCoinConfigToolProps: () => ({ marker: "coin-config-props" }),
+}));
+
+jest.mock("../AccountDiscovery/useAccountDiscoveryTool", () => ({
+  useAccountDiscoveryTool: () => ({
+    toolProps: { marker: "account-discovery-props" },
+    run: null,
+    onRunCancelled: jest.fn(),
+    onRunFailed: jest.fn(),
+  }),
 }));
 
 jest.mock("../DeviceOnboarding/useDeviceOnboardingTool", () => ({
@@ -117,6 +127,7 @@ describe("DevToolsScreen", () => {
             config: { marker: "account-source-portfolio-props" },
           },
           { id: "account-descriptor", config: { marker: "account-descriptor-props" } },
+          { id: "account-discovery", config: { marker: "account-discovery-props" } },
           { id: "account-balance", config: { marker: "account-balance-props" } },
           { id: "account-operation", config: { marker: "account-operation-props" } },
           { id: "account-balance-history", config: { marker: "account-balance-history-props" } },

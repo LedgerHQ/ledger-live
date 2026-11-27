@@ -1,6 +1,6 @@
 import { keccak_256 } from "@noble/hashes/sha3";
 import { bytesToHex, utf8ToBytes } from "@noble/hashes/utils";
-import { AddressSchema, type Address } from "@domain/entity-account-descriptor";
+import { AddressSchema, type Address } from "@domain/entity-network";
 
 const ADDRESS_RE = /^0x[0-9a-fA-F]{40}$/;
 const DECIMAL_RE = /^(\d+)(?:\.(\d+))?$/;

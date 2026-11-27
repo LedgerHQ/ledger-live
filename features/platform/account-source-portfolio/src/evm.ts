@@ -1,9 +1,9 @@
-import {
-  currencyIdFromNetwork,
-  type AccountDescriptor,
-  type AddressAccountDescriptor,
+import type {
+  AccountDescriptor,
+  AddressAccountDescriptor,
 } from "@domain/entity-account-descriptor";
 import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
+import { currencyIdFromNetwork } from "@domain/entity-network";
 import type { PortfolioFamily } from "./family";
 
 /** Ethereum uses coin type 60, Ethereum Classic 61. */

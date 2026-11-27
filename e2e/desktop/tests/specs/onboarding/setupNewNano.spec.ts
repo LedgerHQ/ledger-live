@@ -41,7 +41,7 @@ test.describe(`Onboarding a new Nano (mock server)`, () => {
       await app.onboarding.completeQuiz();
       await app.onboarding.continueTutorial("quiz-success");
 
-      await mockServer.pinOnboardingStep(ONBOARDING_STEP.ready, true);
+      await mockServer.pinOnboardingStep({ step: ONBOARDING_STEP.ready, onboarded: true });
       await app.onboarding.runGenuineCheck();
       await app.onboarding.continueTutorial("genuine-check");
 

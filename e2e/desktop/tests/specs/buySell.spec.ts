@@ -59,7 +59,7 @@ for (const asset of assets) {
     });
 
     test(
-      `[${crypto.currency.testLabel}] - Buy entry point from asset page`,
+      `[${crypto.currency.testLabel}] - Buy entry points from asset and account pages`,
       {
         tag: buildTags({ currencyId: crypto.currency.id }),
         annotation: {
@@ -73,6 +73,19 @@ for (const asset of assets) {
         await app.assetPage.startBuyFlow();
         await app.buyAndSell.selectNetworkAndAccountIfShown(crypto);
         await app.buyAndSell.verifyBuySellLandingAndCryptoAssetSelector(crypto, operation);
+        await app.buyAndSell.verifyFiatAssetSelector(fiat.currencyTicker);
+
+        await app.mainNavigation.openTargetFromMainNavigation("accounts");
+        await app.accounts.navigateToAccountByName(getParentAccountName(crypto));
+        if (crypto.tokenType) {
+          await app.account.navigateToTokenInAccount(crypto);
+        }
+        await app.account.verifyAccountHeaderNameIsVisible(
+          crypto.tokenType ? crypto.currency.name : crypto.accountName,
+        );
+        await app.account.clickBuy(crypto);
+        await app.buyAndSell.verifyBuySellLandingAndCryptoAssetSelector(crypto, operation);
+        await app.buyAndSell.verifyLiveAppOpenedWithAsset(crypto);
         await app.buyAndSell.verifyFiatAssetSelector(fiat.currencyTicker);
       },
     );
@@ -91,35 +104,6 @@ for (const asset of assets) {
         await app.market.openBuyPage(crypto.currency.ticker);
         await app.buyAndSell.selectNetworkAndAccountIfShown(crypto);
         await app.buyAndSell.verifyBuySellLandingAndCryptoAssetSelector(crypto, operation);
-        await app.buyAndSell.verifyFiatAssetSelector(fiat.currencyTicker);
-      },
-    );
-
-    test(
-      `[${crypto.currency.testLabel}] - Buy entry point from account page`,
-      {
-        tag: buildTags({ currencyId: crypto.currency.id }),
-        annotation: {
-          type: "TMS",
-          description: asset.xrayTicket,
-        },
-      },
-      async ({ app }) => {
-        await app.mainNavigation.openTargetFromMainNavigation("accounts");
-        await app.accounts.navigateToAccountByName(getParentAccountName(asset.buySell.crypto));
-        if (asset.buySell.crypto.tokenType) {
-          await app.account.navigateToTokenInAccount(asset.buySell.crypto);
-        }
-        await app.account.verifyAccountHeaderNameIsVisible(
-          asset.buySell.crypto.tokenType
-            ? asset.buySell.crypto.currency.name
-            : asset.buySell.crypto.accountName,
-        );
-        await app.account.clickBuy(asset.buySell.crypto);
-        await app.buyAndSell.verifyBuySellLandingAndCryptoAssetSelector(
-          asset.buySell.crypto,
-          operation,
-        );
         await app.buyAndSell.verifyFiatAssetSelector(fiat.currencyTicker);
       },
     );
@@ -207,7 +191,6 @@ for (const sellAsset of sellAssets) {
         await app.buyAndSell.verifySellInfoBox();
         await app.buyAndSell.verifyProviderInfoIsNotVisible();
         await app.buyAndSell.changeRegionAndCurrency(fiat);
-        await app.buyAndSell.verifyFiatAssetSelector(fiat.currencyTicker);
         const amount = await getMinimumSellAmount(crypto.currency.id);
         const actualAmount = await app.buyAndSell.setAmountToPay(amount, operation);
         const buySell = { ...sellAsset.buySell, amount: actualAmount };

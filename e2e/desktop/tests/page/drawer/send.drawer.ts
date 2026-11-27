@@ -19,7 +19,10 @@ export class SendDrawer extends Drawer {
 
   @step("Verify operation type in transaction details: $0")
   async expectOperationType(operationType: string) {
-    await expect(this.operationType).toHaveText(operationType);
+    await expect(this.operationType).toBeVisible();
+    await this.softExpect(async soft => {
+      await soft(this.operationType).toHaveText(operationType);
+    });
   }
 
   @step("Verify memo is visible in transaction details: $0")

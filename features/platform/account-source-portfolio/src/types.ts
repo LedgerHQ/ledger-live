@@ -1,5 +1,5 @@
 import type { Portfolio } from "@domain/api-account-portfolio";
-import type { AccountUUID } from "@domain/entity-account-descriptor";
+import type { AccountUUID } from "@domain/entity-account";
 
 /** How the last balance read of an account went. */
 export type PortfolioOutcome = {

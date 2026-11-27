@@ -42,6 +42,7 @@ function OsUpdatesOrchestratorDebugContent() {
     return (
       <View style={styles.container}>
         <WhatsNewScreen
+          name={viewModel.whatsNew.name}
           version={viewModel.whatsNew.version}
           notes={viewModel.whatsNew.notes}
           onOpenReleaseNotes={viewModel.onOpenReleaseNotes}
