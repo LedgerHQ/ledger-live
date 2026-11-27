@@ -131,18 +131,6 @@ export default class SwapLiveAppPage {
     await this.fromSelector.tap();
   }
 
-  @Step("Check if account {{{0.accountName}}} is already selected")
-  async isAccountSelected(account: Account, isFromCurrency: boolean): Promise<boolean> {
-    const selector = isFromCurrency ? this.fromSelector : this.toSelector;
-    const accountNameTag = isFromCurrency
-      ? this.fromAccountAccountNameTag
-      : this.toAccountAccountNameTag;
-    const expectedAccountName = account.parentAccount?.accountName ?? account.accountName;
-    if (!(await selector.getText()).includes(account.currency.ticker)) return false;
-    if (!(await accountNameTag.isVisible())) return false;
-    return (await accountNameTag.getText()).includes(expectedAccountName);
-  }
-
   @Step("Tap to currency")
   async tapToCurrency() {
     await this.toSelector.tap();

@@ -39,10 +39,6 @@ export function truncateSwapAmount(amount: string): string {
 
 async function selectCurrency(options: SelectCurrencyOptions) {
   const { account, isFromCurrency = true } = options;
-  // Several assets share a ticker, so the account name is checked too.
-  if (await app.swapLiveApp.isAccountSelected(account, isFromCurrency)) {
-    return;
-  }
   if (isFromCurrency) {
     await app.swapLiveApp.tapFromCurrency();
     await app.modularDrawer.selectAssetAndAccount(account);
