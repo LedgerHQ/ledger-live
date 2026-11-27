@@ -1,11 +1,13 @@
 import { act, renderHook } from "@tests/test-renderer";
 import type { WalletApiDeviceIntentSignRequest } from "../components/TransactionSignatureDrawer/types";
 import type { WalletApiDeviceIntentSignMessageRequest } from "../components/MessageSignatureDrawer/types";
+import type { WalletApiDeviceIntentSignRawRequest } from "../components/RawTransactionSignatureDrawer/types";
 import { useWalletApiSignatureQueue } from "./useWalletApiSignatureQueue";
 
 const firstTransaction = { manifestId: "first" } as unknown as WalletApiDeviceIntentSignRequest;
 const secondTransaction = { manifestId: "second" } as unknown as WalletApiDeviceIntentSignRequest;
 const message = { manifestId: "message" } as unknown as WalletApiDeviceIntentSignMessageRequest;
+const rawTransaction = { manifestId: "raw" } as unknown as WalletApiDeviceIntentSignRawRequest;
 
 describe("useWalletApiSignatureQueue", () => {
   it("shows nothing when no request is pending", () => {
@@ -20,6 +22,7 @@ describe("useWalletApiSignatureQueue", () => {
     act(() => {
       result.current.enqueueTransactionSignature(firstTransaction);
       result.current.enqueueMessageSignature(message);
+      result.current.enqueueRawTransactionSignature(rawTransaction);
       result.current.enqueueTransactionSignature(secondTransaction);
     });
     expect(result.current.currentSignature).toMatchObject({
@@ -29,6 +32,12 @@ describe("useWalletApiSignatureQueue", () => {
 
     act(() => result.current.closeCurrentSignature());
     expect(result.current.currentSignature).toMatchObject({ type: "message", request: message });
+
+    act(() => result.current.closeCurrentSignature());
+    expect(result.current.currentSignature).toMatchObject({
+      type: "rawTransaction",
+      request: rawTransaction,
+    });
 
     act(() => result.current.closeCurrentSignature());
     expect(result.current.currentSignature).toMatchObject({

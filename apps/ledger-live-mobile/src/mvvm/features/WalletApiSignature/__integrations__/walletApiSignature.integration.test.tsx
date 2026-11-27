@@ -2,8 +2,10 @@ import React, { useEffect } from "react";
 import { render, waitFor, act } from "@tests/test-renderer";
 import TransactionSignatureDrawer from "../components/TransactionSignatureDrawer";
 import MessageSignatureDrawer from "../components/MessageSignatureDrawer";
+import RawTransactionSignatureDrawer from "../components/RawTransactionSignatureDrawer";
 import type { WalletApiDeviceIntentSignRequest } from "../components/TransactionSignatureDrawer";
 import type { WalletApiDeviceIntentSignMessageRequest } from "../components/MessageSignatureDrawer";
+import type { WalletApiDeviceIntentSignRawRequest } from "../components/RawTransactionSignatureDrawer";
 import { useWalletApiSignatureQueue } from "../hooks/useWalletApiSignatureQueue";
 
 // The Device Intent Executor drives a real device connection + bottom sheet, which cannot
@@ -16,6 +18,7 @@ type ExecutorProps = {
   intent: unknown;
   intentComponentExtraProps?: Record<string, unknown>;
   onIntentJobStateChanged: (state: { type: string; [key: string]: unknown }) => void;
+  onIntentJobComplete: () => void;
   onIntentJobError: (error: unknown) => void;
   onUserCancel: () => void;
 };
@@ -36,10 +39,11 @@ jest.mock("LLM/components/DeviceIntentExecutor", () => {
 });
 
 jest.mock("@features/platform-device-intent", () => ({
-  createIntent: jest.fn((definition: unknown, input: unknown) => ({
+  createIntent: jest.fn((definition: unknown, input: unknown, listeners?: object) => ({
     uuid: "intent-1",
     definition,
     input,
+    ...listeners,
   })),
 }));
 
@@ -64,6 +68,10 @@ jest.mock("../components/TransactionSignatureDrawer/intentDefinition", () => ({
 
 jest.mock("../components/MessageSignatureDrawer/intentDefinition", () => ({
   signMessageIntentPlatformDefinition: { label: "Sign message" },
+}));
+
+jest.mock("../components/RawTransactionSignatureDrawer/intentDefinition", () => ({
+  signRawTransactionIntentPlatformDefinition: { label: "Sign raw transaction" },
 }));
 
 const account = { id: "js:2:ethereum:0xabc:", type: "Account", currency: { name: "Ethereum" } };
@@ -98,6 +106,13 @@ function SignatureQueueHost({ onQueue }: { onQueue: (queue: SignatureQueue) => v
     <>
       {currentSignature?.type === "transaction" && (
         <TransactionSignatureDrawer
+          key={currentSignature.id}
+          request={currentSignature.request}
+          onClose={closeCurrentSignature}
+        />
+      )}
+      {currentSignature?.type === "rawTransaction" && (
+        <RawTransactionSignatureDrawer
           key={currentSignature.id}
           request={currentSignature.request}
           onClose={closeCurrentSignature}
@@ -159,6 +174,55 @@ describe("WalletApiSignature feature", () => {
 
     const signedOperation = { operation: { id: "op-1" } };
     act(() => mockExecutorProps!.onIntentJobStateChanged({ type: "signed", signedOperation }));
+
+    expect(onSuccess).toHaveBeenCalledWith(signedOperation);
+    expect(onClose).toHaveBeenCalledTimes(1);
+  });
+
+  it("mounts the executor for a raw transaction request and resolves the promise once the job completes", async () => {
+    const onSuccess = jest.fn();
+    const onClose = jest.fn();
+    const request = {
+      account,
+      parentAccount: undefined,
+      transaction: "cHNidP8BAA==",
+      broadcast: true,
+      appName: undefined,
+      dependencies: undefined,
+      manifestId: "ledger-wallet-connect",
+      manifestName: "WalletConnect",
+      onSuccess,
+      onError: jest.fn(),
+    } as unknown as WalletApiDeviceIntentSignRawRequest;
+
+    const { getByTestId } = render(
+      <RawTransactionSignatureDrawer request={request} onClose={onClose} />,
+    );
+
+    await waitFor(() => expect(getByTestId("device-intent-executor")).toBeTruthy());
+    expect(mockExecutorProps?.sourceFlow).toBe("wallet_connect");
+    expect(mockExecutorProps?.analyticsProperties).toEqual({
+      manifestId: "ledger-wallet-connect",
+      manifestName: "WalletConnect",
+    });
+    expect(mockExecutorProps?.intentComponentExtraProps).toEqual({
+      manifestId: "ledger-wallet-connect",
+      manifestName: "WalletConnect",
+    });
+    expect(mockExecutorProps?.intent).toMatchObject({
+      input: {
+        account,
+        transaction: "cHNidP8BAA==",
+        broadcast: true,
+        manifestId: "ledger-wallet-connect",
+      },
+    });
+
+    const signedOperation = { operation: { id: "op-1" }, signature: "0200000001" };
+    const intent = mockExecutorProps!.intent as { onResult: (result: unknown) => void };
+    act(() => intent.onResult(signedOperation));
+    expect(onSuccess).not.toHaveBeenCalled();
+    act(() => mockExecutorProps!.onIntentJobComplete());
 
     expect(onSuccess).toHaveBeenCalledWith(signedOperation);
     expect(onClose).toHaveBeenCalledTimes(1);

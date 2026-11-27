@@ -72,6 +72,7 @@ import { useModularDrawerController } from "LLM/features/ModularDrawer";
 import { LiveAppManifest } from "@ledgerhq/live-common/platform/types";
 import type { WalletApiDeviceIntentSignRequest } from "LLM/features/WalletApiSignature/components/TransactionSignatureDrawer";
 import type { WalletApiDeviceIntentSignMessageRequest } from "LLM/features/WalletApiSignature/components/MessageSignatureDrawer";
+import type { WalletApiDeviceIntentSignRawRequest } from "LLM/features/WalletApiSignature/components/RawTransactionSignatureDrawer";
 import { useDeviceIntentSignEnabled } from "LLM/features/WalletApiSignature/hooks/useDeviceIntentSignEnabled";
 import { useWalletApiSignatureQueue } from "LLM/features/WalletApiSignature/hooks/useWalletApiSignatureQueue";
 import { AccountPublicKeyUnavailable } from "@ledgerhq/live-common/errors";
@@ -148,12 +149,14 @@ export function useWebView(
   const accounts = useSelector(flattenAccountsSelector);
   const mevProtected = useSelector(mevProtectionSelector);
 
-  // When the device-intent sign flow is enabled, `transaction.sign` and `message.sign` queue
-  // their request here instead of navigating, so the Device Intent Executor is mounted as a
-  // bottom-sheet drawer floating over the live app, one request at a time.
+  // When the device-intent sign flow is enabled, `transaction.sign`, `transaction.signRaw` and
+  // `message.sign` queue their request here instead of navigating, so the Device Intent
+  // Executor is mounted as a bottom-sheet drawer floating over the live app, one request at a
+  // time.
   const {
     currentSignature,
     enqueueTransactionSignature,
+    enqueueRawTransactionSignature,
     enqueueMessageSignature,
     closeCurrentSignature,
     clearSignatures,
@@ -169,6 +172,7 @@ export function useWebView(
     bridgeSessionRef,
     onTransactionBroadcast: onWalletApiTransactionBroadcast,
     requestDeviceIntentSign: enqueueTransactionSignature,
+    requestDeviceIntentSignRaw: enqueueRawTransactionSignature,
     requestDeviceIntentSignMessage: enqueueMessageSignature,
     onPublicKeyUnavailable: setPublicKeyUnavailableError,
     onAccountRequestCancel,
@@ -634,6 +638,11 @@ export interface Props {
    */
   requestDeviceIntentSign: (request: WalletApiDeviceIntentSignRequest) => void;
   /**
+   * Same as {@link requestDeviceIntentSign} but for `transaction.signRaw` (and so
+   * `bitcoin.signPsbt`), in place of navigating to the SignRawTransaction stack.
+   */
+  requestDeviceIntentSignRaw: (request: WalletApiDeviceIntentSignRawRequest) => void;
+  /**
    * Same as {@link requestDeviceIntentSign} but for `message.sign`, surfacing the request
    * so the Device Intent Executor is mounted as a bottom-sheet drawer instead of navigating
    * to the SignMessage stack.
@@ -651,6 +660,7 @@ export function useUiHook({
   onTransactionBroadcast,
   onPublicKeyUnavailable,
   requestDeviceIntentSign,
+  requestDeviceIntentSignRaw,
   requestDeviceIntentSignMessage,
   onAccountRequestCancel,
   onAccountRequestSuccess,
@@ -841,6 +851,24 @@ export function useUiHook({
         onSuccess,
         onError,
       }) => {
+        // When enabled, sign through the DeviceIntentExecutor surfaced as a bottom-sheet
+        // drawer over the live app (see RawTransactionSignatureDrawer).
+        if (deviceIntentSignEnabled) {
+          requestDeviceIntentSignRaw({
+            account,
+            parentAccount,
+            transaction,
+            broadcast,
+            appName: options?.hwAppId,
+            dependencies: options?.dependencies,
+            manifestId: manifest.id,
+            manifestName: manifest.name,
+            onSuccess,
+            onError,
+          });
+          return;
+        }
+
         navigation.navigate(NavigatorName.SignRawTransaction, {
           screen: ScreenName.SignRawTransactionSelectDevice,
           params: {
@@ -953,6 +981,7 @@ export function useUiHook({
       onTransactionBroadcast,
       deviceIntentSignEnabled,
       requestDeviceIntentSign,
+      requestDeviceIntentSignRaw,
       requestDeviceIntentSignMessage,
       manifest.id,
       manifest.name,

@@ -8,6 +8,7 @@ import { useWebView } from "./helpers";
 import { NetworkError } from "./NetworkError";
 import TransactionSignatureDrawer from "LLM/features/WalletApiSignature/components/TransactionSignatureDrawer";
 import MessageSignatureDrawer from "LLM/features/WalletApiSignature/components/MessageSignatureDrawer";
+import RawTransactionSignatureDrawer from "LLM/features/WalletApiSignature/components/RawTransactionSignatureDrawer";
 import ExchangeDeviceDrawer from "LLM/features/WalletApiExchange/components/ExchangeDeviceDrawer";
 import { useDeviceIntentExchangeEnabled } from "LLM/features/WalletApiExchange/hooks/useDeviceIntentExchangeEnabled";
 import { INTERNAL_APP_IDS, WC_ID } from "@ledgerhq/live-common/wallet-api/constants";
@@ -156,6 +157,13 @@ export const WalletAPIWebview = forwardRef<WebviewAPI, WebviewProps>(
         />
         {currentSignature?.type === "transaction" && (
           <TransactionSignatureDrawer
+            key={currentSignature.id}
+            request={currentSignature.request}
+            onClose={closeCurrentSignature}
+          />
+        )}
+        {currentSignature?.type === "rawTransaction" && (
+          <RawTransactionSignatureDrawer
             key={currentSignature.id}
             request={currentSignature.request}
             onClose={closeCurrentSignature}
