@@ -25,7 +25,7 @@ export function SettingsRowDescription({
         <ListItemDescription className="whitespace-normal">{description}</ListItemDescription>
       ) : null}
       {link ? (
-        <Link asChild size="sm" underline disabled={disabled}>
+        <Link asChild size="sm" underline disabled={disabled} className="cursor-pointer">
           <button type="button" onClick={onLinkClick} onKeyDown={onLinkKeyDown} disabled={disabled}>
             {link.label}
           </button>
