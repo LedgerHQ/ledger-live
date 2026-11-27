@@ -6,6 +6,7 @@ import { deriveOnSession, deriveOnTransport, type RunDeviceJob } from "./deriveO
 import type { DeviceManagementKit } from "@ledgerhq/device-management-kit";
 import type { RunOnTransport } from "../../coin-modules/types";
 import { LegacyDeriveUnsupportedError } from "./errors";
+import { clearDerivedLegacyHints, readDerivedLegacyHints } from "./derivedLegacyHints";
 
 const loadSetupForFamily = jest.fn();
 const getAccountDescriptorType = jest.fn(() => "address");
@@ -130,7 +131,11 @@ describe("deriveOnTransport", () => {
 });
 
 describe("deriveOnTransport with the family resolver", () => {
-  beforeEach(() => loadSetupForFamily.mockResolvedValue({}));
+  beforeEach(() => {
+    loadSetupForFamily.mockResolvedValue({});
+    getAddress.mockReset();
+    clearDerivedLegacyHints();
+  });
 
   it("keys an address family on the address, at the legacy spelling of its path", async () => {
     const ethereum = getCryptoCurrencyById("ethereum");
@@ -176,6 +181,68 @@ describe("deriveOnTransport with the family resolver", () => {
       key: "ab".repeat(32),
       path: "m/44h/607h/0h/0h/2h/0h",
     });
+  });
+
+  it("records the mode seedIdentifier once per mode and each account's publicKey", async () => {
+    const ethereum = getCryptoCurrencyById("ethereum");
+    const addr0 = "0x71C7656EC7ab88b098defB751B7401B5f6d8976F";
+    const addr1 = "0x0000000000000000000000000000000000000002";
+    getAddress.mockImplementation((_t, { path }: { path: string }) => {
+      if (path === "44'/60'/0'")
+        return Promise.resolve({ address: addr0, publicKey: "04seed", path });
+      if (path === "44'/60'/0'/0/0")
+        return Promise.resolve({ address: addr0, publicKey: "04acc0", path });
+      return Promise.resolve({ address: addr1, publicKey: "04acc1", path });
+    });
+    const derive = deriveOnTransport(runOnTransport);
+    const mode = new AbortController().signal;
+    const d0 = await derive(candidateOf(ethereum, "", 0), mode);
+    const d1 = await derive(candidateOf(ethereum, "", 1), mode);
+    expect(d0 && "key" in d0 && readDerivedLegacyHints(d0)).toEqual({
+      seedIdentifier: "04seed",
+      publicKey: "04acc0",
+      address: addr0,
+    });
+    expect(d1 && "key" in d1 && readDerivedLegacyHints(d1)).toEqual({
+      seedIdentifier: "04seed",
+      publicKey: "04acc1",
+      address: addr1,
+    });
+    const seedCalls = getAddress.mock.calls.filter(([, opts]) => opts.path === "44'/60'/0'");
+    expect(seedCalls).toHaveLength(1);
+  });
+
+  it("reuses the account publicKey as seedIdentifier without an extra call when paths match", async () => {
+    const vechain = getCryptoCurrencyById("vechain");
+    const vetAddress = "0x0000000000000000000000000000000000000001";
+    getAddress.mockResolvedValue({
+      address: vetAddress,
+      publicKey: "d086b5",
+      path: "44'/818'/0'/0/0",
+    });
+    const d0 = await deriveOnTransport(runOnTransport)(
+      candidateOf(vechain, "", 0),
+      new AbortController().signal,
+    );
+    expect(getAddress).toHaveBeenCalledTimes(1);
+    expect(d0 && "key" in d0 && readDerivedLegacyHints(d0)).toEqual({
+      seedIdentifier: "d086b5",
+      publicKey: "d086b5",
+      address: vetAddress,
+    });
+  });
+
+  it("propagates device failures during the seedIdentifier read", async () => {
+    const ethereum = getCryptoCurrencyById("ethereum");
+    const addr0 = "0x71C7656EC7ab88b098defB751B7401B5f6d8976F";
+    const disconnect = new Error("DisconnectedDevice");
+    getAddress.mockImplementation((_t, { path }: { path: string }) => {
+      if (path === "44'/60'/0'") return Promise.reject(disconnect);
+      return Promise.resolve({ address: addr0, publicKey: "04acc0", path });
+    });
+    await expect(
+      deriveOnTransport(runOnTransport)(candidateOf(ethereum, "", 0), new AbortController().signal),
+    ).rejects.toBe(disconnect);
   });
 });
 

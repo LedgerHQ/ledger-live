@@ -9,11 +9,17 @@ import getAddress from "../../hw/getAddress";
 import { keyOfDerivedAccount } from "../../account/accountDescriptor";
 import type { RunOnTransport } from "../../coin-modules/types";
 
-/** Derives an address family's descriptor with its resolver, as `scanAccounts` does. */
-export function deriveAddress(
+export type DerivedAddressDescriptor = {
+  readonly descriptor: AccountDescriptor;
+  readonly address: string;
+  readonly publicKey: string;
+};
+
+/** Derives an address family's descriptor and its device public key, as `scanAccounts` does. */
+export function deriveAddressWithPublicKey(
   runOnTransport: RunOnTransport,
   candidate: AccountCandidate,
-): Observable<AccountDescriptor> {
+): Observable<DerivedAddressDescriptor> {
   const currency = getCryptoCurrencyById(currencyIdFromNetwork(candidate.network));
   return runOnTransport(transport =>
     from(
@@ -24,8 +30,8 @@ export function deriveAddress(
       }),
     ),
   ).pipe(
-    map(derived =>
-      AccountDescriptorSchema.parse({
+    map(derived => ({
+      descriptor: AccountDescriptorSchema.parse({
         purpose: "account",
         version: "2",
         type: "address",
@@ -33,6 +39,18 @@ export function deriveAddress(
         key: keyOfDerivedAccount(currency.id, derived),
         path: candidate.addressPath,
       }),
-    ),
+      address: derived.address,
+      publicKey: derived.publicKey,
+    })),
+  );
+}
+
+/** Derives an address family's descriptor with its resolver, as `scanAccounts` does. */
+export function deriveAddress(
+  runOnTransport: RunOnTransport,
+  candidate: AccountCandidate,
+): Observable<AccountDescriptor> {
+  return deriveAddressWithPublicKey(runOnTransport, candidate).pipe(
+    map(({ descriptor }) => descriptor),
   );
 }

@@ -62,7 +62,7 @@ const genericBridgeConfigKeys: Record<string, string> = {
   stacks: "config_stacks_generic_bridge",
 };
 
-function shouldUseGenericCoinFrameworkBridge(family: string) {
+export function shouldUseGenericCoinFrameworkBridge(family: string) {
   if (!isGenericCoinFrameworkFamily(family)) return false;
   const configKey = genericBridgeConfigKeys[family];
   return !configKey || Boolean(LiveConfig.getValueByKey(configKey));

@@ -352,7 +352,7 @@ export const makeSync =
 
               a = recalculateAccountBalanceHistories(a, acc);
 
-              if (!a.used) {
+              if (shape.used === undefined && !a.used) {
                 a.used = !isAccountEmpty(a);
               }
 
