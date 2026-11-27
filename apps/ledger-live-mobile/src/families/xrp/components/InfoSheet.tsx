@@ -39,6 +39,7 @@ export function InfoSheet({ isOpen, onClose, testID, ...contentProps }: Props) {
       isRequestingToBeOpened={isOpen}
       onClose={onClose}
       enableDynamicSizing
+      contentHasBottomSpace
       testID={testID}
     >
       <InfoSheetContent {...contentProps} />

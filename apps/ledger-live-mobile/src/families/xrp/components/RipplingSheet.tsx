@@ -77,6 +77,7 @@ export function RipplingSheet({ isOpen, onClose, ...contentProps }: Props) {
       isRequestingToBeOpened={isOpen}
       onClose={onClose}
       enableDynamicSizing
+      contentHasBottomSpace
       testID="xrp-rippling-sheet"
     >
       <SheetContent {...contentProps} />

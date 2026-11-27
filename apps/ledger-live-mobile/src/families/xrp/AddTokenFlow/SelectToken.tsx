@@ -147,6 +147,7 @@ export default function SelectToken(props: Props) {
         isRequestingToBeOpened={viewModel.isEmpty}
         onClose={viewModel.isEmpty ? viewModel.onClose : undefined}
         enableDynamicSizing
+        contentHasBottomSpace
         restoreOnFocus
         testID="xrp-no-assets-sheet"
       >
