@@ -143,7 +143,7 @@ jobs:
           url: ${{ vars.ARTIFACTORY_MAVEN_URL }}
 
       - name: setup JDK 17
-        uses: actions/setup-java@03ad4de0992f5dab5e18fcb136590ce7c4a0ac95 # v5.6.0
+        uses: actions/setup-java@77dd5b2ce225ea11469928ac317850245a74ae78 # v6.2.0
         with:
           distribution: "zulu"
           java-version: "17"
