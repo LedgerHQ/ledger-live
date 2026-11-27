@@ -1,5 +1,18 @@
 # @ledgerhq/transaction-observability
 
+## 0.8.0-next.0
+
+### Minor Changes
+
+- [#24686](https://github.com/LedgerHQ/ledger-live/pull/24686) [`faeace9`](https://github.com/LedgerHQ/ledger-live/commit/faeace97ae3de8c6e403e66732bdc16d57d78296) Thanks [@Valentin-Ledger](https://github.com/Valentin-Ledger)! - Report Borrow transaction attempts left pending when the Borrow screen is torn down to the Borrow lifecycle sink on path `borrow`, behind the new `borrowTxLifecycleMonitoring` flag on Desktop and Mobile. Each attempt stays with the product that opened it, so Borrow never closes or reroutes an attempt Earn owns.
+
+- [#25464](https://github.com/LedgerHQ/ledger-live/pull/25464) [`9159aba`](https://github.com/LedgerHQ/ledger-live/commit/9159aba9b313cf37b74488b1917f95c0ea064ade) Thanks [@Valentin-Ledger](https://github.com/Valentin-Ledger)! - Report Earn live app sign attempts left pending when their webview is torn down as `failure/abandoned` on path `earn`, behind `earnTxLifecycleMonitoring`; each webview only abandons its own attempt, and the mobile Earn tab, which stays mounted, only reports on unmount
+
+### Patch Changes
+
+- Updated dependencies [[`c1f5e3f`](https://github.com/LedgerHQ/ledger-live/commit/c1f5e3f808ab22c42bd0cbc1125106ff84a6e4c7), [`35e9ca8`](https://github.com/LedgerHQ/ledger-live/commit/35e9ca85552282ddc37c47bc4212c81b06a2ee2c), [`52ba745`](https://github.com/LedgerHQ/ledger-live/commit/52ba7459509dbdaeb551bb24b8bd7965e2f0f252)]:
+  - @ledgerhq/types-live@6.134.0-next.0
+
 ## 0.7.0
 
 ### Minor Changes

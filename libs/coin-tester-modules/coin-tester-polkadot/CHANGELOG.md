@@ -1,5 +1,15 @@
 # @ledgerhq/coin-tester-polkadot
 
+## 1.22.3-next.0
+
+### Patch Changes
+
+- Updated dependencies [[`afe8aea`](https://github.com/LedgerHQ/ledger-live/commit/afe8aea94052e7475b17e203028ca7e02e2848e1), [`a8fa5ed`](https://github.com/LedgerHQ/ledger-live/commit/a8fa5ed0c6cc91f08c0b2f3cb7638de82ed66c3e), [`c1f5e3f`](https://github.com/LedgerHQ/ledger-live/commit/c1f5e3f808ab22c42bd0cbc1125106ff84a6e4c7), [`6f99261`](https://github.com/LedgerHQ/ledger-live/commit/6f992617634a052d86bb1ff059779009cc5c4da6), [`44c63d1`](https://github.com/LedgerHQ/ledger-live/commit/44c63d1ed48ea109d1d7328553f29cef9cd52653), [`1049173`](https://github.com/LedgerHQ/ledger-live/commit/1049173dd551ad24deb427d55f2aa5dfc8f28f09), [`35e9ca8`](https://github.com/LedgerHQ/ledger-live/commit/35e9ca85552282ddc37c47bc4212c81b06a2ee2c), [`866ed62`](https://github.com/LedgerHQ/ledger-live/commit/866ed62f04647abce7efeff0ebefe79c8e5bafde), [`52ba745`](https://github.com/LedgerHQ/ledger-live/commit/52ba7459509dbdaeb551bb24b8bd7965e2f0f252), [`fcd1d97`](https://github.com/LedgerHQ/ledger-live/commit/fcd1d979dcce6f25d9e4dfcf7dd6b68d79b8b03c), [`fad072f`](https://github.com/LedgerHQ/ledger-live/commit/fad072fe09bf0f17548890472f1f123749d71351)]:
+  - @ledgerhq/ledger-wallet-framework@3.14.0-next.0
+  - @ledgerhq/coin-tester@0.22.0-next.0
+  - @ledgerhq/types-live@6.134.0-next.0
+  - @ledgerhq/coin-polkadot@9.5.0-next.0
+
 ## 1.22.2
 
 ### Patch Changes

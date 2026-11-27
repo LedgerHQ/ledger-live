@@ -1,5 +1,23 @@
 # @features/flow-pay-contact
 
+## 0.11.0-next.0
+
+### Minor Changes
+
+- [#25369](https://github.com/LedgerHQ/ledger-live/pull/25369) [`5c7f0ef`](https://github.com/LedgerHQ/ledger-live/commit/5c7f0ef8aaebce9ac0dcf1eb509dd0756f389b10) Thanks [@LucasWerey](https://github.com/LucasWerey)! - Upgrade Lumen to latest
+
+  - Updated `@ledgerhq/lumen-design-core` to `0.1.37`
+  - Updated `@ledgerhq/lumen-ui-react` to `0.1.75`
+  - Updated `@ledgerhq/lumen-ui-rnative` to `0.1.76`
+
+### Patch Changes
+
+- Updated dependencies [[`5c7f0ef`](https://github.com/LedgerHQ/ledger-live/commit/5c7f0ef8aaebce9ac0dcf1eb509dd0756f389b10), [`56af9ec`](https://github.com/LedgerHQ/ledger-live/commit/56af9ec64a0dcd29974c02102b2eb75a604940c0)]:
+  - @features/flow-contacts-detail@0.6.0-next.0
+  - @features/platform-contacts@0.13.2-next.0
+  - @features/flow-contacts-add-contact@0.10.4-next.0
+  - @domain/entity-contact@0.13.2-next.0
+
 ## 0.10.0
 
 ### Minor Changes

@@ -1,5 +1,11 @@
 # @domain/entity-device-os-update
 
+## 0.4.0-next.0
+
+### Minor Changes
+
+- [#25211](https://github.com/LedgerHQ/ledger-live/pull/25211) [`0e667e6`](https://github.com/LedgerHQ/ledger-live/commit/0e667e61b34339dc31695190ed92141ab68259b2) Thanks [@benruseau](https://github.com/benruseau)! - Show the target OS version name with its provider suffix in the OS update banner and What's new
+
 ## 0.3.0
 
 ### Minor Changes

@@ -1,6 +1,6 @@
 {
   "name": "@domain/entity-network",
-  "version": "0.1.0",
+  "version": "0.2.0-next.0",
   "private": true,
   "description": "Network entity: the CAL network id, its bridges to the currency id, and the address on a network",
   "main": "src/index.ts",

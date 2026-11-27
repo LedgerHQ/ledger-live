@@ -1,5 +1,16 @@
 # @features/platform-device-action-content
 
+## 0.6.0-next.0
+
+### Minor Changes
+
+- [#25632](https://github.com/LedgerHQ/ledger-live/pull/25632) [`06e3668`](https://github.com/LedgerHQ/ledger-live/commit/06e3668c302b4e483774dc661f32e3b49d22e03b) Thanks [@ysitbon](https://github.com/ysitbon)! - Drop the `styled-components` peer dependency; the dark-theme tests mount `StyleProvider` from `@features/platform-style` instead.
+
+### Patch Changes
+
+- Updated dependencies [[`5c7f0ef`](https://github.com/LedgerHQ/ledger-live/commit/5c7f0ef8aaebce9ac0dcf1eb509dd0756f389b10)]:
+  - @features/platform-style@0.6.0-next.0
+
 ## 0.5.0
 
 ### Minor Changes

@@ -1,6 +1,6 @@
 {
   "name": "@shared/share-sheet",
-  "version": "0.1.0",
+  "version": "0.2.0-next.0",
   "private": true,
   "description": "Opens the system share sheet with a text and, optionally, an image of a view",
   "main": "src/index.ts",

@@ -1,5 +1,20 @@
 # @domain/api-aggregated-assets
 
+## 0.8.0-next.0
+
+### Minor Changes
+
+- [#25430](https://github.com/LedgerHQ/ledger-live/pull/25430) [`59a49df`](https://github.com/LedgerHQ/ledger-live/commit/59a49dfd0974de3bd3ff379ce843a54910ba5a97) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - Remove the unused sparkline data from market items: drop `sparklineIn7d`, `SparklineSvgData` and the raw `sparkline` field
+
+### Patch Changes
+
+- Updated dependencies [[`afe8aea`](https://github.com/LedgerHQ/ledger-live/commit/afe8aea94052e7475b17e203028ca7e02e2848e1), [`baf40c7`](https://github.com/LedgerHQ/ledger-live/commit/baf40c7721ae8525c7d99d48667a749d8de4e59a)]:
+  - @domain/entity-currency-crypto@0.21.0-next.0
+  - @shared/api-services@0.14.0-next.0
+  - @domain/api-currency-token@0.9.1-next.0
+  - @domain/entity-currency@0.5.2-next.0
+  - @domain/entity-currency-token@0.6.1-next.0
+
 ## 0.7.2
 
 ### Patch Changes

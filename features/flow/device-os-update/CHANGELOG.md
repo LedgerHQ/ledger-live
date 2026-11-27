@@ -1,5 +1,19 @@
 # @features/flow-device-os-update
 
+## 0.4.0-next.0
+
+### Minor Changes
+
+- [#25211](https://github.com/LedgerHQ/ledger-live/pull/25211) [`0e667e6`](https://github.com/LedgerHQ/ledger-live/commit/0e667e61b34339dc31695190ed92141ab68259b2) Thanks [@benruseau](https://github.com/benruseau)! - Show the target OS version name with its provider suffix in the OS update banner and What's new
+
+### Patch Changes
+
+- Updated dependencies [[`06e3668`](https://github.com/LedgerHQ/ledger-live/commit/06e3668c302b4e483774dc661f32e3b49d22e03b), [`5c7f0ef`](https://github.com/LedgerHQ/ledger-live/commit/5c7f0ef8aaebce9ac0dcf1eb509dd0756f389b10), [`0e667e6`](https://github.com/LedgerHQ/ledger-live/commit/0e667e61b34339dc31695190ed92141ab68259b2)]:
+  - @features/platform-device-action-content@0.6.0-next.0
+  - @shared/ui-info-state@0.9.0-next.0
+  - @domain/entity-device-os-update@0.4.0-next.0
+  - @features/platform-device-os-update@0.4.0-next.0
+
 ## 0.3.0
 
 ### Minor Changes

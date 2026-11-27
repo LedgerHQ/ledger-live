@@ -1,5 +1,20 @@
 # @features/platform-currencies
 
+## 0.15.0-next.0
+
+### Minor Changes
+
+- [#25043](https://github.com/LedgerHQ/ledger-live/pull/25043) [`baf40c7`](https://github.com/LedgerHQ/ledger-live/commit/baf40c7721ae8525c7d99d48667a749d8de4e59a) Thanks [@mateuszmarcinkowski-ext-afk](https://github.com/mateuszmarcinkowski-ext-afk)! - Stop retrying a CAL request answered with 403 or 407, as a proxy that denies the host answers the same way every time, and keep the HTTP status on LedgerAPI4xx and LedgerAPI5xx, which a CAL 4xx or 5xx page that is not JSON now raises with an empty message instead of an Error with the parse text
+
+### Patch Changes
+
+- Updated dependencies [[`afe8aea`](https://github.com/LedgerHQ/ledger-live/commit/afe8aea94052e7475b17e203028ca7e02e2848e1), [`baf40c7`](https://github.com/LedgerHQ/ledger-live/commit/baf40c7721ae8525c7d99d48667a749d8de4e59a)]:
+  - @domain/entity-currency-crypto@0.21.0-next.0
+  - @shared/api-services@0.14.0-next.0
+  - @features/platform-feature-flags@0.13.2-next.0
+  - @domain/api-currency-token@0.9.1-next.0
+  - @domain/entity-currency-token@0.6.1-next.0
+
 ## 0.14.1
 
 ### Patch Changes

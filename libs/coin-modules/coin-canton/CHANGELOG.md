@@ -1,5 +1,36 @@
 # @ledgerhq/coin-canton
 
+## 4.0.0-next.0
+
+### Major Changes
+
+- [#25610](https://github.com/LedgerHQ/ledger-live/pull/25610) [`cf74268`](https://github.com/LedgerHQ/ledger-live/commit/cf74268e58c112da0f00b5640e7b761bb97b4914) Thanks [@lysyi3m](https://github.com/lysyi3m)! - Read the coin-canton gateway page size, cache TTLs, reserve and gateway switch from `config_currency_canton_network*`, where they are required with their values in `cantonDefaults`; an invalid or missing value throws `CantonInvalidConfigError`. `gatewayUrl` and `nodeId` are required, `nodeUrl` is dropped, and the network functions and caches take the `CantonContext` first.
+
+### Minor Changes
+
+- [#25573](https://github.com/LedgerHQ/ledger-live/pull/25573) [`c1d2f34`](https://github.com/LedgerHQ/ledger-live/commit/c1d2f347303382fd6394a9ae8b3746a962bd207c) Thanks [@amaslakov](https://github.com/amaslakov)! - Offer Send max on Canton: the amount fills with the whole spendable balance, minus the fee for CC
+
+- [#25256](https://github.com/LedgerHQ/ledger-live/pull/25256) [`69913ea`](https://github.com/LedgerHQ/ledger-live/commit/69913ea3e54831b7f6ddf731cd43d2857048e365) Thanks [@gre-ledger](https://github.com/gre-ledger)! - Expose getAccountStatus on the Canton coin module for account discovery
+
+- [#25376](https://github.com/LedgerHQ/ledger-live/pull/25376) [`ae89855`](https://github.com/LedgerHQ/ledger-live/commit/ae898555a9637ca2db1853fe34eadfade620b03c) Thanks [@amaslakov](https://github.com/amaslakov)! - Reduce repeated Canton history scans and record received offers that sync held back once they settle
+
+- [#25626](https://github.com/LedgerHQ/ledger-live/pull/25626) [`aec8cf1`](https://github.com/LedgerHQ/ledger-live/commit/aec8cf112d8ab931bc7db1556f200188973d680c) Thanks [@lysyi3m](https://github.com/lysyi3m)! - Fill the coin module API's Canton Send max with the amount and tiered fee the wallet's Send max uses
+
+- [#25079](https://github.com/LedgerHQ/ledger-live/pull/25079) [`3854f2a`](https://github.com/LedgerHQ/ledger-live/commit/3854f2a5178b26b00ec34a347e9f2375892a300d) Thanks [@ishaba](https://github.com/ishaba)! - Exclude locked holdings from the Canton too-many-UTXOs count, as the gateway picks transfer inputs from unlocked holdings only
+
+- [#25550](https://github.com/LedgerHQ/ledger-live/pull/25550) [`c0f52e3`](https://github.com/LedgerHQ/ledger-live/commit/c0f52e3fca89dd0c2d2fb4ecbb2553e69b7e5c9d) Thanks [@lysyi3m](https://github.com/lysyi3m)! - Flag failed operations on bridge sync; shape each pending send as the sync records it and keep it until its hash is synced; block a send whose token account is gone
+
+- [#25619](https://github.com/LedgerHQ/ledger-live/pull/25619) [`2bf8c04`](https://github.com/LedgerHQ/ledger-live/commit/2bf8c041f54e6400150a49e78515e7f14680606c) Thanks [@amaslakov](https://github.com/amaslakov)! - Fill the largest Canton Send max amount the tiered fee allows, and charge the tiered fee's 0.001% on the whole part of any amount above 100,000,000 CC
+
+- [#25078](https://github.com/LedgerHQ/ledger-live/pull/25078) [`440f25f`](https://github.com/LedgerHQ/ledger-live/commit/440f25f86cc2974d80e2c29f823db526dcc5e178) Thanks [@ishaba](https://github.com/ishaba)! - Lower the Canton too-many-UTXOs thresholds to the device signing limit (popup above 8, warning above 6)
+
+### Patch Changes
+
+- Updated dependencies [[`afe8aea`](https://github.com/LedgerHQ/ledger-live/commit/afe8aea94052e7475b17e203028ca7e02e2848e1), [`c1f5e3f`](https://github.com/LedgerHQ/ledger-live/commit/c1f5e3f808ab22c42bd0cbc1125106ff84a6e4c7), [`44c63d1`](https://github.com/LedgerHQ/ledger-live/commit/44c63d1ed48ea109d1d7328553f29cef9cd52653), [`35e9ca8`](https://github.com/LedgerHQ/ledger-live/commit/35e9ca85552282ddc37c47bc4212c81b06a2ee2c), [`866ed62`](https://github.com/LedgerHQ/ledger-live/commit/866ed62f04647abce7efeff0ebefe79c8e5bafde), [`52ba745`](https://github.com/LedgerHQ/ledger-live/commit/52ba7459509dbdaeb551bb24b8bd7965e2f0f252), [`fcd1d97`](https://github.com/LedgerHQ/ledger-live/commit/fcd1d979dcce6f25d9e4dfcf7dd6b68d79b8b03c), [`24ce1e8`](https://github.com/LedgerHQ/ledger-live/commit/24ce1e804772ca1f3bbdf74143effce4e021821d)]:
+  - @ledgerhq/ledger-wallet-framework@3.14.0-next.0
+  - @ledgerhq/types-live@6.134.0-next.0
+  - @ledgerhq/hw-app-canton@0.18.0-next.0
+
 ## 3.0.0
 
 ### Major Changes

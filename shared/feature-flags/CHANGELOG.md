@@ -1,5 +1,33 @@
 # @shared/feature-flags
 
+## 0.33.0-next.0
+
+### Minor Changes
+
+- [#24686](https://github.com/LedgerHQ/ledger-live/pull/24686) [`faeace9`](https://github.com/LedgerHQ/ledger-live/commit/faeace97ae3de8c6e403e66732bdc16d57d78296) Thanks [@Valentin-Ledger](https://github.com/Valentin-Ledger)! - Report Borrow transaction attempts left pending when the Borrow screen is torn down to the Borrow lifecycle sink on path `borrow`, behind the new `borrowTxLifecycleMonitoring` flag on Desktop and Mobile. Each attempt stays with the product that opened it, so Borrow never closes or reroutes an attempt Earn owns.
+
+- [#25646](https://github.com/LedgerHQ/ledger-live/pull/25646) [`9e67809`](https://github.com/LedgerHQ/ledger-live/commit/9e678098ea38d509fc4f19ffe05a2f06003a41c5) Thanks [@KVNLS](https://github.com/KVNLS)! - Update the Datadog browser SDK to v7, with trace baggage behind the lldDatadog flag
+
+- [#25500](https://github.com/LedgerHQ/ledger-live/pull/25500) [`0568a9d`](https://github.com/LedgerHQ/ledger-live/commit/0568a9d51bcc7244bad8ae415c7775697fc93811) Thanks [@francois-guerin-ledger](https://github.com/francois-guerin-ledger)! - Move the Nano S deprecated currencies into the llmNanoSDeprecation params and remove the VTHO graph, token support link and EVM gas prefill leaks from generic Mobile code
+
+- [#25205](https://github.com/LedgerHQ/ledger-live/pull/25205) [`7627a66`](https://github.com/LedgerHQ/ledger-live/commit/7627a66e667eb4b00ca417603c39d0adf5e2a094) Thanks [@OlivierFreyssinet](https://github.com/OlivierFreyssinet)! - Add the lwmMyWalletDeviceList flag, off by default, to show the new device list in My Wallet on mobile
+
+- [#25199](https://github.com/LedgerHQ/ledger-live/pull/25199) [`5ea4203`](https://github.com/LedgerHQ/ledger-live/commit/5ea4203bdc7b89f7ef0ffe12ae9036b679320a97) Thanks [@deepyjr](https://github.com/deepyjr)! - Add the newSettings flag and the settings flow package for the new Settings, and report the flag in analytics
+
+- [#25699](https://github.com/LedgerHQ/ledger-live/pull/25699) [`089284b`](https://github.com/LedgerHQ/ledger-live/commit/089284b16bfee3dd5f6255799c58f5c8dbe108c8) Thanks [@shazzzam](https://github.com/shazzzam)! - Add the LI.FI Intents swap provider terms of use, name and scan.li.fi explorer link
+
+- [#25352](https://github.com/LedgerHQ/ledger-live/pull/25352) [`35e9ca8`](https://github.com/LedgerHQ/ledger-live/commit/35e9ca85552282ddc37c47bc4212c81b06a2ee2c) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - Remove the unused lldNetworkBasedAddAccount feature flag and its desktop analytics attribute
+
+- [#25021](https://github.com/LedgerHQ/ledger-live/pull/25021) [`4779bbd`](https://github.com/LedgerHQ/ledger-live/commit/4779bbd567b2f36cf01751c022a978b2d93cf288) Thanks [@CremaFR](https://github.com/CremaFR)! - Sign Perps trading actions with the Device Intent Executor behind the ptxPerpsDeviceIntentSign and ptxPerpsDeviceIntentSignMobile flags
+
+- [#25503](https://github.com/LedgerHQ/ledger-live/pull/25503) [`31cc80c`](https://github.com/LedgerHQ/ledger-live/commit/31cc80c18f3eeed000ce3ee3d97e8e1bdcd1bb37) Thanks [@dgreen-ledger](https://github.com/dgreen-ledger)! - Add a recover param to the deviceOnboarding feature flag, on by default. Turning it off hides the Ledger Recover steps of the unseeded device flow
+
+- [#25487](https://github.com/LedgerHQ/ledger-live/pull/25487) [`513bdba`](https://github.com/LedgerHQ/ledger-live/commit/513bdba4eee8332446903bb853ec5bc608cb46b9) Thanks [@Valentin-Ledger](https://github.com/Valentin-Ledger)! - Add the borrowMarkets flag, off by default, mapping each Borrow stablecoin to its enabled collateral currency ids
+
+- [#25509](https://github.com/LedgerHQ/ledger-live/pull/25509) [`62493e1`](https://github.com/LedgerHQ/ledger-live/commit/62493e1d65a96ef1998f1ff8fd0e1880ae6190b9) Thanks [@deepyjr](https://github.com/deepyjr)! - Let the newSettings params choose which rows Apollo hides in the new Settings
+
+- [#25398](https://github.com/LedgerHQ/ledger-live/pull/25398) [`78d27e7`](https://github.com/LedgerHQ/ledger-live/commit/78d27e7045c452d503ad88e1ffb4e2621ef00074) Thanks [@dilaouid](https://github.com/dilaouid)! - feat(wc): Enable device intent signing for the Wallet Connect live app and track it as the wallet_connect flow
+
 ## 0.32.0
 
 ### Minor Changes

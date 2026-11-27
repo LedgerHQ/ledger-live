@@ -1,5 +1,12 @@
 # @domain/entity-contact
 
+## 0.13.2-next.0
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @domain/entity-currency@0.5.2-next.0
+
 ## 0.13.1
 
 ### Patch Changes

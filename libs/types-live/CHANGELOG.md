@@ -1,5 +1,15 @@
 # @ledgerhq/types-live
 
+## 6.134.0-next.0
+
+### Minor Changes
+
+- [#25362](https://github.com/LedgerHQ/ledger-live/pull/25362) [`c1f5e3f`](https://github.com/LedgerHQ/ledger-live/commit/c1f5e3f808ab22c42bd0cbc1125106ff84a6e4c7) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - Remove the legacy starred accounts feature: drop `starredIds` from `AccountUserData` and `starred` from `AccountRaw` and `TokenAccountRaw`
+
+- [#25352](https://github.com/LedgerHQ/ledger-live/pull/25352) [`35e9ca8`](https://github.com/LedgerHQ/ledger-live/commit/35e9ca85552282ddc37c47bc4212c81b06a2ee2c) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - Remove the unused lldNetworkBasedAddAccount feature flag and its desktop analytics attribute
+
+- [#25583](https://github.com/LedgerHQ/ledger-live/pull/25583) [`52ba745`](https://github.com/LedgerHQ/ledger-live/commit/52ba7459509dbdaeb551bb24b8bd7965e2f0f252) Thanks [@lysyi3m](https://github.com/lysyi3m)! - Make coin-concordium stateless: `createBridges` takes a `Context`, and the proxy tuning, fee fallbacks, cache TTLs and WalletConnect relay come from `config_currency_concordium*`. `assignFromAccountRaw` may return a promise, which deserialization awaits.
+
 ## 6.133.0
 
 ### Minor Changes

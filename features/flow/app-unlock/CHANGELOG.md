@@ -1,5 +1,12 @@
 # @features/flow-app-unlock
 
+## 0.2.4-next.0
+
+### Patch Changes
+
+- Updated dependencies [[`5c7f0ef`](https://github.com/LedgerHQ/ledger-live/commit/5c7f0ef8aaebce9ac0dcf1eb509dd0756f389b10)]:
+  - @shared/ui-info-state@0.9.0-next.0
+
 ## 0.2.3
 
 ### Patch Changes

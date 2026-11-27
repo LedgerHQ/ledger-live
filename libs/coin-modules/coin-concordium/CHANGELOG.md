@@ -1,5 +1,25 @@
 # @ledgerhq/coin-concordium
 
+## 2.0.0-next.0
+
+### Major Changes
+
+- [#25583](https://github.com/LedgerHQ/ledger-live/pull/25583) [`52ba745`](https://github.com/LedgerHQ/ledger-live/commit/52ba7459509dbdaeb551bb24b8bd7965e2f0f252) Thanks [@lysyi3m](https://github.com/lysyi3m)! - Make coin-concordium stateless: `createBridges` takes a `Context`, and the proxy tuning, fee fallbacks, cache TTLs and WalletConnect relay come from `config_currency_concordium*`. `assignFromAccountRaw` may return a promise, which deserialization awaits.
+
+### Minor Changes
+
+- [#25428](https://github.com/LedgerHQ/ledger-live/pull/25428) [`452b4ed`](https://github.com/LedgerHQ/ledger-live/commit/452b4ed3cc44a6c9dc9726dfe0aa840b0cd3babd) Thanks [@gre-ledger](https://github.com/gre-ledger)! - Follow coin-modules ADR-079: the coin module account status answers `activated` instead of `isOnboarded`, each field optional, and the asset activation gate no longer names its method
+
+- [#25255](https://github.com/LedgerHQ/ledger-live/pull/25255) [`6bb12b6`](https://github.com/LedgerHQ/ledger-live/commit/6bb12b62cf964b8bb137701c5f7d1b5cdc43e6e6) Thanks [@gre-ledger](https://github.com/gre-ledger)! - Answer the Concordium account status from its coin module: onboarded and used once the public key has an account on chain
+
+- [#25546](https://github.com/LedgerHQ/ledger-live/pull/25546) [`42d1fd6`](https://github.com/LedgerHQ/ledger-live/commit/42d1fd68d14197b3d490118403cd001305f5860d) Thanks [@amaslakov](https://github.com/amaslakov)! - Keep the fee of every transaction type in Concordium history, sponsored ones included, and the CCD that contracts, scheduled transfers and shielding move, in getBlock too. Stored histories are rebuilt after the upgrade.
+
+### Patch Changes
+
+- Updated dependencies [[`afe8aea`](https://github.com/LedgerHQ/ledger-live/commit/afe8aea94052e7475b17e203028ca7e02e2848e1), [`c1f5e3f`](https://github.com/LedgerHQ/ledger-live/commit/c1f5e3f808ab22c42bd0cbc1125106ff84a6e4c7), [`44c63d1`](https://github.com/LedgerHQ/ledger-live/commit/44c63d1ed48ea109d1d7328553f29cef9cd52653), [`35e9ca8`](https://github.com/LedgerHQ/ledger-live/commit/35e9ca85552282ddc37c47bc4212c81b06a2ee2c), [`866ed62`](https://github.com/LedgerHQ/ledger-live/commit/866ed62f04647abce7efeff0ebefe79c8e5bafde), [`52ba745`](https://github.com/LedgerHQ/ledger-live/commit/52ba7459509dbdaeb551bb24b8bd7965e2f0f252), [`fcd1d97`](https://github.com/LedgerHQ/ledger-live/commit/fcd1d979dcce6f25d9e4dfcf7dd6b68d79b8b03c)]:
+  - @ledgerhq/ledger-wallet-framework@3.14.0-next.0
+  - @ledgerhq/types-live@6.134.0-next.0
+
 ## 1.9.0
 
 ### Minor Changes

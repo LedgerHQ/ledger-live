@@ -1,5 +1,21 @@
 # @ledgerhq/coin-tron
 
+## 10.6.0-next.0
+
+### Minor Changes
+
+- [#25582](https://github.com/LedgerHQ/ledger-live/pull/25582) [`44c63d1`](https://github.com/LedgerHQ/ledger-live/commit/44c63d1ed48ea109d1d7328553f29cef9cd52653) Thanks [@qperrot](https://github.com/qperrot)! - Show a failed token transfer as a failed send of its attempted amount, without moving the token balance history
+
+- [#25316](https://github.com/LedgerHQ/ledger-live/pull/25316) [`b5dfc59`](https://github.com/LedgerHQ/ledger-live/commit/b5dfc59ec046e0daca132e41002413a9fc0415d4) Thanks [@ishaba](https://github.com/ishaba)! - Sum TRC20 transfers of one token in one direction within a transaction so none is lost
+
+- [#25313](https://github.com/LedgerHQ/ledger-live/pull/25313) [`d735125`](https://github.com/LedgerHQ/ledger-live/commit/d73512533b0b2e31337953877db54b735e725de5) Thanks [@ishaba](https://github.com/ishaba)! - Time out and retry TronGrid POSTs except broadcasts, and fail the history listing when the minHeight block lookup fails instead of restarting from zero
+
+- [#25284](https://github.com/LedgerHQ/ledger-live/pull/25284) [`a376ffb`](https://github.com/LedgerHQ/ledger-live/commit/a376ffb073b8cebd8d59da988e21361f17d73a70) Thanks [@renovate-operator-ledger](https://github.com/apps/renovate-operator-ledger)! - fix(deps): update dependency tronweb to v6.5.2
+
+  - Updated `tronweb` to `6.5.2`
+
+- [#25294](https://github.com/LedgerHQ/ledger-live/pull/25294) [`5f2a864`](https://github.com/LedgerHQ/ledger-live/commit/5f2a8649a328cc929e823586b124d5a96d0cae42) Thanks [@ishaba](https://github.com/ishaba)! - Fix the operation history walk stopping early and dropping older operations
+
 ## 10.5.0
 
 ### Minor Changes

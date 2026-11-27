@@ -1,5 +1,39 @@
 # @ledgerhq/wallet-cli
 
+## 3.8.0-next.0
+
+### Minor Changes
+
+- [#25043](https://github.com/LedgerHQ/ledger-live/pull/25043) [`baf40c7`](https://github.com/LedgerHQ/ledger-live/commit/baf40c7721ae8525c7d99d48667a749d8de4e59a) Thanks [@mateuszmarcinkowski-ext-afk](https://github.com/mateuszmarcinkowski-ext-afk)! - Name the host a failed network request could not reach, with a hint to allow it in a sandbox, or saying it timed out or its TLS certificate is not trusted (`host` and `hint` in JSON errors), give Earn HTTP failures the `EarnApiHttpError` code and `http_status`, and read a proxy's refused tunnel on Bun 1.4.4 as its HTTP status
+
+- [#25436](https://github.com/LedgerHQ/ledger-live/pull/25436) [`8030207`](https://github.com/LedgerHQ/ledger-live/commit/803020759f7f1b66ddeede81a2cd88c4fc36708a) Thanks [@gre-ledger](https://github.com/gre-ledger)! - Keep `@domain/entity-account-descriptor` for the edges: AccountUUID moves to `@domain/entity-account`, NetworkId and Address to the new `@domain/entity-network`, DerivationPath and the legacy path bridges to `@domain/entity-derivation`
+
+- [#25359](https://github.com/LedgerHQ/ledger-live/pull/25359) [`5dfd2fc`](https://github.com/LedgerHQ/ledger-live/commit/5dfd2fcf31fb86d5f3336b349ee14effc89ffa6b) Thanks [@michalmisiejuk-ext-collab](https://github.com/michalmisiejuk-ext-collab)! - Fail `ring destroy` with exit 1 when stdin ends before the confirmation, exit 130 on Ctrl-C and cancel on Ctrl-D at the prompt, instead of hanging at 100% CPU
+
+- [#25592](https://github.com/LedgerHQ/ledger-live/pull/25592) [`32dd38a`](https://github.com/LedgerHQ/ledger-live/commit/32dd38a82237a062e102d5cdc466db4682bf100c) Thanks [@gre-ledger](https://github.com/gre-ledger)! - Deprecate `currencyIdFromNetwork`: keep it for legacy reconciliation only; prefer the asset or account data for product logic.
+
+- [#25321](https://github.com/LedgerHQ/ledger-live/pull/25321) [`71d36df`](https://github.com/LedgerHQ/ledger-live/commit/71d36dffa7755351d345333b50530392b194dd7b) Thanks [@gre-ledger](https://github.com/gre-ledger)! - Replace isomorphic-ws with the native global WebSocket
+
+- [#25043](https://github.com/LedgerHQ/ledger-live/pull/25043) [`baf40c7`](https://github.com/LedgerHQ/ledger-live/commit/baf40c7721ae8525c7d99d48667a749d8de4e59a) Thanks [@mateuszmarcinkowski-ext-afk](https://github.com/mateuszmarcinkowski-ext-afk)! - Stop retrying a CAL request answered with 403 or 407, as a proxy that denies the host answers the same way every time, and keep the HTTP status on LedgerAPI4xx and LedgerAPI5xx, which a CAL 4xx or 5xx page that is not JSON now raises with an empty message instead of an Error with the parse text
+
+- [#25299](https://github.com/LedgerHQ/ledger-live/pull/25299) [`101c8e3`](https://github.com/LedgerHQ/ledger-live/commit/101c8e3d6c41276e59352a23fee3883767b9b79b) Thanks [@renovate-operator-ledger](https://github.com/apps/renovate-operator-ledger)! - chore(deps): update dependency @types/debug to v4.1.13
+
+  - Updated `@types/debug` to `4.1.13`
+
+- [#25302](https://github.com/LedgerHQ/ledger-live/pull/25302) [`fad072f`](https://github.com/LedgerHQ/ledger-live/commit/fad072fe09bf0f17548890472f1f123749d71351) Thanks [@renovate-operator-ledger](https://github.com/apps/renovate-operator-ledger)! - chore(deps): update dependency @types/node to v24.12.4
+
+  - Updated `@types/node` to `24.12.4`
+
+- [#25306](https://github.com/LedgerHQ/ledger-live/pull/25306) [`bae613e`](https://github.com/LedgerHQ/ledger-live/commit/bae613e410c4f3e0445a125896bc8e80bcd4d1f0) Thanks [@renovate-operator-ledger](https://github.com/apps/renovate-operator-ledger)! - chore(deps): update dependency oxfmt to v0.79.0
+
+  - Updated `oxfmt` to `0.79.0`
+
+- [#25307](https://github.com/LedgerHQ/ledger-live/pull/25307) [`6d30714`](https://github.com/LedgerHQ/ledger-live/commit/6d30714c27a4404642599a028613bc5ae32f8bd8) Thanks [@renovate-operator-ledger](https://github.com/apps/renovate-operator-ledger)! - chore(deps): update dependency oxlint to v1.94.0
+
+  - Updated `oxlint` to `1.94.0`
+
+- [#24445](https://github.com/LedgerHQ/ledger-live/pull/24445) [`b634442`](https://github.com/LedgerHQ/ledger-live/commit/b6344424eff1e187901bac36a87188e7cfb1ae7f) Thanks [@gre-ledger](https://github.com/gre-ledger)! - Upgrade `usb` to 3.3.1 (Rust-based, WebUSB API) and drop the native addon embedding workaround
+
 ## 3.7.0
 
 ### Minor Changes

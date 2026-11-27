@@ -1,6 +1,6 @@
 {
   "name": "@domain/api-market-index-global",
-  "version": "0.1.0",
+  "version": "0.2.0-next.0",
   "private": true,
   "description": "Domain API client for the global market index: RTK Query endpoint injected into the Countervalues service api",
   "main": "src/index.ts",

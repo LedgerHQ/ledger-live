@@ -1,5 +1,19 @@
 # @features/flow-account-detail
 
+## 0.6.0-next.0
+
+### Minor Changes
+
+- [#25521](https://github.com/LedgerHQ/ledger-live/pull/25521) [`4755ff6`](https://github.com/LedgerHQ/ledger-live/commit/4755ff6d1827376a4651c76d640d34089107e2bc) Thanks [@mateuszpalosz-ext](https://github.com/mateuszpalosz-ext)! - Add an optional Manage assets item to the account settings menu, and open XRP Manage assets from it on desktop
+
+### Patch Changes
+
+- Updated dependencies [[`faeace9`](https://github.com/LedgerHQ/ledger-live/commit/faeace97ae3de8c6e403e66732bdc16d57d78296), [`4755ff6`](https://github.com/LedgerHQ/ledger-live/commit/4755ff6d1827376a4651c76d640d34089107e2bc), [`9e67809`](https://github.com/LedgerHQ/ledger-live/commit/9e678098ea38d509fc4f19ffe05a2f06003a41c5), [`0568a9d`](https://github.com/LedgerHQ/ledger-live/commit/0568a9d51bcc7244bad8ae415c7775697fc93811), [`27d87de`](https://github.com/LedgerHQ/ledger-live/commit/27d87de711ef01ffe5a21fd9a8f986c455e3c9c7), [`5c7f0ef`](https://github.com/LedgerHQ/ledger-live/commit/5c7f0ef8aaebce9ac0dcf1eb509dd0756f389b10), [`7627a66`](https://github.com/LedgerHQ/ledger-live/commit/7627a66e667eb4b00ca417603c39d0adf5e2a094), [`5ea4203`](https://github.com/LedgerHQ/ledger-live/commit/5ea4203bdc7b89f7ef0ffe12ae9036b679320a97), [`089284b`](https://github.com/LedgerHQ/ledger-live/commit/089284b16bfee3dd5f6255799c58f5c8dbe108c8), [`35e9ca8`](https://github.com/LedgerHQ/ledger-live/commit/35e9ca85552282ddc37c47bc4212c81b06a2ee2c), [`4779bbd`](https://github.com/LedgerHQ/ledger-live/commit/4779bbd567b2f36cf01751c022a978b2d93cf288), [`31cc80c`](https://github.com/LedgerHQ/ledger-live/commit/31cc80c18f3eeed000ce3ee3d97e8e1bdcd1bb37), [`513bdba`](https://github.com/LedgerHQ/ledger-live/commit/513bdba4eee8332446903bb853ec5bc608cb46b9), [`62493e1`](https://github.com/LedgerHQ/ledger-live/commit/62493e1d65a96ef1998f1ff8fd0e1880ae6190b9), [`78d27e7`](https://github.com/LedgerHQ/ledger-live/commit/78d27e7045c452d503ad88e1ffb4e2621ef00074), [`6b74045`](https://github.com/LedgerHQ/ledger-live/commit/6b740451bc0a1c698164821d74fc210a4b451dd5), [`ef25edc`](https://github.com/LedgerHQ/ledger-live/commit/ef25edc7e5a2845fdc1cb9d2c4490f0096038004)]:
+  - @shared/feature-flags@0.33.0-next.0
+  - @features/flow-account-detail-settings@0.4.0-next.0
+  - @features/flow-account-detail-hero@0.6.0-next.0
+  - @features/platform-feature-flags@0.13.2-next.0
+
 ## 0.5.1
 
 ### Patch Changes

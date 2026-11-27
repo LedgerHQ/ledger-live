@@ -1,6 +1,6 @@
 {
   "name": "@shared/device-locale",
-  "version": "0.1.0",
+  "version": "0.2.0-next.0",
   "private": true,
   "description": "Device language, region and time zone for React Native, with expo-localization",
   "main": "src/index.ts",

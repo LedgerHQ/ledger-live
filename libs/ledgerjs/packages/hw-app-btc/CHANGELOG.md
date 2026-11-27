@@ -1,5 +1,11 @@
 # @ledgerhq/hw-app-btc
 
+## 13.0.0-next.0
+
+### Major Changes
+
+- [#25419](https://github.com/LedgerHQ/ledger-live/pull/25419) [`afe8aea`](https://github.com/LedgerHQ/ledger-live/commit/afe8aea94052e7475b17e203028ca7e02e2848e1) Thanks [@qperrot](https://github.com/qperrot)! - Remove the discontinued Horizen (zencash) currency and its bitcoin-family support
+
 ## 12.4.0
 
 ### Minor Changes

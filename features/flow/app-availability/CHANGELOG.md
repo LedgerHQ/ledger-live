@@ -1,5 +1,13 @@
 # @features/flow-app-availability
 
+## 0.4.1-next.0
+
+### Patch Changes
+
+- Updated dependencies [[`5ac8385`](https://github.com/LedgerHQ/ledger-live/commit/5ac8385c5dcd43b8bc0686e6c0c98d14358c0e00)]:
+  - @shared/linking@0.5.0-next.0
+  - @domain/api-ofac@0.2.1-next.0
+
 ## 0.4.0
 
 ### Minor Changes

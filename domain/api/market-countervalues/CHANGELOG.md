@@ -1,5 +1,22 @@
 # @domain/api-market-countervalues
 
+## 0.5.0-next.0
+
+### Minor Changes
+
+- [#25436](https://github.com/LedgerHQ/ledger-live/pull/25436) [`8030207`](https://github.com/LedgerHQ/ledger-live/commit/803020759f7f1b66ddeede81a2cd88c4fc36708a) Thanks [@gre-ledger](https://github.com/gre-ledger)! - Keep `@domain/entity-account-descriptor` for the edges: AccountUUID moves to `@domain/entity-account`, NetworkId and Address to the new `@domain/entity-network`, DerivationPath and the legacy path bridges to `@domain/entity-derivation`
+
+### Patch Changes
+
+- Updated dependencies [[`8030207`](https://github.com/LedgerHQ/ledger-live/commit/803020759f7f1b66ddeede81a2cd88c4fc36708a), [`ed00958`](https://github.com/LedgerHQ/ledger-live/commit/ed00958b914fefe16416405ab3e109f0b2b1d67e), [`baf40c7`](https://github.com/LedgerHQ/ledger-live/commit/baf40c7721ae8525c7d99d48667a749d8de4e59a)]:
+  - @domain/entity-account-balance@0.4.0-next.0
+  - @domain/entity-account-balance-history@0.4.0-next.0
+  - @domain/entity-account-operation@0.4.0-next.0
+  - @domain/api-account-data@0.7.0-next.0
+  - @shared/api-services@0.14.0-next.0
+  - @domain/entity-currency@0.5.2-next.0
+  - @domain/entity-market-countervalues@0.6.1-next.0
+
 ## 0.4.1
 
 ### Patch Changes

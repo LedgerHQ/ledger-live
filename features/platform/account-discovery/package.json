@@ -1,6 +1,6 @@
 {
   "name": "@features/platform-account-discovery",
-  "version": "0.2.0",
+  "version": "0.3.0-next.0",
   "private": true,
   "description": "Account discovery as a stream of account descriptors: candidates derived on the device, then asked to the account data sources whether they exist",
   "main": "src/index.ts",

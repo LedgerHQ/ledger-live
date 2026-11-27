@@ -1,5 +1,16 @@
 # @features/flow-device-onboarding-update-offer
 
+## 0.3.0-next.0
+
+### Minor Changes
+
+- [#25405](https://github.com/LedgerHQ/ledger-live/pull/25405) [`e1effae`](https://github.com/LedgerHQ/ledger-live/commit/e1effae27267fcbb14150d17fe2086459d34f8f5) Thanks [@tonykhaov](https://github.com/tonykhaov)! - Track the unseeded device onboarding funnel. Seeded and unseeded events share the same props
+
+### Patch Changes
+
+- Updated dependencies [[`5c7f0ef`](https://github.com/LedgerHQ/ledger-live/commit/5c7f0ef8aaebce9ac0dcf1eb509dd0756f389b10)]:
+  - @shared/ui-info-state@0.9.0-next.0
+
 ## 0.2.0
 
 ### Minor Changes

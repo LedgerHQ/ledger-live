@@ -1,5 +1,24 @@
 # @features/flow-pay-card-assets
 
+## 0.8.0-next.0
+
+### Minor Changes
+
+- [#25369](https://github.com/LedgerHQ/ledger-live/pull/25369) [`5c7f0ef`](https://github.com/LedgerHQ/ledger-live/commit/5c7f0ef8aaebce9ac0dcf1eb509dd0756f389b10) Thanks [@LucasWerey](https://github.com/LucasWerey)! - Upgrade Lumen to latest
+
+  - Updated `@ledgerhq/lumen-design-core` to `0.1.37`
+  - Updated `@ledgerhq/lumen-ui-react` to `0.1.75`
+  - Updated `@ledgerhq/lumen-ui-rnative` to `0.1.76`
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @domain/entity-currency@0.5.2-next.0
+  - @features/flow-pay-card-auth@0.14.1-next.0
+  - @domain/api-card-management@0.10.1-next.0
+  - @features/flow-pay-card-wallets@0.6.6-next.0
+  - @features/flow-pay-card-transactions@0.8.1-next.0
+
 ## 0.7.2
 
 ### Patch Changes

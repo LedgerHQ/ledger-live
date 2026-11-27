@@ -1,5 +1,21 @@
 # @features/flow-account-detail-settings
 
+## 0.4.0-next.0
+
+### Minor Changes
+
+- [#25521](https://github.com/LedgerHQ/ledger-live/pull/25521) [`4755ff6`](https://github.com/LedgerHQ/ledger-live/commit/4755ff6d1827376a4651c76d640d34089107e2bc) Thanks [@mateuszpalosz-ext](https://github.com/mateuszpalosz-ext)! - Add an optional Manage assets item to the account settings menu, and open XRP Manage assets from it on desktop
+
+- [#25618](https://github.com/LedgerHQ/ledger-live/pull/25618) [`27d87de`](https://github.com/LedgerHQ/ledger-live/commit/27d87de711ef01ffe5a21fd9a8f986c455e3c9c7) Thanks [@vtaranushenko-ext-ledger](https://github.com/vtaranushenko-ext-ledger)! - Open XRP Manage assets from the account settings of the new account screen on mobile
+
+### Patch Changes
+
+- Updated dependencies [[`afe8aea`](https://github.com/LedgerHQ/ledger-live/commit/afe8aea94052e7475b17e203028ca7e02e2848e1), [`5c7f0ef`](https://github.com/LedgerHQ/ledger-live/commit/5c7f0ef8aaebce9ac0dcf1eb509dd0756f389b10), [`5ac8385`](https://github.com/LedgerHQ/ledger-live/commit/5ac8385c5dcd43b8bc0686e6c0c98d14358c0e00)]:
+  - @domain/entity-currency-crypto@0.21.0-next.0
+  - @shared/ui-info-state@0.9.0-next.0
+  - @shared/linking@0.5.0-next.0
+  - @domain/entity-account-name@0.5.1-next.0
+
 ## 0.3.3
 
 ### Patch Changes

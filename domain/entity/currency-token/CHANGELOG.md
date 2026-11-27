@@ -1,5 +1,12 @@
 # @domain/entity-currency-token
 
+## 0.6.1-next.0
+
+### Patch Changes
+
+- Updated dependencies [[`afe8aea`](https://github.com/LedgerHQ/ledger-live/commit/afe8aea94052e7475b17e203028ca7e02e2848e1)]:
+  - @domain/entity-currency-crypto@0.21.0-next.0
+
 ## 0.6.0
 
 ### Minor Changes

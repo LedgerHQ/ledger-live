@@ -1,5 +1,16 @@
 # @ledgerhq/live-signer-aleo
 
+## 0.20.0-next.0
+
+### Minor Changes
+
+- [#25378](https://github.com/LedgerHQ/ledger-live/pull/25378) [`5f05425`](https://github.com/LedgerHQ/ledger-live/commit/5f0542591bcc57c068913f6123a61bc6977db35b) Thanks [@gre-ledger](https://github.com/gre-ledger)! - Keep the device action error as the cause of the Aleo signer's generic errors
+
+### Patch Changes
+
+- Updated dependencies [[`fa1161f`](https://github.com/LedgerHQ/ledger-live/commit/fa1161f005a5409dc3d53f9bc2ec475465190a16), [`b4e886d`](https://github.com/LedgerHQ/ledger-live/commit/b4e886db64a3c223fd67850e51dcfd685d5ef1cf)]:
+  - @ledgerhq/coin-aleo@2.12.0-next.0
+
 ## 0.19.20
 
 ### Patch Changes

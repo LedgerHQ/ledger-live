@@ -1,5 +1,11 @@
 # @shared/linking
 
+## 0.5.0-next.0
+
+### Minor Changes
+
+- [#25524](https://github.com/LedgerHQ/ledger-live/pull/25524) [`5ac8385`](https://github.com/LedgerHQ/ledger-live/commit/5ac8385c5dcd43b8bc0686e6c0c98d14358c0e00) Thanks [@LucasWerey](https://github.com/LucasWerey)! - Receive address screen: help card and FAQ data, with their events. The screen opens its links through `@shared/linking`, support articles in the user's language; `useUrlLocalizer` localizes any URL, and `isSafeUrl` tells whether the opener accepts a URL; incident links it refuses show as text
+
 ## 0.4.0
 
 ### Minor Changes

@@ -1,6 +1,6 @@
 {
   "name": "@features/platform-intent-hyperliquid-sign",
-  "version": "0.0.0",
+  "version": "0.1.0-next.0",
   "private": true,
   "description": "Cross-platform Device Intent that signs Hyperliquid actions in the Hyperliquid device app",
   "main": "src/index.ts",

@@ -1,5 +1,11 @@
 # @shared/ui-animated-qr-code
 
+## 0.3.0-next.0
+
+### Minor Changes
+
+- [#25595](https://github.com/LedgerHQ/ledger-live/pull/25595) [`43ab12c`](https://github.com/LedgerHQ/ledger-live/commit/43ab12c6ed56e638dadeecb2b623b233ac7afd5c) Thanks [@LucasWerey](https://github.com/LucasWerey)! - Receive: soft haptic feedback when the address is copied from Copy or the QR code on mobile
+
 ## 0.2.0
 
 ### Minor Changes

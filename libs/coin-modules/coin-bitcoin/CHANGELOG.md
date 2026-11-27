@@ -1,5 +1,26 @@
 # @ledgerhq/coin-bitcoin
 
+## 1.5.0-next.0
+
+### Minor Changes
+
+- [#25419](https://github.com/LedgerHQ/ledger-live/pull/25419) [`afe8aea`](https://github.com/LedgerHQ/ledger-live/commit/afe8aea94052e7475b17e203028ca7e02e2848e1) Thanks [@qperrot](https://github.com/qperrot)! - Remove the discontinued Horizen (zencash) currency and its bitcoin-family support
+
+- [#24754](https://github.com/LedgerHQ/ledger-live/pull/24754) [`282a032`](https://github.com/LedgerHQ/ledger-live/commit/282a032d2a85ad89cbe2bb782f45d4dd31c398eb) Thanks [@qperrot](https://github.com/qperrot)! - Sign the caller's custom fee over a forwarded fee rate
+
+- [#25328](https://github.com/LedgerHQ/ledger-live/pull/25328) [`62afcbf`](https://github.com/LedgerHQ/ledger-live/commit/62afcbf91ddf5c622d670140ce21cd1f34b2992f) Thanks [@qperrot](https://github.com/qperrot)! - Price a fee estimate with the absolute fee the caller passes, and validate that fee as crafting imposes it
+
+- [#25327](https://github.com/LedgerHQ/ledger-live/pull/25327) [`25ecb6d`](https://github.com/LedgerHQ/ledger-live/commit/25ecb6db88a4a6566cdc4e6259d42369a5335e2f) Thanks [@qperrot](https://github.com/qperrot)! - Add listPendingOperations and getPendingTransaction, with a pending transaction's inputs and size for replacing it
+
+- [#24754](https://github.com/LedgerHQ/ledger-live/pull/24754) [`282a032`](https://github.com/LedgerHQ/ledger-live/commit/282a032d2a85ad89cbe2bb782f45d4dd31c398eb) Thanks [@qperrot](https://github.com/qperrot)! - Do not offer the change of an own transaction replaced or dropped since as spendable
+
+### Patch Changes
+
+- Updated dependencies [[`afe8aea`](https://github.com/LedgerHQ/ledger-live/commit/afe8aea94052e7475b17e203028ca7e02e2848e1), [`c1f5e3f`](https://github.com/LedgerHQ/ledger-live/commit/c1f5e3f808ab22c42bd0cbc1125106ff84a6e4c7), [`44c63d1`](https://github.com/LedgerHQ/ledger-live/commit/44c63d1ed48ea109d1d7328553f29cef9cd52653), [`35e9ca8`](https://github.com/LedgerHQ/ledger-live/commit/35e9ca85552282ddc37c47bc4212c81b06a2ee2c), [`866ed62`](https://github.com/LedgerHQ/ledger-live/commit/866ed62f04647abce7efeff0ebefe79c8e5bafde), [`52ba745`](https://github.com/LedgerHQ/ledger-live/commit/52ba7459509dbdaeb551bb24b8bd7965e2f0f252), [`fcd1d97`](https://github.com/LedgerHQ/ledger-live/commit/fcd1d979dcce6f25d9e4dfcf7dd6b68d79b8b03c)]:
+  - @ledgerhq/wallet-btc@2.0.0-next.0
+  - @ledgerhq/ledger-wallet-framework@3.14.0-next.0
+  - @ledgerhq/types-live@6.134.0-next.0
+
 ## 1.4.0
 
 ### Minor Changes

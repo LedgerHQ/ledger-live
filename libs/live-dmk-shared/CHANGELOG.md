@@ -1,5 +1,20 @@
 # @ledgerhq/live-dmk
 
+## 0.42.0-next.0
+
+### Minor Changes
+
+- [#25367](https://github.com/LedgerHQ/ledger-live/pull/25367) [`5feaf06`](https://github.com/LedgerHQ/ledger-live/commit/5feaf06e713cfd096eeede46a624fd8991be6070) Thanks [@OlivierFreyssinet](https://github.com/OlivierFreyssinet)! - Send the Device UX V2 analytics events of the connectivity screen, alone and in the Add mode of the device list
+
+- [#25368](https://github.com/LedgerHQ/ledger-live/pull/25368) [`ea642dd`](https://github.com/LedgerHQ/ledger-live/commit/ea642ddb50ee3418f5d80cb3ec0d682ac7bf8d3b) Thanks [@OlivierFreyssinet](https://github.com/OlivierFreyssinet)! - Send the Device UX V2 analytics events of the My Wallet device list
+
+- [#25205](https://github.com/LedgerHQ/ledger-live/pull/25205) [`7627a66`](https://github.com/LedgerHQ/ledger-live/commit/7627a66e667eb4b00ca417603c39d0adf5e2a094) Thanks [@OlivierFreyssinet](https://github.com/OlivierFreyssinet)! - `connectKnownOrNewDevice` takes an optional `onAddNewDevice`: Add calls it instead of opening the Add mode
+
+### Patch Changes
+
+- Updated dependencies [[`1b1d171`](https://github.com/LedgerHQ/ledger-live/commit/1b1d171a6e5fa3be798eeee2ba90d462d3f23dad)]:
+  - @domain/entity-client-identity@0.7.0-next.0
+
 ## 0.41.0
 
 ### Minor Changes

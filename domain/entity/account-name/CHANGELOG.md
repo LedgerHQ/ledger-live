@@ -1,5 +1,12 @@
 # @domain/entity-account-name
 
+## 0.5.1-next.0
+
+### Patch Changes
+
+- Updated dependencies [[`8030207`](https://github.com/LedgerHQ/ledger-live/commit/803020759f7f1b66ddeede81a2cd88c4fc36708a), [`d35cf10`](https://github.com/LedgerHQ/ledger-live/commit/d35cf10970da952fb6a760b6c839f28f0ec85758), [`ed3d726`](https://github.com/LedgerHQ/ledger-live/commit/ed3d726cb936e75f9a54bc782bd97103dafbe51f)]:
+  - @domain/entity-account@0.5.0-next.0
+
 ## 0.5.0
 
 ### Minor Changes

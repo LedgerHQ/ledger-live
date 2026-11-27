@@ -1,5 +1,20 @@
 # @domain/api-account-data
 
+## 0.7.0-next.0
+
+### Minor Changes
+
+- [#25436](https://github.com/LedgerHQ/ledger-live/pull/25436) [`8030207`](https://github.com/LedgerHQ/ledger-live/commit/803020759f7f1b66ddeede81a2cd88c4fc36708a) Thanks [@gre-ledger](https://github.com/gre-ledger)! - Keep `@domain/entity-account-descriptor` for the edges: AccountUUID moves to `@domain/entity-account`, NetworkId and Address to the new `@domain/entity-network`, DerivationPath and the legacy path bridges to `@domain/entity-derivation`
+
+- [#25423](https://github.com/LedgerHQ/ledger-live/pull/25423) [`ed00958`](https://github.com/LedgerHQ/ledger-live/commit/ed00958b914fefe16416405ab3e109f0b2b1d67e) Thanks [@gre-ledger](https://github.com/gre-ledger)! - useAccountData and useAccountDataBatch take the AccountUUID and read the descriptor from the accounts slice
+
+### Patch Changes
+
+- Updated dependencies [[`8030207`](https://github.com/LedgerHQ/ledger-live/commit/803020759f7f1b66ddeede81a2cd88c4fc36708a), [`d35cf10`](https://github.com/LedgerHQ/ledger-live/commit/d35cf10970da952fb6a760b6c839f28f0ec85758), [`ed3d726`](https://github.com/LedgerHQ/ledger-live/commit/ed3d726cb936e75f9a54bc782bd97103dafbe51f)]:
+  - @domain/entity-account-descriptor@0.8.0-next.0
+  - @domain/entity-account@0.5.0-next.0
+  - @domain/entity-account-data@0.7.0-next.0
+
 ## 0.6.1
 
 ### Patch Changes

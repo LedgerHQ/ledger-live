@@ -1,5 +1,11 @@
 # @shared/ui-karaoke
 
+## 0.4.0-next.0
+
+### Minor Changes
+
+- [#25405](https://github.com/LedgerHQ/ledger-live/pull/25405) [`e1effae`](https://github.com/LedgerHQ/ledger-live/commit/e1effae27267fcbb14150d17fe2086459d34f8f5) Thanks [@tonykhaov](https://github.com/tonykhaov)! - Track the unseeded device onboarding funnel. Seeded and unseeded events share the same props
+
 ## 0.3.0
 
 ### Minor Changes

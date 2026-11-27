@@ -1,5 +1,73 @@
 # @features/flow-receive
 
+## 0.4.0-next.0
+
+### Minor Changes
+
+- [#25428](https://github.com/LedgerHQ/ledger-live/pull/25428) [`452b4ed`](https://github.com/LedgerHQ/ledger-live/commit/452b4ed3cc44a6c9dc9726dfe0aa840b0cd3babd) Thanks [@gre-ledger](https://github.com/gre-ledger)! - Follow coin-modules ADR-079: the coin module account status answers `activated` instead of `isOnboarded`, each field optional, and the asset activation gate no longer names its method
+
+- [#25436](https://github.com/LedgerHQ/ledger-live/pull/25436) [`8030207`](https://github.com/LedgerHQ/ledger-live/commit/803020759f7f1b66ddeede81a2cd88c4fc36708a) Thanks [@gre-ledger](https://github.com/gre-ledger)! - Keep `@domain/entity-account-descriptor` for the edges: AccountUUID moves to `@domain/entity-account`, NetworkId and Address to the new `@domain/entity-network`, DerivationPath and the legacy path bridges to `@domain/entity-derivation`
+
+- [#25374](https://github.com/LedgerHQ/ledger-live/pull/25374) [`ef04300`](https://github.com/LedgerHQ/ledger-live/commit/ef04300008fd43cd44b74d252653d72c13a4175a) Thanks [@LucasWerey](https://github.com/LucasWerey)! - Add the Share, Copy and Verify tiles, the verify hint and copy from a press on the QR code to the mobile receive screen; Share sends an image of the address card through the new @shared/share-sheet package, which Pay Tab now uses too
+
+- [#25423](https://github.com/LedgerHQ/ledger-live/pull/25423) [`ed00958`](https://github.com/LedgerHQ/ledger-live/commit/ed00958b914fefe16416405ab3e109f0b2b1d67e) Thanks [@gre-ledger](https://github.com/gre-ledger)! - useAccountData and useAccountDataBatch take the AccountUUID and read the descriptor from the accounts slice
+
+- [#25579](https://github.com/LedgerHQ/ledger-live/pull/25579) [`ed3d726`](https://github.com/LedgerHQ/ledger-live/commit/ed3d726cb936e75f9a54bc782bd97103dafbe51f) Thanks [@gre-ledger](https://github.com/gre-ledger)! - Receive flow holds only the AccountUUID: network from the asset, assetStatus read for every asset, taproot from the legacy account
+
+- [#25243](https://github.com/LedgerHQ/ledger-live/pull/25243) [`3b1517c`](https://github.com/LedgerHQ/ledger-live/commit/3b1517ccc795bd9db1661b7ae4a2fd4e97918f58) Thanks [@LucasWerey](https://github.com/LucasWerey)! - Add Copy, Share and Verify to the receive address screen
+
+- [#25261](https://github.com/LedgerHQ/ledger-live/pull/25261) [`f60f5cf`](https://github.com/LedgerHQ/ledger-live/commit/f60f5cf9649b38011656bde091713fc3f404c237) Thanks [@LucasWerey](https://github.com/LucasWerey)! - Add the Copy and Verify tiles, the verify hint and copy from a click on the QR code to the desktop receive screen
+
+- [#25264](https://github.com/LedgerHQ/ledger-live/pull/25264) [`8fa7713`](https://github.com/LedgerHQ/ledger-live/commit/8fa7713bdf17583286e3c2cd4cd0fdd75b11a0b9) Thanks [@LucasWerey](https://github.com/LucasWerey)! - Keep the network badge border of the receive QR code icon light in dark theme on desktop
+
+- [#25323](https://github.com/LedgerHQ/ledger-live/pull/25323) [`514ccdb`](https://github.com/LedgerHQ/ledger-live/commit/514ccdb44d56aaba35f51dac57debf98b6a37533) Thanks [@LucasWerey](https://github.com/LucasWerey)! - Verify shows the receive address on the device, then Got it: the device check runs before the address is shown, the Verified screen is removed, and a mismatch returned by the device still shows its warning
+
+- [#25360](https://github.com/LedgerHQ/ledger-live/pull/25360) [`31557d8`](https://github.com/LedgerHQ/ledger-live/commit/31557d8791d9ab9fb63132ddbd03e91320e5ef7b) Thanks [@LucasWerey](https://github.com/LucasWerey)! - The receive address QR code on mobile shows the asset icon without its network badge
+
+- [#25595](https://github.com/LedgerHQ/ledger-live/pull/25595) [`43ab12c`](https://github.com/LedgerHQ/ledger-live/commit/43ab12c6ed56e638dadeecb2b623b233ac7afd5c) Thanks [@LucasWerey](https://github.com/LucasWerey)! - Receive: soft haptic feedback when the address is copied from Copy or the QR code on mobile
+
+- [#25554](https://github.com/LedgerHQ/ledger-live/pull/25554) [`141fa5b`](https://github.com/LedgerHQ/ledger-live/commit/141fa5bac5b997f2c243248b29aa23bc78eacf16) Thanks [@LucasWerey](https://github.com/LucasWerey)! - Receive address screen: onboarding and activation states, with a port for the app to open the family flow
+
+- [#25679](https://github.com/LedgerHQ/ledger-live/pull/25679) [`9aae059`](https://github.com/LedgerHQ/ledger-live/commit/9aae059686c0668d32da2f83be3bfa5803c8d489) Thanks [@LucasWerey](https://github.com/LucasWerey)! - Receive address (mobile): "Need support? Get help" sits at the bottom of a short screen
+
+- [#25524](https://github.com/LedgerHQ/ledger-live/pull/25524) [`5ac8385`](https://github.com/LedgerHQ/ledger-live/commit/5ac8385c5dcd43b8bc0686e6c0c98d14358c0e00) Thanks [@LucasWerey](https://github.com/LucasWerey)! - Receive address screen: help card and FAQ data, with their events. The screen opens its links through `@shared/linking`, support articles in the user's language; `useUrlLocalizer` localizes any URL, and `isSafeUrl` tells whether the opener accepts a URL; incident links it refuses show as text
+
+- [#25533](https://github.com/LedgerHQ/ledger-live/pull/25533) [`5dcb721`](https://github.com/LedgerHQ/ledger-live/commit/5dcb721fabb3ad922f9751a6c1d7a9b3045fe9eb) Thanks [@LucasWerey](https://github.com/LucasWerey)! - Receive address dialog: "Need support? Get help" card and its help panel
+
+- [#25585](https://github.com/LedgerHQ/ledger-live/pull/25585) [`3b1afb5`](https://github.com/LedgerHQ/ledger-live/commit/3b1afb550854b13348417fdc3f20d22153f7088b) Thanks [@LucasWerey](https://github.com/LucasWerey)! - Receive help sheet rows line up with the other lists of the app
+
+- [#25533](https://github.com/LedgerHQ/ledger-live/pull/25533) [`5dcb721`](https://github.com/LedgerHQ/ledger-live/commit/5dcb721fabb3ad922f9751a6c1d7a9b3045fe9eb) Thanks [@LucasWerey](https://github.com/LucasWerey)! - Receive address screen: "Need support? Get help" card and its help bottom sheet
+
+- [#25600](https://github.com/LedgerHQ/ledger-live/pull/25600) [`2d03bcd`](https://github.com/LedgerHQ/ledger-live/commit/2d03bcde5ad9e1020cfc5c89fd1eef47678e645a) Thanks [@LucasWerey](https://github.com/LucasWerey)! - Receive memo bottom sheet: header row with its close button, and the sheet's own 16px margin
+
+- [#25560](https://github.com/LedgerHQ/ledger-live/pull/25560) [`4ff7ba9`](https://github.com/LedgerHQ/ledger-live/commit/4ff7ba9df28fd5aba07a336c2b4bffc6a43be342) Thanks [@LucasWerey](https://github.com/LucasWerey)! - Receive address screen: "Need a Tag/Memo?" card, with its desktop panel and mobile bottom sheet
+
+- [#25655](https://github.com/LedgerHQ/ledger-live/pull/25655) [`d822947`](https://github.com/LedgerHQ/ledger-live/commit/d8229475e9bb4cab8830be6566de6bb79a9d55b6) Thanks [@LucasWerey](https://github.com/LucasWerey)! - Receive asset picker: the network step explains which network to pick, with a "How to select the network?" help. Pay Request picks its asset in the receive flow
+
+- [#25465](https://github.com/LedgerHQ/ledger-live/pull/25465) [`3158647`](https://github.com/LedgerHQ/ledger-live/commit/315864750caca883908aacb8f648710be980756c) Thanks [@LucasWerey](https://github.com/LucasWerey)! - Receive address screen on desktop: notice banners, and a service incident shown before the address
+
+- [#25504](https://github.com/LedgerHQ/ledger-live/pull/25504) [`7716eba`](https://github.com/LedgerHQ/ledger-live/commit/7716eba4f80e7f80b3a03f526a4300a8f645edae) Thanks [@LucasWerey](https://github.com/LucasWerey)! - Receive address screen on mobile: notice banners, and a service incident bottom sheet over the screen
+
+- [#25429](https://github.com/LedgerHQ/ledger-live/pull/25429) [`b3e594b`](https://github.com/LedgerHQ/ledger-live/commit/b3e594b5b57e841703cf5b93806e06914de8239a) Thanks [@LucasWerey](https://github.com/LucasWerey)! - Add the notices of the receive address screen: the family's notices, the notice that the device cannot show the address, and the service incident warning with its page event
+
+- [#25667](https://github.com/LedgerHQ/ledger-live/pull/25667) [`9be8d2b`](https://github.com/LedgerHQ/ledger-live/commit/9be8d2bcf55c9b751d2bbfb67af6faeb1f4660a4) Thanks [@LucasWerey](https://github.com/LucasWerey)! - Receive address: a sanctioned address is never shown, the screen explains why with a link to the support article
+
+### Patch Changes
+
+- Updated dependencies [[`faeace9`](https://github.com/LedgerHQ/ledger-live/commit/faeace97ae3de8c6e403e66732bdc16d57d78296), [`452b4ed`](https://github.com/LedgerHQ/ledger-live/commit/452b4ed3cc44a6c9dc9726dfe0aa840b0cd3babd), [`9e67809`](https://github.com/LedgerHQ/ledger-live/commit/9e678098ea38d509fc4f19ffe05a2f06003a41c5), [`8030207`](https://github.com/LedgerHQ/ledger-live/commit/803020759f7f1b66ddeede81a2cd88c4fc36708a), [`0568a9d`](https://github.com/LedgerHQ/ledger-live/commit/0568a9d51bcc7244bad8ae415c7775697fc93811), [`d35cf10`](https://github.com/LedgerHQ/ledger-live/commit/d35cf10970da952fb6a760b6c839f28f0ec85758), [`5c7f0ef`](https://github.com/LedgerHQ/ledger-live/commit/5c7f0ef8aaebce9ac0dcf1eb509dd0756f389b10), [`ef04300`](https://github.com/LedgerHQ/ledger-live/commit/ef04300008fd43cd44b74d252653d72c13a4175a), [`7627a66`](https://github.com/LedgerHQ/ledger-live/commit/7627a66e667eb4b00ca417603c39d0adf5e2a094), [`5ea4203`](https://github.com/LedgerHQ/ledger-live/commit/5ea4203bdc7b89f7ef0ffe12ae9036b679320a97), [`ed00958`](https://github.com/LedgerHQ/ledger-live/commit/ed00958b914fefe16416405ab3e109f0b2b1d67e), [`089284b`](https://github.com/LedgerHQ/ledger-live/commit/089284b16bfee3dd5f6255799c58f5c8dbe108c8), [`35e9ca8`](https://github.com/LedgerHQ/ledger-live/commit/35e9ca85552282ddc37c47bc4212c81b06a2ee2c), [`4779bbd`](https://github.com/LedgerHQ/ledger-live/commit/4779bbd567b2f36cf01751c022a978b2d93cf288), [`31cc80c`](https://github.com/LedgerHQ/ledger-live/commit/31cc80c18f3eeed000ce3ee3d97e8e1bdcd1bb37), [`513bdba`](https://github.com/LedgerHQ/ledger-live/commit/513bdba4eee8332446903bb853ec5bc608cb46b9), [`baf40c7`](https://github.com/LedgerHQ/ledger-live/commit/baf40c7721ae8525c7d99d48667a749d8de4e59a), [`ed3d726`](https://github.com/LedgerHQ/ledger-live/commit/ed3d726cb936e75f9a54bc782bd97103dafbe51f), [`43ab12c`](https://github.com/LedgerHQ/ledger-live/commit/43ab12c6ed56e638dadeecb2b623b233ac7afd5c), [`5ac8385`](https://github.com/LedgerHQ/ledger-live/commit/5ac8385c5dcd43b8bc0686e6c0c98d14358c0e00), [`62493e1`](https://github.com/LedgerHQ/ledger-live/commit/62493e1d65a96ef1998f1ff8fd0e1880ae6190b9), [`78d27e7`](https://github.com/LedgerHQ/ledger-live/commit/78d27e7045c452d503ad88e1ffb4e2621ef00074)]:
+  - @shared/feature-flags@0.33.0-next.0
+  - @domain/entity-account-status@0.2.0-next.0
+  - @domain/entity-account@0.5.0-next.0
+  - @domain/entity-account-data@0.7.0-next.0
+  - @domain/entity-account-receive@0.2.0-next.0
+  - @features/platform-account-data@0.5.0-next.0
+  - @shared/ui-info-state@0.9.0-next.0
+  - @shared/share-sheet@0.2.0-next.0
+  - @features/platform-currencies@0.15.0-next.0
+  - @shared/ui-animated-qr-code@0.3.0-next.0
+  - @shared/linking@0.5.0-next.0
+  - @domain/entity-currency@0.5.2-next.0
+
 ## 0.3.0
 
 ### Minor Changes

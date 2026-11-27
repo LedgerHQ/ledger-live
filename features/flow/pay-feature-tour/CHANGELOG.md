@@ -1,5 +1,12 @@
 # @features/flow-pay-feature-tour
 
+## 0.11.1-next.0
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @features/platform-feature-flags@0.13.2-next.0
+
 ## 0.11.0
 
 ### Minor Changes

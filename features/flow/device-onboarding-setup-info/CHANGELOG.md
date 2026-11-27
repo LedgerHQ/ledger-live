@@ -1,5 +1,11 @@
 # @features/flow-device-onboarding-setup-info
 
+## 0.3.0-next.0
+
+### Minor Changes
+
+- [#25354](https://github.com/LedgerHQ/ledger-live/pull/25354) [`e3a4316`](https://github.com/LedgerHQ/ledger-live/commit/e3a4316469e9471c7aa0af1ab0142a40035d530b) Thanks [@jiyuzhuang](https://github.com/jiyuzhuang)! - Match the Nano setup stepper to the device: setup choice before PIN, the OS version check as the last step when the OS updates after setup, a PIN info card, and the setup and OS update wording from the latest design
+
 ## 0.2.0
 
 ### Minor Changes

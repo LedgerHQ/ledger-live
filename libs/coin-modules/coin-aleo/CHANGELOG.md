@@ -1,5 +1,19 @@
 # @ledgerhq/coin-aleo
 
+## 2.12.0-next.0
+
+### Minor Changes
+
+- [#25377](https://github.com/LedgerHQ/ledger-live/pull/25377) [`fa1161f`](https://github.com/LedgerHQ/ledger-live/commit/fa1161f005a5409dc3d53f9bc2ec475465190a16) Thanks [@gre-ledger](https://github.com/gre-ledger)! - Add `getAccountStatus` on the Aleo public state and the account key codec (`<address>.<viewKey>`)
+
+- [#25471](https://github.com/LedgerHQ/ledger-live/pull/25471) [`b4e886d`](https://github.com/LedgerHQ/ledger-live/commit/b4e886db64a3c223fd67850e51dcfd685d5ef1cf) Thanks [@gre-ledger](https://github.com/gre-ledger)! - Drop the `<address>.<viewKey>` account key: `getAccountStatus` reads the account address
+
+### Patch Changes
+
+- Updated dependencies [[`afe8aea`](https://github.com/LedgerHQ/ledger-live/commit/afe8aea94052e7475b17e203028ca7e02e2848e1), [`c1f5e3f`](https://github.com/LedgerHQ/ledger-live/commit/c1f5e3f808ab22c42bd0cbc1125106ff84a6e4c7), [`44c63d1`](https://github.com/LedgerHQ/ledger-live/commit/44c63d1ed48ea109d1d7328553f29cef9cd52653), [`35e9ca8`](https://github.com/LedgerHQ/ledger-live/commit/35e9ca85552282ddc37c47bc4212c81b06a2ee2c), [`866ed62`](https://github.com/LedgerHQ/ledger-live/commit/866ed62f04647abce7efeff0ebefe79c8e5bafde), [`52ba745`](https://github.com/LedgerHQ/ledger-live/commit/52ba7459509dbdaeb551bb24b8bd7965e2f0f252), [`fcd1d97`](https://github.com/LedgerHQ/ledger-live/commit/fcd1d979dcce6f25d9e4dfcf7dd6b68d79b8b03c)]:
+  - @ledgerhq/ledger-wallet-framework@3.14.0-next.0
+  - @ledgerhq/types-live@6.134.0-next.0
+
 ## 2.11.0
 
 ### Minor Changes

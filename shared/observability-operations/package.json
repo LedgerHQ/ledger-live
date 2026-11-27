@@ -1,6 +1,6 @@
 {
   "name": "@shared/observability-operations",
-  "version": "0.1.0",
+  "version": "0.2.0-next.0",
   "private": true,
   "description": "Vendor-agnostic tracking of named operations, sent through a sink the app registers",
   "main": "src/index.ts",

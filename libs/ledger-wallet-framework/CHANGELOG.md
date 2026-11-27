@@ -1,5 +1,24 @@
 # @ledgerhq/ledger-wallet-framework
 
+## 3.14.0-next.0
+
+### Minor Changes
+
+- [#25419](https://github.com/LedgerHQ/ledger-live/pull/25419) [`afe8aea`](https://github.com/LedgerHQ/ledger-live/commit/afe8aea94052e7475b17e203028ca7e02e2848e1) Thanks [@qperrot](https://github.com/qperrot)! - Remove the discontinued Horizen (zencash) currency and its bitcoin-family support
+
+- [#25582](https://github.com/LedgerHQ/ledger-live/pull/25582) [`44c63d1`](https://github.com/LedgerHQ/ledger-live/commit/44c63d1ed48ea109d1d7328553f29cef9cd52653) Thanks [@qperrot](https://github.com/qperrot)! - Show a failed token transfer as a failed send of its attempted amount, without moving the token balance history
+
+- [#25488](https://github.com/LedgerHQ/ledger-live/pull/25488) [`866ed62`](https://github.com/LedgerHQ/ledger-live/commit/866ed62f04647abce7efeff0ebefe79c8e5bafde) Thanks [@semeano](https://github.com/semeano)! - fix(coin-near): partition the native balance between the liquid funds and the staking positions, summed by the generic adapter through `partitionsNativeBalance`, so staked NEAR is counted once
+
+- [#25583](https://github.com/LedgerHQ/ledger-live/pull/25583) [`52ba745`](https://github.com/LedgerHQ/ledger-live/commit/52ba7459509dbdaeb551bb24b8bd7965e2f0f252) Thanks [@lysyi3m](https://github.com/lysyi3m)! - Make coin-concordium stateless: `createBridges` takes a `Context`, and the proxy tuning, fee fallbacks, cache TTLs and WalletConnect relay come from `config_currency_concordium*`. `assignFromAccountRaw` may return a promise, which deserialization awaits.
+
+- [#25502](https://github.com/LedgerHQ/ledger-live/pull/25502) [`fcd1d97`](https://github.com/LedgerHQ/ledger-live/commit/fcd1d979dcce6f25d9e4dfcf7dd6b68d79b8b03c) Thanks [@cted-ledger](https://github.com/cted-ledger)! - Take a NEAR gas refund landing after the account's own transaction as explained, instead of reading the history again for an hour
+
+### Patch Changes
+
+- Updated dependencies [[`c1f5e3f`](https://github.com/LedgerHQ/ledger-live/commit/c1f5e3f808ab22c42bd0cbc1125106ff84a6e4c7), [`35e9ca8`](https://github.com/LedgerHQ/ledger-live/commit/35e9ca85552282ddc37c47bc4212c81b06a2ee2c), [`52ba745`](https://github.com/LedgerHQ/ledger-live/commit/52ba7459509dbdaeb551bb24b8bd7965e2f0f252)]:
+  - @ledgerhq/types-live@6.134.0-next.0
+
 ## 3.13.0
 
 ### Minor Changes

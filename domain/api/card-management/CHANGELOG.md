@@ -1,5 +1,12 @@
 # @domain/api-card-management
 
+## 0.10.1-next.0
+
+### Patch Changes
+
+- Updated dependencies [[`baf40c7`](https://github.com/LedgerHQ/ledger-live/commit/baf40c7721ae8525c7d99d48667a749d8de4e59a)]:
+  - @shared/api-services@0.14.0-next.0
+
 ## 0.10.0
 
 ### Minor Changes

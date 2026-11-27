@@ -1,5 +1,12 @@
 # @ledgerhq/live-signer-polkadot
 
+## 0.1.8-next.0
+
+### Patch Changes
+
+- Updated dependencies [[`1049173`](https://github.com/LedgerHQ/ledger-live/commit/1049173dd551ad24deb427d55f2aa5dfc8f28f09)]:
+  - @ledgerhq/coin-polkadot@9.5.0-next.0
+
 ## 0.1.7
 
 ### Patch Changes

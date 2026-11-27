@@ -1,5 +1,23 @@
 # @devtools/registry
 
+## 0.11.0-next.0
+
+### Minor Changes
+
+- [#25518](https://github.com/LedgerHQ/ledger-live/pull/25518) [`3c87df2`](https://github.com/LedgerHQ/ledger-live/commit/3c87df2aae7e25b46bc58cf55ade07233181b83b) Thanks [@deepyjr](https://github.com/deepyjr)! - Hide the rows Apollo hides, or the ones the newSettings params turn on, in the new Settings, with a "Simulate an Apollo device" toggle in the mobile DevTools
+
+### Patch Changes
+
+- Updated dependencies [[`632ad25`](https://github.com/LedgerHQ/ledger-live/commit/632ad25e76668e3b2e682e47231a9e40781c02b4), [`8030207`](https://github.com/LedgerHQ/ledger-live/commit/803020759f7f1b66ddeede81a2cd88c4fc36708a), [`26bc734`](https://github.com/LedgerHQ/ledger-live/commit/26bc7347d5d2c4bfa09bc09ccbaf3c617e33cf8f), [`152fccc`](https://github.com/LedgerHQ/ledger-live/commit/152fccc90360e9a937dc39b7d9af985d269c42fa), [`3c87df2`](https://github.com/LedgerHQ/ledger-live/commit/3c87df2aae7e25b46bc58cf55ade07233181b83b)]:
+  - @devtools/account-discovery@0.3.0-next.0
+  - @devtools/mock-accounts@0.6.0-next.0
+  - @devtools/account-name@0.3.0-next.0
+  - @devtools/receive@0.4.0-next.0
+  - @devtools/app-toggles@0.2.0-next.0
+  - @devtools/feature-flags@0.13.1-next.0
+  - @devtools/device-onboarding@0.6.3-next.0
+  - @devtools/cloud-sync@0.4.1-next.0
+
 ## 0.10.0
 
 ### Minor Changes

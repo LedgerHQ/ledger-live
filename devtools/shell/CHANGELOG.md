@@ -1,5 +1,12 @@
 # @devtools/shell
 
+## 0.16.1-next.0
+
+### Patch Changes
+
+- Updated dependencies [[`3c87df2`](https://github.com/LedgerHQ/ledger-live/commit/3c87df2aae7e25b46bc58cf55ade07233181b83b)]:
+  - @devtools/registry@0.11.0-next.0
+
 ## 0.16.0
 
 ### Minor Changes
