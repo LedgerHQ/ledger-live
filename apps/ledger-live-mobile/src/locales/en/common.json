@@ -285,7 +285,6 @@
     "retry": "Retry",
     "backTo": "Back to {{to}}",
     "done": "Done",
-    "sortBy": "Sort by",
     "signOut": "Sign out",
     "search": "Search",
     "searchProvider": "Search for a provider...",
@@ -4125,14 +4124,6 @@
       "year": "past year"
     }
   },
-  "orderOption": {
-    "choices": {
-      "name|asc": "Name A-Z",
-      "name|desc": "Name Z-A",
-      "balance|asc": "Lowest Balance",
-      "balance|desc": "Highest Balance"
-    }
-  },
   "operations": {
     "types": {
       "IN": "Received",
@@ -6360,7 +6351,6 @@
     }
   },
   "addAccounts": {
-    "addNew": "Add new",
     "seeAllAccounts": "See all accounts",
     "addNewOrExisting": "Add new or existing account",
     "supportLinks": {

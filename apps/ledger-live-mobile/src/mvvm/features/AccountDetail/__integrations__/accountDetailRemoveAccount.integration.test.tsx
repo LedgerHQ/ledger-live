@@ -86,8 +86,8 @@ function PortfolioScreen({
       testID="open-accounts"
       onPress={() =>
         navigation.navigate(NavigatorName.PortfolioAccounts, {
-          screen: ScreenName.Accounts,
-          params: {},
+          screen: ScreenName.AccountsList,
+          params: { sourceScreenName: ScreenName.Portfolio },
         })
       }
     >
@@ -98,7 +98,7 @@ function PortfolioScreen({
 
 function AccountsListScreen({
   navigation,
-}: StackNavigatorProps<AccountsNavigatorParamList, ScreenName.Accounts>) {
+}: StackNavigatorProps<AccountsNavigatorParamList, ScreenName.AccountsList>) {
   return (
     <Pressable
       testID="open-account"
@@ -112,7 +112,7 @@ function AccountsListScreen({
 function PortfolioAccountsNavigator() {
   return (
     <PortfolioAccounts.Navigator screenOptions={{ headerShown: false }}>
-      <PortfolioAccounts.Screen name={ScreenName.Accounts} component={AccountsListScreen} />
+      <PortfolioAccounts.Screen name={ScreenName.AccountsList} component={AccountsListScreen} />
       <PortfolioAccounts.Screen name={ScreenName.Account} component={AccountScreen} />
     </PortfolioAccounts.Navigator>
   );

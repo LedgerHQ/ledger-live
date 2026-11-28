@@ -3,12 +3,9 @@ import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { useTranslation } from "~/context/Locale";
 import { useTheme } from "styled-components/native";
 import { ScreenName } from "~/const";
-import Accounts from "~/screens/Accounts";
 import AccountSettingsMain from "~/screens/AccountSettings";
 import EditAccountName from "~/screens/AccountSettings/EditAccountName";
 import AdvancedLogs from "~/screens/AccountSettings/AdvancedLogs";
-import AccountOrder from "~/screens/Accounts/AccountOrder";
-import AddAccount from "~/screens/Accounts/AddAccount";
 import CurrencySettings from "~/screens/Settings/CryptoAssets/Currencies/CurrencySettings";
 import { getStackNavigatorConfig } from "~/navigation/navigatorConfig";
 import { AccountSettingsNavigatorParamList } from "./types/AccountSettingsNavigator";
@@ -46,15 +43,6 @@ export default function AccountSettingsNavigator() {
       />
       <Stack.Screen name={ScreenName.CurrencySettings} component={CurrencySettings} />
       <Stack.Screen name={ScreenName.EditCurrencyUnits} component={EditCurrencyUnits} />
-      <Stack.Screen
-        name={ScreenName.Accounts}
-        component={Accounts}
-        options={{
-          title: t("accounts.title"),
-          headerLeft: () => <AccountOrder />,
-          headerRight: () => <AddAccount />,
-        }}
-      />
     </Stack.Navigator>
   );
 }
