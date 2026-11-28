@@ -19,8 +19,6 @@ export const ETHEREUM_ACCOUNT: HistoryExportAccount = {
 export function createFakePort(overrides: Partial<HistoryExportPort> = {}): HistoryExportPort {
   return {
     accounts: [BITCOIN_ACCOUNT, ETHEREUM_ACCOUNT],
-    syncAccounts: jest.fn(),
-    isSyncing: jest.fn(() => false),
     exportCsv: jest.fn(async () => "saved" as const),
     ...overrides,
   };

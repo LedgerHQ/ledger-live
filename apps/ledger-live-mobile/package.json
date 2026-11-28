@@ -176,6 +176,7 @@
     "@features/flow-settings-help": "workspace:^",
     "@features/flow-settings-security": "workspace:^",
     "@features/platform-account-analytics": "workspace:^",
+    "@features/platform-account-operations-csv": "workspace:^",
     "@features/platform-account-source-coin-module": "workspace:^",
     "@features/platform-aggregated-assets": "workspace:*",
     "@features/platform-app-lock": "workspace:*",

@@ -31,6 +31,10 @@ import type { State } from "~/renderer/reducers";
 
 const { selectAccountEntry } = accountsSlice.getSelectors((state: State) => state.accountEntries);
 
+/** The currency of a coin or token id, for what values or formats the account data. */
+export const findAssetCurrency: CountervaluesHost["findCurrency"] = assetId =>
+  findCryptoCurrencyById(assetId) ?? getCryptoAssetsStore().findTokenById(assetId);
+
 /** What can observe the account data layer. `AccountDataRecorder` matches it structurally. */
 export type AccountDataObserver = {
   readonly middleware: Middleware;
@@ -82,8 +86,7 @@ export function accountDataSources(
   const blacklistedTokenIds = () => blacklistedTokenIdsSelector(getState());
   const countervalues: CountervaluesHost = {
     rates: () => countervaluesStateSelector(getState()),
-    findCurrency: assetId =>
-      findCryptoCurrencyById(assetId) ?? getCryptoAssetsStore().findTokenById(assetId),
+    findCurrency: findAssetCurrency,
   };
   const fullSyncHost: FullSyncHost = {
     findAccount: accountUUID => {

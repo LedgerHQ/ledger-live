@@ -10,10 +10,9 @@ export type HistoryExportAccount = Readonly<{
 
 export type HistoryExportOutcome = "saved" | "canceled" | "failed";
 
-/** What the app gives the export flow: its accounts, their sync, and how it builds and saves the CSV. */
+/** What the app gives the export flow: its accounts, and how it reads, builds and saves their CSV. */
 export type HistoryExportPort = Readonly<{
   accounts: readonly HistoryExportAccount[];
-  syncAccounts: (accountIds: readonly AccountId[]) => void;
-  isSyncing: (accountIds: readonly AccountId[]) => boolean;
+  /** Reads the operations of the accounts again before writing them: the CSV is never stale. */
   exportCsv: (accountIds: readonly AccountId[]) => Promise<HistoryExportOutcome>;
 }>;
