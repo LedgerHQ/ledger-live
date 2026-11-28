@@ -6,6 +6,7 @@ import { InfoState } from "@shared/ui-info-state";
 import { DeviceActionContent } from "LLM/components/DeviceActionContent";
 import type { SignMessageIntentJobState } from "@ledgerhq/live-common/intents/signMessageIntent";
 import { useTranslation } from "~/context/Locale";
+import ModalLock from "~/components/ModalLock";
 
 type SignMessageIntentComponentProps = Readonly<{
   jobState: SignMessageIntentJobState | undefined;
@@ -23,15 +24,18 @@ export function SignMessageIntentComponent({ jobState, onClose }: SignMessageInt
   switch (jobState.type) {
     case "pending":
       return (
-        <DeviceActionContent
-          action="continue"
-          description={t("walletApiSignMessage.sign.description")}
-          deviceModelId={jobState.deviceModelId}
-          testID="wallet-api-message-signature-prompt"
-          title={t("walletApiSignMessage.sign.title", {
-            productName: getProductName(jobState.deviceModelId),
-          })}
-        />
+        <>
+          <ModalLock />
+          <DeviceActionContent
+            action="continue"
+            description={t("walletApiSignMessage.sign.description")}
+            deviceModelId={jobState.deviceModelId}
+            testID="wallet-api-message-signature-prompt"
+            title={t("walletApiSignMessage.sign.title", {
+              productName: getProductName(jobState.deviceModelId),
+            })}
+          />
+        </>
       );
     case "signed":
       return (

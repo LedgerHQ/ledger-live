@@ -1,4 +1,4 @@
-import React, { memo, useMemo } from "react";
+import React, { memo } from "react";
 import { StyleSheet, View } from "react-native";
 import { DeviceIntentExecutor } from "LLM/components/DeviceIntentExecutor";
 import { useMessageSignatureDrawerViewModel } from "./useMessageSignatureDrawerViewModel";
@@ -13,7 +13,6 @@ type Props = {
 };
 
 const deviceConnectionParams = { acceptedDeviceModelIds: [] };
-const noop = () => undefined;
 
 /**
  * Hosts the wallet-api `message.sign` step (the Device Intent Executor and the bottom
@@ -23,18 +22,15 @@ const noop = () => undefined;
 function MessageSignatureDrawer({ request, onClose }: Props) {
   const {
     sourceFlow,
+    analyticsProperties,
     deviceInitializationInput,
     signatureIntent,
     onIntentJobStateChanged,
+    onIntentJobComplete,
     onIntentJobError,
     onExecutorStateChanged,
     onUserCancel,
   } = useMessageSignatureDrawerViewModel({ request, onClose });
-
-  const analyticsProperties = useMemo(
-    () => ({ manifestId: request.manifestId, manifestName: request.manifestName }),
-    [request.manifestId, request.manifestName],
-  );
 
   if (!deviceInitializationInput || !signatureIntent) {
     return null;
@@ -56,7 +52,7 @@ function MessageSignatureDrawer({ request, onClose }: Props) {
         intentComponentExtraProps={undefined}
         onExecutorStateChanged={onExecutorStateChanged}
         onIntentJobStateChanged={onIntentJobStateChanged}
-        onIntentJobComplete={noop}
+        onIntentJobComplete={onIntentJobComplete}
         onIntentJobError={onIntentJobError}
         cancelIntentRequestId={undefined}
         onUserCancel={onUserCancel}

@@ -90,6 +90,7 @@ const Earn = () => {
     [stableSavingsFlag],
   );
   const { updateManifests } = useRemoteLiveAppContext();
+  const deviceIntentSignEnabled = useFeature("lldWalletApiDeviceIntentSign")?.enabled ?? false;
 
   const inputs = useMemo(() => {
     const routeState = (location.state as Record<string, string | undefined> | null) ?? {};
@@ -105,6 +106,7 @@ const Earn = () => {
       OS: "web",
       uiVersion: computedUiVersion,
       lw40enabled: "true",
+      lldWalletApiDeviceIntentSignEnabled: deviceIntentSignEnabled ? "true" : "false",
       stakeProgramsParam: stakeProgramsParam ? JSON.stringify(stakeProgramsParam) : undefined,
       stakeCurrenciesParam: stakeCurrenciesParam ? JSON.stringify(stakeCurrenciesParam) : undefined,
       ethDepositCohort,
@@ -129,6 +131,7 @@ const Earn = () => {
     discreetMode,
     devMode,
     computedUiVersion,
+    deviceIntentSignEnabled,
     stakeProgramsParam,
     stakeCurrenciesParam,
     ethDepositCohort,

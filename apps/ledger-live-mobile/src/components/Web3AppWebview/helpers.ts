@@ -38,7 +38,7 @@ import { useNavigation } from "@react-navigation/native";
 import { NavigatorName, ScreenName } from "~/const";
 import { flattenAccountsSelector } from "../../reducers/accounts";
 import { WebviewAPI, WebviewProps, WebviewState } from "./types";
-import prepareSignTransaction from "./liveSDKLogic";
+import { prepareSignTransaction } from "@ledgerhq/live-common/wallet-api/logic";
 import { closePlatformExchange } from "./closePlatformExchange";
 import { mevProtectionSelector, trackingEnabledSelector } from "../../reducers/settings";
 import storage from "LLM/storage";
@@ -73,7 +73,7 @@ import { LiveAppManifest } from "@ledgerhq/live-common/platform/types";
 import type { WalletApiDeviceIntentSignRequest } from "LLM/features/WalletApiSignature/components/TransactionSignatureDrawer";
 import type { WalletApiDeviceIntentSignMessageRequest } from "LLM/features/WalletApiSignature/components/MessageSignatureDrawer";
 import { useDeviceIntentSignEnabled } from "LLM/features/WalletApiSignature/hooks/useDeviceIntentSignEnabled";
-import { useWalletApiSignatureQueue } from "LLM/features/WalletApiSignature/hooks/useWalletApiSignatureQueue";
+import { useWalletApiSignatureQueue } from "@features/platform-wallet-api-sign";
 import { AccountPublicKeyUnavailable } from "@ledgerhq/live-common/errors";
 import type { BridgeSession } from "@ledgerhq/live-common/wallet-api/bridgeSession";
 import {
@@ -157,7 +157,10 @@ export function useWebView(
     enqueueMessageSignature,
     closeCurrentSignature,
     clearSignatures,
-  } = useWalletApiSignatureQueue();
+  } = useWalletApiSignatureQueue<
+    WalletApiDeviceIntentSignRequest,
+    WalletApiDeviceIntentSignMessageRequest
+  >();
   // Set on getPublicKey failure; the consuming component renders it as a native bottom modal.
   const [publicKeyUnavailableError, setPublicKeyUnavailableError] = useState<Error | null>(null);
   const clearPublicKeyUnavailableError = useCallback(() => setPublicKeyUnavailableError(null), []);

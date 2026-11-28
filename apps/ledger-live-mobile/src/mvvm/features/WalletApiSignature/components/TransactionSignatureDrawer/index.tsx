@@ -1,4 +1,4 @@
-import React, { memo, useMemo } from "react";
+import React, { memo } from "react";
 import { StyleSheet, View } from "react-native";
 import { DeviceIntentExecutor } from "LLM/components/DeviceIntentExecutor";
 import { useTransactionSignatureDrawerViewModel } from "./useTransactionSignatureDrawerViewModel";
@@ -13,7 +13,6 @@ type Props = {
 };
 
 const deviceConnectionParams = { acceptedDeviceModelIds: [] };
-const noop = () => undefined;
 
 /**
  * Hosts the wallet-api signature step (the Device Intent Executor and the bottom sheet
@@ -23,27 +22,16 @@ const noop = () => undefined;
 function TransactionSignatureDrawer({ request, onClose }: Props) {
   const {
     sourceFlow,
+    analyticsProperties,
+    intentComponentExtraProps,
     deviceInitializationInput,
     signatureIntent,
     onIntentJobStateChanged,
+    onIntentJobComplete,
     onIntentJobError,
     onExecutorStateChanged,
     onUserCancel,
   } = useTransactionSignatureDrawerViewModel({ request, onClose });
-
-  const analyticsProperties = useMemo(
-    () => ({ manifestId: request.manifestId, manifestName: request.manifestName }),
-    [request.manifestId, request.manifestName],
-  );
-
-  const intentComponentExtraProps = useMemo(
-    () => ({
-      manifestId: request.manifestId,
-      manifestName: request.manifestName,
-      recipient: request.transaction.recipient,
-    }),
-    [request.manifestId, request.manifestName, request.transaction.recipient],
-  );
 
   if (!deviceInitializationInput || !signatureIntent) {
     return null;
@@ -65,7 +53,7 @@ function TransactionSignatureDrawer({ request, onClose }: Props) {
         intentComponentExtraProps={intentComponentExtraProps}
         onExecutorStateChanged={onExecutorStateChanged}
         onIntentJobStateChanged={onIntentJobStateChanged}
-        onIntentJobComplete={noop}
+        onIntentJobComplete={onIntentJobComplete}
         onIntentJobError={onIntentJobError}
         cancelIntentRequestId={undefined}
         onUserCancel={onUserCancel}

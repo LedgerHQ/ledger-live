@@ -1,6 +1,11 @@
 import { app } from "~/renderer/bridge";
 import { addPendingOperation } from "@ledgerhq/live-common/account/index";
+import { useWalletApiSignatureQueue } from "@features/platform-wallet-api-sign";
 import { useToasts } from "@ledgerhq/live-common/notifications/ToastProvider/index";
+import type { BridgeSession } from "@ledgerhq/live-common/wallet-api/bridgeSession";
+import { prepareSignTransaction } from "@ledgerhq/live-common/wallet-api/logic";
+import type { WalletApiDeviceIntentSignMessageRequest } from "LLD/features/WalletApiSignature/components/MessageSignatureDialog/types";
+import type { WalletApiDeviceIntentSignRequest } from "LLD/features/WalletApiSignature/components/TransactionSignatureDialog/types";
 import {
   ExchangeType,
   UiHook,
@@ -47,17 +52,35 @@ import { HOOKS_TRACKING_LOCATIONS } from "~/renderer/analytics/hooks/variables";
 import { setFlowValue, setSourceValue } from "~/renderer/reducers/modularDialog";
 import { useDrawerConfiguration } from "@ledgerhq/live-common/wallet-api/ModularDrawer/useDrawerConfiguration";
 import { useOpenAssetAndAccount } from "LLD/features/ModularDialog/hooks/useOpenAssetAndAccount";
+import { MessageSignatureDialog } from "LLD/features/WalletApiSignature/components/MessageSignatureDialog";
+import { TransactionSignatureDialog } from "LLD/features/WalletApiSignature/components/TransactionSignatureDialog";
+import { useDeviceIntentSignEnabled } from "LLD/features/WalletApiSignature/hooks/useDeviceIntentSignEnabled";
 import { useFeature } from "@features/platform-feature-flags";
 import { setOriginFlow } from "~/renderer/analytics/originFlow";
 import { getTrackingRouteLiveAppSource } from "./analytics";
 
 const wallet = { name: "ledger-live-desktop", version: __APP_VERSION__ };
 
-function useUiHook(manifest: AppManifest, tracking: TrackingAPI): UiHook {
+type UseUiHookParams = Readonly<{
+  manifest: AppManifest;
+  tracking: TrackingAPI;
+  bridgeSessionRef: RefObject<BridgeSession | undefined>;
+  requestDeviceIntentSign: (request: WalletApiDeviceIntentSignRequest) => void;
+  requestDeviceIntentSignMessage: (request: WalletApiDeviceIntentSignMessageRequest) => void;
+}>;
+
+function useUiHook({
+  manifest,
+  tracking,
+  bridgeSessionRef,
+  requestDeviceIntentSign,
+  requestDeviceIntentSignMessage,
+}: UseUiHookParams): UiHook {
   const { pushToast } = useToasts();
   const { t } = useTranslation();
   const dispatch = useDispatch();
   const { createDrawerConfiguration } = useDrawerConfiguration();
+  const deviceIntentSignEnabled = useDeviceIntentSignEnabled(manifest.id);
 
   const source = getTrackingRouteLiveAppSource();
 
@@ -126,6 +149,21 @@ function useUiHook(manifest: AppManifest, tracking: TrackingAPI): UiHook {
       },
       "message.sign": ({ account, message, options, onSuccess, onError, onCancel }) => {
         app.show();
+        if (deviceIntentSignEnabled) {
+          requestDeviceIntentSignMessage({
+            account,
+            parentAccount: undefined,
+            message,
+            appName: options?.hwAppId,
+            dependencies: options?.dependencies,
+            manifestId: manifest.id,
+            manifestName: manifest.name,
+            onSuccess,
+            onError,
+            onCancel,
+          });
+          return;
+        }
         dispatch(
           openModal("MODAL_SIGN_MESSAGE", {
             account,
@@ -144,7 +182,7 @@ function useUiHook(manifest: AppManifest, tracking: TrackingAPI): UiHook {
       "storage.set": ({ key, value, storeId }) => {
         return setStoreValue(key, value, storeId);
       },
-      "transaction.sign": ({
+      "transaction.sign": async ({
         account,
         parentAccount,
         signFlowInfos: { canEditFees, hasFeesProvided, liveTx },
@@ -153,6 +191,31 @@ function useUiHook(manifest: AppManifest, tracking: TrackingAPI): UiHook {
         onError,
       }) => {
         app.show();
+        if (deviceIntentSignEnabled) {
+          try {
+            const session = bridgeSessionRef.current;
+            const transaction = await prepareSignTransaction(
+              account,
+              parentAccount ?? undefined,
+              liveTx,
+            );
+            if (session && !session.isOpen) return;
+            requestDeviceIntentSign({
+              account,
+              parentAccount: parentAccount ?? undefined,
+              transaction,
+              appName: options?.hwAppId,
+              dependencies: options?.dependencies,
+              manifestId: manifest.id,
+              manifestName: manifest.name,
+              onSuccess,
+              onError,
+            });
+          } catch (error) {
+            onError(error instanceof Error ? error : new Error(String(error)));
+          }
+          return;
+        }
         dispatch(
           openModal("MODAL_SIGN_TRANSACTION", {
             canEditFees,
@@ -273,13 +336,17 @@ function useUiHook(manifest: AppManifest, tracking: TrackingAPI): UiHook {
       },
     }),
     [
+      bridgeSessionRef,
+      createDrawerConfiguration,
+      deviceIntentSignEnabled,
       dispatch,
       flow,
-      source,
-      createDrawerConfiguration,
-      openAssetAndAccount,
       manifest,
+      openAssetAndAccount,
       pushToast,
+      requestDeviceIntentSign,
+      requestDeviceIntentSignMessage,
+      source,
       t,
       tracking,
     ],
@@ -311,7 +378,25 @@ function useWebView(
   const accounts = useSelector(flattenAccountsSelector);
   const mevProtected = useSelector(mevProtectionSelector);
 
-  const uiHook = useUiHook(manifest, tracking);
+  const {
+    currentSignature,
+    enqueueTransactionSignature,
+    enqueueMessageSignature,
+    closeCurrentSignature,
+    clearSignatures,
+  } = useWalletApiSignatureQueue<
+    WalletApiDeviceIntentSignRequest,
+    WalletApiDeviceIntentSignMessageRequest
+  >();
+
+  const bridgeSessionRef = useRef<BridgeSession | undefined>(undefined);
+  const uiHook = useUiHook({
+    manifest,
+    tracking,
+    bridgeSessionRef,
+    requestDeviceIntentSign: enqueueTransactionSignature,
+    requestDeviceIntentSignMessage: enqueueMessageSignature,
+  });
   const shareAnalytics = useSelector(shareAnalyticsSelector);
   const userId = useGetUserId();
   const config = useConfig({
@@ -329,7 +414,10 @@ function useWebView(
     // oxlint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  const bridge = useWebviewBridgeSession(webviewRef, mainFrameUrl);
+  const bridge = useWebviewBridgeSession(webviewRef, mainFrameUrl, clearSignatures);
+  useLayoutEffect(() => {
+    bridgeSessionRef.current = bridge.session;
+  }, [bridge.session]);
 
   const walletState = useSelector(walletSelector);
 
@@ -419,7 +507,16 @@ function useWebView(
     };
   }, [customWebviewStyle, widgetLoaded]);
 
-  return { webviewRef, widgetLoaded, onReload, webviewStyle, noAccounts, isLoadingAccounts };
+  return {
+    webviewRef,
+    widgetLoaded,
+    onReload,
+    webviewStyle,
+    noAccounts,
+    isLoadingAccounts,
+    currentSignature,
+    closeCurrentSignature,
+  };
 }
 
 export const WalletAPIWebview = forwardRef<WebviewAPI, WebviewProps>(
@@ -484,7 +581,14 @@ export const WalletAPIWebview = forwardRef<WebviewAPI, WebviewProps>(
       }
     }, [webviewState, onStateChange]);
 
-    const { webviewStyle, widgetLoaded, noAccounts, isLoadingAccounts } = useWebView(
+    const {
+      webviewStyle,
+      widgetLoaded,
+      noAccounts,
+      isLoadingAccounts,
+      currentSignature,
+      closeCurrentSignature,
+    } = useWebView(
       {
         manifest,
         customHandlers,
@@ -545,6 +649,20 @@ export const WalletAPIWebview = forwardRef<WebviewAPI, WebviewProps>(
           {...webviewPartition}
         />
         {!hideLoader ? <Loader manifest={manifest} isLoading={!widgetLoaded} /> : null}
+        {currentSignature?.type === "transaction" && (
+          <TransactionSignatureDialog
+            key={currentSignature.id}
+            request={currentSignature.request}
+            onClose={closeCurrentSignature}
+          />
+        )}
+        {currentSignature?.type === "message" && (
+          <MessageSignatureDialog
+            key={currentSignature.id}
+            request={currentSignature.request}
+            onClose={closeCurrentSignature}
+          />
+        )}
       </>
     );
   },

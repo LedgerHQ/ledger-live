@@ -19,6 +19,7 @@ const useEarnLiveAppModalContentViewModel = (): EarnLiveAppModalContentViewModel
     shouldDisplayEarnUpselling,
   } = useWalletFeaturesConfig("desktop");
   const earnUiFlag = useFeature("ptxEarnUi");
+  const deviceIntentSignEnabled = useFeature("lldWalletApiDeviceIntentSign")?.enabled ?? false;
   const computedUiVersion = computeEarnUiVersion({
     baseUiVersion: earnUiFlag?.params?.value ?? "v2",
     shouldDisplayEarnUpselling,
@@ -32,11 +33,12 @@ const useEarnLiveAppModalContentViewModel = (): EarnLiveAppModalContentViewModel
     return {
       uiVersion: isLwd40Enabled ? computedUiVersion : "v1",
       lw40enabled: isLwd40Enabled ? "true" : "false",
+      lldWalletApiDeviceIntentSignEnabled: deviceIntentSignEnabled ? "true" : "false",
       ethDepositCohort,
       stakeProgramsParam: stakeProgramsParam ? JSON.stringify(stakeProgramsParam) : undefined,
       stakeCurrenciesParam: stakeCurrenciesParam ? JSON.stringify(stakeCurrenciesParam) : undefined,
     };
-  }, [stakePrograms, isLwd40Enabled, computedUiVersion]);
+  }, [stakePrograms, isLwd40Enabled, computedUiVersion, deviceIntentSignEnabled]);
 
   return { extraInputs };
 };

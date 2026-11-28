@@ -59,12 +59,12 @@ function mockSignMessageExec(result$: Observable<Result>) {
   jest.mocked(signMessageExec).mockReturnValue(result$);
 }
 
-function startJob() {
+function startJob(onResult: jest.Mock = jest.fn()) {
   return signMessageIntentJob({
     deviceConnectionResult,
     deviceExtractedContext,
     input,
-    onResult: jest.fn(),
+    onResult,
   });
 }
 
@@ -155,5 +155,26 @@ describe("signMessageIntentJob", () => {
         });
       }),
     ).rejects.toEqual(new Error("sign failed"));
+  });
+  it("should report the signature as the job result", async () => {
+    mockSignMessageExec(of(result));
+    const onResult = jest.fn();
+
+    await new Promise<void>((resolve, reject) => {
+      startJob(onResult).subscribe({ error: reject, complete: resolve });
+    });
+
+    expect(onResult).toHaveBeenCalledTimes(1);
+    expect(onResult).toHaveBeenCalledWith("0xsignature");
+  });
+
+  it("should report no result when the user refuses", () => {
+    mockSignMessageExec(throwError(() => new UserRefusedOnDevice()));
+    const onResult = jest.fn();
+
+    const subscription = startJob(onResult).subscribe();
+
+    expect(onResult).not.toHaveBeenCalled();
+    subscription.unsubscribe();
   });
 });

@@ -295,4 +295,42 @@ describe("Earn screen", () => {
 
     expect(mockedUseEarnAppLifecycleMonitoring).toHaveBeenLastCalledWith(undefined);
   });
+
+  it("passes lldWalletApiDeviceIntentSignEnabled=true when the flag is enabled", () => {
+    render(<Earn />, {
+      initialState: withFlagOverrides({
+        ptxEarnLiveApp: { enabled: true, params: { manifest_id: "earn-manifest-id" } },
+        lldWalletApiDeviceIntentSign: {
+          enabled: true,
+          params: { variantId: "variant_a", enabledManifestIds: ["earn-manifest-id"] },
+        },
+        stakePrograms: { enabled: true, params: { list: [], redirects: {} } },
+      }),
+    });
+
+    const lastCall = mockWebPlatformPlayer.mock.calls.at(-1)?.[0] as
+      | { inputs?: Record<string, string | undefined> }
+      | undefined;
+
+    expect(lastCall?.inputs?.lldWalletApiDeviceIntentSignEnabled).toBe("true");
+  });
+
+  it("passes lldWalletApiDeviceIntentSignEnabled=false when the flag is disabled", () => {
+    render(<Earn />, {
+      initialState: withFlagOverrides({
+        ptxEarnLiveApp: { enabled: true, params: { manifest_id: "earn-manifest-id" } },
+        lldWalletApiDeviceIntentSign: {
+          enabled: false,
+          params: { variantId: "variant_a", enabledManifestIds: ["earn-manifest-id"] },
+        },
+        stakePrograms: { enabled: true, params: { list: [], redirects: {} } },
+      }),
+    });
+
+    const lastCall = mockWebPlatformPlayer.mock.calls.at(-1)?.[0] as
+      | { inputs?: Record<string, string | undefined> }
+      | undefined;
+
+    expect(lastCall?.inputs?.lldWalletApiDeviceIntentSignEnabled).toBe("false");
+  });
 });

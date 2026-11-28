@@ -7,7 +7,7 @@ import { useWebviewState, useUiHook } from "./helpers";
 import { getInitialURL } from "@ledgerhq/live-common/wallet-api/helpers";
 import type { LiveAppManifest } from "@ledgerhq/live-common/platform/types";
 import { NavigatorName, ScreenName } from "~/const";
-import prepareSignTransaction from "./liveSDKLogic";
+import { prepareSignTransaction } from "@ledgerhq/live-common/wallet-api/logic";
 import { isUrlAllowedByManifestDomains } from "@ledgerhq/live-common/wallet-api/manifestDomainUtils";
 import { act } from "@testing-library/react-native";
 import { BridgeSession } from "@ledgerhq/live-common/wallet-api/bridgeSession";
@@ -66,9 +66,9 @@ jest.mock("./domainCheckReport", () => ({
 
 jest.mock("./closePlatformExchange", () => ({ closePlatformExchange: jest.fn() }));
 
-jest.mock("./liveSDKLogic", () => ({
-  __esModule: true,
-  default: jest.fn(),
+jest.mock("@ledgerhq/live-common/wallet-api/logic", () => ({
+  ...jest.requireActual("@ledgerhq/live-common/wallet-api/logic"),
+  prepareSignTransaction: jest.fn(),
 }));
 
 const mockManifest: LiveAppManifest = {

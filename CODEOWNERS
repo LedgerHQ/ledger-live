@@ -450,6 +450,8 @@ libs/deeplink-module/                                    @ledgerhq/coin-integrat
 libs/test-utils/                                         @ledgerhq/coin-integration
 apps/ledger-live-mobile/src/mvvm/features/Web3Hub/    @ledgerhq/coin-integration
 apps/ledger-live-mobile/src/mvvm/features/WalletApiSignature/ @ledgerhq/coin-integration
+apps/ledger-live-desktop/src/mvvm/features/WalletApiSignature/ @ledgerhq/coin-integration
+features/platform/wallet-api-sign/                       @ledgerhq/coin-integration
 apps/ledger-live-desktop/src/renderer/hooks/useDeeplinking/handlers/bridge.handler.ts   @ledgerhq/coin-integration
 apps/ledger-live-desktop/src/renderer/hooks/useDeeplinking/handlers/discover.handler.ts @ledgerhq/coin-integration
 

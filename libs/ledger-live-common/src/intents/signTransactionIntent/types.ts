@@ -28,7 +28,8 @@ export type SignTransactionIntentInput = SignatureRequest;
 
 export type SignTransactionIntentDefinition = IntentDefinition<
   SignTransactionIntentJobState,
-  SignTransactionIntentInput
+  SignTransactionIntentInput,
+  SignedOperation
 >;
 
 export type SignTransactionIntentWithResultDefinition = IntentDefinition<
@@ -38,12 +39,18 @@ export type SignTransactionIntentWithResultDefinition = IntentDefinition<
 >;
 
 export type SignTransactionIntentPlatformDefinition<ExtraProps = undefined> =
-  IntentPlatformDefinition<SignTransactionIntentJobState, SignTransactionIntentInput, ExtraProps>;
+  IntentPlatformDefinition<
+    SignTransactionIntentJobState,
+    SignTransactionIntentInput,
+    ExtraProps,
+    SignedOperation
+  >;
 
 export type SignTransactionIntent<ExtraProps = undefined> = Intent<
   SignTransactionIntentJobState,
   SignTransactionIntentInput,
-  ExtraProps
+  ExtraProps,
+  SignedOperation
 >;
 
 export type SignTransactionIntentWithResultPlatformDefinition<ExtraProps = undefined> =

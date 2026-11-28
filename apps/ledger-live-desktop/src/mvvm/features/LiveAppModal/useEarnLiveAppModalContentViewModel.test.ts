@@ -50,10 +50,39 @@ describe("useEarnLiveAppModalContentViewModel (desktop)", () => {
     expect(result.current.extraInputs).toEqual({
       uiVersion: "v2",
       lw40enabled: "true",
+      lldWalletApiDeviceIntentSignEnabled: "false",
       ethDepositCohort: "cohort-a",
       stakeProgramsParam: JSON.stringify({ ethereum: "earn", bitcoin: "stakekit" }),
       stakeCurrenciesParam: JSON.stringify(["ethereum", "bitcoin"]),
     });
+  });
+
+  it("forwards lldWalletApiDeviceIntentSignEnabled=true when the flag is enabled", () => {
+    const { result } = renderHook(() => useEarnLiveAppModalContentViewModel(), {
+      initialState: withFlagOverrides({
+        lldWalletApiDeviceIntentSign: {
+          enabled: true,
+          params: { variantId: "variant_a", enabledManifestIds: ["earn"] },
+        },
+        stakePrograms: makeStakeProgramsFeature({}, []),
+      }),
+    });
+
+    expect(result.current.extraInputs?.lldWalletApiDeviceIntentSignEnabled).toBe("true");
+  });
+
+  it("forwards lldWalletApiDeviceIntentSignEnabled=false when the flag is disabled", () => {
+    const { result } = renderHook(() => useEarnLiveAppModalContentViewModel(), {
+      initialState: withFlagOverrides({
+        lldWalletApiDeviceIntentSign: {
+          enabled: false,
+          params: { variantId: "variant_a", enabledManifestIds: ["earn"] },
+        },
+        stakePrograms: makeStakeProgramsFeature({}, []),
+      }),
+    });
+
+    expect(result.current.extraInputs?.lldWalletApiDeviceIntentSignEnabled).toBe("false");
   });
 
   it("returns fallback v1 and lw40enabled=false when wallet 40 is disabled", () => {

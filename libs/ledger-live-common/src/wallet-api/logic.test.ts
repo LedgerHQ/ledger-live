@@ -6,12 +6,16 @@ import {
   bitcoinFamilyAccountGetXPubLogic,
   broadcastTransactionLogic,
   completeExchangeLogic,
+  prepareSignTransaction,
   protectStorageLogic,
   receiveOnAccountLogic,
   signMessageLogic,
   signRawTransactionLogic,
   WalletAPIContext,
 } from "./logic";
+import * as bridgeModule from "../bridge";
+import { getPlatformTransactionSignFlowInfos } from "../platform/converters";
+import { PLATFORM_FAMILIES_ENUM, type PlatformTransaction } from "../platform/types";
 import { liveBlindSigningReporter } from "@ledgerhq/live-dmk-shared";
 
 import { AppManifest, WalletAPITransaction } from "./types";
@@ -1767,6 +1771,136 @@ describe("liveBlindSigningReporter live-app context wrapping", () => {
 
     expect(setContextSpy).toHaveBeenLastCalledWith({ liveAppContext: null });
     expect(liveBlindSigningReporter.getContext().liveAppContext).toBeNull();
+  });
+});
+
+describe("prepareSignTransaction", () => {
+  afterEach(() => {
+    jest.restoreAllMocks();
+  });
+
+  it("updates recipient before remaining liveTx fields on a main account", async () => {
+    const ethAccount = createFixtureAccount("12", getCryptoCurrencyById("ethereum"));
+    const realBridge = await bridgeModule.getAccountBridge(ethAccount, undefined);
+    const createTransaction = jest.spyOn(realBridge, "createTransaction");
+    const updateTransaction = jest.spyOn(realBridge, "updateTransaction");
+
+    const liveTx: Partial<EvmTransaction> = {
+      recipient: "0x111111125421ca6dc452d289314280a0f8842a65",
+      amount: new BigNumber("1000"),
+      feesStrategy: "custom",
+    };
+
+    const result = await prepareSignTransaction(ethAccount, undefined, liveTx);
+
+    expect(createTransaction).toHaveBeenCalledWith(ethAccount);
+    expect(updateTransaction).toHaveBeenNthCalledWith(
+      1,
+      expect.objectContaining({ family: "evm" }),
+      {
+        recipient: "0x111111125421ca6dc452d289314280a0f8842a65",
+        subAccountId: undefined,
+      },
+    );
+    expect(updateTransaction).toHaveBeenNthCalledWith(
+      2,
+      expect.objectContaining({
+        recipient: "0x111111125421ca6dc452d289314280a0f8842a65",
+        subAccountId: undefined,
+      }),
+      {
+        amount: new BigNumber("1000"),
+        feesStrategy: "custom",
+      },
+    );
+    expect(result).toEqual(
+      expect.objectContaining({
+        family: "evm",
+        recipient: "0x111111125421ca6dc452d289314280a0f8842a65",
+        subAccountId: undefined,
+        amount: new BigNumber("1000"),
+        feesStrategy: "custom",
+      }),
+    );
+  });
+
+  it("returns a Transaction for platform", async () => {
+    const parentAccount = createFixtureAccount("12", getCryptoCurrencyById("ethereum"));
+    const childAccount = createTokenAccount("js:2:ethereum:0x022:", parentAccount.id);
+    const expectedResult: EvmTransaction = {
+      amount: new BigNumber("1000"),
+      data: Buffer.from([]),
+      family: "evm",
+      feesStrategy: "custom",
+      gasPrice: new BigNumber("700000"),
+      gasLimit: new BigNumber("1200000"),
+      customGasLimit: new BigNumber("1200000"),
+      mode: "send",
+      nonce: 8,
+      recipient: "0x0123456",
+      subAccountId: "js:2:ethereum:0x022:",
+      useAllAmount: false,
+      maxFeePerGas: undefined,
+      maxPriorityFeePerGas: undefined,
+      type: 0,
+      chainId: 1,
+    };
+
+    const tx: PlatformTransaction = {
+      family: PLATFORM_FAMILIES_ENUM.ETHEREUM,
+      amount: new BigNumber("1000"),
+      recipient: "0x0123456",
+      nonce: 8,
+      data: Buffer.from("Some data...", "hex"),
+      gasPrice: new BigNumber("700000"),
+      gasLimit: new BigNumber("1200000"),
+    };
+
+    const { liveTx } = await getPlatformTransactionSignFlowInfos(tx, childAccount);
+    const result = await prepareSignTransaction(childAccount, parentAccount, liveTx);
+
+    expect(result).toEqual(expectedResult);
+  });
+
+  it("returns a Transaction for wallet-api", async () => {
+    const parentAccount = createFixtureAccount("12", getCryptoCurrencyById("ethereum"));
+    const childAccount = createTokenAccount("js:2:ethereum:0x022:", parentAccount.id);
+    const expectedResult: EvmTransaction = {
+      amount: new BigNumber("1000"),
+      data: Buffer.from([]),
+      family: "evm",
+      feesStrategy: "custom",
+      gasPrice: new BigNumber("700000"),
+      gasLimit: new BigNumber("1200000"),
+      customGasLimit: new BigNumber("1200000"),
+      mode: "send",
+      nonce: 8,
+      recipient: "0x0123456",
+      subAccountId: "js:2:ethereum:0x022:",
+      useAllAmount: false,
+      maxFeePerGas: undefined,
+      maxPriorityFeePerGas: undefined,
+      type: 0,
+      chainId: 1,
+    };
+
+    const tx: WalletAPITransaction = {
+      family: "ethereum",
+      amount: new BigNumber("1000"),
+      recipient: "0x0123456",
+      nonce: 8,
+      data: Buffer.from("Some data...", "hex"),
+      gasPrice: new BigNumber("700000"),
+      gasLimit: new BigNumber("1200000"),
+    };
+
+    const { liveTx } = await converters.getWalletAPITransactionSignFlowInfos({
+      walletApiTransaction: tx,
+      account: childAccount,
+    });
+    const result = await prepareSignTransaction(childAccount, parentAccount, liveTx);
+
+    expect(result).toEqual(expectedResult);
   });
 });
 

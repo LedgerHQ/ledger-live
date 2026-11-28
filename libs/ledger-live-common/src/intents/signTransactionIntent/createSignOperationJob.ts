@@ -238,6 +238,17 @@ export function createSignOperationJobWithResult<Input extends SignOperationJobI
     );
 }
 
+export function createSignOperationJobWithSignedResult<Input extends SignOperationJobInput>(
+  params: CreateSignOperationJobParams<Input>,
+): Job<SignTransactionIntentJobState, Input, SignedOperation> {
+  return jobInput =>
+    runSignOperationJob<Input, SignTransactionIntentJobState, SignedOperation>(
+      params,
+      { ...retryableRefusal, results: { signed: signedOperation => signedOperation } },
+      jobInput,
+    );
+}
+
 /** How a terminal signature job reports its end through `onResult`. */
 export type TerminalSignOperationResult =
   | Readonly<{ status: "signed"; signedOperation: SignedOperation }>

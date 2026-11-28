@@ -59,6 +59,7 @@
     "earnWithdrawV2",
     "earnTxLifecycleMonitoring",
     "earnApiGravitee",
+    "lldWalletApiDeviceIntentSign",
     "llmWalletApiDeviceIntentSign"
   ]
 }

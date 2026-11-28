@@ -74,6 +74,7 @@ import { getWallet40Attributes } from "@ledgerhq/live-common/analytics/featureFl
 import { getNewSendFlowAttribute } from "@ledgerhq/live-common/analytics/featureFlagHelpers/newSendFlow";
 import { getRecoverV2Attribute } from "@ledgerhq/live-common/analytics/featureFlagHelpers/recoverV2";
 import { getRemoteABTestingAttributes } from "@ledgerhq/live-common/analytics/remoteABTesting/remoteABTestingAnalytics";
+import { getLldWalletApiDeviceIntentSignAttributes } from "./getLldWalletApiDeviceIntentSignAttributes";
 import { scrubAccountId } from "../helpers/scrubAccountId";
 import { getContentAbTestTracking } from "@features/platform-content-ab-tests";
 
@@ -358,6 +359,9 @@ const extraProperties = (store: ReduxStore) => {
   const accountDetailAnalyticsBanner = isAccountDetailAnalyticsBannerEnabled(accountDetailFeature);
   const newSettings = analyticsFeatureFlagMethod?.("newSettings")?.enabled ?? false;
   const remoteABTestingAttributes = getRemoteABTestingAttributes(analyticsFeatureFlagMethod);
+  const lldWalletApiDeviceIntentSignAttributes = getLldWalletApiDeviceIntentSignAttributes(
+    analyticsFeatureFlagMethod?.("lldWalletApiDeviceIntentSign"),
+  );
   const payAttributes = getPayAttributes(
     state,
     analyticsFeatureFlagMethod?.("lwdPayTab")?.enabled ?? false,
@@ -421,6 +425,7 @@ const extraProperties = (store: ReduxStore) => {
     accountDetailAnalyticsBanner,
     newSettings,
     ...remoteABTestingAttributes,
+    ...lldWalletApiDeviceIntentSignAttributes,
   };
 };
 

@@ -1,5 +1,6 @@
 import {
   Account,
+  AccountBridge,
   AccountLike,
   AnyMessage,
   getCurrencyForAccount,
@@ -150,6 +151,26 @@ export async function signTransactionLogic(
       hasFeesProvided,
     });
   });
+}
+
+/**
+ * Turns the transaction a live app sends to `transaction.sign` into a bridge transaction.
+ * The recipient is set first, on its own, because setting it can reset other fields.
+ */
+export async function prepareSignTransaction(
+  account: AccountLike,
+  parentAccount: Account | undefined,
+  liveTx: Partial<Transaction>,
+): Promise<Transaction> {
+  const bridge: AccountBridge<Transaction> = await getAccountBridge(account, parentAccount);
+  const initialTx = bridge.createTransaction(account);
+  const { recipient, ...txData } = liveTx;
+  const txWithRecipient = bridge.updateTransaction(initialTx, {
+    recipient,
+    subAccountId: isTokenAccount(account) ? account.id : undefined,
+  });
+
+  return bridge.updateTransaction(txWithRecipient, txData);
 }
 
 export async function signRawTransactionLogic(
