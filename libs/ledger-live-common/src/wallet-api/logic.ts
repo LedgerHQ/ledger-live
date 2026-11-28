@@ -225,11 +225,37 @@ export async function broadcastTransactionLogic(
   return uiNavigation(signerAccount, parentAccount, signedOperation);
 }
 
+const stripMasterPrefix = (path: string) => (path.startsWith("m/") ? path.slice(2) : path);
+
+function getMessageSignPath(account: Account, path: string): string | undefined {
+  const addressPath = stripMasterPrefix(path);
+  if (account.currency.family !== "bitcoin") {
+    if (addressPath !== stripMasterPrefix(account.freshAddressPath)) {
+      throw new Error("path must be the account's own path for non-bitcoin accounts");
+    }
+    // Same address as without a path, so sign as before.
+    return undefined;
+  }
+  const { path: rootPath, index: accountIndex } = getWalletAccount(account).params;
+  const accountPath = `${rootPath}/${accountIndex}'/`;
+  const addressPart = addressPath.slice(accountPath.length);
+  if (
+    !addressPath.startsWith(accountPath) ||
+    !/^[01]\/\d+$/.test(addressPart) ||
+    // Indices from 2^31 are hardened, so they are not receive or change addresses.
+    Number(addressPart.slice(2)) >= 0x80000000
+  ) {
+    throw new Error("path does not belong to the account");
+  }
+  return addressPath;
+}
+
 export async function signMessageLogic(
   { manifest, accounts, tracking }: WalletAPIContext,
   walletAccountId: string,
   message: string,
   uiNavigation: (account: AccountLike, message: AnyMessage) => Promise<Buffer>,
+  path?: string,
 ): Promise<Buffer> {
   return withLiveAppContext(manifest, async () => {
     tracking.signMessageRequested(manifest);
@@ -249,7 +275,11 @@ export async function signMessageLogic(
     let formattedMessage: AnyMessage;
     try {
       if (isAccount(account)) {
-        formattedMessage = await prepareMessageToSign(account, message);
+        formattedMessage = await prepareMessageToSign(
+          account,
+          message,
+          path === undefined ? undefined : getMessageSignPath(account, path),
+        );
       } else {
         throw new Error("account provided should be the main one");
       }

@@ -33,6 +33,7 @@ import { getCryptoAssetsStore } from "@ledgerhq/ledger-wallet-framework/cryptoAs
 import openTransportAsSubject from "../hw/openTransportAsSubject";
 import { useDispatch } from "react-redux";
 import { mockTokenCurrency } from "@domain/entity-currency-token/schema.mock";
+import { prepareMessageToSign } from "../hw/signMessage/index";
 
 const walletState: AccountNamesState = new Map();
 const mockSetHandler = jest.fn();
@@ -95,6 +96,12 @@ jest.mock("../hw/signMessage/index", () => ({
 jest.mock("../hw/openTransportAsSubject", () => ({
   __esModule: true,
   default: jest.fn(),
+}));
+
+jest.mock("@ledgerhq/coin-bitcoin/getWalletAccount", () => ({
+  getWalletAccount: jest.fn().mockReturnValue({
+    params: { path: "84'/0'", index: 0 },
+  }),
 }));
 
 jest.mock("@domain/api-currency-token", () => ({
@@ -703,6 +710,40 @@ describe("signing flow of a closed bridge session", () => {
 
     await expect(request).rejects.toBeInstanceOf(BridgeSessionClosed);
     expect(liveBlindSigningReporter.getContext().liveAppContext).toBeNull();
+  });
+});
+
+describe("message.sign handler with options.path", () => {
+  afterEach(() => {
+    cleanup();
+    jest.mocked(prepareMessageToSign).mockClear();
+  });
+
+  it("forwards options.path to prepareMessageToSign for a Bitcoin account", async () => {
+    const bitcoinAccount = createFixtureAccount("01", CRYPTO_CURRENCIES_REGISTRY["bitcoin_testnet"]);
+    bitcoinAccount.freshAddressPath = "84'/0'/0'/0/0";
+    jest.mocked(getAccountIdFromWalletAccountId).mockReturnValue(bitcoinAccount.id);
+    const uiMessageSign = jest.fn(({ onSuccess }) => {
+      onSuccess("0xsignature");
+    });
+    const options = createDefaultOptions({
+      accounts: [bitcoinAccount],
+      uiHook: { "message.sign": uiMessageSign },
+    });
+    renderHook(() => useWalletAPIServer(options));
+
+    await getRegisteredHandler("message.sign")({
+      accountId: "wallet-account-id",
+      message: Buffer.from("hello"),
+      meta: undefined,
+      options: { path: "m/84'/0'/0'/0/5" },
+    });
+
+    expect(prepareMessageToSign).toHaveBeenCalledWith(
+      expect.objectContaining({ id: bitcoinAccount.id }),
+      expect.any(String),
+      "84'/0'/0'/0/5",
+    );
   });
 });
 
