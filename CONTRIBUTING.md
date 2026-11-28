@@ -67,6 +67,8 @@ pnpm changeset
 
 A changeset is **required** for any user-facing change or library API modification. See the [wiki](https://github.com/LedgerHQ/ledger-live/wiki/Changesets) for the full guide.
 
+When the prompt asks which packages get a minor bump, select them all: a package you skip there gets `patch`, which is only for pull requests to a hotfix branch.
+
 ## Translations
 
 We use [Smartling](https://www.smartling.com/) for automated translations.
