@@ -8,6 +8,8 @@ operations on the Device Intent Executor (DIE) session:
 
 - **Add member** (`addMemberIntentDefinition`): `getOrCreateTrustchain`, which creates the
   trustchain, joins an existing one, or restores it. Its result is the SDK's `TrustchainResult`.
+  The optional `onInitialResponse` input sees the seed's trustchains before anything is created or
+  joined; a throw ends the run, and `NoTrustchainInitialized` ends it as `failed` with `no-trustchain`.
 - **Remove member** (`removeMemberIntentDefinition`): `removeMember`, which rotates the trustchain
   key. Its result is the new `Trustchain`, which the app must store.
 
@@ -58,6 +60,23 @@ Errors are job states, except a device disconnection, which errors the observabl
 shows its Disconnected screen, and an exception thrown by `onResult`, which errors the observable so
 the job still ends.
 
+The SDK can finish its cloud part after the executor unsubscribed, for example when the device
+disconnects right after the user approved. The result of the latest run then still goes through
+`onResult`, with no job state, so the app stores it. The app's `onResult` must tolerate this late
+call: it stores the result and skips any navigation from a screen that is gone. An error after the
+unsubscribe, a throw from that late `onResult`, and the result of a run that a Retry replaced are
+ignored. After a disconnection, the executor's Retry starts a new job: a late result of the
+disconnected job is dropped once the new job delivered its own, so it never overwrites a newer
+trustchain. The jobs order their results through `resultOrder`, a required input: each host creates
+one `createLedgerSyncResultOrder()` for its lifetime and passes it in every add member and remove
+member input, since both write the same trustchain store.
+
+A Ledger Sync reset rotates the member credentials, so a late result whose run started with other
+credentials belongs to a Ledger Sync that is gone. The app's `onResult` dispatches
+`acceptLedgerSyncResult(setTrustchain(trustchain), runCredentials)`: the thunk reads the state when
+the result arrives, dispatches the action only when the credentials are still the run's, and returns
+whether it did, so the app tracks and navigates only then.
+
 `mapLedgerSyncErrorToFailure` reads `error.name`, not the class, so an error that lost its prototype
 (serialized across a bridge, or thrown by another copy of the SDK) still maps to its reason:
 
@@ -85,10 +104,11 @@ const addMemberIntentLWMDefinition = { ...addMemberIntentDefinition, component: 
 
 const intent = createIntent(
   addMemberIntentLWMDefinition,
-  { memberCredentials, currentTrustchain, createSessionSdk },
+  { memberCredentials, currentTrustchain, createSessionSdk, resultOrder },
   { onResult: result => dispatch(setTrustchain(result.trustchain)) },
 );
 ```
 
-No app binds these intents yet. The rollout flags `lwmLedgerSyncDie` and `lwdLedgerSyncDie` gate them
-once they do.
+Both apps bind these intents in the Ledger Sync intents devtool. Ledger Wallet Mobile also runs
+them in its Ledger Sync screens behind the `lwmLedgerSyncDie` rollout flag. `lwdLedgerSyncDie` will gate
+the Ledger Wallet Desktop screens once they bind them.

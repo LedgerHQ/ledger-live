@@ -1,4 +1,4 @@
-import { Platform, DeviceEventEmitter } from "react-native";
+import { Platform } from "react-native";
 import invariant from "invariant";
 import { Subject } from "rxjs";
 import { store } from "~/state-manager/configureStore";
@@ -12,22 +12,18 @@ import {
 import { importStore as importAccountsRaw } from "~/actions/accounts";
 import { importTrustchainStoreState } from "@ledgerhq/ledger-key-ring-protocol/store";
 import { setContacts } from "@domain/entity-contact";
+import { identitiesSlice } from "@domain/entity-client-identity";
 import { importPostOnboardingState } from "@ledgerhq/live-common/postOnboarding/actions";
 import { restorePayCardBalanceFilter } from "@features/flow-pay-balance/state";
 import { restorePayCardFeatureTour } from "@features/flow-pay-feature-tour/state";
-import { restoreReceiveVerifyHint } from "@features/flow-pay-request/state";
+import { restoreReceiveVerifyHint } from "@features/flow-receive/state";
 import { restorePayCardLoginIntro } from "@features/flow-pay-card-auth/state";
 import { restorePayCardOnboardingWidget } from "@features/flow-pay-card-widget/state";
 import { exportSelector as accountsExportSelector } from "~/reducers/accounts";
 import { saveAccounts } from "~/db";
 import { acceptGeneralTerms } from "~/logic/terms";
 import { navigate } from "~/rootnavigation";
-import {
-  addKnownBleDevice,
-  importBle,
-  removeKnownBleDevice,
-  removeKnownBleDevices,
-} from "~/actions/ble";
+import { addKnownBleDevice, removeKnownBleDevice, removeKnownBleDevices } from "~/actions/ble";
 import { LaunchArguments } from "react-native-launch-arguments";
 import logReport from "~/log-report";
 import { webviewLogStore } from "~/e2e/webviewLogStore";
@@ -50,8 +46,6 @@ import {
 } from "@ledgerhq/live-dmk-mobile";
 import { ledgerToDmkDeviceIdMap } from "@ledgerhq/live-dmk-shared";
 import type { DeviceModelId } from "@ledgerhq/types-devices";
-import { DeviceManagementKitTransportSpeculos } from "@ledgerhq/live-dmk-speculos";
-import { setSpeculosDeviceModel, setSpeculosSessionToken } from "~/services/registerTransports";
 import { appNetworkLogStore, initAppNetworkLogging } from "../appNetworkLogStore";
 import { readLaunchForceProvider } from "~/launchForceProvider";
 
@@ -62,7 +56,7 @@ let retryCount = 0;
 const maxRetries = 5; // Maximum number of retry attempts
 const retryDelay = 500; // Initial retry delay in milliseconds
 
-async function disconnectDeviceIntentSpeculosSessions() {
+async function disconnectAllSpeculosSessions() {
   const dmk = getDeviceManagementKit();
   await Promise.all(
     dmk
@@ -70,11 +64,6 @@ async function disconnectDeviceIntentSpeculosSessions() {
       .filter(device => device.transport === speculosIdentifier)
       .map(({ sessionId }) => dmk.disconnect({ sessionId }).catch(() => {})),
   );
-}
-
-async function disconnectAllSpeculosSessions() {
-  await DeviceManagementKitTransportSpeculos.disconnectAll();
-  await disconnectDeviceIntentSpeculosSessions();
 }
 
 function removeKnownSpeculosDevices() {
@@ -244,10 +233,6 @@ async function onMessage(event: WebSocketMessageEvent) {
         store.dispatch(importSettings(msg.payload));
         break;
       }
-      case "importBle": {
-        store.dispatch(importBle(msg.payload));
-        break;
-      }
       case "importPostOnboarding": {
         store.dispatch(importPostOnboardingState({ newState: msg.payload }));
         break;
@@ -255,10 +240,13 @@ async function onMessage(event: WebSocketMessageEvent) {
       case "importPayCard": {
         // The same fan-out LedgerStore performs on the persisted blob: one payload, one slice each.
         store.dispatch(restorePayCardFeatureTour(msg.payload));
-        store.dispatch(restoreReceiveVerifyHint(msg.payload));
         store.dispatch(restorePayCardBalanceFilter(msg.payload));
         store.dispatch(restorePayCardLoginIntro(msg.payload));
         store.dispatch(restorePayCardOnboardingWidget(msg.payload));
+        break;
+      }
+      case "importReceiveVerifyHint": {
+        store.dispatch(restoreReceiveVerifyHint(msg.payload));
         break;
       }
       case "overrideFeatureFlags": {
@@ -270,15 +258,16 @@ async function onMessage(event: WebSocketMessageEvent) {
         store.dispatch(setOverride({ key: id, value }));
         break;
       }
+      case "overrideUserId": {
+        store.dispatch(identitiesSlice.actions.importFromLegacy({ userId: msg.payload }));
+        break;
+      }
       case "overrideLiveConfig": {
         LiveConfig.setAllOverrides(msg.payload);
         break;
       }
       case "navigate":
         navigate(msg.payload, {});
-        break;
-      case "addUSB":
-        DeviceEventEmitter.emit("onDeviceConnect", msg.payload);
         break;
       case "getLogs": {
         const payload = JSON.stringify({
@@ -332,8 +321,6 @@ async function onMessage(event: WebSocketMessageEvent) {
         }: { address: string; model: DeviceModelId; sessionToken?: string } = JSON.parse(
           msg.payload,
         );
-        setSpeculosDeviceModel(model);
-        setSpeculosSessionToken(sessionToken);
         await disconnectAllSpeculosSessions();
         const speculosDeviceId = buildSpeculosLegacyDeviceId(address);
         const knownSpeculosIds = bleDevicesSelector(store.getState())
@@ -357,7 +344,7 @@ async function onMessage(event: WebSocketMessageEvent) {
             modelId: model,
           }),
         );
-        // Device intents only offer DMK-known devices, so Speculos is registered here too.
+        // Device intents and `withDevice` both reach Speculos through this app DMK target.
         speculosTargetSubject.next({
           url: address,
           deviceModelId: ledgerToDmkDeviceIdMap[model],
@@ -377,8 +364,6 @@ async function onMessage(event: WebSocketMessageEvent) {
       }
       case "removeKnownSpeculos": {
         const address = msg.payload;
-        setSpeculosDeviceModel(undefined);
-        setSpeculosSessionToken(undefined);
         await disconnectAllSpeculosSessions();
         store.dispatch(removeKnownBleDevice(buildSpeculosLegacyDeviceId(address)));
         speculosTargetSubject.next(null);

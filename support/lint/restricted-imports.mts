@@ -57,7 +57,10 @@ export const WALLET_FRAMEWORK_CURRENCY_TYPES = [
     name: "@ledgerhq/ledger-wallet-framework/types",
     ...WALLET_FRAMEWORK_CURRENCY_TYPES_RESTRICTION,
   },
-  { name: "@ledgerhq/ledger-wallet-framework/api", ...WALLET_FRAMEWORK_CURRENCY_TYPES_RESTRICTION },
+  {
+    name: "@ledgerhq/ledger-wallet-framework/api",
+    ...WALLET_FRAMEWORK_CURRENCY_TYPES_RESTRICTION,
+  },
 ];
 
 export const LIVE_COMMON_LIB = {
@@ -118,6 +121,29 @@ export const ACCOUNT_DATA_SETUP_FILES = [
   "src/config/account-data-setup.test.ts",
 ];
 
+// Code holds the AccountUUID; only ACCOUNT_DESCRIPTOR_EDGES import what carries the descriptor and its key.
+// `paths` entries match the exact name, so tests keep @domain/entity-account-descriptor/schema.mock.
+export const ACCOUNT_DESCRIPTOR = [
+  "@domain/entity-account-descriptor",
+  "@domain/entity-account/descriptor",
+  "@features/platform-account-discovery/descriptor",
+].map(name => ({
+  name,
+  message:
+    "Hold the AccountUUID; the descriptor stays at the edges (ACCOUNT_DESCRIPTOR_EDGES in " +
+    "support/lint, wallet-cli, devtools). Take the network from the asset, and have the edge " +
+    "answer what a descriptor field would tell. See docs/account-models.",
+}));
+
+// Paths from the repo root, turned into overrides by the base preset; unrestricted layers are not listed.
+export const ACCOUNT_DESCRIPTOR_EDGES = [
+  "domain/api/account-data",
+  "domain/entity/account",
+  "features/platform/account-data",
+  "features/platform/account-discovery",
+  "features/platform/account-source-*",
+];
+
 export const COIN_MODULE_CREATE_API = {
   group: ["@ledgerhq/coin-*/api", "@ledgerhq/coin-*/api/*"],
   importNamePattern: "^createApi$",
@@ -128,6 +154,26 @@ export const COIN_MODULE_CREATE_API = {
     "fails at runtime with nothing failing at compile time. If a direct call is genuinely " +
     "needed, add the file to the exemptions in this config and record in the PR why it cannot " +
     "break.",
+};
+
+export const COIN_MODULE_LAYER_IMPORTS = {
+  group: [
+    "@ledgerhq/**",
+    "!@ledgerhq/logs",
+    "!@ledgerhq/logs/**",
+    "!@ledgerhq/live-network",
+    "!@ledgerhq/live-network/**",
+    "!@ledgerhq/coin-module-framework",
+    "!@ledgerhq/coin-module-framework/**",
+    "!@ledgerhq/ledger-wallet-framework",
+    "!@ledgerhq/ledger-wallet-framework/**",
+  ],
+  message:
+    "The api/, logic/ and network/ folders of a coin module may import only @ledgerhq/logs, " +
+    "@ledgerhq/live-network, @ledgerhq/coin-module-framework and " +
+    "@ledgerhq/ledger-wallet-framework, so the module can move to LedgerHQ/coin-modules. " +
+    "Read the value from the coin config (context.config()) instead, or move the code to " +
+    "bridge/. If the import is genuinely needed, add the file to the exemptions in libs-coin.mts.",
 };
 
 export const RELATIVE_IMPORTS = {
@@ -141,7 +187,10 @@ export const RELATIVE_IMPORTS = {
 export const JSON_FRAGMENTS = {
   "bignumber.json": { paths: [BIGNUMBER_NAMED_IMPORT] },
   "lodash.json": { paths: [LODASH, BIGNUMBER_NAMED_IMPORT] },
-  "relative-imports.json": { paths: [BIGNUMBER_NAMED_IMPORT], patterns: [RELATIVE_IMPORTS] },
+  "relative-imports.json": {
+    paths: [BIGNUMBER_NAMED_IMPORT],
+    patterns: [RELATIVE_IMPORTS],
+  },
   "wallet-cli.json": {
     paths: [LODASH, BIGNUMBER_NAMED_IMPORT],
     patterns: [LIVE_COMMON_LIB, LIVE_COMMON_CURRENCY_ACCESSORS],

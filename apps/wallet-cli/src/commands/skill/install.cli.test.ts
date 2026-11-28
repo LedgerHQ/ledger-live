@@ -16,6 +16,7 @@ import os from "node:os";
 import path from "node:path";
 import { runCli } from "../../testing/cli-runner";
 import { readTrackedFromDisk, stampSidecar } from "../../testing/skill-fixtures";
+import { canSymlinkFiles, linkDirectory } from "../../testing/symlinks";
 import { getSkill, renderSkillMarkdown, SIDECAR_FILENAME } from "../../skills/registry";
 
 const SKILL_NAME = "wallet-cli-usage";
@@ -158,7 +159,7 @@ describe("skill install", () => {
     const outsideDir = path.join(tmpDir, "outside");
     await mkdir(outsideDir);
     await mkdir(path.join(tmpDir, SKILL_NAME));
-    await symlink(outsideDir, path.join(tmpDir, SKILL_NAME, "old-references"));
+    await linkDirectory(outsideDir, path.join(tmpDir, SKILL_NAME, "old-references"));
     const dropped = { path: "old-references/dropped.md", content: DROPPED.content };
     await installOlderSkillWithAFileThisOneDropped(tmpDir, dropped);
 
@@ -238,64 +239,76 @@ describe("skill install", () => {
     expect(await readFile(skillMd, "utf8")).toBe(olderSkillMd);
   });
 
-  it("doesn't write through a dangling link where the new skill adds a file", async () => {
-    tmpDir = await mkdtemp(path.join(os.tmpdir(), "wallet-cli-skilltest-"));
-    const { reference } = await installOlderSkillWithoutTheReference(tmpDir);
-    const outsideTheSkill = path.join(tmpDir, "outside.md");
-    await symlink(outsideTheSkill, reference);
+  it.skipIf(!canSymlinkFiles)(
+    "doesn't write through a dangling link where the new skill adds a file",
+    async () => {
+      tmpDir = await mkdtemp(path.join(os.tmpdir(), "wallet-cli-skilltest-"));
+      const { reference } = await installOlderSkillWithoutTheReference(tmpDir);
+      const outsideTheSkill = path.join(tmpDir, "outside.md");
+      await symlink(outsideTheSkill, reference);
 
-    const update = await runCli(["skill", "install", SKILL_NAME, "--dir", tmpDir]);
+      const update = await runCli(["skill", "install", SKILL_NAME, "--dir", tmpDir]);
 
-    expect(update.exitCode).toBe(1);
-    expect(await exists(outsideTheSkill)).toBe(false);
-  });
+      expect(update.exitCode).toBe(1);
+      expect(await exists(outsideTheSkill)).toBe(false);
+    },
+  );
 
-  it("doesn't write through a dangling link in a skill without a sidecar", async () => {
-    tmpDir = await mkdtemp(path.join(os.tmpdir(), "wallet-cli-skilltest-"));
-    const { reference } = await installOlderSkillWithoutTheReference(tmpDir);
-    await rm(path.join(tmpDir, SKILL_NAME, SIDECAR_FILENAME));
-    const outsideTheSkill = path.join(tmpDir, "outside.md");
-    await symlink(outsideTheSkill, reference);
+  it.skipIf(!canSymlinkFiles)(
+    "doesn't write through a dangling link in a skill without a sidecar",
+    async () => {
+      tmpDir = await mkdtemp(path.join(os.tmpdir(), "wallet-cli-skilltest-"));
+      const { reference } = await installOlderSkillWithoutTheReference(tmpDir);
+      await rm(path.join(tmpDir, SKILL_NAME, SIDECAR_FILENAME));
+      const outsideTheSkill = path.join(tmpDir, "outside.md");
+      await symlink(outsideTheSkill, reference);
 
-    const update = await runCli(["skill", "install", SKILL_NAME, "--dir", tmpDir]);
+      const update = await runCli(["skill", "install", SKILL_NAME, "--dir", tmpDir]);
 
-    expect(update.exitCode).toBe(1);
-    expect(await exists(outsideTheSkill)).toBe(false);
-  });
+      expect(update.exitCode).toBe(1);
+      expect(await exists(outsideTheSkill)).toBe(false);
+    },
+  );
 
-  it("replaces a dangling link instead of writing through it with --force", async () => {
-    tmpDir = await mkdtemp(path.join(os.tmpdir(), "wallet-cli-skilltest-"));
-    const { reference, shippedReference } = await installOlderSkillWithoutTheReference(tmpDir);
-    const outsideTheSkill = path.join(tmpDir, "outside.md");
-    await symlink(outsideTheSkill, reference);
+  it.skipIf(!canSymlinkFiles)(
+    "replaces a dangling link instead of writing through it with --force",
+    async () => {
+      tmpDir = await mkdtemp(path.join(os.tmpdir(), "wallet-cli-skilltest-"));
+      const { reference, shippedReference } = await installOlderSkillWithoutTheReference(tmpDir);
+      const outsideTheSkill = path.join(tmpDir, "outside.md");
+      await symlink(outsideTheSkill, reference);
 
-    const update = await runCli(["skill", "install", SKILL_NAME, "--dir", tmpDir, "--force"]);
+      const update = await runCli(["skill", "install", SKILL_NAME, "--dir", tmpDir, "--force"]);
 
-    expect(update.exitCode, `stderr: ${update.stderr}`).toBe(0);
-    expect(await exists(outsideTheSkill)).toBe(false);
-    expect(await readFile(reference, "utf8")).toBe(shippedReference);
-  });
+      expect(update.exitCode, `stderr: ${update.stderr}`).toBe(0);
+      expect(await exists(outsideTheSkill)).toBe(false);
+      expect(await readFile(reference, "utf8")).toBe(shippedReference);
+    },
+  );
 
-  it("keeps a SKILL.md that links to the user's own copy without --force", async () => {
-    tmpDir = await mkdtemp(path.join(os.tmpdir(), "wallet-cli-skilltest-"));
-    const skillRoot = await installOlderSkill(tmpDir);
-    const skillMd = path.join(skillRoot, "SKILL.md");
-    const userCopy = path.join(tmpDir, "my-SKILL.md");
-    await rename(skillMd, userCopy);
-    await symlink(userCopy, skillMd);
+  it.skipIf(!canSymlinkFiles)(
+    "keeps a SKILL.md that links to the user's own copy without --force",
+    async () => {
+      tmpDir = await mkdtemp(path.join(os.tmpdir(), "wallet-cli-skilltest-"));
+      const skillRoot = await installOlderSkill(tmpDir);
+      const skillMd = path.join(skillRoot, "SKILL.md");
+      const userCopy = path.join(tmpDir, "my-SKILL.md");
+      await rename(skillMd, userCopy);
+      await symlink(userCopy, skillMd);
 
-    const update = await runCli(["skill", "install", SKILL_NAME, "--dir", tmpDir]);
+      const update = await runCli(["skill", "install", SKILL_NAME, "--dir", tmpDir]);
 
-    expect(update.exitCode).toBe(1);
-    expect((await lstat(skillMd)).isSymbolicLink()).toBe(true);
-  });
+      expect(update.exitCode).toBe(1);
+      expect((await lstat(skillMd)).isSymbolicLink()).toBe(true);
+    },
+  );
 
   it("doesn't write through a references directory that links outside the skill", async () => {
     tmpDir = await mkdtemp(path.join(os.tmpdir(), "wallet-cli-skilltest-"));
     const skillRoot = await installOlderSkill(tmpDir);
     const sharedReferences = path.join(tmpDir, "shared-references");
     await rename(path.join(skillRoot, "references"), sharedReferences);
-    await symlink(sharedReferences, path.join(skillRoot, "references"));
+    await linkDirectory(sharedReferences, path.join(skillRoot, "references"));
     const sharedReference = path.join(sharedReferences, "business-logic.md");
     const olderReference = await readFile(sharedReference, "utf8");
 
@@ -311,7 +324,7 @@ describe("skill install", () => {
     const sharedReferences = path.join(tmpDir, "shared-references");
     await mkdir(sharedReferences);
     await rm(path.dirname(reference), { recursive: true });
-    await symlink(sharedReferences, path.dirname(reference));
+    await linkDirectory(sharedReferences, path.dirname(reference));
 
     const update = await runCli(["skill", "install", SKILL_NAME, "--dir", tmpDir]);
 
@@ -325,7 +338,7 @@ describe("skill install", () => {
     const claudeSkills = path.join(tmpDir, ".claude", "skills");
     const skillRoot = await installOlderSkill(agentsSkills);
     await mkdir(claudeSkills, { recursive: true });
-    await symlink(skillRoot, path.join(claudeSkills, SKILL_NAME));
+    await linkDirectory(skillRoot, path.join(claudeSkills, SKILL_NAME));
 
     const update = await runCli(["skill", "install", SKILL_NAME, "--dir", claudeSkills]);
 
@@ -335,22 +348,25 @@ describe("skill install", () => {
     );
   });
 
-  it("replaces a linked sidecar instead of writing through it", async () => {
-    tmpDir = await mkdtemp(path.join(os.tmpdir(), "wallet-cli-skilltest-"));
-    const first = await runCli(["skill", "install", SKILL_NAME, "--dir", tmpDir]);
-    expect(first.exitCode).toBe(0);
-    const sidecar = path.join(tmpDir, SKILL_NAME, SIDECAR_FILENAME);
-    const userFile = path.join(tmpDir, "notes.txt");
-    await writeFile(userFile, "my own notes\n", "utf8");
-    await rm(sidecar);
-    await symlink(userFile, sidecar);
+  it.skipIf(!canSymlinkFiles)(
+    "replaces a linked sidecar instead of writing through it",
+    async () => {
+      tmpDir = await mkdtemp(path.join(os.tmpdir(), "wallet-cli-skilltest-"));
+      const first = await runCli(["skill", "install", SKILL_NAME, "--dir", tmpDir]);
+      expect(first.exitCode).toBe(0);
+      const sidecar = path.join(tmpDir, SKILL_NAME, SIDECAR_FILENAME);
+      const userFile = path.join(tmpDir, "notes.txt");
+      await writeFile(userFile, "my own notes\n", "utf8");
+      await rm(sidecar);
+      await symlink(userFile, sidecar);
 
-    const update = await runCli(["skill", "install", SKILL_NAME, "--dir", tmpDir]);
+      const update = await runCli(["skill", "install", SKILL_NAME, "--dir", tmpDir]);
 
-    expect(update.exitCode, `stderr: ${update.stderr}`).toBe(0);
-    expect(await readFile(userFile, "utf8")).toBe("my own notes\n");
-    expect(JSON.parse(await readFile(sidecar, "utf8")).name).toBe(SKILL_NAME);
-  });
+      expect(update.exitCode, `stderr: ${update.stderr}`).toBe(0);
+      expect(await readFile(userFile, "utf8")).toBe("my own notes\n");
+      expect(JSON.parse(await readFile(sidecar, "utf8")).name).toBe(SKILL_NAME);
+    },
+  );
 
   it("keeps a skill edited since install without --force, then overwrites it with --force", async () => {
     tmpDir = await mkdtemp(path.join(os.tmpdir(), "wallet-cli-skilltest-"));

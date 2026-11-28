@@ -13,7 +13,11 @@ import type {
   SignedOperation,
 } from "@ledgerhq/types-live";
 import { Observable, type Subscription } from "rxjs";
-import type { SignOperationProgressState, SignTransactionIntentJobState } from "./types";
+import type {
+  SignOperationProgressState,
+  SignTransactionIntentJobState,
+  SignTransactionIntentWithResultJobState,
+} from "./types";
 
 type SigningDevice = Readonly<{
   deviceId: string;
@@ -33,7 +37,7 @@ export type SignOperationRequest<Input> = Readonly<{
   deviceModelId: DeviceModelId;
 }>;
 
-type CreateSignOperationJobParams<Input> = Readonly<{
+export type CreateSignOperationJobParams<Input> = Readonly<{
   /** The currency whose coin-specific refusal errors count as a user cancel. */
   getRefusalCurrency: (mainAccount: Account, input: Input) => CryptoOrTokenCurrency;
   sign: (request: SignOperationRequest<Input>) => Observable<SignOperationEvent>;
@@ -49,15 +53,19 @@ type SignOutcome<State, Result> = Readonly<{
   /** Whether a refusal closes the job instead of leaving it open for `retry`. */
   endOnRefusal: boolean;
   /** Turns a signing failure into a state. Without it, the failure is an observable error. */
-  failed?: (error: Error) => State;
+  failed?: Readonly<{
+    state: (error: Error, retry: () => void) => State;
+    /** Whether a failure closes the job instead of leaving it open for `retry`. */
+    ends: boolean;
+  }>;
   /**
    * Reports how the signature ended, once, right before the matching state. Without it the job
    * reports nothing.
    */
   results?: Readonly<{
     signed: (signedOperation: SignedOperation) => Result;
-    refused: () => Result;
-    failed: (error: Error) => Result;
+    refused?: () => Result;
+    failed?: (error: Error) => Result;
   }>;
 }>;
 
@@ -124,16 +132,16 @@ function runSignOperationJob<
 
     const fail = (error: unknown) => {
       const normalized = toExchangeError(error);
-      if (outcome.results) onResult(outcome.results.failed(normalized));
+      if (outcome.results?.failed) onResult(outcome.results.failed(normalized));
       if (outcome.failed) {
-        subscriber.next(outcome.failed(normalized));
-        subscriber.complete();
+        subscriber.next(outcome.failed.state(normalized, run));
+        if (outcome.failed.ends) subscriber.complete();
         return;
       }
       subscriber.error(normalized);
     };
 
-    const run = () => {
+    function run() {
       const currentRunRequestId = ++runRequestId;
       innerSubscription?.unsubscribe();
       subscriber.next({ type: "pending", deviceModelId: device.modelId });
@@ -164,7 +172,7 @@ function runSignOperationJob<
             // would otherwise trigger the executor's generic error screen.
             error: error => {
               if (isUserRefusalError(error, currency)) {
-                if (outcome.results) onResult(outcome.results.refused());
+                if (outcome.results?.refused) onResult(outcome.results.refused());
                 subscriber.next(outcome.refused(run));
                 if (outcome.endOnRefusal) subscriber.complete();
                 return;
@@ -183,7 +191,7 @@ function runSignOperationJob<
 
           fail(error);
         });
-    };
+    }
 
     run();
 
@@ -194,13 +202,38 @@ function runSignOperationJob<
   });
 }
 
+const retryableRefusal = {
+  refused: (retry: () => void): SignTransactionIntentJobState => ({ type: "cancelled", retry }),
+  endOnRefusal: false,
+} as const;
+
 export function createSignOperationJob<Input extends SignOperationJobInput>(
   params: CreateSignOperationJobParams<Input>,
 ): Job<SignTransactionIntentJobState, Input> {
   return jobInput =>
     runSignOperationJob<Input, SignTransactionIntentJobState, undefined>(
       params,
-      { refused: retry => ({ type: "cancelled", retry }), endOnRefusal: false },
+      retryableRefusal,
+      jobInput,
+    );
+}
+
+/**
+ * Like {@link createSignOperationJob}, but the signed operation is also reported as the job's
+ * result, so the caller acts on it from `onIntentJobComplete` instead of reading the job state.
+ * A signing failure is a retryable `error` state rather than an observable error.
+ */
+export function createSignOperationJobWithResult<Input extends SignOperationJobInput>(
+  params: CreateSignOperationJobParams<Input>,
+): Job<SignTransactionIntentWithResultJobState, Input, SignedOperation> {
+  return jobInput =>
+    runSignOperationJob<Input, SignTransactionIntentWithResultJobState, SignedOperation>(
+      params,
+      {
+        ...retryableRefusal,
+        failed: { state: (error, retry) => ({ type: "error", error, retry }), ends: false },
+        results: { signed: signedOperation => signedOperation },
+      },
       jobInput,
     );
 }
@@ -232,7 +265,7 @@ export function createTerminalSignOperationJob<Input extends SignOperationJobInp
       {
         refused: () => ({ type: "refused" }),
         endOnRefusal: true,
-        failed: error => ({ type: "error", error }),
+        failed: { state: error => ({ type: "error", error }), ends: true },
         results: {
           signed: signedOperation => ({ status: "signed", signedOperation }),
           refused: () => ({ status: "refused" }),

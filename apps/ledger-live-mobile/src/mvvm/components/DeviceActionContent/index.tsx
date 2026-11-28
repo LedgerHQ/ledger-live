@@ -22,10 +22,8 @@ export const supportedDeviceActionModelIds: SupportedDeviceActionModelId[] = Obj
 ).filter((modelId): modelId is SupportedDeviceActionModelId => modelId !== DeviceModelId.blue);
 
 export type {
-  DeviceActionAnimationSource,
   DeviceActionAnimationTheme,
   DeviceActionContentAction,
-  DeviceActionContentBanner,
   DeviceActionContentProps,
   SupportedDeviceActionModelId,
 } from "./types";

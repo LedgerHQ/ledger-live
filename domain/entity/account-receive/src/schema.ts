@@ -1,9 +1,7 @@
 import { z } from "zod";
-import {
-  AccountUUIDSchema,
-  AddressSchema,
-  DerivationPathSchema,
-} from "@domain/entity-account-descriptor";
+import { AccountUUIDSchema } from "@domain/entity-account";
+import { AddressSchema } from "@domain/entity-network";
+import { DerivationPathSchema } from "@domain/entity-derivation";
 
 const addressVerification = <T extends string>(type: T) =>
   z.object({ type: z.literal(type), path: DerivationPathSchema, address: AddressSchema });
@@ -26,10 +24,20 @@ export const ReceiveVerificationSchema = z.discriminatedUnion("type", [
 
 export type ReceiveVerification = z.infer<typeof ReceiveVerificationSchema>;
 
+/**
+ * The memo or tag a sender can attach next to the address, as the coin's send contract declares
+ * it: exchanges and custodians receive on shared addresses and tell their users apart by it.
+ * `tag`: a number (XRP destination tag). `typed`: one of several kinds (Stellar).
+ */
+export const ReceiveMemoSchema = z.object({ type: z.enum(["text", "tag", "typed"]) });
+
+export type ReceiveMemo = z.infer<typeof ReceiveMemoSchema>;
+
 /** An address to receive on, and how the device confirms it, absent where it cannot. */
 export const ReceiveAddressSchema = z.object({
   address: AddressSchema,
   verification: ReceiveVerificationSchema.optional(),
+  memo: ReceiveMemoSchema.optional(),
 });
 
 export type ReceiveAddress = z.infer<typeof ReceiveAddressSchema>;

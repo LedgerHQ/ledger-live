@@ -15,34 +15,8 @@ export const isAccountDetailEnabled = async (page: Page) =>
 
 export const useLocalEarnManifest = process.env.USE_LOCAL_EARN_MANIFEST === "1";
 
-const FF_LWD_WALLET_40_Q1 = {
-  lwdWallet40: {
-    enabled: true,
-    params: {
-      lazyOnboarding: true,
-      brazePlacement: true,
-      earnUpselling: false,
-      earnSimulator: false,
-    },
-  },
-} satisfies PartialFeatures;
-
-export const FF_LWD_WALLET_40_Q2 = {
-  lwdWallet40: {
-    enabled: true,
-    params: {
-      lazyOnboarding: true,
-      brazePlacement: true,
-      earnUpselling: true,
-      earnSimulator: true,
-    },
-  },
-} satisfies PartialFeatures;
-
-// Wallet 4.0 Q2 flags with the analytics consent dialog forced OFF, so the
-// "Help us improve Ledger" prompt never interrupts portfolio-landing E2E flows.
-export const FF_LWD_WALLET_40_Q2_NO_ANALYTICS_CONSENT = {
-  ...FF_LWD_WALLET_40_Q2,
+// Keeps the "Help us improve Ledger" consent prompt from interrupting portfolio-landing flows.
+export const FF_ANALYTICS_OPTIN_DISABLED = {
   analyticsOptIn: { enabled: false },
 } satisfies PartialFeatures;
 
@@ -71,17 +45,51 @@ export const FF_DEVICE_ONBOARDING = {
 
 // Wallet 4.0 without analytics consent; pins flags that would block the finish-onboarding widget.
 export const FF_POST_ONBOARDING_MOCK_DESKTOP = {
-  ...FF_LWD_WALLET_40_Q2_NO_ANALYTICS_CONSENT,
+  ...FF_ANALYTICS_OPTIN_DISABLED,
   onboardingWidget: { enabled: true },
   protectServicesDesktop: { enabled: false },
   lwdProductTour: { enabled: false },
   lldLedgerSyncEntryPoints: { enabled: false },
 } satisfies PartialFeatures;
 
+export const FF_ENTRY_POINTS_SERVICES_BORROW = {
+  entryPointsServices: { enabled: true, params: { services: ["borrow"] } },
+} satisfies PartialFeatures;
+
+export const FF_ENTRY_POINTS_SERVICES_DISABLED = {
+  entryPointsServices: { enabled: false },
+} satisfies PartialFeatures;
+
 export const FF_BORROW_DESKTOP = {
   ptxBorrowLiveApp: {
     enabled: true,
     params: { manifest_id: "borrow" },
+  },
+} satisfies PartialFeatures;
+
+const PERPS_LIVE_APP_STG_MANIFEST_ID = "perps-live-app-stg";
+const PERPS_LIVE_APP_MANIFEST_ID =
+  process.env.PERPS_LIVE_APP_MANIFEST_ID || PERPS_LIVE_APP_STG_MANIFEST_ID;
+export const IS_PERPS_LIVE_APP_STAGING =
+  PERPS_LIVE_APP_MANIFEST_ID === PERPS_LIVE_APP_STG_MANIFEST_ID;
+
+export const FF_PERPS_DESKTOP = {
+  ptxPerpsLiveApp: {
+    enabled: true,
+    params: { manifest_id: PERPS_LIVE_APP_MANIFEST_ID },
+  },
+  currencyHypercore: { enabled: true },
+} satisfies PartialFeatures;
+
+// TODO: staging only; pick manifest by build type in setup-e2e-env.
+const PREDICTIONS_LIVE_APP_MANIFEST_ID =
+  process.env.PREDICTIONS_LIVE_APP_MANIFEST_ID || "predictions-live-app-stg";
+
+export const FF_PREDICTIONS_DESKTOP = {
+  entryPointsServices: { enabled: true, params: { services: ["predictions"] } },
+  ptxPredictionsLiveAppDesktop: {
+    enabled: true,
+    params: { manifest_id: PREDICTIONS_LIVE_APP_MANIFEST_ID },
   },
 } satisfies PartialFeatures;
 
@@ -97,7 +105,15 @@ export const FF_EARN_V2_DESKTOP = {
 
 export const FF_EARN_V2_DESKTOP_WITH_SIMULATOR = {
   ...FF_EARN_V2_DESKTOP,
-  ...FF_LWD_WALLET_40_Q2_NO_ANALYTICS_CONSENT,
+  lwdWallet40: {
+    enabled: true,
+    params: {
+      lazyOnboarding: true,
+      brazePlacement: true,
+      earnUpselling: true,
+      earnSimulator: true,
+    },
+  },
 } satisfies PartialFeatures;
 
 export const FF_STAKE_PROGRAMS_MODAL = {
@@ -241,7 +257,6 @@ export const getMergedFeatureFlags = ({
      * This will reduce friction and provide CI stability for any callers of the workflow.
      * PLEASE NOTE: non-existing keys will return 'undefined' which spreads to an empty object.
      */
-    "wallet40-q1": FF_LWD_WALLET_40_Q1,
     "account-detail": FF_ACCOUNT_DETAIL_ENABLED,
   };
 
@@ -265,8 +280,6 @@ export const getMergedFeatureFlags = ({
         live_apps_blocklist: [],
       },
     },
-    // default flags for wallet 4.0
-    ...FF_LWD_WALLET_40_Q2,
     ...FF_NEW_SEND_FLOW_FIRST_INTERACTION_BANNER_ENABLED,
     // any flags from env variable (if set)
     ...ffPresetMap[process.env.E2E_DESKTOP_FEATURE_FLAGS || ""],

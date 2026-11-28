@@ -1,8 +1,0 @@
-{
-  "name": "@features/platform-device-intent",
-  "targets": {
-    "build": {
-      "executor": "nx:noop"
-    }
-  }
-}

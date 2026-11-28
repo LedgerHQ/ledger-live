@@ -3,7 +3,14 @@ const assert = require("node:assert");
 const fs = require("fs");
 const os = require("os");
 const path = require("path");
-const { extractKeys, findMissingKeys, flatten, hasKey, consumersOf } = require("./validate");
+const {
+  extractKeys,
+  failureMessages,
+  findMissingKeys,
+  flatten,
+  hasKey,
+  consumersOf,
+} = require("./validate");
 
 const tmp = fs.mkdtempSync(path.join(os.tmpdir(), "i18n-keys-"));
 
@@ -228,6 +235,93 @@ describe("extractKeys: type-enumerated dynamic keys", () => {
     );
   });
 
+  describe("platform-suffixed relative imports", () => {
+    function platformPackage() {
+      write("suffix/package.json", "{}");
+      for (const platform of ["native", "web"]) {
+        write(
+          `suffix/tsconfig.${platform}.json`,
+          JSON.stringify({
+            compilerOptions: { moduleResolution: "bundler", moduleSuffixes: [`.${platform}`, ""] },
+          }),
+        );
+        write(`suffix/platform.${platform}.ts`, `export const platform = "${platform}" as const;`);
+      }
+    }
+
+    function platformSites(name) {
+      platformPackage();
+      return sitesOf(
+        `import { platform } from "./platform"; declare const f: boolean; t(f ? \`p.\${platform}\` : "p.x");`,
+        name,
+      );
+    }
+
+    it("resolves the .native twin from a .native file with the package's native tsconfig", () => {
+      const sites = platformSites("suffix/view.native.tsx");
+      assert.deepStrictEqual(
+        sites.map(s => s.kind),
+        ["enumerated"],
+      );
+      assert.deepStrictEqual(sites[0].keys.map(k => k.key).sort(), ["p.native", "p.x"]);
+    });
+
+    it("resolves the .web twin from a .web file with the package's web tsconfig", () => {
+      const sites = platformSites("suffix/view.web.tsx");
+      assert.deepStrictEqual(
+        sites.map(s => s.kind),
+        ["enumerated"],
+      );
+      assert.deepStrictEqual(sites[0].keys.map(k => k.key).sort(), ["p.web", "p.x"]);
+    });
+
+    it("leaves a shared file's twin import unverifiable", () => {
+      assert.deepStrictEqual(
+        platformSites("suffix/view.tsx").map(s => s.kind),
+        ["unverifiable"],
+      );
+    });
+  });
+
+  describe("zod enums", () => {
+    const zod = path.dirname(
+      require.resolve("zod/package.json", {
+        paths: [path.resolve(__dirname, "../../../domain/api/card-management")],
+      }),
+    );
+    fs.mkdirSync(path.join(tmp, "zod-pkg/node_modules"), { recursive: true });
+    fs.symlinkSync(zod, path.join(tmp, "zod-pkg/node_modules/zod"), "dir");
+
+    function zodSites(usage) {
+      return sitesOf(
+        `import { z } from "zod"; const Stage = z.enum(["pin", "seed"]); type Stage = z.infer<typeof Stage>; ${usage}`,
+        "zod-pkg/view.tsx",
+      );
+    }
+
+    it("enumerates a z.infer type", () => {
+      const sites = zodSites("declare const s: Stage; t(`setup.${s}.title`);");
+      assert.deepStrictEqual(
+        sites.map(s => s.kind),
+        ["enumerated"],
+      );
+      assert.deepStrictEqual(
+        sites[0].keys.map(k => k.key),
+        ["setup.pin.title", "setup.seed.title"],
+      );
+    });
+
+    it("enumerates .enum members and .options", () => {
+      const sites = zodSites(
+        "t(`setup.${Stage.enum.pin}`); Stage.options.map(o => t(`setup.${o}`));",
+      );
+      assert.deepStrictEqual(
+        sites.map(s => s.keys.map(k => k.key)),
+        [["setup.pin"], ["setup.pin", "setup.seed"]],
+      );
+    });
+  });
+
   it("gives up on combinations above the cap", () => {
     const members = Array.from({ length: 30 }, (_, i) => `"v${i}"`).join(" | ");
     const source = `type V = ${members}; declare const a: V; declare const b: V; t(\`\${a}.\${b}\`);`;
@@ -394,5 +488,32 @@ describe("consumersOf", () => {
     assert.deepStrictEqual([...consumers.get(dirOf("leaf"))], ["Mobile"]);
     assert.deepStrictEqual([...consumers.get(dirOf("alone"))], []);
     assert.ok(!consumers.has(path.join(dirOf(".."), "libs", "bridge")));
+  });
+});
+
+describe("failureMessages", () => {
+  const unverifiableSite = { file: "features/x/view.tsx", line: 3 };
+  const missingMobileKey = {
+    file: "features/flow/pay-balance/src/view.tsx",
+    line: 7,
+    key: "payTab.actions.pay",
+    absentFrom: ["Mobile"],
+  };
+
+  it("fails on an unverifiable site alone", () => {
+    const failures = failureMessages({ missing: [], unverifiable: [unverifiableSite] });
+
+    assert.ok(failures.some(line => line.includes("Unverifiable i18n key sites (1")));
+  });
+
+  it("fails on a missing key that used to be allowlisted", () => {
+    const failures = failureMessages({ missing: [missingMobileKey], unverifiable: [] });
+
+    assert.ok(failures.some(line => line.includes('"payTab.actions.pay"  missing in Mobile')));
+    assert.ok(failures.some(line => line.includes("src/locales/en/common.json")));
+  });
+
+  it("passes when no key is missing or unverifiable", () => {
+    assert.deepStrictEqual(failureMessages({ missing: [], unverifiable: [] }), []);
   });
 });

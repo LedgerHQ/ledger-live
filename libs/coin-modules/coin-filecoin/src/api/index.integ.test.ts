@@ -2,13 +2,13 @@ import { generateMnemonic, accountFromMnemonic } from "iso-filecoin/wallet";
 import type { CoinModuleApi } from "@ledgerhq/coin-module-framework/api/index";
 import { withDefaults } from "@ledgerhq/coin-module-framework/api/index";
 import { createApi } from ".";
-import type { FilecoinCoinConfig } from "../config";
+import { filecoinDefaults, type FilecoinCoinConfig } from "../config";
 import { TEST_ADDRESSES } from "../test/fixtures";
 import { createMockFilecoinContext } from "../test/context";
 
 describe("createApi (integration)", () => {
   let api: CoinModuleApi<FilecoinCoinConfig>;
-  const context = createMockFilecoinContext();
+  const context = createMockFilecoinContext(filecoinDefaults.filecoin);
 
   beforeAll(() => {
     // Through withDefaults, as the consumer resolver does: the module omits the capabilities the
@@ -22,8 +22,6 @@ describe("createApi (integration)", () => {
       "call",
       "register",
       "craftRawTransaction",
-      "getBlock",
-      "getBlockInfo",
       "getStakes",
       "getRewards",
       "getValidators",
@@ -43,14 +41,6 @@ describe("createApi (integration)", () => {
 
     it("getValidators throws not supported", () => {
       expect(() => api.getValidators(context)).toThrow(/not supported/);
-    });
-
-    it("getBlock throws not supported", () => {
-      expect(() => api.getBlock(context, 1000)).toThrow(/not supported/);
-    });
-
-    it("getBlockInfo throws not supported", () => {
-      expect(() => api.getBlockInfo(context, 1000)).toThrow(/not supported/);
     });
 
     it("craftRawTransaction throws not supported", () => {

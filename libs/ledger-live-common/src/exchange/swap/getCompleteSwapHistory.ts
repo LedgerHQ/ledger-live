@@ -49,7 +49,15 @@ const getSwapOperationMap =
       finalAmount,
       status,
       tokenId,
+      fromAccountId,
+      feesAmount,
+      payoutFeesAmount,
     } = swapOperation;
+    // Not anchored to an operation yet (a withdraw before its payout tx is known).
+    if (!operationId) return null;
+    // The source account, when it has no operation of its own to hold the entry.
+    const fromAccount = fromAccountId ? accounts.find(a => a.id === fromAccountId) : account;
+    if (!fromAccount) return null;
     // Find operation by matching its hash which is embedded in the operationId
     const operation = account.operations.find(
       o => operationId.includes(o.hash) || o.id === operationId,
@@ -64,7 +72,7 @@ const getSwapOperationMap =
       let toParentAccount;
       let toExists = !optimisticOperation;
 
-      if (toAccount?.type === "Account" && account.type === "TokenAccount") {
+      if (toAccount?.type === "Account" && fromAccount.type === "TokenAccount") {
         toExists = true;
       }
       if (toAccount && tokenId) {
@@ -73,18 +81,22 @@ const getSwapOperationMap =
         if (token && toAccount.type === "Account") {
           toParentAccount = toAccount;
           // Enhance the account with the given token in case we don't have funds yet.
-          toAccount = (accountWithMandatoryTokens(toAccount, [token]).subAccounts || []).find(
-            a => getAccountCurrency(a).id === tokenId,
-          );
-          toExists = (toParentAccount.subAccounts || []).includes(toAccount);
+          const tokenAccount = (
+            accountWithMandatoryTokens(toAccount, [token]).subAccounts || []
+          ).find(a => getAccountCurrency(a).id === tokenId);
+          toAccount = tokenAccount;
+          toExists =
+            tokenAccount !== undefined &&
+            (toParentAccount.subAccounts || []).includes(tokenAccount);
         }
       }
 
-      if (account && toAccount && status) {
+      if (toAccount && status) {
         let fromParentAccount;
 
-        if (account.type === "TokenAccount") {
-          fromParentAccount = accounts.find(a => a.id === account.parentId);
+        if (fromAccount.type === "TokenAccount") {
+          const { parentId } = fromAccount;
+          fromParentAccount = accounts.find(a => a.id === parentId);
           if (fromParentAccount?.type !== "Account") return null;
         }
 
@@ -120,19 +132,21 @@ const getSwapOperationMap =
           status,
           toAccount,
           toParentAccount,
-          fromAccount: account,
+          fromAccount,
           fromParentAccount: fromParentAccount?.type === "Account" ? fromParentAccount : undefined,
           operation: op,
           fromAmount,
           toAmount,
           finalAmount: magnitudeAwareFinalAmount,
           toExists,
+          ...(feesAmount !== undefined && { feesAmount }),
+          ...(payoutFeesAmount !== undefined && { payoutFeesAmount }),
         };
       }
     }
   };
 
-function startOfDay(t) {
+function startOfDay(t: Date) {
   return new Date(t.getFullYear(), t.getMonth(), t.getDate());
 }
 

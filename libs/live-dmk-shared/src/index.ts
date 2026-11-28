@@ -46,6 +46,7 @@ export type {
   ConnectNewDeviceStateMachineInput,
   ConnectNewDeviceUIState,
   ConnectNewDeviceUIStateType,
+  EmbeddedConnectNewDeviceUIState,
   ListedDevice,
   SelectableDevice,
 } from "./connectNewDevice/types";
@@ -57,21 +58,42 @@ export {
   connectNewDeviceUseCase,
   type ConnectNewDeviceUseCaseInput,
 } from "./connectNewDevice/connectNewDeviceUseCase";
+export {
+  ConnectKnownOrNewDeviceUIStateTypes,
+  DeviceListItemStatuses,
+} from "./connectKnownOrNewDevice/types";
+export type {
+  ConnectKnownOrNewDeviceDelays,
+  ConnectKnownOrNewDeviceFindMatchingDevice,
+  ConnectKnownOrNewDeviceGetConnectivity,
+  ConnectKnownOrNewDeviceOnConnected,
+  ConnectKnownOrNewDeviceUIState,
+  ConnectKnownOrNewDeviceUIStateType,
+  DeviceConnectivity,
+  DeviceListItem,
+  DeviceListItemStatus,
+  SelectableDeviceListItem,
+} from "./connectKnownOrNewDevice/types";
+export {
+  connectKnownOrNewDeviceUseCase,
+  type ConnectKnownOrNewDeviceUseCaseInput,
+  type ConnectKnownOrNewDeviceUseCaseOutput,
+} from "./connectKnownOrNewDevice/connectKnownOrNewDeviceUseCase";
+export { connectedDeviceToDevice } from "./connectKnownOrNewDevice/buildDeviceList";
+export { toDevice } from "./connectNewDevice/utils";
 export { activeDeviceSessionSubject } from "./config/activeDeviceSession";
 export { dmkToLedgerDeviceIdMap, ledgerToDmkDeviceIdMap } from "./config/dmkToLedgerDeviceIdMap";
-export {
-  DeviceIntentTrackingProvider,
-  useDeviceIntentTracking,
-} from "./deviceIntentTracking/DeviceIntentTrackingContext";
 export type {
   DeviceIntentTrackingContextValue,
   DeviceIntentTrackingProperties,
   SourceFlow,
-} from "./deviceIntentTracking/DeviceIntentTrackingContext";
+} from "./deviceIntentTracking/types";
 export {
   DeviceFlowFailureType,
   getConnectDeviceFailure,
   getConnectDeviceSubError,
+  getConnectNewDeviceFailure,
+  getConnectivityErrorFailure,
   getDeviceDisconnectedFailure,
   getDeviceFlowFailureProperties,
   getDeviceflowCancelEventName,
@@ -85,10 +107,7 @@ export type {
   DeviceFlowFailureProperties,
   DeviceFlowTransport,
 } from "./deviceIntentTracking/deviceFlowFailure";
-export { OverrideDeviceIntentExecutorHeader } from "./deviceIntentHeader/OverrideDeviceIntentExecutorHeader";
-export { DeviceIntentExecutorHeaderContext } from "./deviceIntentHeader/DeviceIntentExecutorHeaderContext";
-export type { DeviceIntentExecutorHeaderContextValue } from "./deviceIntentHeader/DeviceIntentExecutorHeaderContext";
-export { useDeviceIntentExecutorHeaderOverrideRequests } from "./deviceIntentHeader/useDeviceIntentExecutorHeaderOverrideRequests";
+export type { DeviceIntentExecutorHeaderContextValue } from "./deviceIntentHeader/types";
 export { AddressBookProvider } from "./services/AddressBookProvider";
 export type { AddressBookSource } from "./services/AddressBookProvider";
 export { LedgerLiveLogger } from "./services/LedgerLiveLogger";
@@ -157,4 +176,3 @@ export type {
   PrepareConnectManagerDAError,
   PrepareConnectManagerDAIntermediateValue,
 } from "./device-action/PrepareConnectManager/types";
-export * from "./os-update/api";

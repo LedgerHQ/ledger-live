@@ -229,6 +229,26 @@ describe("addAddressFlowReducer", () => {
         }),
       ).toBe(state);
     });
+
+    it("should keep the ENS disclaimer while an edited ENS name is revalidated", () => {
+      const state = reduce([
+        ...enteringAddressActions(mockContact({ addresses: [] })),
+        {
+          type: "updateAddressEntry",
+          selectedCurrencyId: ETHEREUM_CURRENCY_ID,
+          addressEntry: { ...VALID_ADDRESS_ENTRY, value: "vitalik.eth", inputMethod: "ens" },
+        },
+        {
+          type: "updateAddressEntry",
+          selectedCurrencyId: ETHEREUM_CURRENCY_ID,
+          addressEntry: createValidatingAddressEntryState("vitalik.et", "manual"),
+        },
+      ]);
+
+      expect(state).toMatchObject({
+        addressEntry: { status: "validating", value: "vitalik.et", keepsEnsDisclaimer: true },
+      });
+    });
   });
 
   describe("updateAddressLabel", () => {

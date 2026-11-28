@@ -1,7 +1,7 @@
 import { defineCommand, option } from "@bunli/core";
 import { z } from "zod";
 import { createCommandOutput } from "../../output";
-import { mainnetOf } from "../../shared/accountDescriptor";
+import { addressOfV1, mainnetOf } from "../../shared/accountDescriptor";
 import { walletCliDebug } from "../../shared/log";
 import { writeStderr } from "../../shared/ui";
 import { WalletAdapter } from "../../wallet";
@@ -48,7 +48,7 @@ export default defineCommand({
         );
       }
       const network = v1.network;
-      const address = v1.address;
+      const address = await addressOfV1(v1);
       ctx.network = network;
       ctx.account = address;
 

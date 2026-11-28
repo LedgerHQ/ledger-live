@@ -11,9 +11,25 @@ const ASSET_ITEM_PREFIX = "assetItem-";
 const CRYPTOS_SECTION_ID = "PortfolioCryptosList";
 const STABLECOINS_SECTION_ID = "PortfolioStablecoinsList";
 
+type CheckSectionVisibleOptions = {
+  sectionId: string;
+  itemCount: number;
+  isEmptyPortfolio: boolean;
+};
+
 type AssetRowOptions = {
   /** Scroll the full stablecoin list to the row first. */
   inStablecoinList?: boolean;
+};
+
+type AssetRowCounterValueOptions = {
+  asset: string;
+  counterValue: string;
+};
+
+type CompareAccountsCountOptions = {
+  actual: number;
+  expected: number;
 };
 
 export default class PortfolioPage {
@@ -22,6 +38,7 @@ export default class PortfolioPage {
   // The regex also matches the legacy wallet screen, until legacyWallet leaves the source code.
   private readonly portfolioList = byId(/portfolio-screen|PortfolioReadOnlyItems/);
   private readonly readOnlyItems = byId("PortfolioReadOnlyItems");
+  private readonly signerPortfolio = byId("portfolio-screen");
   private readonly accountsList = byId("PortfolioAccountsList");
   private readonly emptyPortfolioList = byId("PortfolioEmptyList");
   private readonly heroScrollView = byId(/^(PortfolioAccountsList|PortfolioEmptyList)$/);
@@ -38,10 +55,6 @@ export default class PortfolioPage {
   private readonly quickActionSendButton = byId("quick-action-send");
   private readonly quickActionBuyLedgerButton = byId("quick-action-buy-ledger");
   private readonly connectButton = byId("quick-action-connect");
-  private readonly transferDrawer = byId("transfer-drawer");
-  private readonly transferReceiveButton = byId("transfer-action-receive");
-  private readonly transferSendButton = byId("transfer-action-send");
-  private readonly transferBankTransferButton = byId("transfer-action-bank-transfer");
   private readonly addAccountCta = byId("add-account-cta");
   private readonly cryptoAddressesAddAccountCta = byId("crypto-addresses-add-account-cta");
   private readonly cryptoAddressesButton = byId("crypto-addresses-button");
@@ -96,8 +109,9 @@ export default class PortfolioPage {
     await this.portfolioList.waitVisible(timeout);
   }
 
-  @Step("Expect asset row {{{0}}} to have the correct counter value {{{1}}}")
-  async expectAssetRowCounterValue(asset: string, counterValue: string) {
+  @Step("Expect asset row {{{0.asset}}} to have the correct counter value {{{0.counterValue}}}")
+  async expectAssetRowCounterValue(options: AssetRowCounterValueOptions) {
+    const { asset, counterValue } = options;
     await this.assetItemCountervalue(asset).scrollTo(this.accountsList);
     await this.assetItemCountervalue(asset).expectText(counterValue, { containing: true });
   }
@@ -129,8 +143,7 @@ export default class PortfolioPage {
   @Step("Expect operation to contain counter value {{{0}}}")
   async expectOperationCounterValue(counterValue: string) {
     await app.mainNavigation.tapTopBarTransactionHistory();
-    const text = await app.operation.getOperationCounterValue();
-    jestExpect(text).toContain(counterValue);
+    await app.operation.expectOperationCounterValue(counterValue);
   }
 
   @Step("Open Portfolio via deeplink")
@@ -141,7 +154,7 @@ export default class PortfolioPage {
 
   @Step("Click on Add account button in portfolio")
   async addAccount() {
-    await this.cryptoAddressesAddAccountCta.scrollTo(this.emptyPortfolioList, { pixels: 500 });
+    await this.cryptoAddressesAddAccountCta.revealForTap(this.emptyPortfolioList);
     await this.cryptoAddressesAddAccountCta.tap();
   }
 
@@ -195,9 +208,10 @@ export default class PortfolioPage {
     jestExpect(count).toBeGreaterThan(0);
   }
 
-  @Step("Compare Accounts Count {{{0}}} and {{{1}}}")
-  async compareAccountsCount(count1: number, count2: number) {
-    jestExpect(count1).toBe(count2);
+  @Step("Compare Accounts Count {{{0.actual}}} and {{{0.expected}}}")
+  async compareAccountsCount(options: CompareAccountsCountOptions) {
+    const { actual, expected } = options;
+    jestExpect(actual).toBe(expected);
   }
 
   @Step("Navigate asset Page {{{0}}}")
@@ -305,6 +319,13 @@ export default class PortfolioPage {
     await this.readOnlyItems.waitVisible(timeout);
   }
 
+  @Step("Expect the portfolio out of read-only mode")
+  async expectSignerPortfolioVisible(timeout = TIMEOUT.xxxlarge) {
+    await this.signerPortfolio.waitVisible(timeout);
+    await this.readOnlyItems.waitNotVisible();
+    await this.connectButton.waitNotVisible();
+  }
+
   @Step("Expect the no-signer balance title to be visible")
   async expectNoSignerBalanceTitleVisible() {
     await this.balanceNoSignerTitle.expectVisible();
@@ -364,28 +385,22 @@ export default class PortfolioPage {
 
   @Step("Check transfer bottom sheet receive button visibility")
   async checkTransferBottomSheetReceiveButtonVisibility() {
-    await this.transferReceiveButton.expectVisible();
+    await app.transferDrawer.expectReceiveVisible();
   }
 
   @Step("Check transfer bottom sheet send button visibility")
   async checkTransferBottomSheetSendButtonVisibility() {
-    await this.transferSendButton.expectVisible();
+    await app.transferDrawer.expectSendVisible();
   }
 
   @Step("Check transfer bottom sheet bank transfer button visibility")
   async checkTransferBottomSheetBankTransferButtonVisibility() {
-    await this.transferBankTransferButton.expectVisible();
-  }
-
-  // Anchor on the container: the controls are matchable while the sheet still slides (QAA-1522).
-  private async waitForTransferDrawerSettled() {
-    await this.transferDrawer.waitFullyVisible();
+    await app.transferDrawer.expectBankTransferVisible();
   }
 
   @Step("Press transfer bottom sheet receive button")
   async pressTransferBottomSheetReceiveButton() {
-    await this.waitForTransferDrawerSettled();
-    await this.transferReceiveButton.tap();
+    await app.transferDrawer.tapReceive();
   }
 
   @Step("Open the receive drawer")
@@ -396,21 +411,16 @@ export default class PortfolioPage {
 
   @Step("Press transfer bottom sheet send button")
   async pressTransferBottomSheetSendButton() {
-    await this.waitForTransferDrawerSettled();
-    await this.transferSendButton.tap();
+    await app.transferDrawer.tapSend();
   }
 
   @Step("Press transfer bottom sheet bank transfer button")
   async pressTransferBottomSheetBankTransferButton() {
-    await this.waitForTransferDrawerSettled();
-    await this.transferBankTransferButton.tap();
+    await app.transferDrawer.tapBankTransfer();
   }
 
-  private async checkSectionVisible(
-    sectionId: string,
-    itemCount: number,
-    isEmptyPortfolio: boolean,
-  ) {
+  private async checkSectionVisible(options: CheckSectionVisibleOptions) {
+    const { sectionId, itemCount, isEmptyPortfolio } = options;
     const scrollView = isEmptyPortfolio ? this.emptyPortfolioList : this.accountsList;
     const lastItem = this.sectionAssetItem(sectionId, itemCount - 1);
     await lastItem.scrollTo(scrollView);
@@ -419,12 +429,20 @@ export default class PortfolioPage {
 
   @Step("Check cryptos list section is visible {{{0}}}")
   async checkCryptosListSectionVisible(itemCount: number, isEmptyPortfolio = false) {
-    await this.checkSectionVisible(CRYPTOS_SECTION_ID, itemCount, isEmptyPortfolio);
+    await this.checkSectionVisible({
+      sectionId: CRYPTOS_SECTION_ID,
+      itemCount,
+      isEmptyPortfolio,
+    });
   }
 
   @Step("Check stablecoins list section is visible {{{0}}}")
   async checkStablecoinsListSectionVisible(itemCount: number, isEmptyPortfolio = false) {
-    await this.checkSectionVisible(STABLECOINS_SECTION_ID, itemCount, isEmptyPortfolio);
+    await this.checkSectionVisible({
+      sectionId: STABLECOINS_SECTION_ID,
+      itemCount,
+      isEmptyPortfolio,
+    });
   }
 
   @Step("Check add account CTA is visible")
@@ -438,18 +456,14 @@ export default class PortfolioPage {
     await this.anyAssetItem().expectCount(expected);
   }
 
-  private async checkSectionAssetItemCount(sectionId: string, expected: number) {
-    await this.sectionAssetItems(sectionId).expectCount(expected);
-  }
-
   @Step("Check cryptos section asset item count {{{0}}}")
   async checkCryptosSectionAssetItemCount(expected: number) {
-    await this.checkSectionAssetItemCount(CRYPTOS_SECTION_ID, expected);
+    await this.sectionAssetItems(CRYPTOS_SECTION_ID).expectCount(expected);
   }
 
   @Step("Check stablecoins section asset item count {{{0}}}")
   async checkStablecoinsSectionAssetItemCount(expected: number) {
-    await this.checkSectionAssetItemCount(STABLECOINS_SECTION_ID, expected);
+    await this.sectionAssetItems(STABLECOINS_SECTION_ID).expectCount(expected);
   }
 
   @Step("Tap first asset item (wallet 4.0) and return its currency name")

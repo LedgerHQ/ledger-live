@@ -1,8 +1,0 @@
-{
-  "name": "@features/platform-env",
-  "targets": {
-    "build": {
-      "executor": "nx:noop"
-    }
-  }
-}

@@ -13,7 +13,7 @@ import { buildGetAccountShape, postSync } from "./account";
 
 const LOCAL_NODE = "http://127.0.0.1:4943";
 
-const getAccountShape = buildGetAccountShape(() => LOCAL_NODE);
+const getAccountShape = buildGetAccountShape(async () => LOCAL_NODE);
 
 const XPUB =
   "0484bf7562262bbd6940085748f3be6afa52ae317155181ece31b66351ccffa4b08cc43d63b2859d469fee15f31c9edb5324266e6fd0407e87382d60fc4511acd8";

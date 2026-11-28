@@ -8,6 +8,7 @@ import {
   cleanupLedgerSyncAfterAll,
   setupLedgerSyncSeed,
   verifyLedgerSyncEnvironment,
+  withLedgerSyncDie,
 } from "@e2e/helpers/ledgerSyncHelpers";
 import type { LedgerSyncCliCommand } from "@ledgerhq/live-e2e-shared/ledgerSync/setup";
 import {
@@ -16,6 +17,8 @@ import {
   secondEthAccount,
 } from "@ledgerhq/live-e2e-shared/ledgerSync/testData";
 import type { SpeculosAppType } from "@ledgerhq/live-e2e-shared/enum/AppInfos";
+import type { PartialFeatures } from "@shared/feature-flags";
+import type { TestMetaOptions } from "@e2e/models/testOptions";
 
 const APP_INSTANCE_NAME = "LWM";
 const defaultAccountName = `${Currency.ETH.name} 1`;
@@ -33,6 +36,8 @@ type LedgerSyncSuite = {
   /** The seed hook only matters because Speculos reads it at launch, and the teardown frees it. */
   usesSpeculos?: boolean;
 };
+
+type LedgerSyncDieTestOptions = TestMetaOptions & { onDie?: boolean };
 
 /** Keeps the hooks in one place so a suite cannot forget the seed or the Speculos teardown. */
 function ledgerSyncSuite(
@@ -58,10 +63,13 @@ function ledgerSyncSuite(
 }
 
 /** Boots the app already a member of a freshly created trustchain, skipping the activation UI. */
-async function initPreSeeded(seedCommands: LedgerSyncCliCommand[] = []) {
+async function initPreSeeded(
+  seedCommands: LedgerSyncCliCommand[] = [],
+  featureFlags: PartialFeatures = LEDGER_SYNC_FEATURE_FLAGS,
+) {
   await app.init({
     speculosApp: AppInfos.LS,
-    featureFlags: LEDGER_SYNC_FEATURE_FLAGS,
+    featureFlags,
     cliCommands: [
       ...app.ledgerSync.initializeEmptyTrustchain(),
       ...seedCommands,
@@ -72,8 +80,11 @@ async function initPreSeeded(seedCommands: LedgerSyncCliCommand[] = []) {
 }
 
 /** Boots the app with no trustchain, so the settings row leads to the activation flow. */
-async function initUnactivated(speculosApp?: SpeculosAppType) {
-  await app.init({ speculosApp, featureFlags: LEDGER_SYNC_ACTIVATION_FEATURE_FLAGS });
+async function initUnactivated(
+  speculosApp?: SpeculosAppType,
+  featureFlags: PartialFeatures = LEDGER_SYNC_ACTIVATION_FEATURE_FLAGS,
+) {
+  await app.init({ speculosApp, featureFlags });
   await app.mainNavigation.waitForWallet40Ready();
 }
 
@@ -99,7 +110,8 @@ async function openActivationFlowFromSettings() {
   await app.ledgerSync.expectLedgerSyncPageIsDisplayed();
 }
 
-export function runLedgerSyncAddAccountTest(tmsLinks: string[], tags: string[]) {
+export function runLedgerSyncAddAccountTest(options: TestMetaOptions) {
+  const { tmsLinks, tags } = options;
   ledgerSyncSuite(
     {
       suite: "add account",
@@ -128,18 +140,22 @@ export function runLedgerSyncAddAccountTest(tmsLinks: string[], tags: string[]) 
       await app.modularDrawer.selectCurrencyByTicker(Currency.ETH.ticker);
       await app.modularDrawer.selectNetworkIfAsked(Currency.ETH.name);
 
-      const accountId = await app.addAccount.addAccountAtIndex(defaultAccountName, Currency.ETH.id);
+      const accountId = await app.addAccount.addAccountAtIndex({
+        currencyName: defaultAccountName,
+        currencyId: Currency.ETH.id,
+      });
       await app.addAccount.tapCloseAddAccountCta();
 
       await app.accounts.openViaDeeplink();
       await app.common.expectAccountName(defaultAccountName);
 
-      await app.trustchain.expectToHoldAccount(accountId, Currency.ETH.id);
+      await app.trustchain.expectToHoldAccount({ accountId, currencyId: Currency.ETH.id });
     },
   );
 }
 
-export function runLedgerSyncRenameAccountTest(tmsLinks: string[], tags: string[]) {
+export function runLedgerSyncRenameAccountTest(options: TestMetaOptions) {
+  const { tmsLinks, tags } = options;
   ledgerSyncSuite(
     {
       suite: "rename account",
@@ -163,12 +179,16 @@ export function runLedgerSyncRenameAccountTest(tmsLinks: string[], tags: string[
       await app.accounts.openViaDeeplink();
       await app.common.expectAccountName(renamedAccountName);
 
-      await app.trustchain.expectAccountName(ethAccount.id, renamedAccountName);
+      await app.trustchain.expectAccountName({
+        accountId: ethAccount.id,
+        accountName: renamedAccountName,
+      });
     },
   );
 }
 
-export function runLedgerSyncDeleteAccountTest(tmsLinks: string[], tags: string[]) {
+export function runLedgerSyncDeleteAccountTest(options: TestMetaOptions) {
+  const { tmsLinks, tags } = options;
   ledgerSyncSuite(
     {
       suite: "delete account",
@@ -198,14 +218,19 @@ export function runLedgerSyncDeleteAccountTest(tmsLinks: string[], tags: string[
   );
 }
 
-export function runLedgerSyncDeleteInstanceTest(tmsLinks: string[], tags: string[]) {
+export function runLedgerSyncDeleteInstanceTest(options: LedgerSyncDieTestOptions) {
+  const { tmsLinks, tags, onDie = false } = options;
   ledgerSyncSuite(
     {
-      suite: "delete instance",
+      suite: onDie ? "delete instance on DIE" : "delete instance",
       test: "[WXP][Ledger Sync] Delete instance",
       tmsLinks,
       tags,
-      init: () => initPreSeeded([app.ledgerSync.addTrustchainMember(APP_INSTANCE_NAME)]),
+      init: () =>
+        initPreSeeded(
+          [app.ledgerSync.addTrustchainMember(APP_INSTANCE_NAME)],
+          withLedgerSyncDie(LEDGER_SYNC_FEATURE_FLAGS, onDie),
+        ),
     },
     async () => {
       // The app was seeded with the member added last, so the CLI is the other instance — the
@@ -216,10 +241,15 @@ export function runLedgerSyncDeleteInstanceTest(tmsLinks: string[], tags: string
       await app.ledgerSync.openManageInstances();
       await app.ledgerSync.expectInstanceVisible(cliMemberPubKey);
 
-      // Removing an instance navigates to device selection first, unlike desktop where the row's
-      // Remove button goes straight to the device.
       await app.ledgerSync.removeInstance(cliMemberPubKey);
-      await app.common.selectKnownDevice();
+      if (onDie) {
+        // DIE connects to the known Speculos itself, in a sheet over the instances list.
+        await app.ledgerSync.expectRemoveInstanceDeviceStep();
+      } else {
+        // The process screen asks for a device first, unlike desktop where the row's Remove button
+        // goes straight to the device.
+        await app.common.selectKnownDevice();
+      }
       await app.ledgerSync.removeMemberFromLedgerSyncOnSpeculos();
       await app.ledgerSync.expectMemberRemoval(CLI_MEMBER_NAME);
 
@@ -232,7 +262,8 @@ export function runLedgerSyncDeleteInstanceTest(tmsLinks: string[], tags: string
   );
 }
 
-export function runLedgerSyncDeleteBackupTest(tmsLinks: string[], tags: string[]) {
+export function runLedgerSyncDeleteBackupTest(options: TestMetaOptions) {
+  const { tmsLinks, tags } = options;
   ledgerSyncSuite(
     {
       suite: "delete backup",
@@ -242,7 +273,10 @@ export function runLedgerSyncDeleteBackupTest(tmsLinks: string[], tags: string[]
       init: () => initPreSeeded([app.ledgerSync.pushAccountsToTrustchain([ethAccount])]),
     },
     async () => {
-      await app.trustchain.expectToHoldAccount(ethAccount.id, ethAccount.currencyId);
+      await app.trustchain.expectToHoldAccount({
+        accountId: ethAccount.id,
+        currencyId: ethAccount.currencyId,
+      });
 
       await openLedgerSyncSettings();
       await app.ledgerSync.openDeleteSync();
@@ -257,7 +291,8 @@ export function runLedgerSyncDeleteBackupTest(tmsLinks: string[], tags: string[]
   );
 }
 
-export function runLedgerSyncSettingsEntryPointTest(tmsLinks: string[], tags: string[]) {
+export function runLedgerSyncSettingsEntryPointTest(options: TestMetaOptions) {
+  const { tmsLinks, tags } = options;
   ledgerSyncSuite(
     {
       suite: "entry point in settings",
@@ -274,7 +309,8 @@ export function runLedgerSyncSettingsEntryPointTest(tmsLinks: string[], tags: st
   );
 }
 
-export function runLedgerSyncActivationNoBackupTest(tmsLinks: string[], tags: string[]) {
+export function runLedgerSyncActivationNoBackupTest(options: TestMetaOptions) {
+  const { tmsLinks, tags } = options;
   ledgerSyncSuite(
     {
       suite: "activation flow no backup activated",
@@ -290,32 +326,77 @@ export function runLedgerSyncActivationNoBackupTest(tmsLinks: string[], tags: st
   );
 }
 
-export function runLedgerSyncActivationBackupTest(tmsLinks: string[], tags: string[]) {
+export function runLedgerSyncActivationBackupTest(options: LedgerSyncDieTestOptions) {
+  const { tmsLinks, tags, onDie = false } = options;
   ledgerSyncSuite(
     {
-      suite: "activation flow backup activated",
+      suite: onDie ? "activation flow backup activated on DIE" : "activation flow backup activated",
       test: "[WXP][Ledger Sync] Activation Flow - Backup Activated",
       tmsLinks,
       tags,
-      // The app creates this trustchain, not the CLI, so the teardown has no handle on it to
-      // delete — the generated seed is what makes it unreachable. The hook still releases Speculos.
-      init: () => initUnactivated(AppInfos.LS),
+      // The app creates this trustchain on a fresh seed, so this is the first activation. The
+      // teardown has no handle on it and relies on the generated seed making it unreachable. The
+      // hook still releases Speculos.
+      init: () =>
+        initUnactivated(
+          AppInfos.LS,
+          withLedgerSyncDie(LEDGER_SYNC_ACTIVATION_FEATURE_FLAGS, onDie),
+        ),
     },
     async () => {
       await openActivationFlowFromSettings();
 
       await app.ledgerSync.tapTurnOnSync();
       // `lwmLedgerSyncOptimisation` inserts the choose-sync-method step between the CTA and the
-      // device selection.
+      // device step.
       await app.ledgerSync.tapUseMyLedgerDevice();
-      await app.common.selectKnownDevice();
+      if (onDie) {
+        // DIE connects to the known Speculos itself, in a sheet over the entry screen.
+        await app.ledgerSync.expectActivationDeviceStep();
+      } else {
+        await app.common.selectKnownDevice();
+      }
       await app.ledgerSync.activateLedgerSyncOnSpeculos();
-      await app.ledgerSync.expectLedgerSyncSuccessPage();
-      await app.ledgerSync.closeActivationSuccessPage();
-
-      // A backup exists now, so the settings row leads to the management screen.
-      await openLedgerSyncSettings();
-      await app.ledgerSync.expectLedgerSyncManagementVisible();
+      await expectActivationSucceeded();
     },
   );
+}
+
+/** Flag on only: the rejected state and its Retry are DIE screens. */
+export function runLedgerSyncActivationRejectRetryTest(options: TestMetaOptions) {
+  const { tmsLinks, tags } = options;
+  ledgerSyncSuite(
+    {
+      suite: "activation flow rejected on device then retried on DIE",
+      test: "[WXP][Ledger Sync] Activation Flow - Refused on device, Retry, approved, Backup Activated",
+      tmsLinks,
+      tags,
+      init: () =>
+        initUnactivated(AppInfos.LS, withLedgerSyncDie(LEDGER_SYNC_ACTIVATION_FEATURE_FLAGS, true)),
+    },
+    async () => {
+      await openActivationFlowFromSettings();
+
+      await app.ledgerSync.tapTurnOnSync();
+      await app.ledgerSync.tapUseMyLedgerDevice();
+      await app.ledgerSync.expectActivationDeviceStep();
+      await app.ledgerSync.rejectLedgerSyncOnSpeculos();
+      await app.ledgerSync.expectActivationRejectedOnDevice();
+
+      // Retry replays the device step in the same sheet.
+      await app.ledgerSync.retryActivation();
+      await app.ledgerSync.expectActivationDeviceStep();
+      await app.ledgerSync.activateLedgerSyncOnSpeculos();
+      await expectActivationSucceeded();
+    },
+  );
+}
+
+async function expectActivationSucceeded() {
+  await app.ledgerSync.expectLedgerSyncSuccessPage();
+  await app.ledgerSync.closeActivationSuccessPage();
+
+  // A backup exists now, so the settings row leads to the management screen.
+  await openLedgerSyncSettings();
+  await app.ledgerSync.expectLedgerSyncManagementVisible();
 }

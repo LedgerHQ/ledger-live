@@ -1,6 +1,6 @@
 import { getCryptoCurrencyById } from "@ledgerhq/ledger-wallet-framework/currencies";
 import { setCryptoAssetsStore } from "@ledgerhq/ledger-wallet-framework/cryptoAssetsStore";
-import coinConfig from "../config";
+import coinConfig, { suiDefaults } from "../config";
 import type { SuiTransport } from "../config";
 import { STAKE_DELEGATOR } from "../test/fixtures";
 import type { StakeObject } from "../types";
@@ -9,15 +9,9 @@ import { getAccountShape } from "./synchronisation";
 /** Bridge dispatch is keyed on `currency.id` (always "sui"), so we re-bind the config between runs. */
 function configureTransport(transport: SuiTransport) {
   coinConfig.setCoinConfig(() => ({
+    ...suiDefaults.sui,
     status: { type: "active" },
-    // Every URL always present; the feature flag selects which dispatcher branch runs.
-    node: {
-      graphqlUrl: "https://sui.coin.ledger.com/graphql",
-      grpcUrl: "https://sui.coin.ledger.com",
-    },
     features: { transport },
-    name: "Sui",
-    unit: { name: "Sui", code: "SUI", magnitude: 9 },
   }));
 }
 

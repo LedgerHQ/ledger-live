@@ -1,7 +1,9 @@
+export type {
+  DeviceIntentTrackingContextValue,
+  DeviceIntentTrackingProperties,
+  SourceFlow,
+} from "@ledgerhq/live-dmk-shared";
 export {
   DeviceIntentTrackingProvider,
   useDeviceIntentTracking,
-  type DeviceIntentTrackingContextValue,
-  type DeviceIntentTrackingProperties,
-  type SourceFlow,
-} from "@ledgerhq/live-dmk-shared";
+} from "@ledgerhq/live-dmk-shared/react";

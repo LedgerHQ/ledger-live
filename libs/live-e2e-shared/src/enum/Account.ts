@@ -269,6 +269,13 @@ export class Account {
     accountPath: "44'/354'/2'/0'/0'",
   });
 
+  static readonly HYPERCORE_1 = new Account({
+    currency: Currency.HYPERCORE,
+    accountName: "Hyperliquid 1",
+    index: 0,
+    accountPath: "44'/60'/0'/0/0",
+  });
+
   static readonly ETH_1 = new Account({
     currency: Currency.ETH,
     accountName: "Ethereum 1",
@@ -289,12 +296,6 @@ export class Account {
     index: 1,
     accountPath: "44'/60'/1'/0/0",
     ensName: "speculos-qaa.eth",
-  });
-  static readonly ETH_2_LOWER_CASE = new Account({
-    currency: Currency.ETH,
-    accountName: "Ethereum 2",
-    index: 1,
-    accountPath: "44'/60'/1'/0/0",
   });
   static readonly ETH_3 = new Account({
     currency: Currency.ETH,
@@ -513,19 +514,19 @@ export class Account {
 
   static readonly XRP_1 = new Account({
     currency: Currency.XRP,
-    accountName: "XRP 1",
+    accountName: "XRPL 1",
     index: 0,
     accountPath: "44'/144'/0'/0/0",
   });
   static readonly XRP_2 = new Account({
     currency: Currency.XRP,
-    accountName: "XRP 2",
+    accountName: "XRPL 2",
     index: 1,
     accountPath: "44'/144'/1'/0/0",
   });
   static readonly XRP_3 = new Account({
     currency: Currency.XRP,
-    accountName: "XRP 3",
+    accountName: "XRPL 3",
     index: 2,
     accountPath: "44'/144'/2'/0/0",
   });
@@ -638,13 +639,6 @@ export class Account {
     accountName: "SEI Network (EVM) 2",
     index: 1,
     accountPath: "44'/60'/1'/0/0",
-  });
-
-  static readonly EMPTY = new Account({
-    currency: Currency.BTC,
-    accountName: "Empty",
-    index: 0,
-    accountPath: "",
   });
 }
 
@@ -780,13 +774,13 @@ export class TokenAccount extends Account {
     parentAccount: Account.SOL_2,
     address: Addresses.SOL_GIGA_2_ATA_ADDRESS,
   });
-  static readonly SOL_GIGA_3 = new TokenAccount({
+  static readonly SOL_GIGA_4 = new TokenAccount({
     currency: Currency.SOL_GIGA,
-    accountName: "GIGACHAD 3",
-    index: 2,
-    accountPath: Account.SOL_3.accountPath,
+    accountName: "GIGACHAD 4",
+    index: 3,
+    accountPath: Account.SOL_4.accountPath,
     tokenType: TokenType.SPL,
-    parentAccount: Account.SOL_3,
+    parentAccount: Account.SOL_4,
   });
 
   static readonly SOL_WIF_1 = new TokenAccount({
@@ -888,14 +882,6 @@ export class TokenAccount extends Account {
   static readonly POL_DAI_1 = new TokenAccount({
     currency: Currency.POL_DAI,
     accountName: "Dai 1",
-    index: 0,
-    accountPath: "44'/60'/0'/0/0",
-    tokenType: TokenType.ERC20,
-    parentAccount: Account.POL_1,
-  });
-  static readonly POL_UNI = new TokenAccount({
-    currency: Currency.POL_UNI,
-    accountName: "Uniswap 1",
     index: 0,
     accountPath: "44'/60'/0'/0/0",
     tokenType: TokenType.ERC20,

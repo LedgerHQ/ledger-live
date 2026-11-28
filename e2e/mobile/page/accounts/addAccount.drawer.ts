@@ -12,6 +12,12 @@ const IMPORT_PROMPT_TIMEOUT = TIMEOUT.small;
 // Full discovery on a fresh currency, dominated by the derivation scan.
 const ACCOUNT_DISCOVERY_TIMEOUT = 240_000;
 
+type AccountAtIndexOptions = {
+  currencyName: string;
+  currencyId: string;
+  index?: number;
+};
+
 export default class AddAccountDrawer extends CommonPage {
   private readonly baseLink = "add-account";
 
@@ -20,6 +26,9 @@ export default class AddAccountDrawer extends CommonPage {
   private readonly continueButton = byId("enabled-add-accounts-continue-button");
   private readonly accountOfCurrency = (currencyId: string) =>
     this.accountItem({ idPattern: `js:2:${currencyId}:.*` });
+  private readonly aleoViewKeyWarningScreen = byId("aleo-view-key-warning-screen");
+  private readonly aleoViewKeyAllowButton = byId("aleo-view-key-warning-allow-button");
+  private readonly aleoViewKeyApproveScreen = byId("aleo-view-key-approve-screen");
 
   @Step("Open add account via deeplink")
   async openViaDeeplink() {
@@ -42,6 +51,17 @@ export default class AddAccountDrawer extends CommonPage {
     }
   }
 
+  @Step("Allow sharing the Aleo view key")
+  async allowAleoViewKey() {
+    await this.aleoViewKeyWarningScreen.waitVisible();
+    await this.aleoViewKeyAllowButton.tap();
+  }
+
+  @Step("Wait for the Aleo view key approve screen")
+  async waitForAleoViewKeyApproveScreen() {
+    await this.aleoViewKeyApproveScreen.waitVisible();
+  }
+
   @Step("Wait for accounts discovery")
   async waitAccountsDiscovery() {
     const startTime = Date.now();
@@ -54,20 +74,20 @@ export default class AddAccountDrawer extends CommonPage {
           `Account discovery timed out after ${ACCOUNT_DISCOVERY_TIMEOUT}ms. Expected the continue button to show.`,
         );
       }
-      const visible = await withTimeout(
-        this.continueButton.isVisible(TIMEOUT.medium),
-        TIMEOUT.large,
-        "waitAccountsDiscovery:continueButton",
-      );
+      const visible = await withTimeout({
+        operation: this.continueButton.isVisible(TIMEOUT.medium),
+        timeoutMs: TIMEOUT.large,
+        label: "waitAccountsDiscovery:continueButton",
+      });
       if (visible) {
         return;
       }
-      await withTimeout(
-        checkForErrorModals(TIMEOUT.xxsmall, "Account discovery failed"),
-        TIMEOUT.small,
-        "waitAccountsDiscovery:errorModal",
-        { rethrow: true },
-      );
+      await withTimeout({
+        operation: checkForErrorModals(TIMEOUT.xxsmall, "Account discovery failed"),
+        timeoutMs: TIMEOUT.small,
+        label: "waitAccountsDiscovery:errorModal",
+        rethrow: true,
+      });
       return poll();
     };
 
@@ -94,8 +114,9 @@ export default class AddAccountDrawer extends CommonPage {
     await this.continueButton.waitNotVisible();
   }
 
-  @Step("Expect account discovered {{{0}}}")
-  async expectAccountDiscovery(currencyName: string, currencyId: string, index = 0) {
+  @Step("Expect account discovered {{{0.currencyName}}}")
+  async expectAccountDiscovery(options: AccountAtIndexOptions) {
+    const { currencyName, currencyId, index = 0 } = options;
     await this.accountOfCurrency(currencyId).expectVisible();
     const accountId = (await this.accountItem({ index }).getIdentifier()).replace(
       this.accountItemId,
@@ -110,8 +131,9 @@ export default class AddAccountDrawer extends CommonPage {
     await this.closeWithConfirmationButton.tap();
   }
 
-  @Step("Add only discovered {{{0}}} account at index {{{2}}}")
-  async addAccountAtIndex(currencyName: string, currencyId: string, index: number = 0) {
+  @Step("Add only discovered {{{0.currencyName}}} account at index {{{0.index}}}")
+  async addAccountAtIndex(options: AccountAtIndexOptions) {
+    const { currencyName, currencyId, index = 0 } = options;
     await this.waitAccountsDiscovery();
     const accountCount = await this.accountItem().count();
     // A lone discovered account arrives already selected, so tapping it would clear the selection
@@ -120,7 +142,7 @@ export default class AddAccountDrawer extends CommonPage {
       await this.deselectAllButton.tap();
       await this.accountItem({ index }).tap();
     }
-    const accountId = await this.expectAccountDiscovery(currencyName, currencyId, index);
+    const accountId = await this.expectAccountDiscovery({ currencyName, currencyId, index });
     await this.finishAccountsDiscovery();
     return accountId;
   }

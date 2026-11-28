@@ -5,4 +5,4 @@ const testConfig = {
   tags: ["@NanoSP", "@LNS", "@NanoX", "@Stax", "@Flex", "@NanoGen5", "@smoke"],
 };
 
-runRevampedPasswordUnlockTest(testConfig.tmsLinks, testConfig.tags);
+runRevampedPasswordUnlockTest(testConfig);

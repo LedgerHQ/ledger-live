@@ -46,22 +46,40 @@ function mapVerifyAddressError(error: unknown): VerifyAddressDeviceState | undef
   return undefined;
 }
 
-export function getAddressVerification(
-  verify: () => Promise<{ address: string }>,
-): VerifyAddressDeviceAction {
-  let cancelled = false;
+/** Called by the host once the device request is actually sent, not for the app-and-version query. */
+export type NotifyDeviceRequest = () => void;
+
+/**
+ * `signal` aborts on cancel and on unsubscribe: a host stops before starting a request, and
+ * hands the signal to `notifyOnDeviceRequest` so its later requests are rejected.
+ */
+export type VerifyAddressOnDevice = (
+  onDeviceRequest: NotifyDeviceRequest,
+  signal: AbortSignal,
+) => Promise<{ address: string }>;
+
+export function getAddressVerification(verify: VerifyAddressOnDevice): VerifyAddressDeviceAction {
+  const controller = new AbortController();
+  const { signal } = controller;
+  const cancel = () => controller.abort();
 
   const observable = new Observable<VerifyAddressDeviceState>(subscriber => {
-    subscriber.next({ type: "awaiting-confirmation" });
+    let hasNotifiedDeviceRequest = false;
 
-    verify()
+    const onDeviceRequest: NotifyDeviceRequest = () => {
+      if (signal.aborted || subscriber.closed || hasNotifiedDeviceRequest) return;
+      hasNotifiedDeviceRequest = true;
+      subscriber.next({ type: "awaiting-confirmation" });
+    };
+
+    verify(onDeviceRequest, signal)
       .then(result => {
-        if (cancelled) return;
+        if (signal.aborted) return;
         subscriber.next({ type: "confirmed", address: result.address });
         subscriber.complete();
       })
       .catch(error => {
-        if (cancelled) return;
+        if (signal.aborted) return;
 
         const mapped = mapVerifyAddressError(error);
         if (mapped) {
@@ -72,15 +90,8 @@ export function getAddressVerification(
         subscriber.error(toError(error));
       });
 
-    return () => {
-      cancelled = true;
-    };
+    return cancel;
   });
 
-  return {
-    observable,
-    cancel: () => {
-      cancelled = true;
-    },
-  };
+  return { observable, cancel };
 }

@@ -1,10 +1,10 @@
 import type { DeviceManagementKit } from "@ledgerhq/device-management-kit";
 import { DeviceModelId } from "@ledgerhq/types-devices";
-import { EMPTY } from "rxjs";
 
 import { connectDeviceUseCase, type ConnectDeviceUseCaseInput } from "./connectDeviceUseCase";
 import { ConnectDeviceUIStateTypes, type ConnectDeviceUIState, type KnownDevice } from "./types";
-import { BaseConnectionErrorTypes, type DeviceDiscoveryService } from "../deviceConnectivity/types";
+import { BaseConnectionErrorTypes } from "../deviceConnectivity/types";
+import { createFakeDeviceDiscoveryService } from "../deviceConnectivity/discoveryService/__test-utils__/createFakeDeviceDiscoveryService";
 
 // Test helpers
 const knownDevice: KnownDevice = {
@@ -23,13 +23,7 @@ const setupTest = ({
   acceptedDeviceModelIds,
   knownDevices = [knownDevice],
 }: SetupTestOptions = {}) => {
-  const deviceDiscoveryService: DeviceDiscoveryService = {
-    start: jest.fn(),
-    stop: jest.fn(),
-    transportIds: [],
-    discoveredDevices: EMPTY,
-    errors: EMPTY,
-  };
+  const deviceDiscoveryService = createFakeDeviceDiscoveryService();
 
   const dmk = {
     listConnectedDevices: jest.fn(() => []),
@@ -52,8 +46,13 @@ const setupTest = ({
 
 // Tests
 describe("connectDeviceUseCase", () => {
+  beforeEach(() => {
+    jest.useFakeTimers();
+  });
+
   afterEach(() => {
     jest.clearAllMocks();
+    jest.useRealTimers();
   });
 
   it("should create and start the state machine only when subscribed", () => {
@@ -125,6 +124,53 @@ describe("connectDeviceUseCase", () => {
     expect(states).toEqual([{ type: ConnectDeviceUIStateTypes.UnknownError, error: thrown }]);
     expect(errorHandler).not.toHaveBeenCalled();
     expect(completeHandler).toHaveBeenCalledTimes(1);
+
+    subscription.unsubscribe();
+  });
+
+  it("should emit UnknownError when onConnected throws", () => {
+    // Arrange
+    const { input } = setupTest();
+    const error = new Error("onConnected failed");
+    input.dmk = {
+      listConnectedDevices: jest.fn(() => [{ sessionId: "session-id" }]),
+      getConnectedDevice: jest.fn(() => ({ id: "device-id", name: "Ledger Nano X", type: "BLE" })),
+    } as unknown as DeviceManagementKit;
+    input.onConnected = () => {
+      throw error;
+    };
+    const states: Array<ConnectDeviceUIState> = [];
+
+    // Act
+    const subscription = connectDeviceUseCase(input).subscribe(state => states.push(state));
+    // XState throws an unhandled error from a timer.
+    jest.runOnlyPendingTimers();
+
+    // Assert
+    expect(states).toEqual([
+      { type: ConnectDeviceUIStateTypes.Connected },
+      { type: ConnectDeviceUIStateTypes.UnknownError, error },
+    ]);
+
+    subscription.unsubscribe();
+  });
+
+  it("should emit UnknownError when discovery fails to start", () => {
+    // Arrange
+    const { deviceDiscoveryService, input } = setupTest();
+    const error = new Error("start failed");
+    deviceDiscoveryService.start.mockImplementation(() => {
+      throw error;
+    });
+    const states: Array<ConnectDeviceUIState> = [];
+
+    // Act
+    const subscription = connectDeviceUseCase(input).subscribe(state => states.push(state));
+    // XState throws an unhandled error from a timer.
+    jest.runOnlyPendingTimers();
+
+    // Assert
+    expect(states).toEqual([{ type: ConnectDeviceUIStateTypes.UnknownError, error }]);
 
     subscription.unsubscribe();
   });

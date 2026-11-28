@@ -1,9 +1,10 @@
 import { describe, it, expect, afterEach } from "bun:test";
-import { mkdir, mkdtemp, rm, symlink, writeFile } from "node:fs/promises";
+import { mkdir, mkdtemp, rm, writeFile } from "node:fs/promises";
 import os from "node:os";
 import path from "node:path";
 import { hashOne, hashSkillFiles } from "./hash";
 import { diagnoseSkill, SIDECAR_FILENAME, type SkillFile, type SkillManifest } from "./registry";
+import { linkDirectory } from "../testing/symlinks";
 
 const OLDER_SKILL_MD: SkillFile = { path: "SKILL.md", content: "# Older\n" };
 const NESTED_REFERENCE: SkillFile = { path: "references/sub/new.md", content: "A new reference\n" };
@@ -57,7 +58,7 @@ describe("diagnoseSkill", () => {
     const { root, skillRoot } = await installOlderSkill();
     const sharedReferences = path.join(tmpDir!, "shared-references");
     await mkdir(sharedReferences);
-    await symlink(sharedReferences, path.join(skillRoot, "references"));
+    await linkDirectory(sharedReferences, path.join(skillRoot, "references"));
 
     const diagnosis = await diagnoseSkill(NEWER_SKILL, root);
 

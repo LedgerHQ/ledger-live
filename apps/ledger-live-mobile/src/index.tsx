@@ -1,6 +1,6 @@
 import "LLM/utils/logStartup/beforeJSImports";
 import "LLM/utils/logStartup/claimProcessStartTime";
-// Must run before any module that keeps a reference to the global WebSocket (e.g. isomorphic-ws)
+// Must run before any module that keeps a reference to the global WebSocket (e.g. DMK)
 import "./iosWebsocketFix";
 require("./promise-polyfill");
 import "./polyfill";
@@ -71,12 +71,15 @@ import {
 import useAccountsWithFundsListener from "@ledgerhq/live-common/hooks/useAccountsWithFundsListener";
 import { useTrackFundsReceived } from "LLM/features/Analytics/hooks/useTrackFundsReceived";
 import { updateIdentify } from "./analytics";
-import { FeatureToggle, useFeature } from "@features/platform-feature-flags";
+import { useFeature } from "@features/platform-feature-flags";
 import { setAnalyticsFeatureFlagMethod } from "~/analytics/segment";
 import { getVersionedRedirects } from "LLM/hooks/useStake/useVersionedStakePrograms";
 import { selectFeature, type FeatureId } from "@shared/feature-flags";
 import { LiveConfig } from "@ledgerhq/live-config/LiveConfig";
-import { installEarnLifecycleHost } from "@ledgerhq/transaction-observability";
+import {
+  installBorrowLifecycleHost,
+  installEarnLifecycleHost,
+} from "@ledgerhq/transaction-observability";
 import {
   coinObservabilityConfigFor,
   setCoinObservabilityConfigReader,
@@ -89,7 +92,6 @@ import { registerTransports } from "~/services/registerTransports";
 import { useDeviceManagementKit } from "@ledgerhq/live-dmk-mobile";
 import { WaitForAppReady } from "LLM/contexts/WaitForAppReady";
 import AppVersionBlocker from "LLM/features/AppBlockers/components/AppVersionBlocker";
-import { StoragePerformanceOverlay } from "LLM/storage/screens/PerformanceMonitor";
 import { logStartupEvent } from "LLM/utils/logStartupTime";
 import {
   TrackingConsent,
@@ -102,6 +104,7 @@ import {
   customActionEventMapper,
   customErrorEventMapper,
   customLogEventMapper,
+  customResourceEventMapper,
   initializeDatadogProvider,
   stopDatadogRecording,
 } from "./datadog";
@@ -149,7 +152,22 @@ store.subscribe(
     readStakePrograms: () => selectFeature(store.getState(), "stakePrograms"),
     resolveVersionedRedirects: getVersionedRedirects,
     readAppVersion: () => LiveConfig.instance.appVersion || "0.0.0",
+    readManifestId: () => {
+      const earnFlag = selectFeature(store.getState(), "ptxEarnLiveApp");
+      return earnFlag?.enabled
+        ? earnFlag.params?.manifest_id
+        : process.env.DEFAULT_EARN_MANIFEST_ID;
+    },
     apiBaseUrl: Config.EARN_API_BASE_URL,
+  }),
+);
+store.subscribe(
+  installBorrowLifecycleHost({
+    platform: "mobile",
+    readEnabled: () =>
+      selectFeature(store.getState(), "borrowTxLifecycleMonitoring")?.enabled ?? false,
+    readManifestId: () => selectFeature(store.getState(), "ptxBorrowLiveApp")?.params?.manifest_id,
+    apiBaseUrl: Config.BORROW_API_BASE_URL,
   }),
 );
 setCoinObservabilityConfigReader(() => {
@@ -197,6 +215,7 @@ function App() {
         trackResources: datadogFF?.params?.trackResources ?? false,
         errorEventMapper: customErrorEventMapper(!automaticBugReportingEnabled),
         actionEventMapper: customActionEventMapper,
+        resourceEventMapper: customResourceEventMapper,
         firstPartyHosts: [
           {
             match: FIRST_PARTY_MAIN_HOST_DOMAIN,
@@ -339,9 +358,6 @@ function App() {
       <DebugTheme />
       <JsThreadMonitor />
       <Modals />
-      <FeatureToggle featureId="llmMmkvMigration">
-        <StoragePerformanceOverlay />
-      </FeatureToggle>
     </>
   );
 }

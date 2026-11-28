@@ -1,12 +1,13 @@
 import { z } from "zod";
 import { DateTimeIsoSchema } from "@shared/schema-primitives";
-import { AccountUUIDSchema, AddressSchema } from "@domain/entity-account-descriptor";
 import { FiatCurrencyTickerSchema, type FiatCurrencyTicker } from "@domain/entity-currency-fiat";
 import { AmountStrSchema } from "@domain/entity-account-balance";
 import {
   CryptoOrTokenCurrencyIdSchema,
   type CryptoOrTokenCurrencyId,
 } from "@domain/entity-currency";
+import { AccountUUIDSchema } from "@domain/entity-account";
+import { AddressSchema } from "@domain/entity-network";
 
 export const OperationIdSchema = z.string().min(1).brand<"OperationId">();
 export const TransactionHashSchema = z.string().min(1).brand<"TransactionHash">();
@@ -41,6 +42,7 @@ export const OPERATION_TYPES = [
   "APPROVE",
   "OPT_IN",
   "OPT_OUT",
+  "OPT_EDIT",
   "LOCK",
   "UNLOCK",
   "WITHDRAW",

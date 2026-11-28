@@ -1,6 +1,8 @@
 export * from "./types";
 export * from "./machine";
-export * from "./rules";
+export * from "./firmwareRules";
+export * from "./postSetupFirmware";
+export * from "./deviceReady";
 export * from "./retry";
 export * from "./actors/session";
 export * from "./actors/readDeviceState";
@@ -8,6 +10,7 @@ export * from "./actors/genuineCheck";
 export * from "./actors/firmwareCheck";
 export * from "./actors/toggleEarlyCheck";
 export * from "./device/toggleEarlyCheckCommand";
+export * from "./device/recoveryKeyStatus";
 export * from "./actors/seedPolling";
 export * from "./host";
 export * from "./ports";

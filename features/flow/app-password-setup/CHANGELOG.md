@@ -1,5 +1,33 @@
 # @features/flow-app-password-setup
 
+## 0.2.2
+
+### Patch Changes
+
+- Updated dependencies [[`24d4a2b`](https://github.com/LedgerHQ/ledger-live/commit/24d4a2b525d71348b0b33fc031674bbec7787e9c)]:
+  - @features/platform-app-lock@0.9.0
+
+## 0.2.2-next.0
+
+### Patch Changes
+
+- Updated dependencies [[`24d4a2b`](https://github.com/LedgerHQ/ledger-live/commit/24d4a2b525d71348b0b33fc031674bbec7787e9c)]:
+  - @features/platform-app-lock@0.9.0-next.0
+
+## 0.2.1
+
+### Patch Changes
+
+- Updated dependencies [[`934970a`](https://github.com/LedgerHQ/ledger-live/commit/934970adec67ed88f1d546d03b1bb555cbfd128f)]:
+  - @features/platform-app-lock@0.8.0
+
+## 0.2.1-next.0
+
+### Patch Changes
+
+- Updated dependencies [[`934970a`](https://github.com/LedgerHQ/ledger-live/commit/934970adec67ed88f1d546d03b1bb555cbfd128f)]:
+  - @features/platform-app-lock@0.8.0-next.0
+
 ## 0.2.0
 
 ### Minor Changes

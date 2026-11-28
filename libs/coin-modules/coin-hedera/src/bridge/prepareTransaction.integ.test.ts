@@ -1,20 +1,19 @@
 import BigNumber from "bignumber.js";
 import invariant from "invariant";
-import hederaCoinConfig from "../config";
+import hederaCoinConfig, { hederaDefaults } from "../config";
 import { rpcClient } from "../network/rpc";
 import {
   getMockedAccount,
   getMockedTokenAccount,
   MAINNET_TEST_ACCOUNTS,
 } from "../test/fixtures/account.fixture";
-import { getMockedConfig } from "../test/fixtures/config.fixture";
 import { getMockedERC20TokenCurrency } from "../test/fixtures/currency.fixture";
 import { getMockedTransaction } from "../test/fixtures/transaction.fixture";
 import { prepareTransaction } from "./prepareTransaction";
 
 describe("prepareTransaction", () => {
   beforeAll(() => {
-    hederaCoinConfig.setCoinConfig(() => getMockedConfig());
+    hederaCoinConfig.setCoinConfig(() => hederaDefaults.hedera);
   });
 
   afterAll(async () => {

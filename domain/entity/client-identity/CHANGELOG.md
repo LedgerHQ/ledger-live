@@ -1,5 +1,33 @@
 # @domain/entity-client-identity
 
+## 0.6.0
+
+### Minor Changes
+
+- [#24656](https://github.com/LedgerHQ/ledger-live/pull/24656) [`6baeada`](https://github.com/LedgerHQ/ledger-live/commit/6baeadaca277a70109580c0d939278ebf729922b) Thanks [@gre-ledger](https://github.com/gre-ledger)! - Let the Portfolio account data source send the install's `PortfolioId` to the Portfolio service
+
+## 0.6.0-next.0
+
+### Minor Changes
+
+- [#24656](https://github.com/LedgerHQ/ledger-live/pull/24656) [`6baeada`](https://github.com/LedgerHQ/ledger-live/commit/6baeadaca277a70109580c0d939278ebf729922b) Thanks [@gre-ledger](https://github.com/gre-ledger)! - Let the Portfolio account data source send the install's `PortfolioId` to the Portfolio service
+
+## 0.5.0
+
+### Minor Changes
+
+- [#24392](https://github.com/LedgerHQ/ledger-live/pull/24392) [`934970a`](https://github.com/LedgerHQ/ledger-live/commit/934970adec67ed88f1d546d03b1bb555cbfd128f) Thanks [@renovate-operator-ledger](https://github.com/apps/renovate-operator-ledger)! - chore(deps): update dependency @reduxjs/toolkit to v2.13.0
+
+  - Updated `@reduxjs/toolkit` to `2.13.0`
+
+## 0.5.0-next.0
+
+### Minor Changes
+
+- [#24392](https://github.com/LedgerHQ/ledger-live/pull/24392) [`934970a`](https://github.com/LedgerHQ/ledger-live/commit/934970adec67ed88f1d546d03b1bb555cbfd128f) Thanks [@renovate-operator-ledger](https://github.com/apps/renovate-operator-ledger)! - chore(deps): update dependency @reduxjs/toolkit to v2.13.0
+
+  - Updated `@reduxjs/toolkit` to `2.13.0`
+
 ## 0.4.0
 
 ### Minor Changes

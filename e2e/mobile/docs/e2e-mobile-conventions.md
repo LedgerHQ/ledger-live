@@ -6,15 +6,9 @@ MUST and MUST NOT are required. SHOULD is the default, and the same section stat
 
 The Contacts suite is the reference: [`specs/contacts`](../specs/contacts), [`contacts.page.ts`](../page/wallet/contacts.page.ts), [`contactDetail.page.ts`](../page/wallet/contactDetail.page.ts), [`contactName.drawer.ts`](../page/drawer/contactName.drawer.ts).
 
-## Detox element creation and interactions MUST use an installed global function
+## Detox elements MUST go through element handles
 
-Creating, finding, tapping, typing, reading, waiting, and scrolling a Detox element MUST use an installed global. `jest.environment.ts` installs selected functions from `NativeElementHelpers` and `WebElementHelpers` in [`elementHelpers`](../helpers/elementHelpers.ts), and `types/global.d.ts` declares those functions. Examples are `getElementById`, `tapById`, `getTextOfElement`, `waitForElementById`, `getWebElementByTestId`, and `tapWebElementByTestId`. A direct import of either object MUST be used only where those globals are not available.
-
-Code MUST NOT call `element(by...)`, `web.element(...)`, or the same operation on a raw Detox element. `elementHelpers.ts` implements those globals, so it is the place that calls the Detox matchers for them. When no installed global performs the operation, add that action to the [element handle](e2e-mobile-elements.md) and use the handle for that element.
-
-## A page object that imports element handles MUST use them for every element
-
-This rule replaces the previous one for a page object that imports from `@e2e/helpers/elements/*`. Such a page object MUST declare and act on every element through [element handles](e2e-mobile-elements.md) and MUST NOT call an element global. [`helpers/elements`](../helpers/elements) calls the Detox matchers itself and MUST NOT import `elementHelpers.ts`, so the globals can be deleted once every page object is migrated.
+A page object MUST declare and act on every element through [element handles](e2e-mobile-elements.md). A page object or spec MUST NOT call `element(by...)`, `web.element(...)`, `waitFor(...)`, or the same operation on a raw Detox element: [`helpers/elements`](../helpers/elements) is the only place that calls the Detox matchers. When no handle method performs the operation, add that action to the handle.
 
 ## A shared Live App test id SHOULD match the desktop test id
 
@@ -28,7 +22,7 @@ A spec MUST declare only test metadata and invoke the sibling test function. The
 
 ### State MUST be arranged in fixtures and flags
 
-See [E2E conventions](../../docs/e2e-conventions.md#setup-must-be-deterministic). Entry-point flags MUST belong in the test function file, combined with a preset from [`utils/featureFlagUtils`](../utils/featureFlagUtils.ts). `loadConfig` imports `data.settings`, `data.accounts`, `data.trustchain`, `data.postOnboarding`, and `data.payCard` when present. Other domain entities cannot be seeded this way.
+See [E2E conventions](../../docs/e2e-conventions.md#setup-must-be-deterministic). Entry-point flags MUST belong in the test function file, combined with a preset from [`utils/featureFlagUtils`](../utils/featureFlagUtils.ts). `loadConfig` imports `data.settings`, `data.accounts`, `data.trustchain`, `data.postOnboarding`, `data.payCard`, and `data.receiveVerifyHint` when present. Other domain entities cannot be seeded this way.
 
 ### State MUST NOT be arranged in UI steps
 
@@ -38,7 +32,7 @@ A setup MUST NOT open screens or tap controls to reach the state under test.
 
 A step MUST NOT branch on a condition and run only when that condition is met. The branch costs time on every run and hides the regression when the expected path stops happening. The cause MUST be removed in the fixture or the flags.
 
-A conditional step MAY stay when the test documents why the branch is required.
+A conditional step MAY stay when explicit fixture or input state decides its outcome, not a visibility probe, and reachable callers need each outcome. A branch no caller reaches MUST be removed.
 
 ### The test function MUST decide which assertions run
 
@@ -80,19 +74,9 @@ The method MUST live on the page that owns its parameter. `deleteContact(rowId)`
 
 A screen reached from another screen MUST be its own class held as a property: `app.contacts.detail`, `app.contacts.detail.renameDrawer`. Drawers MUST stay drawers.
 
-### In a page object that uses globals, selector helpers MUST be private readonly arrow functions
-
-Element getters and parameterized locator builders MUST be private readonly arrow-function class properties. Static IDs passed to waits MUST be private readonly strings. Dynamic IDs MUST use private readonly builder functions. A step MUST NOT build a matcher or ID inline.
-
-```ts
-private readonly contactsContent = () => getElementById("contacts-content");
-private readonly savedContactRowName = (rowId: string) => getElementById(`${rowId}-name`);
-private readonly addContactContentId = "contacts-add-contact-content";
-```
-
 ### A handle locator MUST be a private readonly property
 
-In a page object that imports element handles, a static locator MUST be a private readonly handle, and a dynamic one a private readonly builder that returns a handle. A step MUST NOT build a handle inline.
+A static locator MUST be a private readonly handle, and a dynamic one a private readonly arrow function that returns a handle. A step MUST NOT build a handle inline.
 
 ```ts
 private readonly recipientInput = byId("recipient-input");
@@ -101,7 +85,7 @@ private readonly contactCompactRow = (contactId: string) => byId(`contacts-compa
 
 ### Every public method MUST use @Step
 
-Parameters MUST be Handlebars placeholders: `{{0}}`, `{{1}}` by index, or named `@Step("Rename to {{name}}", ["name"])`. `$0` renders literally. Values are HTML-escaped, so use `{{{0}}}` for one containing `&`, `<`, or `'`. Arguments appear as Allure parameters even without a placeholder.
+Parameters MUST be Handlebars placeholders: `{{0}}`, `{{1}}` by index, `{{{0.address}}}` for a field of an options object, or named `@Step("Rename to {{name}}", ["name"])`. `$0` renders literally. Values are HTML-escaped, so use `{{{0}}}` for one containing `&`, `<`, or `'`. Arguments appear as Allure parameters even without a placeholder.
 
 ### The test function MUST call $TmsLink
 
@@ -113,7 +97,7 @@ The spec MUST pass the `B2CQA-XXXX` id and the test function MUST call `$TmsLink
 
 ```ts
 // spec
-runBrowseAndSearchContactsTest(["B2CQA-6240"], tags);
+runBrowseAndSearchContactsTest({ tmsLinks: ["B2CQA-6240"], tags });
 
 // test function
 setTeamOwner(Team.WALLET_XP);
@@ -160,7 +144,7 @@ A deeplink MUST NOT be used unless the deeplink is what is under test. A deeplin
 A timeout, delay, or poll interval MUST be a `TIMEOUT` or `INTERVAL` bucket from [`utils/timeouts.ts`](../utils/timeouts.ts), not a bare number. A named constant in the file is allowed only when no bucket fits or the value needs its reason written down. Config files MAY keep literals, since the key already names them (`setupTimeout: 500000` in `detox.config.js`).
 
 ```ts
-await waitForElementById(this.screenId, TIMEOUT.small); // not 5000
+await this.screen.waitVisible(TIMEOUT.small); // not 5000
 ```
 
 ## Test data
@@ -178,7 +162,8 @@ iOS smart punctuation turns a typed `'` into `’`, so a straight apostrophe in 
 The test function calls `declareBroadcastAccounts`, `declareCliBroadcastAccounts` or `declareSharedResources` ([`helpers/exclusiveLock.ts`](../helpers/exclusiveLock.ts)) before its `describe`:
 
 ```ts
-export function runDelegateTest(delegation: DelegateType /* … */) {
+export function runDelegateTest(options: RunDelegateTestOptions) {
+  const { delegation /* … */ } = options;
   declareBroadcastAccounts(delegation.account);
   describe("Delegate", () => {
 ```
@@ -194,7 +179,7 @@ import { $KnownFailure } from "@e2e/helpers/knownFailure";
 
 // Whole spec: right before the test function call, like $TmsLink / $Tag.
 $KnownFailure("LIVE-12345");
-runSendTest(transaction, ["B2CQA-4225"], ["@NanoX", "@family-evm"]);
+runSendTest({ transaction, tmsLinks: ["B2CQA-4225"], tags: ["@NanoX", "@family-evm"] });
 
 // One test: right before its it(), inside the describe.
 $KnownFailure("LIVE-12345");

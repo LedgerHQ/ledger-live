@@ -22,10 +22,10 @@ import { dmkToLedgerDeviceIdMap } from "../config/dmkToLedgerDeviceIdMap";
 import {
   BaseConnectionErrorTypes,
   BaseDiscoveryErrorTypes,
-  type DeviceDiscoveryService,
   type UnknownConnectionError,
   type UnknownDiscoveryError,
 } from "../deviceConnectivity/types";
+import { createFakeDeviceDiscoveryService } from "../deviceConnectivity/discoveryService/__test-utils__/createFakeDeviceDiscoveryService";
 
 // Test helpers
 const testTransport = "RN_BLE" as TransportIdentifier;
@@ -169,6 +169,7 @@ const setupTest = (options: SetupTestOptions = {}) => {
     ({
       connect,
       getConnectedDevice: jest.fn(() => makeConnectedDevice()),
+      listConnectedDevices: jest.fn(() => []),
     } as unknown as DeviceManagementKit);
 
   const states: Array<ConnectDeviceUIState> = [];
@@ -178,13 +179,11 @@ const setupTest = (options: SetupTestOptions = {}) => {
     complete: jest.fn(),
   };
 
-  const deviceDiscoveryService: DeviceDiscoveryService = {
-    start: jest.fn(),
-    stop: jest.fn(),
+  const deviceDiscoveryService = createFakeDeviceDiscoveryService({
     transportIds: [testTransport],
     discoveredDevices,
     errors,
-  };
+  });
 
   const machine: DefaultConnectDeviceStateMachine = new DefaultConnectDeviceStateMachine({
     knownDevices,
@@ -451,6 +450,7 @@ describe("ConnectDeviceStateMachine", () => {
         connect,
         disconnect,
         getConnectedDevice: jest.fn(),
+        listConnectedDevices: jest.fn(() => []),
       } as unknown as DeviceManagementKit;
       const { discoverDevices, machine, onConnected } = setupTest({ dmk });
 
@@ -490,6 +490,7 @@ describe("ConnectDeviceStateMachine", () => {
       const dmk = {
         connect: jest.fn().mockResolvedValue("session-id"),
         getConnectedDevice: jest.fn(() => connectedDevice),
+        listConnectedDevices: jest.fn(() => []),
       } as unknown as DeviceManagementKit;
       const { discoverDevices, machine, onConnected } = setupTest({ dmk });
 
@@ -521,6 +522,7 @@ describe("ConnectDeviceStateMachine", () => {
       const dmk = {
         connect: jest.fn().mockResolvedValue("session-id"),
         getConnectedDevice: jest.fn(() => connectedDevice),
+        listConnectedDevices: jest.fn(() => []),
       } as unknown as DeviceManagementKit;
       const { discoverDevices, machine, onConnected } = setupTest({ dmk, buildCompatDeviceId });
 

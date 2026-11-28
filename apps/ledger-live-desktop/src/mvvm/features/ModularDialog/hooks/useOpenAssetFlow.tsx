@@ -5,11 +5,13 @@ import type { AssetCategory } from "@domain/api-aggregated-assets";
 import { Account, AccountLike } from "@ledgerhq/types-live";
 import { ModularDrawerVisibleParams } from "@ledgerhq/live-common/modularDrawer/types/visibility";
 import { useDispatch } from "LLD/hooks/redux";
-import { openModal } from "~/renderer/actions/modals";
+import { openModalWithReceiveFlow } from "LLD/features/Receive/openReceiveFlow";
 import { getCurrentTrackingPage } from "@shared/analytics";
+import { failOperation } from "@shared/observability-operations";
 import { setDrawer } from "~/renderer/drawers/Provider";
 import { GlobalModalData, ModalData } from "~/renderer/modals/types";
 import ModularDrawerAddAccountFlowManager from "../../AddAccountDrawer/ModularDrawerAddAccountFlowManager";
+import { ADD_ACCOUNT_OPERATION } from "../../AddAccountDrawer/domain";
 import { useModularDialogAnalytics } from "../analytics/useModularDialogAnalytics";
 import { CloseButton } from "../components/CloseButton";
 import type { EnhancedModularDrawerConfiguration } from "@ledgerhq/live-common/wallet-api/ModularDrawer/types";
@@ -72,6 +74,7 @@ export function useOpenAssetFlow<Name extends keyof GlobalModalData = keyof Glob
       dispatch(setSourceValue(source));
 
       const onClose = () => {
+        failOperation(ADD_ACCOUNT_OPERATION, "ABANDONED", { attributes: { trigger: "close" } });
         setDrawer();
         trackModularDialogEvent("button_clicked", {
           button: "Close",
@@ -85,7 +88,7 @@ export function useOpenAssetFlow<Name extends keyof GlobalModalData = keyof Glob
           // openModal's payload creator collapses ModalData[Name] to `never` for a generic
           // Name, so we assert the merged payload back to the modal's data type.
           dispatch(
-            openModal(modalNameToReopen, {
+            openModalWithReceiveFlow(modalNameToReopen, {
               ...extraModalData,
               account,
               parentAccount,

@@ -59,7 +59,11 @@ export const getNetworkParameters = (networkName: string): BitcoinLikeNetworkPar
       sigHash: BitcoinLikeSigHashType.SIGHASH_ALL,
       additionalBIPs: [],
     };
-  } else if (networkName === "bitcoin_testnet" || networkName === "bitcoin_regtest") {
+  } else if (
+    networkName === "bitcoin_testnet" ||
+    networkName === "bitcoin_regtest" ||
+    networkName === "bitcoin_signet"
+  ) {
     return {
       identifier: "btc_testnet",
       P2PKHVersion: Buffer.from([0x6f]),
@@ -100,20 +104,6 @@ export const getNetworkParameters = (networkName: string): BitcoinLikeNetworkPar
       timestampDelay: new BigNumber(0),
       sigHash: BitcoinLikeSigHashType.SIGHASH_ALL | BitcoinLikeSigHashType.SIGHASH_FORKID,
       additionalBIPs: [],
-    };
-  } else if (networkName === "zencash") {
-    return {
-      identifier: "zen",
-      P2PKHVersion: Buffer.from([0x20, 0x89]),
-      P2SHVersion: Buffer.from([0x20, 0x96]),
-      xpubVersion: Buffer.from([0x04, 0x88, 0xb2, 0x1e]),
-      feePolicy: BitcoinLikeFeePolicy.PER_BYTE,
-      dustAmount: new BigNumber(10000),
-      messagePrefix: "Zencash Signed Message:\n",
-      usesTimestampedTransaction: false,
-      timestampDelay: new BigNumber(0),
-      sigHash: BitcoinLikeSigHashType.SIGHASH_ALL,
-      additionalBIPs: ["BIP115"],
     };
   } else if (networkName === "litecoin") {
     return {

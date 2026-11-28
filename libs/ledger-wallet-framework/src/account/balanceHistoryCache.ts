@@ -4,8 +4,10 @@ import type {
   BalanceHistoryDataCache,
   AccountLike,
   Account,
+  Operation,
   TokenAccount,
 } from "@ledgerhq/types-live";
+import BigNumber from "bignumber.js";
 import { getOperationAmountNumberWithInternals } from "../operation";
 
 export const createEmptyHistoryCache = () => ({
@@ -58,25 +60,29 @@ const granularities = {
   },
 };
 
+/**
+ * A failed transaction moves no token: on a token account, only a fee charged in that token (a
+ * `FEES` operation) changes the balance. The operation still shows its attempted amount.
+ */
+function getBalanceChange(account: AccountLike, operation: Operation): BigNumber {
+  const failedTokenMovement =
+    account.type === "TokenAccount" && operation.hasFailed && operation.type !== "FEES";
+  return failedTokenMovement ? new BigNumber(0) : getOperationAmountNumberWithInternals(operation);
+}
+
 function generateHistoryFromOperationsG(
   account: AccountLike,
-  g: GranularityId, // partial=true allows a faster implementation that only recompose the last part of the history
-  // to only use when we do not recalculate the history but we just want to access it
-  partial = false,
+  g: GranularityId,
 ): BalanceHistoryDataCache {
   const { increment, startOf, maxDatapoints } = granularities[g];
   const latestDate = startOf(new Date()).getTime();
-  let balances: number[] = [];
+  const balances: number[] = [];
   let { balance } = account;
   const operationsLength = account.operations.length;
   let date = latestDate;
-  const reference = account.balanceHistoryCache?.[g];
 
   for (let i = 0; i < operationsLength;) {
-    if (
-      (partial && reference?.latestDate && date < reference.latestDate) ||
-      balances.length > maxDatapoints
-    ) {
+    if (balances.length > maxDatapoints) {
       break;
     }
 
@@ -86,16 +92,12 @@ function generateHistoryFromOperationsG(
       // FIXME: added valueOf here to make typescript happy
       account.operations[i].date.valueOf() > date
     ) {
-      balance = balance.minus(getOperationAmountNumberWithInternals(account.operations[i]));
+      balance = balance.minus(getBalanceChange(account, account.operations[i]));
       i++;
     }
 
     balances.unshift(Math.max(balance.toNumber(), 0));
     date -= increment;
-  }
-
-  if (partial && reference?.balances) {
-    balances = reference.balances.concat(balances);
   }
 
   return {
@@ -112,6 +114,63 @@ export function generateHistoryFromOperations(account: AccountLike): BalanceHist
   };
 }
 
+function refreshHistoryFromOperationsG(
+  account: AccountLike,
+  g: GranularityId,
+): BalanceHistoryDataCache {
+  const { increment, startOf, maxDatapoints } = granularities[g];
+  const latestDate = startOf(new Date()).getTime();
+  const saved = account.balanceHistoryCache?.[g];
+  const savedDate = saved?.latestDate;
+  if (!saved?.balances.length || !savedDate) {
+    return generateHistoryFromOperationsG(account, g);
+  }
+  const elapsedPeriods = (latestDate - savedDate) / increment;
+  const gridLinesUp = Number.isInteger(elapsedPeriods) && elapsedPeriods >= 0;
+  if (!gridLinesUp || elapsedPeriods > maxDatapoints) {
+    return generateHistoryFromOperationsG(account, g);
+  }
+
+  const { operations } = account;
+  const sinceSavedDate = Array.from<number>({ length: elapsedPeriods + 1 });
+  let { balance } = account;
+  let i = 0;
+  for (let period = elapsedPeriods; period >= 0; period--) {
+    const regenerationEndedEarlier = i === operations.length;
+    if (regenerationEndedEarlier) return generateHistoryFromOperationsG(account, g);
+    const date = savedDate + period * increment;
+    while (i < operations.length && operations[i].date.valueOf() > date) {
+      balance = balance.minus(getBalanceChange(account, operations[i]));
+      i++;
+    }
+    sinceSavedDate[period] = Math.max(balance.toNumber(), 0);
+  }
+
+  const [balanceAtSavedDate, ...newBalances] = sinceSavedDate;
+  if (balanceAtSavedDate !== saved.balances[saved.balances.length - 1]) {
+    return generateHistoryFromOperationsG(account, g);
+  }
+  if (newBalances.length === 0) return saved;
+
+  return {
+    balances: saved.balances.concat(newBalances).slice(-(maxDatapoints + 1)),
+    latestDate,
+  };
+}
+
+/**
+ * Extends the account's saved cache with the periods since its date. The saved points stay as
+ * they are, even when operations older than that date were dropped since. A cache that does not
+ * line up with the current periods or balance is regenerated.
+ */
+export function refreshHistoryFromOperations(account: AccountLike): BalanceHistoryCache {
+  return {
+    HOUR: refreshHistoryFromOperationsG(account, "HOUR"),
+    DAY: refreshHistoryFromOperationsG(account, "DAY"),
+    WEEK: refreshHistoryFromOperationsG(account, "WEEK"),
+  };
+}
+
 /**
  * get the current balance history of the account. if possible from the cache.
  */
@@ -124,8 +183,7 @@ export function getAccountHistoryBalances(account: AccountLike, g: GranularityId
     return cacheData.balances;
   }
 
-  // account cache was not up to date or missing. recalculating on the fly
-  return generateHistoryFromOperationsG(account, g, true).balances;
+  return refreshHistoryFromOperationsG(account, g).balances;
 }
 
 /**

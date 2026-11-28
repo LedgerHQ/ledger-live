@@ -134,6 +134,14 @@ export class TronEmptyPage extends Error {
   }
 }
 
+export class TronPageServedTwice extends Error {
+  override name = "TronPageServedTwice";
+  constructor(message?: string, fields?: Record<string, unknown>) {
+    super(message || "TronPageServedTwice");
+    if (fields) Object.assign(this, fields);
+  }
+}
+
 export class TronEmptyAccount extends Error {
   override name = "TronEmptyAccount";
   constructor(message?: string, fields?: Record<string, unknown>) {
@@ -213,6 +221,15 @@ export class EnergyRentInsufficientBalance extends Error {
   override name = "EnergyRentInsufficientBalance";
   constructor(message?: string, fields?: Record<string, unknown>) {
     super(message || "EnergyRentInsufficientBalance");
+    if (fields) Object.assign(this, fields);
+  }
+}
+
+/** The signed energy-rent payment is not signed by its owner key. */
+export class EnergyRentSignatureMismatch extends Error {
+  override name = "EnergyRentSignatureMismatch";
+  constructor(message?: string, fields?: Record<string, unknown>) {
+    super(message || "EnergyRentSignatureMismatch");
     if (fields) Object.assign(this, fields);
   }
 }

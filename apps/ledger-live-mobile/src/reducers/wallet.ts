@@ -2,18 +2,11 @@ import { useCallback } from "react";
 import { combineReducers, type Dispatch } from "@reduxjs/toolkit";
 import {
   accountNamesSlice,
-  accountNameSelector as entityAccountNameSelector,
   accountNameWithDefaultSelector as entityAccountNameWithDefault,
   setAccountName as setAccountNameRTK,
   initFromUserData,
 } from "@domain/entity-account-name";
 import { setContacts, type ContactsState } from "@domain/entity-contact";
-import {
-  starredAccountsSlice,
-  isStarredAccountSelector as entityIsStarredAccount,
-  setAccountStarred as setAccountStarredRTK,
-  initStarredFromIds,
-} from "@domain/entity-starred-account";
 import { walletSyncSlice, walletSyncUpdate, type WSState } from "@domain/entity-wallet-sync";
 import {
   nonImportedAccountsSlice,
@@ -29,11 +22,9 @@ import type { State } from "./types";
 import { shallowEqual } from "react-redux";
 import { useSelector } from "~/context/hooks";
 import type { Account, AccountLike, AccountUserData } from "@ledgerhq/types-live";
-import { parseAnyAccountId } from "@domain/entity-account";
 
 const walletReducer = combineReducers({
   accountNames: accountNamesSlice.reducer,
-  starredAccountIds: starredAccountsSlice.reducer,
   walletSync: walletSyncSlice.reducer,
   nonImportedAccountInfos: nonImportedAccountsSlice.reducer,
   recentAddresses: recentAddressesSlice.reducer,
@@ -50,7 +41,6 @@ export type ExportedWalletState = {
   nonImportedAccountInfos: NonImportedAccountInfo[];
   accountsData: {
     accountNames: Array<[string, string]>;
-    starredAccountIds: string[];
   };
   contacts: ContactsState["contacts"];
   recentAddresses: RecentAddressesState;
@@ -63,7 +53,6 @@ export const exportWalletState = (state: WalletPersistenceState): ExportedWallet
   nonImportedAccountInfos: state.wallet.nonImportedAccountInfos,
   accountsData: {
     accountNames: Array.from(state.wallet.accountNames),
-    starredAccountIds: Array.from(state.wallet.starredAccountIds),
   },
   contacts: state.contacts.contacts,
   recentAddresses: state.wallet.recentAddresses,
@@ -76,7 +65,6 @@ export const walletStateExportShouldDiffer = (
   a.wallet.walletSync.walletSyncState !== b.wallet.walletSync.walletSyncState ||
   a.wallet.nonImportedAccountInfos !== b.wallet.nonImportedAccountInfos ||
   a.wallet.accountNames !== b.wallet.accountNames ||
-  a.wallet.starredAccountIds !== b.wallet.starredAccountIds ||
   a.contacts.contacts !== b.contacts.contacts ||
   a.wallet.recentAddresses !== b.wallet.recentAddresses;
 
@@ -87,9 +75,6 @@ export const importWalletState =
       dispatch(
         initFromUserData(payload.accountsData.accountNames.map(([id, name]) => ({ id, name }))),
       );
-    }
-    if (payload.accountsData?.starredAccountIds) {
-      dispatch(initStarredFromIds(payload.accountsData.starredAccountIds));
     }
     if (payload.walletSyncState !== undefined) {
       dispatch(walletSyncUpdate(payload.walletSyncState));
@@ -110,35 +95,18 @@ export const importWalletState =
 export const setAccountName = (accountId: string, name: string) =>
   setAccountNameRTK({ accountId, name });
 
-export const setAccountStarred = (accountId: string, starred: boolean) =>
-  setAccountStarredRTK({ accountId, starred });
-
 export { updateRecentAddresses };
-
-export const accountNameSelector = (
-  state: WalletState,
-  params: { accountId: string },
-): string | undefined => entityAccountNameSelector(state.accountNames, params);
 
 export const accountNameWithDefaultSelector = (state: WalletState, account: AccountLike): string =>
   entityAccountNameWithDefault(state.accountNames, account);
-
-export const isStarredAccountSelector = (
-  state: WalletState,
-  params: { accountId: string },
-): boolean => entityIsStarredAccount(state.starredAccountIds, params);
 
 export const accountUserDataExportSelector = (
   state: WalletState,
   { account }: { account: Account },
 ): AccountUserData => {
-  const starredIds = [account, ...(account.subAccounts || [])]
-    .map(a => a.id)
-    .filter(id => state.starredAccountIds.has(parseAnyAccountId(id)));
   return {
     id: account.id,
     name: accountNameWithDefaultSelector(state, account),
-    starredIds,
   };
 };
 

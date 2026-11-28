@@ -6,6 +6,7 @@ import { encodeTokenAccountId } from "@ledgerhq/ledger-wallet-framework/account/
 import { forbidRemoteRequests } from "@ledgerhq/coin-tester/localOnly";
 import { startSandbox } from "@ledgerhq/coin-tester/sandbox";
 import type { Sandbox } from "@ledgerhq/coin-tester/sandbox";
+import { sandboxVersions } from "@ledgerhq/coin-tester/versions";
 import type { EvmConfigInfo } from "@ledgerhq/coin-evm/config";
 import { makeAccount } from "../fixtures";
 import { blockscoutOf, swapTokens } from "../sandboxEvm";
@@ -100,10 +101,7 @@ export const scenarioOptimism: Scenario<GenericTransaction, Account> = {
     const signer = await buildSigner();
     sandbox = await startSandbox(
       { family: "evm", network: "optimism" },
-      {
-        node: { implementation: "op-reth", version: "2.6.1" },
-        indexer: { implementation: "blockscout", version: "12.0.3" },
-      },
+      sandboxVersions("optimism"),
     );
     const { node: rpc, indexer: explorer } = sandbox.endpoints;
     if (rpc === undefined || explorer === undefined) {

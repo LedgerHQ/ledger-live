@@ -21,24 +21,6 @@ type Props = {
   onClose?: () => void;
 };
 
-const translations = {
-  action: {
-    accept: "families.canton.pendingTransactions.accept",
-    reject: "families.canton.pendingTransactions.reject",
-    withdraw: "families.canton.pendingTransactions.withdraw",
-  },
-  successTitle: {
-    accept: "families.canton.pendingTransactions.deviceAppModal.success.accept.title",
-    reject: "families.canton.pendingTransactions.deviceAppModal.success.reject.title",
-    withdraw: "families.canton.pendingTransactions.deviceAppModal.success.withdraw.title",
-  },
-  successDescription: {
-    accept: "families.canton.pendingTransactions.deviceAppModal.success.accept.description",
-    reject: "families.canton.pendingTransactions.deviceAppModal.success.reject.description",
-    withdraw: "families.canton.pendingTransactions.deviceAppModal.success.withdraw.description",
-  },
-};
-
 export function View({
   confirmationState,
   error,
@@ -51,7 +33,7 @@ export function View({
   onClose,
 }: DeviceAppModalViewModel) {
   const { t } = useTranslation();
-  const actionTitle = t(translations.action[action]);
+  const actionTitle = t(`families.canton.pendingTransactions.${action}`);
 
   return (
     <Modal
@@ -78,8 +60,12 @@ export function View({
             {confirmationState === "completed" ? (
               <Box alignItems="center" py={4}>
                 <SuccessDisplay
-                  title={t(translations.successTitle[action])}
-                  description={t(translations.successDescription[action])}
+                  title={t(
+                    `families.canton.pendingTransactions.deviceAppModal.success.${action}.title`,
+                  )}
+                  description={t(
+                    `families.canton.pendingTransactions.deviceAppModal.success.${action}.description`,
+                  )}
                 />
               </Box>
             ) : confirmationState === "error" && error ? (

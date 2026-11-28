@@ -39,6 +39,9 @@ const targets = [
   "Confirmation",
   "ReceiveConfirmationPostAlert",
   "ReceiveConfirmationTokenAlert",
+  "ReceiveAddressConfig",
+  "ReceiveGateAction",
+  "shouldCreateEmptyTokenAccount",
   "ConnectDevice",
   "VerifyAddress",
   "NoAssociatedAccounts",
@@ -50,6 +53,7 @@ const targets = [
   "PendingTransferProposals",
   "customAddAccountFlow",
   "customSendFlow",
+  "manageAssetsAction",
 ];
 
 async function genTarget(target) {

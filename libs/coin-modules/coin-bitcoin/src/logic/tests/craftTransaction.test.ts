@@ -1,4 +1,5 @@
 import { NotEnoughBalance } from "@ledgerhq/ledger-wallet-framework/errors";
+import { InvalidReplacementInput, InvalidUtxoId, UnknownUtxo } from "../../errors";
 import type { TransactionIntent } from "@ledgerhq/coin-module-framework/api/types";
 import { Psbt, Transaction, address as btcAddress } from "bitcoinjs-lib";
 import { http, HttpResponse } from "msw";
@@ -6,7 +7,7 @@ import { secp256k1 } from "@noble/curves/secp256k1.js";
 import { combine } from "../combine";
 import { craftTransaction, RBF_SEQUENCE } from "../craftTransaction";
 import { estimateFees } from "../estimateFees";
-import { PRISTINE_P2PKH } from "./helpers/fixtures";
+import { CURRENCY_ADDRESSES, PRISTINE_P2PKH } from "./helpers/fixtures";
 import { ADDRESSES, PRIVATE_KEY, PUBLIC_KEY, fundingTransaction, signPsbt } from "./helpers/keys";
 import {
   explorerUrl,
@@ -15,6 +16,7 @@ import {
   pendingUtxosHandler,
   server,
   testContext,
+  txHandler,
   useMswServer,
   utxosHandler,
 } from "./helpers/msw";
@@ -284,6 +286,39 @@ describe("craftTransaction", () => {
     expect(crafted.details?.fee).toBe(2_500n);
   });
 
+  it("signs the caller's custom fee, not the rate its forwarded estimate carries", async () => {
+    // The custom fee comes with a non-custom strategy: the estimate is priced at the medium rate
+    // and its `feePerByte` is forwarded to crafting beside the custom fee.
+    fund(ADDRESSES.nativeSegwit, [80_000]);
+    const estimation = await estimateFees(
+      testContext(),
+      "bitcoin",
+      intent(ADDRESSES.nativeSegwit),
+      { feesStrategy: "medium" },
+    );
+    expect(estimation.parameters).toHaveProperty("feePerByte");
+    const crafted = await craftTransaction(
+      testContext(),
+      "bitcoin",
+      intent(ADDRESSES.nativeSegwit),
+      {
+        value: 5_000n,
+        parameters: { ...estimation.parameters, feesStrategy: "medium", fees: 5_000n },
+      },
+    );
+    expect(crafted.details?.fee).toBe(5_000n);
+  });
+
+  it("refuses a custom fee that is not a bigint, rather than signing another fee", async () => {
+    fund(ADDRESSES.nativeSegwit, [80_000]);
+    await expect(
+      craftTransaction(testContext(), "bitcoin", intent(ADDRESSES.nativeSegwit), {
+        value: 5_000n,
+        parameters: { fees: "5000" },
+      }),
+    ).rejects.toThrow("customFees.parameters.fees must be a bigint");
+  });
+
   it("crafts with an absolute fee without reading the explorer's rates", async () => {
     fund(ADDRESSES.nativeSegwit, [80_000]);
     // Only the relay floor is read: the rates endpoint is down.
@@ -380,5 +415,303 @@ describe("craftTransaction", () => {
         intent(ADDRESSES.nativeSegwit, { asset: { type: "token", assetReference: "x" } }),
       ),
     ).rejects.toThrow("only native transfers are supported");
+  });
+});
+
+const inputsOf = (crafted: { details?: Record<string, unknown> }) =>
+  (crafted.details?.inputs ?? []) as { hash: string; outputIndex: number }[];
+
+describe("craftTransaction with a coin control", () => {
+  const sender = ADDRESSES.nativeSegwit;
+  const control = (utxoStrategy: Record<string, unknown>, overrides = {}) =>
+    intent(sender, {
+      data: { type: "unknown", utxoStrategy },
+      ...overrides,
+    } as Partial<TransactionIntent>);
+
+  beforeEach(() => server.use(feesHandler({ "2": 3000, "4": 2000, "6": 1000 }), networkHandler()));
+
+  it("never spends an excluded output, for a send or a send-max", async () => {
+    const txs = fund(sender, [80_000, 60_000, 30_000]);
+    const excluded = `${txs[0].getId()}:0`;
+    const send = await craftTransaction(
+      testContext(),
+      "bitcoin",
+      control({ excludedUtxos: [excluded] }, { amount: 20_000n }),
+    );
+    const sweep = await craftTransaction(
+      testContext(),
+      "bitcoin",
+      control({ excludedUtxos: [excluded] }, { useAllAmount: true, amount: 0n }),
+    );
+    for (const crafted of [send, sweep]) {
+      const ids = inputsOf(crafted).map(input => `${input.hash}:${input.outputIndex}`);
+      expect(ids).not.toContain(excluded);
+    }
+    expect(inputsOf(sweep)).toHaveLength(2);
+  });
+
+  it("spends exactly the selected output, or refuses with NotEnoughBalance", async () => {
+    const txs = fund(sender, [80_000, 60_000, 30_000]);
+    const selectedUtxos = [`${txs[2].getId()}:0`];
+    const crafted = await craftTransaction(
+      testContext(),
+      "bitcoin",
+      control({ selectedUtxos }, { amount: 20_000n }),
+    );
+    expect(Psbt.fromBase64(crafted.transaction).txInputs).toHaveLength(1);
+    expect(inputsOf(crafted).map(input => input.hash)).toEqual([txs[2].getId()]);
+
+    await expect(
+      craftTransaction(testContext(), "bitcoin", control({ selectedUtxos })),
+    ).rejects.toBeInstanceOf(NotEnoughBalance);
+  });
+
+  it("refuses a selected output the address does not hold, naming it", async () => {
+    fund(sender, [80_000]);
+    const unknown = `${"ef".repeat(32)}:0`;
+    await expect(
+      craftTransaction(testContext(), "bitcoin", control({ selectedUtxos: [unknown] })),
+    ).rejects.toEqual(expect.objectContaining({ name: "UnknownUtxo", utxoId: unknown }));
+    await expect(
+      craftTransaction(testContext(), "bitcoin", control({ selectedUtxos: [unknown] })),
+    ).rejects.toBeInstanceOf(UnknownUtxo);
+  });
+
+  it("refuses a selected output that is neither spendable nor spent by a pending transaction", async () => {
+    const txs = fund(sender, [80_000]);
+    const pendingId = `${"d".repeat(64)}:0`;
+    server.use(
+      pendingUtxosHandler(sender, {
+        spent: [
+          { hash: txs[0].getId(), txId: txs[0].getId(), outputIndex: 0, value: "80000", hex: "" },
+        ],
+      }),
+    );
+    await expect(
+      craftTransaction(testContext(), "bitcoin", control({ selectedUtxos: [pendingId] })),
+    ).rejects.toEqual(expect.objectContaining({ name: "UnknownUtxo", utxoId: pendingId }));
+  });
+
+  it("refuses a malformed UTXO id", async () => {
+    fund(sender, [80_000]);
+    await expect(
+      craftTransaction(testContext(), "bitcoin", control({ selectedUtxos: ["nope"] })),
+    ).rejects.toBeInstanceOf(InvalidUtxoId);
+  });
+
+  it("refuses an output listed twice, so no input is duplicated", async () => {
+    const txs = fund(sender, [80_000]);
+    const twice = `${txs[0].getId()}:0`;
+    await expect(
+      craftTransaction(testContext(), "bitcoin", control({ selectedUtxos: [twice, twice] })),
+    ).rejects.toEqual(expect.objectContaining({ name: "InvalidUtxoId", utxoId: twice }));
+  });
+
+  it("selects the same inputs and fee for the estimate and the craft", async () => {
+    const txs = fund(sender, [80_000, 60_000, 30_000]);
+    const coinControl = control(
+      {
+        selectedUtxos: [`${txs[2].getId()}:0`],
+        strategy: "merge-outputs",
+      },
+      { amount: 20_000n },
+    );
+    const estimation = await estimateFees(testContext(), "bitcoin", coinControl);
+    const crafted = await craftTransaction(testContext(), "bitcoin", coinControl);
+    expect(estimation.parameters?.inputCount).toBe(inputsOf(crafted).length);
+    expect(estimation.value).toBe(crafted.details?.fee);
+  });
+});
+
+describe("craftTransaction replacing an unconfirmed transaction", () => {
+  const sender = ADDRESSES.nativeSegwit;
+  const senderScript = Buffer.from(btcAddress.toOutputScript(sender));
+  const replace = (overrides: Partial<TransactionIntent> = {}) =>
+    intent(sender, {
+      data: { type: "unknown", utxoStrategy: { selectedUtxos } },
+      ...overrides,
+    } as Partial<TransactionIntent>);
+  let selectedUtxos: string[];
+
+  // Confirmed output b (60_000) is free; a (80_000) is spent by pending transaction p, whose change
+  // output p:1 (200_000) is the address's own unconfirmed output.
+  beforeEach(() => {
+    const [a] = fund(sender, [80_000, 60_000]);
+    const aId = a.getId();
+    const pending = "e".repeat(64);
+    const spentA = { hash: aId, txId: aId, outputIndex: 0, value: "80000", hex: "" };
+    selectedUtxos = [`${aId}:0`];
+    server.use(
+      feesHandler({ "2": 3000, "4": 2000, "6": 1000 }),
+      networkHandler(),
+      pendingUtxosHandler(sender, {
+        spent: [spentA],
+        created: [
+          {
+            hash: pending,
+            txId: pending,
+            outputIndex: 1,
+            value: "200000",
+            hex: senderScript.toString("hex"),
+          },
+        ],
+      }),
+      txHandler(pending, [`${aId}:0`]),
+    );
+  });
+
+  it("speeds up: spends the original's input again, at the new rate, signalling RBF", async () => {
+    const crafted = await craftTransaction(testContext(), "bitcoin", replace(), {
+      value: 0n,
+      parameters: { feePerByte: 9n },
+    });
+    expect(inputsOf(crafted).map(input => `${input.hash}:${input.outputIndex}`)).toEqual(
+      selectedUtxos,
+    );
+    expect(crafted.details?.feePerByte).toBe(9n);
+    expect(Psbt.fromBase64(crafted.transaction).txInputs.map(i => i.sequence)).toEqual([
+      RBF_SEQUENCE,
+    ]);
+  });
+
+  it("cancels: sends the whole input back to the sender in a single output", async () => {
+    const crafted = await craftTransaction(
+      testContext(),
+      "bitcoin",
+      replace({ recipient: sender, useAllAmount: true, amount: 0n }),
+      { value: 0n, parameters: { feePerByte: 9n } },
+    );
+    const { txOutputs } = Psbt.fromBase64(crafted.transaction);
+    expect(txOutputs).toHaveLength(1);
+    expect(Buffer.from(txOutputs[0].script).toString("hex")).toBe(senderScript.toString("hex"));
+    expect(inputsOf(crafted)).toHaveLength(1);
+  });
+
+  it("never spends what the replaced transaction creates, and adds no input", async () => {
+    // 100_000 exceeds the selected input; the replaced transaction's 200_000 change and the free
+    // 60_000 output would cover it, but neither is added.
+    const request = replace({ amount: 100_000n });
+    await expect(craftTransaction(testContext(), "bitcoin", request)).rejects.toBeInstanceOf(
+      NotEnoughBalance,
+    );
+    const estimation = await estimateFees(testContext(), "bitcoin", request);
+    expect(estimation.parameters).toEqual(
+      expect.objectContaining({ inputCount: 1, sufficient: false }),
+    );
+  });
+
+  const output = (hash: string, outputIndex: number, value: number) => ({
+    hash,
+    txId: hash,
+    outputIndex,
+    value: String(value),
+    hex: senderScript.toString("hex"),
+  });
+  const aId = () => selectedUtxos[0].split(":")[0];
+  // The free confirmed output b is the second funding transaction.
+  const bId = () => fundingTransaction(senderScript, 60_000, 1).getId();
+  const selecting = (...ids: string[]) =>
+    replace({ data: { type: "unknown", utxoStrategy: { selectedUtxos: ids } } } as never);
+
+  describe("selecting more than the original's inputs", () => {
+    const pending = "e".repeat(64);
+    const child = "f".repeat(64);
+    const unrelated = "d".repeat(64);
+
+    it("refuses an output created by a transaction it replaces", async () => {
+      // pending spends a and creates pending:1; child spends pending:1 and is replaced with it.
+      server.use(
+        pendingUtxosHandler(sender, {
+          spent: [output(aId(), 0, 80_000), output(pending, 1, 200_000)],
+          created: [output(pending, 1, 200_000), output(child, 0, 150_000)],
+        }),
+        txHandler(child, [`${pending}:1`]),
+      );
+      const ids = [`${aId()}:0`, `${pending}:1`];
+      await expect(craftTransaction(testContext(), "bitcoin", selecting(...ids))).rejects.toEqual(
+        expect.objectContaining({ name: "InvalidReplacementInput", utxoIds: [`${pending}:1`] }),
+      );
+      await expect(
+        estimateFees(testContext(), "bitcoin", selecting(...ids)),
+      ).rejects.toBeInstanceOf(InvalidReplacementInput);
+    });
+
+    it("refuses adding the unconfirmed change of an unrelated pending transaction", async () => {
+      server.use(
+        pendingUtxosHandler(sender, {
+          spent: [output(aId(), 0, 80_000), output(bId(), 0, 60_000)],
+          created: [output(pending, 1, 200_000), output(unrelated, 0, 40_000)],
+        }),
+        txHandler(unrelated, [`${bId()}:0`]),
+      );
+      await expect(
+        craftTransaction(testContext(), "bitcoin", selecting(`${aId()}:0`, `${unrelated}:0`)),
+      ).rejects.toEqual(
+        expect.objectContaining({ name: "InvalidReplacementInput", utxoIds: [`${unrelated}:0`] }),
+      );
+    });
+
+    it("accepts an original input that is itself unconfirmed change", async () => {
+      // upstream spends b and creates upstream:0; pending spends a and upstream:0.
+      const upstreamTx = fundingTransaction(senderScript, 50_000, 5);
+      const upstream = upstreamTx.getId();
+      server.use(
+        http.get(`${explorerUrl()}/tx/${upstream}/hex`, () =>
+          HttpResponse.json({ transaction_hash: upstream, hex: upstreamTx.toHex() }),
+        ),
+        pendingUtxosHandler(sender, {
+          spent: [output(aId(), 0, 80_000), output(bId(), 0, 60_000), output(upstream, 0, 50_000)],
+          created: [output(upstream, 0, 50_000), output(pending, 1, 100_000)],
+        }),
+        txHandler(upstream, [`${bId()}:0`]),
+        txHandler(pending, [`${aId()}:0`, `${upstream}:0`]),
+      );
+      const crafted = await craftTransaction(
+        testContext(),
+        "bitcoin",
+        selecting(`${aId()}:0`, `${upstream}:0`),
+        { value: 0n, parameters: { feePerByte: 9n } },
+      );
+      expect(
+        inputsOf(crafted)
+          .map(input => `${input.hash}:${input.outputIndex}`)
+          .sort(),
+      ).toEqual([`${aId()}:0`, `${upstream}:0`].sort());
+    });
+
+    it("accepts a confirmed output next to a replaced input", async () => {
+      const crafted = await craftTransaction(
+        testContext(),
+        "bitcoin",
+        selecting(`${aId()}:0`, `${bId()}:0`),
+        { value: 0n, parameters: { feePerByte: 9n } },
+      );
+      expect(
+        inputsOf(crafted)
+          .map(input => `${input.hash}:${input.outputIndex}`)
+          .sort(),
+      ).toEqual([`${aId()}:0`, `${bId()}:0`].sort());
+    });
+  });
+
+  it("refuses on a currency that does not signal RBF", async () => {
+    const ltc = CURRENCY_ADDRESSES.litecoin;
+    const spent = { txId: "a".repeat(64), hash: "a".repeat(64), outputIndex: 0, value: "80000" };
+    server.use(
+      utxosHandler(ltc, [{ data: [spent], token: null }], "ltc"),
+      pendingUtxosHandler(ltc, { spent: [spent] }, "ltc"),
+      feesHandler({ "2": 3000, "4": 2000, "6": 1000 }, "ltc"),
+      networkHandler("0.00001", "ltc"),
+    );
+    const request = intent(ltc, {
+      recipient: ltc,
+      data: { type: "unknown", utxoStrategy: { selectedUtxos: [`${spent.hash}:0`] } },
+    } as Partial<TransactionIntent>);
+    await expect(
+      craftTransaction(testContext({ explorerId: "ltc" }), "litecoin", request),
+    ).rejects.toEqual(
+      expect.objectContaining({ name: "ReplacementNotSupported", utxoIds: [`${spent.hash}:0`] }),
+    );
   });
 });

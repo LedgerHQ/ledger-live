@@ -19,6 +19,7 @@ import { getPreloadStrategy, hydrate, preload } from "./preload";
 import { prepareTransaction } from "./prepareTransaction";
 import { assignFromAccountRaw, assignToAccountRaw } from "./serialization";
 import { buildSignOperation } from "./signOperation";
+import { buildSignRawOperation } from "./signRawOperation";
 import { getAccountShape, sync } from "./synchronisation";
 import { createBridges } from "./index";
 
@@ -26,6 +27,7 @@ import { createBridges } from "./index";
 jest.mock("../config");
 jest.mock("../signer");
 jest.mock("./signOperation");
+jest.mock("./signRawOperation");
 jest.mock("./synchronisation");
 jest.mock("./broadcast");
 jest.mock("./createTransaction");
@@ -39,6 +41,9 @@ jest.mock("./formatters");
 const mockSuiConfig = suiConfig as jest.Mocked<typeof suiConfig>;
 const mockSignerGetAddress = signerGetAddress as jest.MockedFunction<typeof signerGetAddress>;
 const mockBuildSignOperation = buildSignOperation as jest.MockedFunction<typeof buildSignOperation>;
+const mockBuildSignRawOperation = buildSignRawOperation as jest.MockedFunction<
+  typeof buildSignRawOperation
+>;
 const mockGetAccountShape = getAccountShape as jest.MockedFunction<typeof getAccountShape>;
 const mockSync = sync as jest.MockedFunction<typeof sync>;
 const mockBroadcast = broadcast as jest.MockedFunction<typeof broadcast>;
@@ -99,6 +104,7 @@ describe("bridge/index", () => {
     // Setup mock functions
     mockSignerGetAddress.mockReturnValue(jest.fn());
     mockBuildSignOperation.mockReturnValue(jest.fn());
+    mockBuildSignRawOperation.mockReturnValue(jest.fn());
     mockGetAccountShape.mockReturnValue({} as any);
     mockSync.mockReturnValue({} as any);
     mockBroadcast.mockResolvedValue({} as any);
@@ -136,6 +142,16 @@ describe("bridge/index", () => {
       createBridges(mockSignerContext, mockCoinConfig);
 
       expect(mockBuildSignOperation).toHaveBeenCalledWith(mockSignerContext);
+    });
+
+    it("should expose a signRawOperation built with the signer context", () => {
+      const rawSigner = jest.fn();
+      mockBuildSignRawOperation.mockReturnValue(rawSigner);
+
+      const { accountBridge } = createBridges(mockSignerContext, mockCoinConfig);
+
+      expect(mockBuildSignRawOperation).toHaveBeenCalledWith(mockSignerContext);
+      expect(accountBridge.signRawOperation).toBe(rawSigner);
     });
   });
 

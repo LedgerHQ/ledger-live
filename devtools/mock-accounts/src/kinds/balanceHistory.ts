@@ -5,6 +5,7 @@ import {
   type BalanceHistoryRange,
 } from "@domain/entity-account-balance-history";
 import type { MockReader } from "../families/types";
+import { accountMagnitudeOf, mockCountervalueOf } from "./countervalues";
 
 const HOUR = 3_600_000;
 const DAY = 24 * HOUR;
@@ -35,24 +36,31 @@ function countOf(range: BalanceHistoryRange, operations: AccountOperation[], now
  * the graph agrees with the operations and ends on the balance; dated back from now, one step of the
  * range apart.
  */
-export const balanceHistory: MockReader<"balanceHistory"> = ({ balances, operations }, query) => {
+export const balanceHistory: MockReader<"balanceHistory"> = (
+  { balances, operations, currency, family },
+  query,
+) => {
   const range = query?.range ?? DEFAULT_BALANCE_HISTORY_RANGE;
   const all = operations();
   const now = Date.now();
   const { step } = RANGES[range];
   const count = countOf(range, all, now);
+  const countervalueOf = query?.countervalue
+    ? mockCountervalueOf(query.countervalue, accountMagnitudeOf({ currency, family }))
+    : undefined;
   const dates = Array.from({ length: count }, (_, index) => now - (count - 1 - index) * step);
   const series = balances().map(({ assetId, balance }) => {
     const own = all.filter(op => op.assetId === assetId);
     return {
       assetId,
-      points: dates.map(date => ({
-        date: new Date(date).toISOString(),
-        balance: own
+      points: dates.map(date => {
+        const at = new Date(date).toISOString();
+        const amount = own
           .filter(op => Date.parse(op.date) > date)
-          .reduce((total, op) => total - deltaOf(op), BigInt(balance))
-          .toString(),
-      })),
+          .reduce((total, op) => total - deltaOf(op), BigInt(balance));
+        const countervalues = countervalueOf?.(assetId, amount, at);
+        return { date: at, balance: amount.toString(), ...(countervalues && { countervalues }) };
+      }),
     };
   });
   return AccountBalanceHistorySchema.parse({ range, series });

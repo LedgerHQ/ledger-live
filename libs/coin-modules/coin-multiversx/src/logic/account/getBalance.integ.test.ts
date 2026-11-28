@@ -1,13 +1,10 @@
+import { API_ENDPOINT, DELEGATION_API_ENDPOINT } from "../../test/integEndpoints";
 /**
  * Integration tests — hit real MultiversX API.
  * Run with: pnpm --filter @ledgerhq/coin-multiversx test-integ
  */
 import { createNetworkApi } from "../../network/api";
 import { getBalance } from "./getBalance";
-
-const API_ENDPOINT = process.env.MULTIVERSX_API_ENDPOINT ?? "https://api.multiversx.com";
-const DELEGATION_API_ENDPOINT =
-  process.env.MULTIVERSX_DELEGATION_API_ENDPOINT ?? "https://delegation-api.multiversx.com";
 
 // A well-known MultiversX address with EGLD and delegation history
 const ACTIVE_ADDR = "erd1spyavw0956vq68xj8y4tenjpq2wd5a9p2c6j8gsz7ztyrnpxrruqzu66jx";

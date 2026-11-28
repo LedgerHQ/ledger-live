@@ -6,16 +6,10 @@ import { genAccount } from "@ledgerhq/ledger-wallet-framework/mocks/account";
 import { getCurrencyBridge } from "@ledgerhq/live-common/bridge/impl";
 import { screen, render, waitFor } from "@tests/test-renderer";
 import { http, HttpResponse, server } from "@tests/server";
-import coinConfig from "@ledgerhq/coin-canton/config";
 import { DeviceModelId } from "@ledgerhq/types-devices";
 import type { State } from "~/reducers/types";
 import CantonReonboardDrawer from "../index";
-import {
-  CANTON_DEVNET_GATEWAY,
-  CANTON_DEVNET_NODE_ID,
-  cantonOnboardingPrepareUrl,
-  mockOnboardingPrepareResponse,
-} from "@tests/handlers/canton";
+import { cantonOnboardingPrepareUrl, mockOnboardingPrepareResponse } from "@tests/handlers/canton";
 
 jest.mock("@ledgerhq/live-common/hw/deviceAccess", () => ({
   withDevice: jest.fn(() => (job: (transport: unknown) => unknown) => job({})),
@@ -74,17 +68,6 @@ describe("CantonReonboardDrawer integration", () => {
   beforeAll(async () => {
     currency = getCryptoCurrencyById("canton_network_devnet");
     accountToReonboard = { ...genAccount("canton-devnet-reonboard", { currency }), used: true };
-
-    coinConfig.setCoinConfig(() => ({
-      status: { type: "active" },
-      name: "Canton Network (Devnet)",
-      unit: { name: "cc", code: "CC", magnitude: 38 },
-      networkType: "devnet",
-      gatewayUrl: CANTON_DEVNET_GATEWAY,
-      nodeId: CANTON_DEVNET_NODE_ID,
-      useGateway: true,
-      nativeInstrumentId: "Amulet",
-    }));
 
     await getCurrencyBridge(currency);
   });

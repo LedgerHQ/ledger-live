@@ -1,0 +1,182 @@
+import React from "react";
+import { AccessibilityInfo, Text } from "react-native";
+import { render, screen, userEvent } from "@testing-library/react-native";
+import { Karaoke, karaokeTestIds } from "./index";
+
+describe("Karaoke", () => {
+  it("should replace the sequence with the final after the last tap", async () => {
+    const user = userEvent.setup();
+    render(
+      <Karaoke.Root phrases={["First.", "Last."]} tapLabel="Tap">
+        <Karaoke.Sequence />
+        <Karaoke.Final>
+          <Text>Final screen</Text>
+        </Karaoke.Final>
+      </Karaoke.Root>,
+    );
+
+    await user.press(screen.getByTestId(karaokeTestIds.advance));
+
+    expect(screen.getByText("Last.")).toBeOnTheScreen();
+    expect(screen.getByText("Tap")).toBeVisible();
+    expect(screen.queryByText("Final screen")).toBeNull();
+
+    await user.press(screen.getByTestId(karaokeTestIds.advance));
+
+    expect(screen.getByText("Final screen")).toBeOnTheScreen();
+    expect(screen.queryByText("Last.")).toBeNull();
+  });
+
+  it("should report each tap with what now shows, the final last", async () => {
+    const user = userEvent.setup();
+    const onAdvance = jest.fn();
+    render(
+      <Karaoke.Root phrases={["First.", "Last."]} tapLabel="Tap" onAdvance={onAdvance}>
+        <Karaoke.Sequence />
+        <Karaoke.Final>
+          <Text>Final screen</Text>
+        </Karaoke.Final>
+      </Karaoke.Root>,
+    );
+
+    await user.press(screen.getByTestId(karaokeTestIds.advance));
+    await user.press(screen.getByTestId(karaokeTestIds.advance));
+
+    expect(onAdvance.mock.calls).toEqual([[1], [2]]);
+  });
+
+  it("should move the glow to the bottom once the action replaces the tap hint", async () => {
+    const user = userEvent.setup();
+    render(
+      <Karaoke.Root phrases={["First.", "Last."]} tapLabel="Tap" action={<Text>Done</Text>}>
+        <Karaoke.Sequence />
+      </Karaoke.Root>,
+    );
+    expect(screen.getByTestId(karaokeTestIds.glow).props.showBottom).toBe(false);
+
+    await user.press(screen.getByTestId(karaokeTestIds.advance));
+
+    expect(screen.getByText("Done")).toBeOnTheScreen();
+    const glow = screen.getByTestId(karaokeTestIds.glow);
+    expect(glow.props.showBottom).toBe(true);
+    expect(glow.props.delayMs).toBe(0);
+  });
+
+  it("should make the bottom glow shorter, with the same top glow, when one action shows", () => {
+    render(
+      <Karaoke.Root phrases={["Only."]} tapLabel="Tap" action={<Text>Done</Text>}>
+        <Karaoke.Sequence />
+      </Karaoke.Root>,
+    );
+    const withAction = screen.getByTestId(karaokeTestIds.glow).props;
+    screen.unmount();
+    render(
+      <Karaoke.Root phrases={["Only."]} tapLabel="Tap">
+        <Karaoke.Sequence />
+      </Karaoke.Root>,
+    );
+    const withFinal = screen.getByTestId(karaokeTestIds.glow).props;
+
+    expect(withAction.glowReach).toBeLessThan(withFinal.glowReach);
+    expect(withAction.glowReach * withAction.glowTopReach).toBeCloseTo(
+      withFinal.glowReach * withFinal.glowTopReach,
+    );
+  });
+
+  it("should move the glow down once the final title is read", async () => {
+    const user = userEvent.setup();
+    render(
+      <Karaoke.Root phrases={["Only line."]} tapLabel="Tap">
+        <Karaoke.Sequence />
+        <Karaoke.Final>
+          <Text>Final screen</Text>
+        </Karaoke.Final>
+      </Karaoke.Root>,
+    );
+    expect(screen.getByTestId(karaokeTestIds.glow).props.showBottom).toBe(false);
+
+    await user.press(screen.getByTestId(karaokeTestIds.advance));
+
+    const glow = screen.getByTestId(karaokeTestIds.glow);
+    expect(glow.props.showTop).toBe(false);
+    expect(glow.props.showBottom).toBe(true);
+    expect(glow.props.delayMs).toBe(2000);
+  });
+
+  it("should accept any set of phrases", () => {
+    render(
+      <Karaoke.Root phrases={["Only line."]} tapLabel="Tap" action={<Text>Done</Text>}>
+        <Karaoke.Sequence />
+      </Karaoke.Root>,
+    );
+
+    expect(screen.getByText("Only line.")).toBeOnTheScreen();
+    expect(screen.getByText("Done")).toBeOnTheScreen();
+    expect(screen.queryByText("Tap")).toBeNull();
+  });
+
+  it("should read each new phrase to screen readers", async () => {
+    const announce = jest.spyOn(AccessibilityInfo, "announceForAccessibility");
+    const user = userEvent.setup();
+    render(
+      <Karaoke.Root phrases={["First.", "Second."]} tapLabel="Tap">
+        <Karaoke.Sequence />
+      </Karaoke.Root>,
+    );
+
+    await user.press(screen.getByTestId(karaokeTestIds.advance));
+
+    expect(announce).toHaveBeenCalledWith("Second.");
+    announce.mockRestore();
+  });
+
+  it("should hide the tap area from screen readers once the action shows", async () => {
+    const user = userEvent.setup();
+    render(
+      <Karaoke.Root phrases={["First.", "Last."]} tapLabel="Tap" action={<Text>Done</Text>}>
+        <Karaoke.Sequence />
+      </Karaoke.Root>,
+    );
+    expect(screen.getByRole("button", { name: "Tap" })).toBeOnTheScreen();
+
+    await user.press(screen.getByTestId(karaokeTestIds.advance));
+
+    expect(screen.getByText("Done")).toBeOnTheScreen();
+    expect(screen.queryByRole("button", { name: "Tap" })).toBeNull();
+    expect(
+      screen.getByTestId(karaokeTestIds.advance, { includeHiddenElements: true }),
+    ).toBeDisabled();
+  });
+
+  it("should treat a null action as no action and let the last tap finish", async () => {
+    const user = userEvent.setup();
+    render(
+      <Karaoke.Root phrases={["First.", "Last."]} tapLabel="Tap" action={null}>
+        <Karaoke.Sequence />
+        <Karaoke.Final>
+          <Text>Final screen</Text>
+        </Karaoke.Final>
+      </Karaoke.Root>,
+    );
+
+    await user.press(screen.getByTestId(karaokeTestIds.advance));
+    expect(screen.getByText("Tap")).toBeOnTheScreen();
+
+    await user.press(screen.getByTestId(karaokeTestIds.advance));
+    expect(screen.getByText("Final screen")).toBeOnTheScreen();
+    expect(screen.queryByText("Last.")).toBeNull();
+  });
+
+  it("should show the same phrase twice", async () => {
+    const user = userEvent.setup();
+    render(
+      <Karaoke.Root phrases={["Again.", "Again."]} tapLabel="Tap">
+        <Karaoke.Sequence />
+      </Karaoke.Root>,
+    );
+
+    await user.press(screen.getByTestId(karaokeTestIds.advance));
+
+    expect(screen.getAllByText("Again.")).toHaveLength(2);
+  });
+});

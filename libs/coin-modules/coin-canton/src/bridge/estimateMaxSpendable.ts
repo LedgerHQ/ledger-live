@@ -1,23 +1,27 @@
 import { getMainAccount } from "@ledgerhq/ledger-wallet-framework/account/index";
 import { AccountBridge } from "@ledgerhq/types-live";
 import BigNumber from "bignumber.js";
-import { CANTON_UNSET_RECIPIENT } from "../constants";
+import type { CantonContext } from "../config";
 import { Transaction, CantonAccount } from "../types";
 import { createTransaction } from "./createTransaction";
-import { getTransactionStatus } from "./getTransactionStatus";
 import { prepareTransaction } from "./prepareTransaction";
 
-export const estimateMaxSpendable: AccountBridge<
-  Transaction,
-  CantonAccount
->["estimateMaxSpendable"] = async ({ account, parentAccount, transaction }) => {
-  const mainAccount = getMainAccount(account, parentAccount);
-  const newTransaction = await prepareTransaction(mainAccount, {
+export const estimateMaxSpendable = async (
+  context: CantonContext,
+  {
+    account,
+    parentAccount,
+    transaction,
+  }: Parameters<AccountBridge<Transaction, CantonAccount>["estimateMaxSpendable"]>[0],
+): Promise<BigNumber> => {
+  // The parent account pays a token's fee in CC.
+  if (account.type === "TokenAccount") return account.spendableBalance;
+
+  const { amount } = await prepareTransaction(context, getMainAccount(account, parentAccount), {
     ...createTransaction(account),
     ...transaction,
-    recipient: transaction?.recipient || CANTON_UNSET_RECIPIENT,
-    amount: new BigNumber(0),
+    subAccountId: undefined,
+    useAllAmount: true,
   });
-  const status = await getTransactionStatus(mainAccount, newTransaction);
-  return BigNumber.max(0, account.spendableBalance.minus(status.estimatedFees));
+  return amount;
 };

@@ -1,7 +1,7 @@
 import React from "react";
 import { act, render } from "@testing-library/react-native";
 import LottieView from "lottie-react-native";
-import { Lottie } from "./Lottie.native";
+import { Lottie } from "./Lottie";
 
 jest.mock("lottie-react-native", () => {
   const React = require("react");

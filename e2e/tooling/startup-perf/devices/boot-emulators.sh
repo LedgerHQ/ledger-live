@@ -1,0 +1,90 @@
+#!/usr/bin/env bash
+# Boots the two Android emulators the measurement alternates on (emulator-5554 and emulator-5556),
+# or the first alone (count 1, the accounts snapshot), and waits until they are on cellular and
+# idle. Run from the repo root, after the AVD and, for two, its copy exist (AVD_NAME, AVD_NAME_2):
+#
+#   boot-emulators.sh <log_dir> [count]
+set -euo pipefail
+: "${ANDROID_HOME:?}" "${AVD_NAME:?}" "${PERF_AVD_CORES:?}"
+
+log_dir="${1:?log directory}"
+count="${2:-2}"
+read -ra avd_options <<< "${AVD_OPTIONS:-}"
+BOOT_TIMEOUT_S=900
+CELLULAR_POLLS=30
+IDLE_TIMEOUT_S=900
+IDLE_POLL_S=15
+
+# Cold boot: the cached snapshot was taken with 2 cores and cannot be loaded with 4.
+start_emulator() {
+  local avd="$1" port="$2" log="$3"
+  nohup "$ANDROID_HOME/emulator/emulator" -avd "$avd" -port "$port" "${avd_options[@]}" \
+    -no-snapshot-load -no-snapshot-save -cores "$PERF_AVD_CORES" > "$log" 2>&1 &
+}
+
+prepare() {
+  local serial="$1"
+  timeout "$BOOT_TIMEOUT_S" adb -s "$serial" wait-for-device
+  timeout "$BOOT_TIMEOUT_S" adb -s "$serial" shell \
+    'while [ "$(getprop sys.boot_completed)" != 1 ]; do sleep 2; done'
+  # The cached AVD was saved with animations off; a user's phone has them on.
+  for key in window_animation_scale transition_animation_scale animator_duration_scale; do
+    adb -s "$serial" shell settings put global "$key" 1
+  done
+  # Screen on and unlocked for the whole run, as Detox ensures for E2E.
+  adb -s "$serial" shell input keyevent KEYCODE_WAKEUP
+  adb -s "$serial" shell locksettings set-disabled true || true
+  adb -s "$serial" shell wm dismiss-keyguard
+  adb -s "$serial" shell settings put global stay_on_while_plugged_in 3
+  adb -s "$serial" shell settings put system screen_off_timeout 2147483647
+  # Their background jobs fire a few minutes after boot and take the CPUs during some launches.
+  for package in com.google.android.apps.messaging com.google.android.googlequicksearchbox; do
+    adb -s "$serial" shell pm disable-user --user 0 "$package" \
+      || echo "::warning title=Package not disabled::$package on $serial"
+  done
+  echo "$serial booted, $(adb -s "$serial" shell nproc | tr -d '\r') CPUs"
+}
+
+# Cellular like the E2E emulators (tools/scripts/boot-android-emulators-ci.sh).
+switch_to_cellular() {
+  local serial="$1" dump net
+  adb -s "$serial" shell svc wifi disable
+  for _ in $(seq "$CELLULAR_POLLS"); do
+    dump=$(adb -s "$serial" shell dumpsys connectivity)
+    net=$(sed -n 's/.*Active default network: \([0-9]*\).*/\1/p' <<< "$dump" | head -1)
+    if [[ -n "$net" && "$(grep -F "NetworkAgentInfo{network{$net}" <<< "$dump")" == *"Transports: CELLULAR"* ]]; then
+      echo "$serial is on cellular"
+      return 0
+    fi
+    sleep 2
+  done
+  echo "::warning title=Emulator not on cellular::$serial is not on cellular after $((CELLULAR_POLLS * 2)) s"
+}
+
+# Waits for a load average below 1, until the shared deadline.
+wait_until_idle() {
+  local serial="$1" deadline="$2" load=""
+  while ((SECONDS < deadline)); do
+    load=$(adb -s "$serial" shell cat /proc/loadavg | cut -d' ' -f1)
+    if awk -v l="$load" 'BEGIN { exit !(l < 1.0) }'; then
+      return 0
+    fi
+    echo "$serial load $load, waiting"
+    sleep "$IDLE_POLL_S"
+  done
+  echo "::warning title=Emulator not idle::$serial load average still ${load:-unknown} after $((IDLE_TIMEOUT_S / 60)) min; measuring anyway"
+}
+
+tools/scripts/cleanup-android-emulators.sh || true
+mkdir -p "$log_dir"
+serials=(emulator-5554)
+start_emulator "$AVD_NAME" 5554 "$log_dir/emulator-1.log"
+if ((count > 1)); then
+  serials+=(emulator-5556)
+  start_emulator "${AVD_NAME}_2" 5556 "$log_dir/emulator-2.log"
+fi
+for serial in "${serials[@]}"; do prepare "$serial"; done
+for serial in "${serials[@]}"; do switch_to_cellular "$serial"; done
+deadline=$((SECONDS + IDLE_TIMEOUT_S))
+for serial in "${serials[@]}"; do wait_until_idle "$serial" "$deadline"; done
+adb devices

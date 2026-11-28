@@ -1,7 +1,7 @@
-import { useCallback, useMemo, useRef } from "react";
-import { useFocusEffect, useNavigation, useRoute } from "@react-navigation/native";
-import { rnBleTransportIdentifier, rnHidTransportIdentifier } from "@ledgerhq/live-dmk-mobile";
-import { track } from "@shared/analytics";
+import { useCallback, useState } from "react";
+import { useNavigation, useRoute } from "@react-navigation/native";
+import { getDeviceModel } from "@ledgerhq/devices";
+import { selectOsUpdates } from "@domain/entity-device-os-update";
 import { useSelector } from "~/context/hooks";
 import {
   hasCompletedOnboardingSelector,
@@ -11,77 +11,61 @@ import {
 import { hasConnectedDeviceSelector } from "~/reducers/appstate";
 import type { BaseNavigation } from "~/components/RootNavigator/types/helpers";
 import { ScreenName } from "~/const";
-import { osUpdatesSelector } from "../../state/osUpdateSlice";
+import { getDeviceSymbolByModelId } from "LLM/utils/getDeviceIcon";
+import { toDmkDevice } from "../../ports/osUpdateDevice";
+import { isOsUpdateTransportSupported } from "../../utils/isOsUpdateTransportSupported";
 import { navigateToMyLedger } from "../../utils/myLedgerNavigation";
-
-export type OsUpdateBannerVariant = "hidden" | "portfolio" | "myLedger";
 
 export function useOsUpdateBannerViewModel() {
   const navigation = useNavigation<BaseNavigation>();
-  const route = useRoute();
-  const isInMyLedgerDeviceScreen = route.name === ScreenName.MyLedgerDevice;
-
+  const isInMyLedgerDeviceScreen = useRoute().name === ScreenName.MyLedgerDevice;
   const lastConnectedDevice = useSelector(lastConnectedDeviceSelector);
   const lastSeenDevice = useSelector(lastSeenDeviceSelector);
   const hasConnectedDevice = useSelector(hasConnectedDeviceSelector);
   const hasCompletedOnboarding = useSelector(hasCompletedOnboardingSelector);
-  const latestOsUpdate = useSelector(osUpdatesSelector).at(-1);
+  const latestOsUpdate = useSelector(selectOsUpdates).at(-1);
+  const [isUpdateOnDesktopOpen, setIsUpdateOnDesktopOpen] = useState(false);
+  const modelId = lastConnectedDevice?.modelId ?? lastSeenDevice?.modelId;
 
-  const device = useMemo(
-    () =>
-      lastConnectedDevice
-        ? {
-            id: lastConnectedDevice.deviceId,
-            name: lastConnectedDevice.deviceName ?? null,
-            deviceModelId: lastConnectedDevice.modelId,
-            transport: lastConnectedDevice.wired
-              ? rnHidTransportIdentifier
-              : rnBleTransportIdentifier,
-          }
-        : undefined,
-    [lastConnectedDevice],
-  );
-  const bannerVisible = Boolean(latestOsUpdate) && hasCompletedOnboarding && hasConnectedDevice;
-  const version = latestOsUpdate?.finalFirmware.version ?? "";
-  const modelId = device?.deviceModelId ?? lastSeenDevice?.modelId;
+  const osVersion =
+    lastSeenDevice?.modelId === lastConnectedDevice?.modelId
+      ? lastSeenDevice?.deviceInfo.version
+      : undefined;
 
-  const visibleVariant = isInMyLedgerDeviceScreen ? "myLedger" : "portfolio";
-  const variant: OsUpdateBannerVariant = bannerVisible ? visibleVariant : "hidden";
-
-  const page = isInMyLedgerDeviceScreen ? "my ledger" : "portfolio";
-  const impressionTracked = useRef(false);
-  useFocusEffect(
-    useCallback(() => {
-      if (impressionTracked.current) return;
-      impressionTracked.current = true;
-      track("banner_impression", { banner: "OS update", page, modelId });
-    }, [page, modelId]),
-  );
-
-  const onClickUpdate = useCallback(() => {
-    track("button_clicked", {
-      page,
-      banner: "OS update",
-      button: "click(update)",
-      modelId,
-    });
-    if (!lastConnectedDevice || !device) return;
-
-    if (isInMyLedgerDeviceScreen) {
-      navigation.navigate(ScreenName.OsUpdate, { device });
+  const onUpdate = useCallback(() => {
+    if (!lastConnectedDevice) return;
+    if (!isOsUpdateTransportSupported(lastConnectedDevice, osVersion)) {
+      setIsUpdateOnDesktopOpen(true);
       return;
     }
-
-    navigateToMyLedger(navigation, {
-      device: lastConnectedDevice,
-      firmwareUpdate: true,
-    });
-  }, [page, modelId, lastConnectedDevice, device, isInMyLedgerDeviceScreen, navigation]);
+    if (isInMyLedgerDeviceScreen) {
+      navigation.navigate(ScreenName.OsUpdate, { device: toDmkDevice(lastConnectedDevice) });
+      return;
+    }
+    navigateToMyLedger(navigation, { device: lastConnectedDevice, firmwareUpdate: true });
+  }, [lastConnectedDevice, osVersion, isInMyLedgerDeviceScreen, navigation]);
+  const onCloseUpdateOnDesktop = useCallback(() => setIsUpdateOnDesktopOpen(false), []);
 
   return {
-    variant,
-    version,
-    deviceModelId: device?.deviceModelId,
-    onClickUpdate,
+    banner: {
+      placement: isInMyLedgerDeviceScreen ? ("myLedger" as const) : ("portfolio" as const),
+      hasCompletedOnboarding,
+      hasConnectedDevice,
+      analyticsModelId: modelId,
+      DeviceIcon: getDeviceSymbolByModelId(lastConnectedDevice?.modelId),
+      onUpdate,
+    },
+    updateOnDesktopSheet: lastConnectedDevice
+      ? {
+          isOpen: isUpdateOnDesktopOpen,
+          page: isInMyLedgerDeviceScreen ? "my ledger" : "portfolio",
+          productName: getDeviceModel(lastConnectedDevice.modelId).productName,
+          analyticsModelId: lastConnectedDevice.modelId,
+          wired: lastConnectedDevice.wired,
+          osVersionFrom: osVersion,
+          osVersionTo: latestOsUpdate?.finalFirmware.version,
+          onClose: onCloseUpdateOnDesktop,
+        }
+      : null,
   };
 }

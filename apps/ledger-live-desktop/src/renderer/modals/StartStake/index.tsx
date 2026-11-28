@@ -40,7 +40,7 @@ const ModalStartStake: FC<ModalStartStakeProps> = ({ account, parentAccount, sou
 
     if (platformAppRoute) {
       dispatch(closeModal("MODAL_START_STAKE"));
-      navigate("/earn", { state: platformAppRoute.state });
+      navigate(platformAppRoute.pathname, { state: platformAppRoute.state });
       return;
     }
 

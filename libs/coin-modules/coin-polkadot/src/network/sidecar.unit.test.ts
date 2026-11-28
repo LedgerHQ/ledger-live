@@ -11,6 +11,7 @@ import {
   getRegistry,
   getStakingProgress,
   isElectionClosed,
+  verifyValidatorAddresses,
 } from "./sidecar";
 import mockServer, { SIDECAR_BASE_URL_TEST } from "./sidecar.mock";
 import { SidecarAccountBalanceInfo, SidecarStakingInfo } from "./types";
@@ -415,5 +416,37 @@ describe("isElectionClosed", () => {
     const isClosed = await isElectionClosed(polkadotMainnetConfigValue, currencyId);
 
     expect(isClosed).toEqual(true);
+  });
+});
+
+describe("verifyValidatorAddresses", () => {
+  const validatorFields = {
+    identity: null,
+    own: "0",
+    total: "0",
+    nominatorsCount: 0,
+    commission: "0",
+    rewardsPoints: null,
+    isElected: false,
+    isOversubscribed: false,
+  };
+
+  beforeEach(() => {
+    jest.mocked(node.default.fetchValidators).mockResolvedValue([
+      { ...validatorFields, accountId: "open", isBlocked: false },
+      { ...validatorFields, accountId: "blocked", isBlocked: true },
+    ]);
+  });
+
+  it("returns blocked and unknown validators", async () => {
+    const result = await verifyValidatorAddresses(config, ["open", "blocked", "unknown"]);
+
+    expect(result).toEqual(["blocked", "unknown"]);
+  });
+
+  it("accepts a blocked validator that is already nominated", async () => {
+    const result = await verifyValidatorAddresses(config, ["open", "blocked"], ["blocked"]);
+
+    expect(result).toEqual([]);
   });
 });

@@ -1,127 +1,72 @@
-import type { Account, AccountLike } from "@ledgerhq/types-live";
 import { AssetCategory } from "@domain/api-aggregated-assets";
+import { AccountIdSchema } from "@domain/entity-account";
 import { act, renderHook } from "tests/testSetup";
-import { useOpenAssetAndAccount } from "../../../ModularDialog/Web3AppWebview/AssetAndAccountDrawer";
-import { deriveRequestReceiveData } from "../deriveRequestReceiveData";
+import { ETH_ACCOUNT_WITH_USDC } from "LLD/features/__mocks__/accounts.mock";
+import { useOpenAssetAndAccount } from "../../../ModularDialog/hooks/useOpenAssetAndAccount";
+import { USDC_TOKEN, fundedState } from "../../__integrations__/fixtures";
 import { usePayTabRequestReceive } from "../usePayTabRequestReceive";
 
-jest.mock("../../../ModularDialog/Web3AppWebview/AssetAndAccountDrawer", () => ({
+jest.mock("../../../ModularDialog/hooks/useOpenAssetAndAccount", () => ({
   useOpenAssetAndAccount: jest.fn(),
-}));
-jest.mock("../deriveRequestReceiveData", () => ({ deriveRequestReceiveData: jest.fn() }));
-jest.mock("../../../../hooks/useCopyToClipboard", () => ({
-  useCopyToClipboard: () => jest.fn(),
 }));
 
 const mockedUseOpenAssetAndAccount = jest.mocked(useOpenAssetAndAccount);
-const mockedDerive = jest.mocked(deriveRequestReceiveData);
-
-const DERIVED = {
-  address: "0xTokenParentAddress",
-  asset: { name: "USD Coin", ticker: "USDC" },
-  network: "Base",
-  assetIcon: { ledgerId: "base/erc20/usd__coin", ticker: "USDC", network: "base" },
-  networkIcon: { ledgerId: "base", ticker: "ETH" },
-};
 
 let openAssetAndAccount: jest.Mock;
 
 beforeEach(() => {
-  jest.clearAllMocks();
-  openAssetAndAccount = jest.fn();
+  openAssetAndAccount = jest.fn(({ onSuccess }) => onSuccess(USDC_TOKEN, ETH_ACCOUNT_WITH_USDC));
   mockedUseOpenAssetAndAccount.mockReturnValue({
     openAssetAndAccount,
     openAssetAndAccountPromise: jest.fn(),
   });
-  mockedDerive.mockReturnValue(DERIVED);
 });
 
-const noop = () => {};
-
 describe("usePayTabRequestReceive", () => {
-  it("should start closed with empty display data", () => {
-    const { result } = renderHook(() => usePayTabRequestReceive(noop));
-
-    expect(result.current.requestReceive.isOpen).toBe(false);
-    expect(result.current.requestReceive.address).toBe("");
-    expect(result.current.requestReceive.asset).toEqual({ name: "", ticker: "" });
-    expect(mockedDerive).not.toHaveBeenCalled();
-  });
-
-  it("should open MAD filtered to the stablecoin category", () => {
-    const { result } = renderHook(() => usePayTabRequestReceive(noop));
+  it("should pick a stablecoin account in the receive flow, from Pay", () => {
+    const { result, store } = renderHook(() => usePayTabRequestReceive(), {
+      initialState: fundedState,
+    });
 
     act(() => result.current.open());
 
     expect(openAssetAndAccount).toHaveBeenCalledWith(
-      expect.objectContaining({
-        categories: [AssetCategory.Stablecoins],
-      }),
+      expect.objectContaining({ categories: [AssetCategory.Stablecoins] }),
+    );
+    expect(store.getState().modularDialog).toEqual(
+      expect.objectContaining({ flow: "receive_flow", source: "pay" }),
     );
   });
 
-  it("should populate the dialog from the selected account on success", () => {
-    const account = { type: "TokenAccount" } as unknown as AccountLike;
-    const parentAccount = { type: "Account" } as unknown as Account;
-
-    const { result } = renderHook(() => usePayTabRequestReceive(noop));
+  it("should open the receive address dialog on the picked token, from Pay", () => {
+    const { result, store } = renderHook(() => usePayTabRequestReceive(), {
+      initialState: fundedState,
+    });
 
     act(() => result.current.open());
-    const { onSuccess } = openAssetAndAccount.mock.calls[0][0];
-    act(() => onSuccess(account, parentAccount));
 
-    expect(mockedDerive).toHaveBeenCalledWith(account, parentAccount);
-    const { requestReceive } = result.current;
-    expect(requestReceive.isOpen).toBe(true);
-    expect(requestReceive.address).toBe(DERIVED.address);
-    expect(requestReceive.asset).toEqual(DERIVED.asset);
-    expect(requestReceive.network).toBe(DERIVED.network);
-    expect(requestReceive.assetIcon).toEqual(DERIVED.assetIcon);
-    expect(requestReceive.networkIcon).toEqual(DERIVED.networkIcon);
+    expect(store.getState().receiveAddressDialog.target).toEqual({
+      accountUUID:
+        store.getState().accountEntries.byLegacyId[AccountIdSchema.parse(ETH_ACCOUNT_WITH_USDC.id)],
+      assetId: USDC_TOKEN.token.id,
+      source: "pay",
+    });
+    expect(store.getState().modals.MODAL_RECEIVE?.isOpened).toBeFalsy();
   });
 
-  it("should close the dialog through onClose", () => {
-    const account = { type: "Account" } as unknown as AccountLike;
-    const { result } = renderHook(() => usePayTabRequestReceive(noop));
+  it("should open the legacy receive modal on an account the account model does not know", () => {
+    const { result, store } = renderHook(() => usePayTabRequestReceive(), {
+      initialState: { ...fundedState, accountEntries: undefined },
+    });
 
     act(() => result.current.open());
-    act(() => openAssetAndAccount.mock.calls[0][0].onSuccess(account, undefined));
-    expect(result.current.requestReceive.isOpen).toBe(true);
 
-    act(() => result.current.requestReceive.onClose());
-    expect(result.current.requestReceive.isOpen).toBe(false);
-  });
-
-  it("should close the receive dialog and hand off the selection to the injected verify callback", () => {
-    const account = { type: "TokenAccount" } as unknown as AccountLike;
-    const parentAccount = { type: "Account" } as unknown as Account;
-    const onVerify = jest.fn();
-    const { result } = renderHook(() => usePayTabRequestReceive(onVerify));
-
-    act(() => result.current.open());
-    act(() => openAssetAndAccount.mock.calls[0][0].onSuccess(account, parentAccount));
-    expect(result.current.requestReceive.isOpen).toBe(true);
-
-    act(() => result.current.requestReceive.onVerify(DERIVED.address));
-
-    expect(result.current.requestReceive.isOpen).toBe(false);
-    expect(onVerify).toHaveBeenCalledWith({ account, parentAccount }, expect.any(Function));
-  });
-
-  it("should reopen the receive dialog when the verify flow calls back", () => {
-    const account = { type: "TokenAccount" } as unknown as AccountLike;
-    const onVerify = jest.fn();
-    const { result } = renderHook(() => usePayTabRequestReceive(onVerify));
-
-    act(() => result.current.open());
-    act(() => openAssetAndAccount.mock.calls[0][0].onSuccess(account, undefined));
-    act(() => result.current.requestReceive.onVerify(DERIVED.address));
-    expect(result.current.requestReceive.isOpen).toBe(false);
-
-    const [, onDone] = onVerify.mock.calls[0];
-    act(() => onDone());
-
-    expect(result.current.requestReceive.isOpen).toBe(true);
-    expect(result.current.requestReceive.address).toBe(DERIVED.address);
+    expect(store.getState().receiveAddressDialog.target).toBeNull();
+    expect(store.getState().modals.MODAL_RECEIVE).toEqual(
+      expect.objectContaining({
+        isOpened: true,
+        data: { account: USDC_TOKEN, parentAccount: ETH_ACCOUNT_WITH_USDC },
+      }),
+    );
   });
 });

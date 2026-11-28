@@ -1,3 +1,4 @@
+import path from "path";
 import { DatadogProvider, DdLogs, TrackingConsent } from "@datadog/mobile-react-native";
 import { setCoinObservabilityConfigReader } from "@features/platform-coin-observability";
 import {
@@ -10,8 +11,10 @@ import {
   broadcastLogger,
   coinModuleCallLogger,
   customErrorEventMapper,
+  customResourceEventMapper,
   initializeDatadogProvider,
   isDatadogRecording,
+  scrubTrackedRequestUrls,
   stopDatadogRecording,
   transactionBroadcastLogger,
 } from "./datadog";
@@ -237,7 +240,7 @@ describe("coinModuleCallLogger", () => {
   it("logs a transaction-path call as info", () => {
     coinModuleCallLogger(call);
     expect(DdLogs.info).toHaveBeenCalledWith("coin_module_call", {
-      coinModule: { ...call, sampleRate: 1, inSample: true },
+      coinModule: { ...call, tier: "transaction", sampleRate: 1, inSample: true },
     });
   });
 
@@ -247,7 +250,12 @@ describe("coinModuleCallLogger", () => {
     const failure = { ...call, method: "getBalance", status: "failure" as const };
     coinModuleCallLogger(failure);
     expect(DdLogs.error).toHaveBeenCalledWith("coin_module_call", {
-      coinModule: { ...failure, sampleRate: observabilityOn.syncPathSampleRate, inSample: false },
+      coinModule: {
+        ...failure,
+        tier: "sync",
+        sampleRate: observabilityOn.syncPathSampleRate,
+        inSample: false,
+      },
     });
     random.mockRestore();
   });
@@ -324,5 +332,209 @@ describe("transactionBroadcastLogger", () => {
   it("ignores sign-stage events", () => {
     transactionBroadcastLogger({ status: "intent", stage: TransactionStage.Sign, ...common });
     expect(DdLogs.info).not.toHaveBeenCalled();
+  });
+});
+
+const ADDRESS_URL = `https://explorers.example/blockchain/v4/eth/address/0x${"a1b2".repeat(10)}/txs`;
+const SCRUBBED_URL = "https://explorers.example/blockchain/v4/eth/address/[redacted]/txs";
+const CLEAN_URL = "https://countervalues.example/v3/spot/simple?froms=bitcoin&to=usd";
+const DATADOG_TRACKING_CONTEXT = "_datadog_xhr";
+
+class FakeRequest {
+  static readonly HEADERS_RECEIVED = 2;
+  static readonly DONE = 4;
+  readyState = 0;
+  status = 0;
+  response: unknown = null;
+  responseType = "";
+  responseURL = "";
+  onreadystatechange: (() => void) | null = null;
+  sentWith: unknown[] | undefined;
+  [DATADOG_TRACKING_CONTEXT]?: { url?: unknown };
+  openedUrl?: string;
+
+  open(_method: string, url: string) {
+    this.openedUrl = url;
+  }
+
+  send(...args: unknown[]) {
+    this.sentWith = args;
+  }
+
+  setRequestHeader() {}
+
+  getResponseHeader() {
+    return null;
+  }
+
+  complete(status: number) {
+    this.status = status;
+    this.readyState = FakeRequest.DONE;
+    this.onreadystatechange?.();
+  }
+}
+
+const createRequestType = () => class TestRequest extends FakeRequest {};
+
+const installOn = (requestType: typeof FakeRequest) =>
+  scrubTrackedRequestUrls(requestType as unknown as typeof XMLHttpRequest);
+
+type ResourceEvent = Parameters<typeof customResourceEventMapper>[0];
+
+const resourceEvent = (resourceContext: unknown): ResourceEvent =>
+  ({
+    key: "1/GET",
+    statusCode: 200,
+    kind: "xhr",
+    size: 0,
+    context: {},
+    timestampMs: 0,
+    resourceContext,
+  }) as unknown as ResourceEvent;
+
+describe("scrubTrackedRequestUrls", () => {
+  it("scrubs the URL of a tracked request when it is sent", () => {
+    const RequestType = createRequestType();
+    installOn(RequestType);
+    const request = new RequestType();
+    request[DATADOG_TRACKING_CONTEXT] = { url: ADDRESS_URL };
+
+    request.send("body");
+
+    expect(request[DATADOG_TRACKING_CONTEXT]?.url).toBe(SCRUBBED_URL);
+    expect(request.sentWith).toEqual(["body"]);
+  });
+
+  it("sends a request that is not tracked as it is", () => {
+    const RequestType = createRequestType();
+    installOn(RequestType);
+    const request = new RequestType();
+
+    request.send();
+
+    expect(request[DATADOG_TRACKING_CONTEXT]).toBeUndefined();
+    expect(request.sentWith).toEqual([]);
+  });
+
+  it("installs once per request type", () => {
+    const RequestType = createRequestType();
+    installOn(RequestType);
+    const send = RequestType.prototype.send;
+
+    installOn(RequestType);
+
+    expect(RequestType.prototype.send).toBe(send);
+  });
+});
+
+describe("customResourceEventMapper", () => {
+  it("keeps a resource whose reported URL holds no identifier", () => {
+    const event = resourceEvent({ [DATADOG_TRACKING_CONTEXT]: { url: SCRUBBED_URL } });
+    expect(customResourceEventMapper(event)).toBe(event);
+  });
+
+  it("drops a resource whose reported URL still holds an identifier", () => {
+    expect(
+      customResourceEventMapper(
+        resourceEvent({ [DATADOG_TRACKING_CONTEXT]: { url: ADDRESS_URL } }),
+      ),
+    ).toBe(null);
+  });
+
+  it("checks the request URL when the SDK context is missing", () => {
+    const clean = resourceEvent({ responseURL: "", _url: CLEAN_URL });
+    expect(customResourceEventMapper(clean)).toBe(clean);
+    expect(customResourceEventMapper(resourceEvent({ responseURL: ADDRESS_URL }))).toBe(null);
+  });
+
+  it("drops a resource whose URL is unknown", () => {
+    expect(customResourceEventMapper(resourceEvent(undefined))).toBe(null);
+    expect(customResourceEventMapper(resourceEvent({}))).toBe(null);
+  });
+
+  it("drops a resource whose request cannot be read", () => {
+    const unreadable = Object.defineProperty({}, "responseURL", {
+      get() {
+        throw new Error("unreadable");
+      },
+    });
+    expect(customResourceEventMapper(resourceEvent(unreadable))).toBe(null);
+  });
+});
+
+describe("under the Datadog SDK resource tracking", () => {
+  const sdkRoot = path.dirname(require.resolve("@datadog/mobile-react-native/package.json"));
+  const requireSdk = (file: string) => jest.requireActual(path.join(sdkRoot, "lib/commonjs", file));
+  const requestProxy = "rum/instrumentation/resourceTracking/requestProxy";
+  const { XHRProxy } = requireSdk(`${requestProxy}/XHRProxy/XHRProxy.js`);
+  const { ResourceReporter } = requireSdk(`${requestProxy}/common/ResourceReporter.js`);
+  const { DdRum } = requireSdk("rum/DdRum.js");
+  const { BufferSingleton } = requireSdk("sdk/DatadogProvider/Buffer/BufferSingleton.js");
+
+  const DROP_RESOURCE = "_dd.resource.drop_resource";
+  const nativeRum = { startResource: jest.fn(), stopResource: jest.fn() };
+  const sdkNativeRum = DdRum.nativeRum;
+
+  beforeAll(() => {
+    DdRum.nativeRum = nativeRum;
+    DdRum.registerResourceEventMapper(customResourceEventMapper);
+    BufferSingleton.onInitialization();
+  });
+
+  beforeEach(() => {
+    nativeRum.startResource.mockClear();
+    nativeRum.stopResource.mockClear();
+  });
+
+  afterAll(() => {
+    BufferSingleton.reset();
+    DdRum.unregisterResourceEventMapper();
+    DdRum.nativeRum = sdkNativeRum;
+  });
+
+  const trackRequest = async (RequestType: typeof FakeRequest) => {
+    const tracking = new XHRProxy({
+      xhrType: RequestType,
+      resourceReporter: new ResourceReporter([]),
+    });
+    tracking.onTrackingStart({ tracingSamplingRate: 0, firstPartyHostsRegexMap: [] });
+    const request = new RequestType();
+    request.open("GET", ADDRESS_URL);
+    request.send();
+    request.complete(200);
+    await jest.runAllTimersAsync();
+    tracking.onTrackingStop();
+    return request;
+  };
+
+  it("sends the scrubbed URL to the native SDK and keeps the resource", async () => {
+    const RequestType = createRequestType();
+    installOn(RequestType);
+
+    const request = await trackRequest(RequestType);
+
+    expect(request.openedUrl).toBe(ADDRESS_URL);
+    expect(nativeRum.startResource).toHaveBeenCalledWith(
+      expect.any(String),
+      "GET",
+      SCRUBBED_URL,
+      expect.anything(),
+      expect.any(Number),
+    );
+    expect(nativeRum.stopResource).toHaveBeenCalledTimes(1);
+    expect(nativeRum.stopResource.mock.calls[0][4]).not.toHaveProperty([DROP_RESOURCE]);
+  });
+
+  it("drops a resource whose URL was not scrubbed", async () => {
+    await trackRequest(createRequestType());
+
+    expect(nativeRum.stopResource).toHaveBeenCalledWith(
+      expect.any(String),
+      200,
+      "xhr",
+      expect.any(Number),
+      { [DROP_RESOURCE]: true },
+      expect.any(Number),
+    );
   });
 });

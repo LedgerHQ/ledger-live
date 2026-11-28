@@ -1,5 +1,8 @@
 /* eslint-disable @typescript-eslint/consistent-type-assertions */
-import type { AssetInfo } from "@ledgerhq/coin-module-framework/api/types";
+import type {
+  AssetInfo,
+  Operation as CoreOperation,
+} from "@ledgerhq/coin-module-framework/api/types";
 import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
 import type { TokenCurrency } from "@domain/entity-currency-token";
 import { setCryptoAssetsStore } from "@ledgerhq/ledger-wallet-framework/cryptoAssetsStore";
@@ -16,6 +19,7 @@ import hederaBridge, {
   keyControlsAccount,
 } from "./api";
 import { adaptA4OperationToLiveOperation } from "../../../bridge/generic-coin-framework/a4/client/operations";
+import { adaptCoreOperationToLiveOperation } from "../../../bridge/generic-coin-framework/utils";
 
 const getAccountsForPublicKeyMock = jest.fn();
 jest.mock("@ledgerhq/coin-hedera/network/api", () => ({
@@ -490,6 +494,43 @@ describe("hedera bridge", () => {
       });
 
       expect(adaptOperations(address, [sponsored])).toEqual([sponsored]);
+    });
+
+    describe("after the generic conversion", () => {
+      const sponsoredSend = (failed: boolean): CoreOperation => ({
+        id: "tx1",
+        type: "OUT",
+        asset: { type: "native" },
+        value: failed ? 0n : 10000n,
+        senders: [address],
+        recipients: ["0.0.5678"],
+        tx: {
+          hash: "tx1",
+          fees: 5505725n,
+          feesPayer: "0.0.5678",
+          failed,
+          block: { hash: "block", height: 1, time: new Date("2025-07-07T18:29:08.000Z") },
+          date: new Date("2025-07-07T18:29:08.000Z"),
+        },
+      });
+      const convertThenAdapt = (op: CoreOperation) => {
+        const { excludesFeesPaidByOthers } = hederaBridge(getCryptoCurrencyById("hedera"));
+        const converted = adaptCoreOperationToLiveOperation(
+          accountId,
+          op,
+          undefined,
+          excludesFeesPaidByOthers ? { accountAddress: address } : undefined,
+        );
+        return adaptOperations(address, [converted]).map(adapted => adapted.value.toFixed());
+      };
+
+      it("should show the amount alone of a sponsored send", () => {
+        expect(convertThenAdapt(sponsoredSend(false))).toEqual(["10000"]);
+      });
+
+      it("should keep the gas a failed sponsored call charges its sender", () => {
+        expect(convertThenAdapt(sponsoredSend(true))).toEqual(["5505725"]);
+      });
     });
 
     it("takes the fee the account paid out of a native IN value", () => {

@@ -7,6 +7,7 @@ export type AccountHistorySource<Operation> = AccountOperationHistory<Operation>
 
 export type AccountAnalyticsIntroductionStatus = Readonly<{
   isEnabled: boolean;
+  isEligible: boolean;
   hasConfirmedHistory: boolean;
   hasDismissed: boolean;
 }>;

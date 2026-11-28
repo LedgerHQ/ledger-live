@@ -48,11 +48,11 @@ function AnalyticsProbe() {
   );
 }
 
-type Setup = Readonly<{ account?: Account; hasDismissed?: boolean }>;
+type Setup = Readonly<{ account?: Account; hasDismissed?: boolean; isEligible?: boolean }>;
 
 function renderAccount(
   analyticsBanner: boolean,
-  { account = historical, hasDismissed = false }: Setup = {},
+  { account = historical, hasDismissed = false, isEligible = true }: Setup = {},
 ) {
   return render(
     <Stack.Navigator id={BASE_NAVIGATOR_ID} screenOptions={{ headerShown: false }}>
@@ -71,7 +71,7 @@ function renderAccount(
         return {
           ...withFlag,
           accounts: { ...withFlag.accounts, active: [account] },
-          accountAnalyticsIntroduction: { hasDismissed },
+          accountAnalyticsIntroduction: { hasDismissed, isEligible },
         };
       },
     },
@@ -117,8 +117,11 @@ describe("AccountDetail Analytics introduction", () => {
     expect(await screen.findByTestId(ACCOUNT_DETAIL_TEST_IDS.analyticsIntroduction)).toBeVisible();
   });
 
-  it("hides the introduction when the analyticsBanner param is off", async () => {
-    renderAccount(false);
+  it.each<[string, boolean, Setup]>([
+    ["the analyticsBanner param is off", false, {}],
+    ["the installation is not eligible", true, { isEligible: false }],
+  ])("hides the introduction when %s", async (_, analyticsBanner, setup) => {
+    renderAccount(analyticsBanner, setup);
 
     expect(await screen.findByTestId(ACCOUNT_DETAIL_TEST_IDS.hero)).toBeVisible();
     expect(screen.queryByTestId(ACCOUNT_DETAIL_TEST_IDS.analyticsIntroduction)).toBeNull();
@@ -159,6 +162,7 @@ describe("AccountDetail Analytics introduction tracking", () => {
 
   it.each([
     ["the analyticsBanner param is off", false, {}],
+    ["the installation is not eligible", true, { isEligible: false }],
     ["the introduction was dismissed", true, { hasDismissed: true }],
     ["the account has no history", true, { account: withoutHistory }],
     ["the account only has pending operations", true, { account: pendingOnly }],

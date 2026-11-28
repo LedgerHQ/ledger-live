@@ -6,7 +6,7 @@ describe("mobileWallet", () => {
     await jest.isolateModulesAsync(async () => {
       jest.doMock("react-native", () => ({ Platform: { OS: os } }));
 
-      const { mobileWallet } = await import("../mobileWallet.native");
+      const { mobileWallet } = await import("../mobileWallet");
 
       expect(mobileWallet).toBe(expected);
     });

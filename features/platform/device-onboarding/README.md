@@ -14,6 +14,7 @@ Design and rationale live in the [technical plan](https://ledgerhq.atlassian.net
 - Reads the device and routes it: the legacy flow, the pre-seed checks, or an interrupted update
 - Waits for the user once, on entry, before it touches a device it can drive
 - Runs the mandatory genuine check and the firmware check, and offers an available update
+- Holds an unseeded Nano's firmware update until it is seeded, when its firmware cannot update before
 - Shows the on-device waiting screen to an unseeded touchscreen while the checks run
 - Hands the OS update over to the app's own update flow, then re-reads the device
 - Follows naming, PIN, seed creation and restore by reading the onboarding step — it never sets them
@@ -68,6 +69,10 @@ The app also sends what only it can see: `LOCKED`, `UNLOCKED` and `TRANSPORT_LOS
 session that can still be read. `FIRMWARE_UPDATE_RECONNECT_REQUIRED` means that flow returned after
 the device rebooted: the machine waits, and the host opens the next session.
 
+`FIRMWARE_UPDATE_RECONNECT_REQUIRED` and `FIRMWARE_UPDATE_FLOW_CLOSED` set
+`context.returningFromFirmwareUpdate`, and entering `awaitingStart` or `checks` clears it. While it is set, the waiting states between the update and the checks are not a new
+screen, so a screen can keep showing the checks.
+
 ### The session
 
 `context.sessionId` is the session the machine talks to. Only 3 events change it:
@@ -114,12 +119,24 @@ The session stays open after the exit, so the app can keep using it.
 
 ## Key exports / concepts
 
-- `deviceOnboardingMachine` — the flow. `machine.ts` is the graph, `context.ts` the bookkeeping
+- `deviceOnboardingMachine` — the flow. `machine.ts` is the graph, `internals/contextActions.ts`
+  the bookkeeping
 - `stampSession` — adds the live session id to the session events. The app calls it, not the machine
 - `OnboardingEvent`, `DeviceOnboardingInput`, `DeviceOnboardingContext`, `DeviceOnboardingOutput` —
   the language the machine and the screens speak
-- `rules.ts` — the pure decisions the transitions ask. Every model takes the flow on any firmware
-  version that can be read
+- `firmwareRules.ts` — the pure decisions the transitions ask from model, firmware and seeded state:
+  which devices leave for the legacy flow (`requiresLegacyFlow`) and which hold their firmware
+  update until they are seeded (`updateWaitsForSeed`)
+- `postSetupFirmware.ts` — how the machine and the apps read that held-back update: its states
+  (`asChecksState`, `isFirmwareCheckFailed`, `isFirmwareUpdateDelegated`) and when leaving finishes
+  the setup instead of quitting it (`isHeldBackUpdatePending`, `finishesSetupOnQuit`)
+- `deviceReady.ts` — when the device reports its setup done, Recovery Key backup included
+  (`reportsSetupDone`): the machine's rule to leave the setup, shared with the apps' analytics
+- `internals/` — what only the package uses: the machine's actions, `isTouchscreen` and
+  `firmwareSettled`. The barrel never re-exports it
+- `host/` — what the apps and the devtool use around the machine: the session events
+  (`stampSession`), the deprecated flat context, the devtool payloads, the event log and the next
+  states
 - `actors/` — the only code that talks to the device: `readDeviceState`, `genuineCheck`,
   `firmwareCheck`, `toggleEarlyCheck`, `seedPolling`, `unlockPolling`. Each gets the session id as
   input and reports through events only
@@ -142,7 +159,6 @@ any legacy onboarding flow.
 ## Validation
 
 ```sh
-pnpm nx run @features/platform-device-onboarding:build
 pnpm nx run @features/platform-device-onboarding:typecheck
 pnpm nx run @features/platform-device-onboarding:test
 pnpm nx run @features/platform-device-onboarding:lint

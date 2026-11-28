@@ -1,6 +1,6 @@
 {
   "name": "@features/flow-contacts",
-  "version": "0.17.0",
+  "version": "0.18.2",
   "private": true,
   "description": "Shared Contacts flow package",
   "main": "src/index.ts",
@@ -75,7 +75,6 @@
     "@testing-library/user-event": "catalog:",
     "@types/jest": "catalog:",
     "@types/react": "catalog:",
-    "@types/react-dom": "catalog:",
     "@typescript/native": "catalog:",
     "class-variance-authority": "catalog:",
     "jest": "catalog:",

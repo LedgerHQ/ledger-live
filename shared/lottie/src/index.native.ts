@@ -1,1 +1,1 @@
-export * from "./Lottie.native";
+export * from "./Lottie";

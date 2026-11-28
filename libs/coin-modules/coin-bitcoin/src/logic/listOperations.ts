@@ -2,6 +2,7 @@ import type {
   ListOperationsOptions,
   Operation,
   Page,
+  PendingOperation,
 } from "@ledgerhq/coin-module-framework/api/types";
 import type { BitcoinContext } from "../config";
 import { fetchAddressTxs } from "../network/explorer";
@@ -15,8 +16,8 @@ const distinct = (values: (string | null | undefined)[]): string[] => [
 ];
 
 /**
- * The operation a confirmed transaction makes on `address`, or `undefined` when it does not move
- * its funds.
+ * The operation a transaction makes on `address`, whether or not it is confirmed, or `undefined`
+ * when it does not move its funds. `tx.date` is the explorer's first sighting, else `fallbackDate`.
  *
  * Values follow the framework convention: an outgoing operation's `value` excludes the fees, which
  * the consumer adds back from `tx.fees`. `tx.fees` is the transaction's whole fee, as the bridge
@@ -27,8 +28,11 @@ const distinct = (values: (string | null | undefined)[]): string[] => [
  *   left the address, so that the balance impact stays exact.
  * - `IN`: the address received more than it spent; `value` = the net amount received.
  */
-export function toOperation(tx: ExplorerTx, address: string): Operation | undefined {
-  if (!tx.block) return undefined;
+export function toPendingOperation(
+  tx: ExplorerTx,
+  address: string,
+  fallbackDate: Date,
+): PendingOperation | undefined {
   const fees = BigInt(tx.fees);
   const inputs = sumByAddress(tx.inputs);
   const outputs = sumByAddress(tx.outputs);
@@ -59,7 +63,6 @@ export function toOperation(tx: ExplorerTx, address: string): Operation | undefi
     type === "IN"
       ? [address]
       : distinct(tx.outputs.map(output => output.address)).filter(a => a !== address);
-  const blockTime = new Date(tx.block.time);
 
   return {
     id: txidOf(tx),
@@ -70,10 +73,24 @@ export function toOperation(tx: ExplorerTx, address: string): Operation | undefi
     asset: { type: "native" },
     tx: {
       hash: txidOf(tx),
-      block: { height: tx.block.height, hash: tx.block.hash, time: blockTime },
       fees: paidFees,
       ...(onlySender ? { feesPayer: address } : {}),
-      date: tx.received_at ? new Date(tx.received_at) : blockTime,
+      date: tx.received_at ? new Date(tx.received_at) : fallbackDate,
+    },
+  };
+}
+
+/** The operation a confirmed transaction makes on `address`, see {@link toPendingOperation}. */
+export function toOperation(tx: ExplorerTx, address: string): Operation | undefined {
+  if (!tx.block) return undefined;
+  const blockTime = new Date(tx.block.time);
+  const operation = toPendingOperation(tx, address, blockTime);
+  if (!operation) return undefined;
+  return {
+    ...operation,
+    tx: {
+      ...operation.tx,
+      block: { height: tx.block.height, hash: tx.block.hash, time: blockTime },
       failed: false,
     },
   };

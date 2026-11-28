@@ -7,6 +7,7 @@ import {
 } from "@ledgerhq/ledger-wallet-framework/errors";
 import { TokenNonTransferable } from "../../../errors";
 import cosmosBridge from "../../../families/cosmos/bridge/api";
+import nearBridge from "../../../families/near/bridge/api";
 import { genericGetTransactionStatus } from "../getTransactionStatus";
 import { getCoinModuleApi } from "../api";
 import { getBridgeApi } from "../bridge";
@@ -316,12 +317,12 @@ describe("genericGetTransactionStatus", () => {
   });
 
   describe("token sends", () => {
-    const tokenAccount = (id: string, tokenId: string) => ({ id, token: { id: tokenId } });
+    const tokenAccount = (id: string, categories: string[]) => ({ id, token: { categories } });
     const accountWithTokens = {
       ...account,
       subAccounts: [
-        tokenAccount("pseth-account", "ethereum/erc20/pooled_staked_eth"),
-        tokenAccount("usdt-account", "ethereum/erc20/usd_tether__erc20_"),
+        tokenAccount("pseth-account", ["non_transferable"]),
+        tokenAccount("usdt-account", ["stablecoins"]),
       ],
     };
     const tokenSend = (subAccountId: string | undefined) =>
@@ -568,5 +569,55 @@ describe("genericGetTransactionStatus", () => {
       ).rejects.toThrow("Unsupported Cosmos transaction mode: swap");
       expect(validateIntent).not.toHaveBeenCalled();
     });
+  });
+
+  describe("near", () => {
+    const nearAccount = {
+      ...account,
+      freshAddress: "sender.near",
+      currency: getCryptoCurrencyById("near"),
+    };
+    const readIntent = () => validateIntent.mock.calls[0][1];
+
+    beforeEach(() => {
+      mockGetBridgeApi.mockResolvedValue({ computeIntentType: nearBridge().computeIntentType });
+    });
+
+    it.each([
+      ["send", "send", "transaction"],
+      ["stake", "stake", "staking"],
+      ["unstake", "unstake", "staking"],
+      ["withdraw", "finalize_unstake", "staking"],
+    ])("sends a near %s to the coin module as intent type %s", async (mode, type, intentType) => {
+      await genericGetTransactionStatus("mainnet", "near")(nearAccount, {
+        mode,
+        recipient: "astro-stakers.poolv1.near",
+        amount: new BigNumber(100),
+        useAllAmount: false,
+        family: "near",
+      } as any);
+
+      expect(readIntent()).toMatchObject({
+        intentType,
+        type,
+        sender: "sender.near",
+        recipient: "astro-stakers.poolv1.near",
+      });
+    });
+
+    it.each(["stake", "unstake", "withdraw"])(
+      "sends no staking mode to the coin module for a near %s",
+      async mode => {
+        await genericGetTransactionStatus("mainnet", "near")(nearAccount, {
+          mode,
+          recipient: "astro-stakers.poolv1.near",
+          amount: new BigNumber(100),
+          useAllAmount: false,
+          family: "near",
+        } as any);
+
+        expect(readIntent().mode).toBeUndefined();
+      },
+    );
   });
 });

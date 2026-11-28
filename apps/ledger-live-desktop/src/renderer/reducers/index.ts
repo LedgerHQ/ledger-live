@@ -34,6 +34,7 @@ import { supportedFiatsSlice, type SupportedFiatsState } from "@domain/entity-cu
 import { contactsSlice, type ContactsState } from "@domain/entity-contact";
 import { accountDataSlice, type AccountDataState } from "@domain/entity-account-data";
 import { accountReceivesSlice, type AccountReceivesState } from "@domain/entity-account-receive";
+import { accountStatusSlice, type AccountStatusState } from "@domain/entity-account-status";
 import { accountBalancesSlice, type AccountBalancesState } from "@domain/entity-account-balance";
 import {
   accountOperationsSlice,
@@ -43,7 +44,12 @@ import {
   accountBalanceHistoriesSlice,
   type AccountBalanceHistoriesState,
 } from "@domain/entity-account-balance-history";
-import { accountsSlice, type AccountsState as AccountEntriesState } from "@domain/entity-account";
+import {
+  accountsSlice,
+  discoveredAccountsSlice,
+  type AccountsState as AccountEntriesState,
+  type DiscoveredAccountsState,
+} from "@domain/entity-account";
 import {
   largeScreenUpsellModalSlice,
   type LargeScreenUpsellModalState,
@@ -58,9 +64,11 @@ import {
   type PayCardFeatureTourState,
 } from "@features/flow-pay-feature-tour/state";
 import {
-  payRequestVerifyHintSlice,
-  type PayRequestVerifyHintState,
-} from "@features/flow-pay-request/state";
+  receiveAddressDialogSlice,
+  receiveVerifyHintSlice,
+  type ReceiveAddressDialogState,
+  type ReceiveVerifyHintState,
+} from "@features/flow-receive/state";
 import {
   payCardAuthSlice,
   payCardLoginIntroSlice,
@@ -136,15 +144,18 @@ export type State = LLDRTKApiState & {
   contacts: ContactsState;
   accountData: AccountDataState;
   accountReceives: AccountReceivesState;
+  accountStatus: AccountStatusState;
   accountBalances: AccountBalancesState;
   accountOperations: AccountOperationsState;
   accountBalanceHistories: AccountBalanceHistoriesState;
   accountEntries: AccountEntriesState;
+  discoveredAccounts: DiscoveredAccountsState;
   largeScreenUpsellModal: LargeScreenUpsellModalState;
   payCardBalance: PayCardBalanceState;
   accountAnalyticsIntroduction: AccountAnalyticsIntroductionState;
   payCardFeatureTour: PayCardFeatureTourState;
-  payRequestVerifyHint: PayRequestVerifyHintState;
+  receiveVerifyHint: ReceiveVerifyHintState;
+  receiveAddressDialog: ReceiveAddressDialogState;
   payCardOnboardingWidget: PayCardOnboardingWidgetState;
   payCardAuth: PayCardAuthState;
   payCardLoginIntro: PayCardLoginIntroState;
@@ -191,15 +202,18 @@ const appReducer = combineReducers({
   contacts: contactsSlice.reducer,
   accountData: accountDataSlice.reducer,
   accountReceives: accountReceivesSlice.reducer,
+  accountStatus: accountStatusSlice.reducer,
   accountBalances: accountBalancesSlice.reducer,
   accountOperations: accountOperationsSlice.reducer,
   accountBalanceHistories: accountBalanceHistoriesSlice.reducer,
   accountEntries: accountsSlice.reducer,
+  discoveredAccounts: discoveredAccountsSlice.reducer,
   largeScreenUpsellModal: largeScreenUpsellModalSlice.reducer,
   payCardBalance: payCardBalanceSlice.reducer,
   accountAnalyticsIntroduction: accountAnalyticsIntroductionSlice.reducer,
   payCardFeatureTour: payCardFeatureTourSlice.reducer,
-  payRequestVerifyHint: payRequestVerifyHintSlice.reducer,
+  receiveVerifyHint: receiveVerifyHintSlice.reducer,
+  receiveAddressDialog: receiveAddressDialogSlice.reducer,
   payCardOnboardingWidget: payCardOnboardingWidgetSlice.reducer,
   payCardAuth: payCardAuthSlice.reducer,
   payCardLoginIntro: payCardLoginIntroSlice.reducer,

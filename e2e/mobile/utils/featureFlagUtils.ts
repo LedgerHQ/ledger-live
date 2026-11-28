@@ -2,36 +2,17 @@ import { parseExtraFeatureFlags } from "@ledgerhq/live-e2e-shared/featureFlagsJs
 
 import type { PartialFeatures } from "@shared/feature-flags";
 
-const FF_LWM_WALLET_40_Q1 = {
-  lwmWallet40: {
-    enabled: true,
-    params: {
-      lazyOnboarding: true,
-      brazePlacement: true,
-      earnUpselling: false,
-      earnSimulator: false,
-    },
-  },
+const FF_ACCOUNT_DETAIL = {
+  accountDetail: { enabled: true },
 } satisfies PartialFeatures;
 
-export const FF_LWM_WALLET_40_Q2 = {
-  lwmWallet40: {
-    enabled: true,
-    params: {
-      lazyOnboarding: true,
-      brazePlacement: true,
-      earnUpselling: true,
-      earnSimulator: true,
-    },
-  },
-} satisfies PartialFeatures;
+export const isAccountDetailEnabled = () => globalThis.mergedFeatureFlags?.accountDetail?.enabled;
 
 export const FF_PASSWORD_REVAMP = {
   lwmPasswordRevamp: { enabled: true },
 } satisfies PartialFeatures;
 
 export const FF_BORROW_ENABLED = {
-  ...FF_LWM_WALLET_40_Q2,
   ptxBorrowLiveApp: {
     enabled: true,
     params: { manifest_id: "borrow" },
@@ -125,7 +106,7 @@ export const getMergedFeatureFlags = ({
      * This will reduce friction and provide CI stability for any callers of the workflow.
      * PLEASE NOTE: non-existing keys will return 'undefined' which spreads to an empty object.
      */
-    "wallet40-q1": FF_LWM_WALLET_40_Q1,
+    "account-detail": FF_ACCOUNT_DETAIL,
   };
 
   const defaultFlags: PartialFeatures = {
@@ -137,6 +118,7 @@ export const getMergedFeatureFlags = ({
     releaseTour: { enabled: false },
     brazePushNotifications: { enabled: false },
     ratingsPrompt: { enabled: false },
+    accountDetail: { enabled: false },
     // Mirrors the production flag; the stg swap manifest is added because e2e loads it unless PRODUCTION=true.
     llmWalletApiDeviceIntentSign: {
       enabled: true,
@@ -164,8 +146,6 @@ export const getMergedFeatureFlags = ({
         backendEnvironment: "PROD",
       },
     },
-    // default flags for wallet 4.0
-    ...FF_LWM_WALLET_40_Q2,
     // any flags from env variable (if set)
     ...ffPresetMap[process.env.E2E_MOBILE_FEATURE_FLAGS || ""],
   };

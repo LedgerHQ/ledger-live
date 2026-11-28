@@ -11,6 +11,8 @@ type TransactionHeaderProps = Readonly<{
   createdAt?: number;
   locale: string;
   origin?: SwapTransactionStatusOrigin;
+  /** Replaces the default title, with the swapped pair on its own line. */
+  title?: string;
 }>;
 
 export function TransactionHeader({
@@ -19,6 +21,7 @@ export function TransactionHeader({
   createdAt,
   locale,
   origin,
+  title: customTitle,
 }: TransactionHeaderProps) {
   const { title, currencies, formattedDate } = useTransactionHeaderViewModel({
     sendCurrency,
@@ -26,6 +29,7 @@ export function TransactionHeader({
     createdAt,
     locale,
     origin,
+    customTitle,
   });
 
   return (

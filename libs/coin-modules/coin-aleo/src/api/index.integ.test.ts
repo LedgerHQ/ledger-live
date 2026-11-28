@@ -1,11 +1,11 @@
 import invariant from "invariant";
 import type { Operation } from "@ledgerhq/coin-module-framework/api/types";
+import { aleoDefaults } from "../config";
 import { createApi } from "../api";
 import { TRANSACTION_TYPE } from "../constants";
 import { AleoApiConfigurationResetError } from "../errors";
 import { fromHex } from "../logic/utils";
 import { accessProvableApi } from "../network/utils";
-import { getTestnetIntegConfig } from "../__tests__/fixtures/config.fixture";
 import {
   referenceTransferPublicTx,
   TEST_TOKEN_PROGRAM_ID,
@@ -42,11 +42,11 @@ async function withPrivacyContext(context: AleoContext, viewKey: string): Promis
 describe("createApi", () => {
   const api = createApi("aleo_testnet");
   const context: AleoContext = {
-    config: async () => getTestnetIntegConfig(),
+    config: async () => aleoDefaults.aleo_testnet,
     logger: () => {},
   };
   const stakingContext: AleoContext = {
-    config: async () => getTestnetIntegConfig({ enableStaking: true }),
+    config: async () => ({ ...aleoDefaults.aleo_testnet, enableStaking: true }),
     logger: () => {},
   };
   let emptyAddress: string;
@@ -195,21 +195,20 @@ describe("createApi", () => {
       expect(balance).toEqual([{ value: 0n, asset: { type: "native" } }]);
     });
 
-    it("adds the bonded stake to the native total as locked, on top of the liquid balance", async () => {
-      const [[liquidNative], stakedBalance] = await Promise.all([
+    it("appends the bonded stake row after the liquid native rows", async () => {
+      const [liquidBalance, stakedBalance] = await Promise.all([
         api.getBalance(privacyContext, testnetAddress),
         api.getBalance(stakingPrivacyContext, testnetAddress),
       ]);
 
+      const liquidNative = liquidBalance.filter(entry => entry.asset.type === "native");
+
       expect(stakedBalance.filter(entry => entry.asset.type === "native")).toEqual([
-        {
-          value: liquidNative.value + testnetBondedMicrocredits,
-          locked: testnetBondedMicrocredits,
-          asset: { type: "native" },
-        },
+        ...liquidNative,
         {
           value: testnetBondedMicrocredits,
           asset: { type: "native" },
+          locked: testnetBondedMicrocredits,
           stake: expect.objectContaining({
             address: testnetAddress,
             state: "active",

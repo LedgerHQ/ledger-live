@@ -1,8 +1,6 @@
-import type { Action } from "redux-actions";
 import type { AccountComparator } from "@ledgerhq/live-common/account/ordering";
 import type { Device } from "@ledgerhq/live-common/hw/actions/types";
 import type { Account, AccountUserData, DeviceInfo, DeviceModelInfo } from "@ledgerhq/types-live";
-import type { Payload as PostOnboardingPayload } from "@ledgerhq/live-common/postOnboarding/reducer";
 import type { DeviceModelId } from "@ledgerhq/types-devices";
 import type {
   AppState,
@@ -26,7 +24,6 @@ import type {
 } from "../reducers/types";
 import type { Unpacked } from "../types/helpers";
 import type { Steps } from "LLM/features/WalletSync/types/Activation";
-import type { UnknownAction } from "redux";
 import type {
   BrazeContentCard,
   CategoryContentCard,
@@ -41,7 +38,6 @@ export enum AccountsActionTypes {
   SET_ACCOUNTS = "SET_ACCOUNTS",
   UPDATE_ACCOUNT = "UPDATE_ACCOUNT",
   DELETE_ACCOUNT = "DELETE_ACCOUNT",
-  CLEAN_CACHE = "CLEAN_CACHE",
   DANGEROUSLY_OVERRIDE_STATE = "DANGEROUSLY_OVERRIDE_STATE",
 }
 
@@ -97,7 +93,7 @@ export enum BleActionTypes {
   BLE_REMOVE_DEVICE = "BLE_REMOVE_DEVICE",
   BLE_REMOVE_DEVICES = "BLE_REMOVE_DEVICES",
   BLE_ADD_DEVICE = "BLE_ADD_DEVICE",
-  BLE_UPDATE_DEVICE = "BLE_UPDATE_DEVICE",
+  BLE_UPSERT_DEVICE = "BLE_UPSERT_DEVICE",
   BLE_IMPORT = "BLE_IMPORT",
   BLE_SAVE_DEVICE_NAME = "BLE_SAVE_DEVICE_NAME",
   DANGEROUSLY_OVERRIDE_STATE = "DANGEROUSLY_OVERRIDE_STATE",
@@ -106,14 +102,14 @@ export enum BleActionTypes {
 export type BleRemoveKnownDevicePayload = string;
 export type BleRemoveKnownDevicesPayload = string[];
 export type BleAddKnownDevicePayload = DeviceLike;
-export type BleUpdateKnownDevicePayload = DeviceLike;
+export type BleUpsertKnownDevicePayload = DeviceLike;
 export type BleImportBlePayload = BleState;
 export type BleSaveDeviceNamePayload = { deviceId: string; name: string };
 export type BlePayload =
   | BleRemoveKnownDevicePayload
   | BleRemoveKnownDevicesPayload
   | BleAddKnownDevicePayload
-  | BleUpdateKnownDevicePayload
+  | BleUpsertKnownDevicePayload
   | BleImportBlePayload
   | BleSaveDeviceNamePayload;
 
@@ -247,6 +243,7 @@ export enum SettingsActionTypes {
   SETTINGS_SET_READONLY_MODE = "SETTINGS_SET_READONLY_MODE",
   SETTINGS_SWITCH_COUNTERVALUE_FIRST = "SETTINGS_SWITCH_COUNTERVALUE_FIRST",
   SETTINGS_HIDE_EMPTY_TOKEN_ACCOUNTS = "SETTINGS_HIDE_EMPTY_TOKEN_ACCOUNTS",
+  SETTINGS_SET_SIMULATE_APOLLO_DEVICE = "SETTINGS_SET_SIMULATE_APOLLO_DEVICE",
   SETTINGS_FILTER_TOKEN_OPERATIONS_ZERO_AMOUNT = "SETTINGS_FILTER_TOKEN_OPERATIONS_ZERO_AMOUNT",
   SETTINGS_HIDE_SMALL_VALUE_TOKEN_OPERATIONS = "SETTINGS_HIDE_SMALL_VALUE_TOKEN_OPERATIONS",
   SHOW_TOKEN = "SHOW_TOKEN",
@@ -315,6 +312,7 @@ export type SettingsSetSelectedTimeRangePayload = SettingsState["selectedTimeRan
 export type SettingsSetHasInstalledAnyAppPayload = SettingsState["hasInstalledAnyApp"];
 export type SettingsSetReadOnlyModePayload = SettingsState["readOnlyModeEnabled"];
 export type SettingsHideEmptyTokenAccountsPayload = SettingsState["hideEmptyTokenAccounts"];
+export type SettingsSetSimulateApolloDevicePayload = SettingsState["simulateApolloDevice"];
 export type SettingsFilterTokenOperationsZeroAmountPayload =
   SettingsState["filterTokenOperationsZeroAmount"];
 export type SettingsHideSmallValueTokenOperationsPayload =
@@ -405,6 +403,7 @@ export type SettingsPayload =
   | SettingsSetHasInstalledAnyAppPayload
   | SettingsSetReadOnlyModePayload
   | SettingsHideEmptyTokenAccountsPayload
+  | SettingsSetSimulateApolloDevicePayload
   | SettingsFilterTokenOperationsZeroAmountPayload
   | SettingsHideSmallValueTokenOperationsPayload
   | SettingsShowTokenPayload
@@ -459,14 +458,6 @@ export enum WalletConnectActionTypes {
 
 export type WalletConnectSetUriPayload = WalletConnectState["uri"] | void;
 export type WalletConnectPayload = WalletConnectSetUriPayload;
-
-// === SWAP ACTIONS ==
-export enum SwapActionTypes {
-  UPDATE_PROVIDERS = "UPDATE_PROVIDERS",
-  UPDATE_TRANSACTION = "UPDATE_TRANSACTION",
-  UPDATE_RATE = "UPDATE_RATE",
-  DANGEROUSLY_OVERRIDE_STATE = "DANGEROUSLY_OVERRIDE_STATE",
-}
 
 // === EARN ACTIONS ==
 export enum EarnActionTypes {
@@ -576,20 +567,3 @@ export type AuthPayload =
   | AuthSetLockedPayload
   | AuthSetBiometricsErrorPayload
   | AuthSetAuthModalOpenPayload;
-
-// === PAYLOADS ===
-
-export type ActionsPayload =
-  | Action<AccountsPayload>
-  | Action<AppStatePayload>
-  | Action<AuthPayload>
-  | Action<BlePayload>
-  | Action<NotificationsPayload>
-  | Action<RatingsPayload>
-  | Action<SettingsPayload>
-  | Action<WalletConnectPayload>
-  | Action<PostOnboardingPayload>
-  | Action<ProtectPayload>
-  | Action<EarnPayload>
-  | Action<MarketPayload>
-  | UnknownAction;

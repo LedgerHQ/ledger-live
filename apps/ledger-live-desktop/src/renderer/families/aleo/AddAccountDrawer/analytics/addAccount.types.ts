@@ -10,9 +10,6 @@ export const ALEO_ADD_ACCOUNT_EVENTS_NAME = {
   VIEW_KEY_APPROVE: "approve view key share",
 } as const;
 
-export type AleoAddAccountEventName =
-  (typeof ALEO_ADD_ACCOUNT_EVENTS_NAME)[keyof typeof ALEO_ADD_ACCOUNT_EVENTS_NAME];
-
 export type AleoAddAccountEventsParams = AddAccountEventParams & {
   [ALEO_ADD_ACCOUNT_EVENTS_NAME.VIEW_KEY_APPROVE]: {
     source: string;

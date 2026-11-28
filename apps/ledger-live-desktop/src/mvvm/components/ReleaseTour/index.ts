@@ -9,5 +9,4 @@ export type {
   ReleaseTourAnalyticsContext,
   ReleaseTourConfig,
   ReleaseTourDrawerViewModel,
-  ReleaseTourSlide,
 } from "./types";

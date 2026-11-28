@@ -6,6 +6,7 @@ import { Scenario, ScenarioTransaction } from "@ledgerhq/coin-tester/main";
 import { forbidRemoteRequests } from "@ledgerhq/coin-tester/localOnly";
 import { startSandbox } from "@ledgerhq/coin-tester/sandbox";
 import type { Sandbox } from "@ledgerhq/coin-tester/sandbox";
+import { sandboxVersions } from "@ledgerhq/coin-tester/versions";
 import type { EvmConfigInfo } from "@ledgerhq/coin-evm/config";
 import { makeAccount } from "../fixtures";
 import { swapTokens } from "../sandboxEvm";
@@ -91,13 +92,7 @@ export const scenarioSonic: Scenario<GenericTransaction, Account> = {
   name: "Ledger Live Basic S Transactions",
   setup: async () => {
     const signer = await buildSigner();
-    sandbox = await startSandbox(
-      { family: "evm", network: "sonic" },
-      {
-        node: { implementation: "sonic", version: "2.2.5" },
-        indexer: { implementation: "etherscan-stub" },
-      },
-    );
+    sandbox = await startSandbox({ family: "evm", network: "sonic" }, sandboxVersions("sonic"));
     const { node: rpc, indexer: explorer } = sandbox.endpoints;
     if (rpc === undefined || explorer === undefined) {
       throw new Error("the sandbox instance has no node or indexer endpoint");

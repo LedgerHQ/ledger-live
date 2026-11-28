@@ -8,6 +8,7 @@ function renderIntroduction(
 ) {
   const props = {
     isEnabled: true,
+    isEligible: true,
     hasConfirmedHistory: true,
     hasDismissed: false,
     onDismiss: jest.fn(),
@@ -26,14 +27,16 @@ describe("AccountAnalyticsIntroduction", () => {
     expect(onDismiss).not.toHaveBeenCalled();
   });
 
-  it.each([{ isEnabled: false }, { hasConfirmedHistory: false }, { hasDismissed: true }])(
-    "should hide the introduction with %o",
-    override => {
-      renderIntroduction(override);
+  it.each([
+    { isEnabled: false },
+    { isEligible: false },
+    { hasConfirmedHistory: false },
+    { hasDismissed: true },
+  ])("should hide the introduction with %o", override => {
+    renderIntroduction(override);
 
-      expect(screen.queryByRole("button")).toBeNull();
-    },
-  );
+    expect(screen.queryByRole("button")).toBeNull();
+  });
 
   it("should open Analytics without consuming the introduction when the CTA is activated", () => {
     const { onDismiss, onOpenAnalytics } = renderIntroduction();

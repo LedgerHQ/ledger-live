@@ -2,7 +2,9 @@ import { Currency, CurrencyType } from "@ledgerhq/live-e2e-shared/enum/Currency"
 import { coinTeamOwner } from "@ledgerhq/live-e2e-shared/data/coinTeamOwner";
 import { TestFolder } from "@ledgerhq/live-e2e-shared/enum/TestFolder";
 import { setTeamOwner } from "@e2e/helpers/allure/allure-helper";
+import { describeIfNanoSSupports } from "@e2e/helpers/commonHelpers";
 import type { PartialFeatures } from "@shared/feature-flags";
+import type { TestMetaOptions } from "@e2e/models/testOptions";
 
 const CURRENCY_FEATURE_FLAGS = new Map<string, PartialFeatures>([
   [Currency.BABY.id, { currencyBabylon: { enabled: true } }],
@@ -10,8 +12,11 @@ const CURRENCY_FEATURE_FLAGS = new Map<string, PartialFeatures>([
 
 const PRUNED_HISTORY_CURRENCIES = new Set([Currency.BABY.id]);
 
-export function runAddAccountTest(currency: CurrencyType, tmsLinks: string[], tags: string[]) {
-  describe("Add account", () => {
+type AddAccountTestOptions = TestMetaOptions & { currency: CurrencyType };
+
+export function runAddAccountTest(options: AddAccountTestOptions) {
+  const { currency, tmsLinks, tags } = options;
+  describeIfNanoSSupports(currency.id)("Add account", () => {
     beforeAll(async () => {
       await app.init({
         userdata: "skip-onboarding",
@@ -27,21 +32,25 @@ export function runAddAccountTest(currency: CurrencyType, tmsLinks: string[], ta
     it(`[${currency.testLabel}] - Add account`, async () => {
       await app.portfolio.addAccount();
       await app.addAccount.importWithYourLedger();
-      await app.modularDrawer.selectCurrencyByTicker(currency.ticker);
+      await app.modularDrawer.selectCurrency(currency);
       await app.modularDrawer.selectNetworkIfAsked(currency.name);
 
-      const accountId = await app.addAccount.addAccountAtIndex(
-        `${currency.name} 1`,
-        currency.id,
-        0,
-      );
+      const accountId = await app.addAccount.addAccountAtIndex({
+        currencyName: `${currency.name} 1`,
+        currencyId: currency.id,
+        index: 0,
+      });
 
       await app.addAccount.tapCloseAddAccountCta();
 
       await app.portfolio.goToAccounts(currency.id);
 
-      await app.assetAccountsPage.waitForAccountPageToLoad(currency.name, currency.id, true);
-      await app.common.goToAccount(accountId, currency.id);
+      await app.assetAccountsPage.waitForAccountPageToLoad({
+        assetName: currency.name,
+        currencyId: currency.id,
+        inCryptoAddressesList: true,
+      });
+      await app.common.goToAccount({ accountId, currencyId: currency.id });
       await app.account.expectAccountBalanceVisible(accountId);
       if (!PRUNED_HISTORY_CURRENCIES.has(currency.id)) {
         await app.account.expectOperationHistoryVisible(accountId);

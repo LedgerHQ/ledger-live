@@ -5,7 +5,7 @@ import { useDispatch } from "LLD/hooks/redux";
 import { closeFinishPostOnboarding } from "LLD/features/FinishOnboarding/FinishOnboardingDialog/finishOnboardingDialog";
 import { EntryPoint } from "LLD/features/LedgerSyncEntryPoints/types";
 import useLedgerSyncEntryPointViewModel from "LLD/features/LedgerSyncEntryPoints/useLedgerSyncEntryPointViewModel";
-import { openModal } from "~/renderer/actions/modals";
+import { openModalWithReceiveFlow } from "LLD/features/Receive/openReceiveFlow";
 import { track } from "@shared/analytics";
 import { useCompleteActionCallback } from "~/renderer/components/PostOnboardingHub/logic/useCompleteAction";
 import { AllModalNames } from "~/renderer/modals/types";
@@ -43,7 +43,7 @@ export function usePostOnboardingActionViewModel(
 
   const handleStartAction = useCallback(() => {
     const openModalCallback = (modalName: AllModalNames) => {
-      dispatch(openModal(modalName, { isFromPostOnboardingEntryPoint: true }));
+      dispatch(openModalWithReceiveFlow(modalName, { isFromPostOnboardingEntryPoint: true }));
     };
     const navigationCallback = (location: Record<string, unknown> | string) => {
       navigate(location);

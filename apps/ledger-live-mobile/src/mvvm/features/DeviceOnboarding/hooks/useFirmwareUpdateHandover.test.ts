@@ -4,7 +4,7 @@ import { DeviceModelId } from "@ledgerhq/types-devices";
 import { useLayoutEffect } from "react";
 import { act, renderHook, waitFor } from "@tests/test-renderer";
 import { ScreenName, BASE_NAVIGATOR_ID } from "~/const";
-import { isRebootedDevice, useFirmwareUpdateHandover } from "./useFirmwareUpdateHandover";
+import { useFirmwareUpdateHandover } from "./useFirmwareUpdateHandover";
 import { useGetLatestAvailableFirmware } from "@ledgerhq/live-common/deviceSDK/hooks/useGetLatestAvailableFirmware";
 
 const mockPush = jest.fn();
@@ -93,6 +93,20 @@ describe("useFirmwareUpdateHandover", () => {
           isBeforeOnboarding: true,
           isDeviceOnboarded: true,
         }),
+      ),
+    );
+  });
+
+  it("should open the update a seeded nano held back until setup", async () => {
+    const { rerender } = renderDelegated(jest.fn(), { isDeviceOnboarded: true });
+
+    reportFirmware("available-firmware", deviceInfo, firmwareUpdateContext);
+    rerender({ machineState: "postSetupFirmware.firmwareUpdateDelegated" });
+
+    await waitFor(() =>
+      expect(mockPush).toHaveBeenCalledWith(
+        ScreenName.FirmwareUpdate,
+        expect.objectContaining({ device, isDeviceOnboarded: true }),
       ),
     );
   });
@@ -262,6 +276,77 @@ describe("useFirmwareUpdateHandover", () => {
     expect(send).toHaveBeenCalledTimes(1);
   });
 
+  it("should count a return from the update screen without updating", async () => {
+    const send = jest.fn();
+    const { result, rerender } = renderDelegated(send);
+
+    reportFirmware("available-firmware", deviceInfo, firmwareUpdateContext);
+    rerender({ machineState: delegated });
+    await waitFor(() => expect(mockPush).toHaveBeenCalledTimes(1));
+
+    expect(result.current.returnsWithoutUpdate).toBe(0);
+
+    const params = mockPush.mock.calls[0][1] as { onBackFromUpdate: () => void };
+    act(() => params.onBackFromUpdate());
+
+    expect(result.current.returnsWithoutUpdate).toBe(1);
+    expect(send).toHaveBeenCalledWith(
+      expect.objectContaining({ type: "FIRMWARE_UPDATE_FLOW_CLOSED" }),
+    );
+  });
+
+  it.each([
+    ["the release notes are closed", "start", 1],
+    ["the update completed", "completed", 0],
+  ])(
+    "should ask for a new session after a disconnect and count the return when %s",
+    async (_, updateStep, expectedReturns) => {
+      const onReconnectRequired = jest.fn();
+      const { result, rerender } = renderDelegated(jest.fn(), { onReconnectRequired });
+
+      reportFirmware("available-firmware", deviceInfo, firmwareUpdateContext);
+      rerender({ machineState: delegated });
+      await waitFor(() => expect(mockPush).toHaveBeenCalledTimes(1));
+      const params = mockPush.mock.calls[0][1] as {
+        onBackFromUpdate: (updateStep: string) => void;
+      };
+
+      rerender({ currentSessionId: null });
+      act(() => params.onBackFromUpdate(updateStep));
+
+      expect(onReconnectRequired).toHaveBeenCalledTimes(1);
+      expect(result.current.returnsWithoutUpdate).toBe(expectedReturns);
+    },
+  );
+
+  it("should count a return from focus alone after a disconnect", async () => {
+    const onReconnectRequired = jest.fn();
+    const { result, rerender } = renderDelegated(jest.fn(), { onReconnectRequired });
+
+    reportFirmware("available-firmware", deviceInfo, firmwareUpdateContext);
+    rerender({ machineState: delegated });
+    await waitFor(() => expect(mockPush).toHaveBeenCalledTimes(1));
+
+    rerender({ currentSessionId: null });
+    act(() => {
+      mockFocusCallback?.();
+    });
+
+    expect(onReconnectRequired).toHaveBeenCalledTimes(1);
+    expect(result.current.returnsWithoutUpdate).toBe(1);
+  });
+
+  it("should not count a return when the firmware metadata fails", async () => {
+    const send = jest.fn();
+    const { result, rerender } = renderDelegated(send);
+
+    reportFirmware("error");
+    rerender({ machineState: delegated });
+
+    await waitFor(() => expect(send).toHaveBeenCalledTimes(1));
+    expect(result.current.returnsWithoutUpdate).toBe(0);
+  });
+
   it("does not open the updater when the user closes before its effect runs", () => {
     const send = jest.fn();
     const closeOnLayout = { current: false };
@@ -358,21 +443,6 @@ function renderDelegated(
     },
   };
 }
-
-describe("isRebootedDevice", () => {
-  it("recognises the same touchscreen after its BLE address and advertised name change", () => {
-    const before = { ...device, deviceName: "Ledger Stax 1A2B" };
-    const after = { ...device, deviceId: "new-ble-address", deviceName: "1A2B" };
-
-    expect(isRebootedDevice(before, after)).toBe(true);
-  });
-
-  it("rejects a different model", () => {
-    expect(
-      isRebootedDevice(device, { ...device, modelId: DeviceModelId.nanoX, deviceName: "Nano X" }),
-    ).toBe(false);
-  });
-});
 
 function reportFirmware(
   status: "idle" | "ongoing" | "error" | "no-available-firmware" | "available-firmware",

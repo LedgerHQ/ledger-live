@@ -1,4 +1,6 @@
 import { afterEach, describe, expect, it } from "bun:test";
+import { AddressSchema } from "@domain/entity-network";
+import { findFailedRequest } from "../../shared/failed-request";
 import {
   EarnApiError,
   getCurrencyProviders,
@@ -172,7 +174,9 @@ describe("getCurrencyProviders", () => {
 describe("getStakes", () => {
   it("POSTs the batch and parses the bare array (v1)", async () => {
     const captured = mockFetch([{ network: "solana", state: "active" }]);
-    const result = await getStakes([{ network: "solana", address: "abc", fresh: true }]);
+    const result = await getStakes([
+      { network: "solana", address: AddressSchema.parse("abc"), fresh: true },
+    ]);
 
     expect(captured.init?.method).toBe("POST");
     expect(JSON.parse(String(captured.init?.body))).toEqual([
@@ -190,7 +194,7 @@ describe("getStakes", () => {
         responded_at: "2026-06-05T14:39:10Z",
       },
     });
-    const result = await getStakesV3([{ network: "solana", address: "abc" }]);
+    const result = await getStakesV3([{ network: "solana", address: AddressSchema.parse("abc") }]);
     expect(result.data).toEqual([]);
     expect(result.meta.is_stale).toBe(true);
   });
@@ -204,14 +208,14 @@ describe("getStakes", () => {
         responded_at: "2026-06-05T14:39:10Z",
       },
     });
-    const result = await getStakesV3([{ network: "base", address: "0xabc" }]);
+    const result = await getStakesV3([{ network: "base", address: AddressSchema.parse("0xabc") }]);
     expect(result.data).toEqual([]);
     expect(result.meta.is_stale).toBe(false);
   });
 
   it("defaults data to [] when the backend omits it (spec marks data optional)", async () => {
     mockFetch({ meta: { is_stale: false, responded_at: "2026-06-05T14:39:10Z" } });
-    const result = await getStakesV3([{ network: "solana", address: "abc" }]);
+    const result = await getStakesV3([{ network: "solana", address: AddressSchema.parse("abc") }]);
     expect(result.data).toEqual([]);
     expect(result.meta.is_stale).toBe(false);
   });
@@ -219,7 +223,9 @@ describe("getStakes", () => {
   it("throws when meta is omitted (meta is required in v3)", async () => {
     // `data` alone is not a valid v3 envelope: `meta` (with is_stale/responded_at) is required.
     mockFetch({ data: [] });
-    await expect(getStakesV3([{ network: "solana", address: "abc" }])).rejects.toThrow();
+    await expect(
+      getStakesV3([{ network: "solana", address: AddressSchema.parse("abc") }]),
+    ).rejects.toThrow();
   });
 });
 
@@ -425,5 +431,17 @@ describe("error handling", () => {
   it("throws a descriptive error when the validators list is unavailable", async () => {
     mockFetch({ message: "nope" }, 503);
     await expect(getSolanaValidators()).rejects.toThrow(/Solana validators GET failed: 503/);
+  });
+
+  it("names the Earn API host and status of a failed request", async () => {
+    mockFetch({ message: "Forbidden" }, 403);
+    const error = await getGrow().catch((e: unknown) => e);
+    expect(findFailedRequest(error)).toEqual({ host: "earn.api.live.ledger.com", status: 403 });
+  });
+
+  it("names the validators host and status of a failed request", async () => {
+    mockFetch({ message: "nope" }, 503);
+    const error = await getSolanaValidators().catch((e: unknown) => e);
+    expect(findFailedRequest(error)).toEqual({ host: "earn.api.live.ledger.com", status: 503 });
   });
 });

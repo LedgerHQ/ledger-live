@@ -16,12 +16,31 @@ import { contactsInitialState } from "@domain/entity-contact";
 import { LARGE_SCREEN_UPSELL_MODAL } from "@features/flow-large-screen-upsell";
 import { encryptData, decryptData } from "~/main/db/crypto";
 import { readFile, writeFile } from "~/main/db/fsHelper";
+import { flushInRounds } from "~/helpers/flushInRounds";
 
-const debounce = <T, R>(fn: (...args: T[]) => R, ms: number) => {
+const debounce = <T, R>(fn: (...args: T[]) => Promise<R>, ms: number) => {
   let timeout: NodeJS.Timeout | undefined;
+  let pendingArgs: T[] = [];
   let resolveRefs: Array<(value: R | PromiseLike<R>) => void> = [];
   let rejectRefs: Array<(error: unknown) => void> = [];
-  return (...args: T[]) => {
+  let inFlight: Promise<void> = Promise.resolve();
+  const run = () => {
+    timeout = undefined;
+    const args = pendingArgs;
+    const resolves = resolveRefs;
+    const rejects = rejectRefs;
+    resolveRefs = [];
+    rejectRefs = [];
+    inFlight = inFlight.then(async () => {
+      try {
+        const res = await fn(...args);
+        resolves.forEach(r => r(res));
+      } catch (err) {
+        rejects.forEach(r => r(err));
+      }
+    });
+  };
+  const debounced = (...args: T[]) => {
     const promise: Promise<R> = new Promise((resolve, reject) => {
       resolveRefs.push(resolve);
       rejectRefs.push(reject);
@@ -29,18 +48,20 @@ const debounce = <T, R>(fn: (...args: T[]) => R, ms: number) => {
     if (timeout) {
       clearTimeout(timeout);
     }
-    timeout = setTimeout(async () => {
-      try {
-        const res = await fn(...args);
-        resolveRefs.forEach(r => r(res));
-      } catch (err) {
-        rejectRefs.forEach(r => r(err));
-      }
-      resolveRefs = [];
-      rejectRefs = [];
-    }, ms);
+    pendingArgs = args;
+    timeout = setTimeout(run, ms);
     return promise;
   };
+  debounced.flush = () => {
+    if (timeout) {
+      clearTimeout(timeout);
+      run();
+    }
+    return inFlight;
+  };
+  debounced.pending = () => timeout !== undefined;
+  debounced.inFlight = () => inFlight;
+  return debounced;
 };
 
 let DBPath: string | null = null;
@@ -48,7 +69,41 @@ let memoryNamespaces: Record<string, Record<string, unknown> | null | undefined>
 let encryptionKeys: Record<string, Record<string, string> | null | undefined> = {};
 const DEBOUNCE_MS =
   process.env.NODE_ENV === "test" || getEnv("PLAYWRIGHT_RUN") || getEnv("MOCK") ? 16 : 500;
-const save = debounce(saveToDisk, DEBOUNCE_MS);
+const saveAndLog = (ns: string) =>
+  saveToDisk(ns).catch(error => {
+    console.error(`[db] ${ns}.json save failed`, error);
+    throw error;
+  });
+const createSaver = () => debounce(saveAndLog, DEBOUNCE_MS);
+const saversByNamespace = new Map<string, ReturnType<typeof createSaver>>();
+
+function save(ns: string) {
+  let saveNamespace = saversByNamespace.get(ns);
+  if (!saveNamespace) {
+    saveNamespace = createSaver();
+    saversByNamespace.set(ns, saveNamespace);
+  }
+  return saveNamespace(ns);
+}
+
+/**
+ * Write the pending saves of all namespaces now, before the app quits.
+ */
+function flush(): Promise<void> {
+  return flushInRounds(flushSavers);
+}
+
+async function flushSavers(): Promise<boolean> {
+  await Promise.allSettled(settingKeys);
+  const savers = Array.from(saversByNamespace.values());
+  const writes = savers.map(saver => saver.flush());
+  await Promise.all(writes);
+  return (
+    settingKeys.size > 0 ||
+    saversByNamespace.size !== savers.length ||
+    savers.some((saver, i) => saver.pending() || saver.inFlight() !== writes[i])
+  );
+}
 
 // Track which keyPaths triggered saves for each namespace
 const saveTriggers: Map<string, Set<string>> = new Map();
@@ -67,9 +122,11 @@ const APP_NAMESPACE_ALLOWED_KEY_PATHS: ReadonlySet<string> = new Set([
   "predictions",
   LARGE_SCREEN_UPSELL_MODAL,
   "payCard",
+  "receiveVerifyHint",
   "knownDevices",
   "cryptoAssets",
   "identities",
+  "lldDatadog",
   "featureFlags",
   "coinConfigOverrides",
   "discover",
@@ -100,6 +157,9 @@ function assertAppNamespaceSetKeyAllowed(keyPath: string): void {
   }
 }
 
+/** The read in progress of each namespace file: a later read would replace the values set since. */
+const loadingNamespaces = new Map<string, Promise<unknown>>();
+
 /**
  * Reset memory state, db path, encryption keys, transforms..
  */
@@ -108,6 +168,7 @@ function init(_DBPath: string) {
   memoryNamespaces = {};
   encryptionKeys = {};
   saveTriggers.clear();
+  loadingNamespaces.clear();
 }
 
 /**
@@ -129,8 +190,10 @@ async function load(ns: string): Promise<unknown> {
     }
   } catch (err) {
     if ((err as { code?: string })?.code === "ENOENT") {
-      memoryNamespaces[ns] = {};
-      await save(ns);
+      // A concurrent read of the missing file can end first and already hold a setKey value.
+      memoryNamespaces[ns] ??= {};
+      // The debounce or db.flush() writes the new file; saveAndLog logs a failed save.
+      save(ns).catch(() => undefined);
     } else {
       console.error(err);
       throw err;
@@ -139,17 +202,38 @@ async function load(ns: string): Promise<unknown> {
   return memoryNamespaces[ns];
 }
 async function ensureNSLoaded(ns: string) {
-  if (!memoryNamespaces[ns]) {
-    await load(ns);
+  if (memoryNamespaces[ns]) return;
+  let loading = loadingNamespaces.get(ns);
+  if (!loading) {
+    const read = load(ns).finally(() => {
+      if (loadingNamespaces.get(ns) === read) loadingNamespaces.delete(ns);
+    });
+    loading = read;
+    loadingNamespaces.set(ns, read);
   }
+  await loading;
 }
+
+let reloading: Promise<void> = Promise.resolve();
 
 /**
  * In the event of a user refreshing the app we need to reload the data
  * to ensure the lock/unlock detection is still valid.
  */
 async function reload() {
-  if (DBPath) init(DBPath);
+  // A pending save would write the values of the previous session after the reload.
+  reloading = flush().then(() => {
+    if (DBPath) init(DBPath);
+  });
+  await reloading;
+}
+
+/**
+ * The memory holds the decrypted data of the previous session until a reload or a reset ends.
+ * The saves do not wait for it, so the reload flush and the reset can end.
+ */
+function waitForReload(): Promise<void> {
+  return reloading;
 }
 
 /**
@@ -223,6 +307,7 @@ async function setEncryptionKey(
   encryptionKey: string,
   currentEncryptionKey?: string,
 ): Promise<boolean> {
+  await waitForReload();
   if (typeof encryptionKey !== "string" || !encryptionKey) throw new DBWrongPassword();
   const replacesHeldKey = assertHeldKey(currentEncryptionKey);
 
@@ -260,6 +345,7 @@ async function setEncryptionKey(
   return replacesHeldKey || decrypted.length > 0;
 }
 async function removeEncryptionKey(currentEncryptionKey?: string): Promise<boolean> {
+  await waitForReload();
   const removesHeldKey = assertHeldKey(currentEncryptionKey);
   const nsToSave = new Set<string>();
   for (const [ns, keyPath] of encryptedDataPaths) {
@@ -287,7 +373,22 @@ async function removeEncryptionKey(currentEncryptionKey?: string): Promise<boole
 /**
  * Set a key in the given namespace
  */
+/** The setKey calls that wait for a namespace read and have not queued their save yet. */
+const settingKeys = new Set<Promise<void>>();
+
 async function setKey<K>(ns: string, keyPath: string, value: K): Promise<void> {
+  // A reload flushes first, so a setKey that waits for the reload must not hold that flush.
+  await waitForReload();
+  const setting = setKeyAndSave(ns, keyPath, value);
+  settingKeys.add(setting);
+  try {
+    await setting;
+  } finally {
+    settingKeys.delete(setting);
+  }
+}
+
+async function setKeyAndSave<K>(ns: string, keyPath: string, value: K): Promise<void> {
   if (ns === "app") {
     assertAppNamespaceSetKeyAllowed(keyPath);
   }
@@ -298,7 +399,8 @@ async function setKey<K>(ns: string, keyPath: string, value: K): Promise<void> {
     saveTriggers.set(ns, new Set());
   }
   saveTriggers.get(ns)!.add(keyPath);
-  return save(ns);
+  // saveAndLog logs the failure once for all the setKey calls that the save holds.
+  save(ns).catch(() => undefined);
 }
 
 /**
@@ -309,6 +411,7 @@ async function getKey<V>(
   keyPath: string,
   defaultValue?: V,
 ): Promise<V | Record<string, V> | undefined> {
+  await waitForReload();
   await ensureNSLoaded(ns);
   if (!keyPath) return (memoryNamespaces[ns] as Record<string, V>) || defaultValue;
   return get(memoryNamespaces[ns], keyPath, defaultValue) as V;
@@ -351,13 +454,18 @@ function buildAppNamespacePayload(memory: Record<string, unknown>): Record<strin
  */
 async function saveToDisk(ns: string) {
   if (!DBPath) throw new NoDBPathGiven();
-  await ensureNSLoaded(ns);
+  const memory = memoryNamespaces[ns];
+  // Loading it again here would queue a save behind this one, which waits for it.
+  const resetClearedNamespace = !memory;
+  if (resetClearedNamespace) {
+    saveTriggers.delete(ns);
+    return;
+  }
 
   const startTime = Date.now();
   const triggersSet = saveTriggers.get(ns);
   const triggers = triggersSet ? Array.from(triggersSet) : [];
 
-  const memory = memoryNamespaces[ns]!;
   const raw = ns === "app" ? buildAppNamespacePayload(memory) : memory;
   const clone = cloneDeep(raw);
 
@@ -396,10 +504,21 @@ async function cleanCache() {
   await save("app");
 }
 async function resetAll() {
+  await waitForReload();
   if (!DBPath) throw new NoDBPathGiven();
+  const resetting = deleteAppNamespace(DBPath);
+  // A setKey during the reset would load the old app.json again and save it back.
+  reloading = resetting.catch(() => undefined);
+  await resetting;
+}
+async function deleteAppNamespace(dbPath: string) {
+  // A read already in progress would put the old data back in memory after the reset.
+  await loadingNamespaces.get("app")?.catch(() => undefined);
   memoryNamespaces.app = null;
   encryptionKeys = {}; // Clear encryption keys to prevent re-encryption of old data
-  await fs.unlink(path.resolve(DBPath, "app.json")).catch((e: NodeJS.ErrnoException) => {
+  // A write already in progress would put the old data back after the unlink.
+  await saversByNamespace.get("app")?.inFlight();
+  await fs.unlink(path.resolve(dbPath, "app.json")).catch((e: NodeJS.ErrnoException) => {
     if (e.code !== "ENOENT") throw e;
   });
 }
@@ -437,4 +556,5 @@ export default {
   hasBeenDecrypted,
   cleanCache,
   resetAll,
+  flush,
 };

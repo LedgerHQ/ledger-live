@@ -10,8 +10,21 @@ export function selectAccountAnalyticsIntroductionDismissed(
   return state.accountAnalyticsIntroduction.hasDismissed;
 }
 
+export function selectAccountAnalyticsIntroductionEligible(
+  state: AccountAnalyticsIntroductionRoot,
+): boolean {
+  return state.accountAnalyticsIntroduction.isEligible === true;
+}
+
+export function selectAccountAnalyticsIntroductionEligibility(
+  state: AccountAnalyticsIntroductionRoot,
+): boolean | null {
+  return state.accountAnalyticsIntroduction.isEligible;
+}
+
 export function accountAnalyticsIntroductionPersistedSelector(
   state: AccountAnalyticsIntroductionRoot,
 ): AccountAnalyticsIntroductionState {
-  return { hasDismissed: state.accountAnalyticsIntroduction.hasDismissed };
+  const { hasDismissed, isEligible } = state.accountAnalyticsIntroduction;
+  return { hasDismissed, isEligible };
 }

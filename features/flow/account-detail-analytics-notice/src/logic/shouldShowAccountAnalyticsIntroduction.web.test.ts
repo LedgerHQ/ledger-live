@@ -2,6 +2,7 @@ import { shouldShowAccountAnalyticsIntroduction } from "./shouldShowAccountAnaly
 
 const visibleStatus = {
   isEnabled: true,
+  isEligible: true,
   hasConfirmedHistory: true,
   hasDismissed: false,
 };
@@ -11,10 +12,12 @@ describe("shouldShowAccountAnalyticsIntroduction", () => {
     expect(shouldShowAccountAnalyticsIntroduction(visibleStatus)).toBe(true);
   });
 
-  it.each([{ isEnabled: false }, { hasConfirmedHistory: false }, { hasDismissed: true }])(
-    "should hide the introduction with %o",
-    override => {
-      expect(shouldShowAccountAnalyticsIntroduction({ ...visibleStatus, ...override })).toBe(false);
-    },
-  );
+  it.each([
+    { isEnabled: false },
+    { isEligible: false },
+    { hasConfirmedHistory: false },
+    { hasDismissed: true },
+  ])("should hide the introduction with %o", override => {
+    expect(shouldShowAccountAnalyticsIntroduction({ ...visibleStatus, ...override })).toBe(false);
+  });
 });

@@ -1,5 +1,67 @@
 # @features/flow-pay-card-widget
 
+## 0.8.0
+
+### Minor Changes
+
+- [#24789](https://github.com/LedgerHQ/ledger-live/pull/24789) [`d27f68a`](https://github.com/LedgerHQ/ledger-live/commit/d27f68ac780099cbd47e533709ebef83f9345d89) Thanks [@ysitbon](https://github.com/ysitbon)! - Import platform files without their `.native` suffix so module resolution picks the platform twin.
+
+- [#24817](https://github.com/LedgerHQ/ledger-live/pull/24817) [`7fffee2`](https://github.com/LedgerHQ/ledger-live/commit/7fffee2e21d1a9b056d026bd2ff50431a1b2793a) Thanks [@deepyjr](https://github.com/deepyjr)! - Make the Pay onboarding, feature tour and bank transfer key tables verifiable by the i18n key check
+
+### Patch Changes
+
+- Updated dependencies [[`5af6447`](https://github.com/LedgerHQ/ledger-live/commit/5af6447acb234632ed35feec4735b415d1993ced)]:
+  - @domain/api-card-management@0.10.0
+  - @domain/entity-currency@0.5.1
+  - @features/flow-pay-card-wallets@0.6.5
+  - @features/platform-pay-analytics@0.4.1
+
+## 0.8.0-next.0
+
+### Minor Changes
+
+- [#24789](https://github.com/LedgerHQ/ledger-live/pull/24789) [`d27f68a`](https://github.com/LedgerHQ/ledger-live/commit/d27f68ac780099cbd47e533709ebef83f9345d89) Thanks [@ysitbon](https://github.com/ysitbon)! - Import platform files without their `.native` suffix so module resolution picks the platform twin.
+
+- [#24817](https://github.com/LedgerHQ/ledger-live/pull/24817) [`7fffee2`](https://github.com/LedgerHQ/ledger-live/commit/7fffee2e21d1a9b056d026bd2ff50431a1b2793a) Thanks [@deepyjr](https://github.com/deepyjr)! - Make the Pay onboarding, feature tour and bank transfer key tables verifiable by the i18n key check
+
+### Patch Changes
+
+- Updated dependencies [[`5af6447`](https://github.com/LedgerHQ/ledger-live/commit/5af6447acb234632ed35feec4735b415d1993ced)]:
+  - @domain/api-card-management@0.10.0-next.0
+  - @domain/entity-currency@0.5.1-next.0
+  - @features/flow-pay-card-wallets@0.6.5-next.0
+  - @features/platform-pay-analytics@0.4.1-next.0
+
+## 0.7.0
+
+### Minor Changes
+
+- [#24392](https://github.com/LedgerHQ/ledger-live/pull/24392) [`934970a`](https://github.com/LedgerHQ/ledger-live/commit/934970adec67ed88f1d546d03b1bb555cbfd128f) Thanks [@renovate-operator-ledger](https://github.com/apps/renovate-operator-ledger)! - chore(deps): update dependency @reduxjs/toolkit to v2.13.0
+
+  - Updated `@reduxjs/toolkit` to `2.13.0`
+
+### Patch Changes
+
+- Updated dependencies [[`cea0076`](https://github.com/LedgerHQ/ledger-live/commit/cea0076fb3fd7c19d0e73b99ac76507278e390a4), [`934970a`](https://github.com/LedgerHQ/ledger-live/commit/934970adec67ed88f1d546d03b1bb555cbfd128f)]:
+  - @domain/entity-currency@0.5.0
+  - @domain/api-card-management@0.9.0
+  - @features/flow-pay-card-wallets@0.6.4
+
+## 0.7.0-next.0
+
+### Minor Changes
+
+- [#24392](https://github.com/LedgerHQ/ledger-live/pull/24392) [`934970a`](https://github.com/LedgerHQ/ledger-live/commit/934970adec67ed88f1d546d03b1bb555cbfd128f) Thanks [@renovate-operator-ledger](https://github.com/apps/renovate-operator-ledger)! - chore(deps): update dependency @reduxjs/toolkit to v2.13.0
+
+  - Updated `@reduxjs/toolkit` to `2.13.0`
+
+### Patch Changes
+
+- Updated dependencies [[`cea0076`](https://github.com/LedgerHQ/ledger-live/commit/cea0076fb3fd7c19d0e73b99ac76507278e390a4), [`934970a`](https://github.com/LedgerHQ/ledger-live/commit/934970adec67ed88f1d546d03b1bb555cbfd128f)]:
+  - @domain/entity-currency@0.5.0-next.0
+  - @domain/api-card-management@0.9.0-next.0
+  - @features/flow-pay-card-wallets@0.6.4-next.0
+
 ## 0.6.2
 
 ### Patch Changes

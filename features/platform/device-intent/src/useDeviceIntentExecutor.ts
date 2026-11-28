@@ -12,7 +12,7 @@ import {
   type DeviceIntentExecutorHookState,
   type IntentExecutionSnapshot,
 } from "./deriveHookState";
-export type { DeviceIntentExecutorHookState, IntentExecutionSnapshot } from "./deriveHookState";
+export type { DeviceIntentExecutorHookState } from "./deriveHookState";
 
 // ---- Hook ----
 

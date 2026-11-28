@@ -1,0 +1,186 @@
+import React from "react";
+import {
+  OsUpdatesSteps,
+  RestoreBackupStateType,
+  type RestoreBackupState,
+} from "@features/platform-device-os-update";
+import { RestoreStatus } from "@domain/entity-device-os-update";
+import { QueuedBottomSheet } from "@shared/ui-queued-bottom-sheet";
+import { render, screen } from "../../__tests__/render";
+import { OsUpdateStep } from "./OsUpdateStep";
+import { stax } from "../../utils/connectedDevice.mock";
+
+function renderView(
+  state: RestoreBackupState,
+  { onClose = jest.fn(), isCloseConfirmationOpen = false } = {},
+) {
+  return render(
+    <OsUpdateStep
+      step={OsUpdatesSteps.RESTORE_BACKUP}
+      state={state}
+      connectedDevice={stax}
+      onUserClose={onClose}
+      isCloseConfirmationOpen={isCloseConfirmationOpen}
+    />,
+  );
+}
+
+// Wraps the real sheet to observe whether the step requests it to be open.
+jest.mock("@shared/ui-queued-bottom-sheet", () => {
+  const actual = jest.requireActual("@shared/ui-queued-bottom-sheet");
+  return { ...actual, QueuedBottomSheet: jest.fn(actual.QueuedBottomSheet) };
+});
+
+const isSheetRequested = () =>
+  jest.mocked(QueuedBottomSheet).mock.lastCall?.[0].isRequestingToBeOpened;
+
+const hasCloseButton = () => !jest.mocked(QueuedBottomSheet).mock.lastCall?.[0].noCloseButton;
+
+describe("RestoreBackup step", () => {
+  it("never shows the preparing screen, and does nothing while loading", () => {
+    renderView({ type: RestoreBackupStateType.LOADING });
+
+    expect(screen.queryByTestId("os-update-preparing-screen")).toBeNull();
+    expect(screen.getByTestId("os-update-progress-screen")).toBeVisible();
+    expect(isSheetRequested()).toBe(false);
+  });
+
+  it("shows the restore progress", () => {
+    renderView({ type: RestoreBackupStateType.RESTORING, progress: 0.4 });
+
+    expect(screen.getByText("Reinstalling your apps and settings...")).toBeVisible();
+    expect(screen.getByTestId("os-update-progress-bar").props.accessibilityValue).toMatchObject({
+      now: 40,
+    });
+  });
+
+  it("shows the restored summary and closes on press", async () => {
+    const onClose = jest.fn();
+    const { user } = renderView(
+      { type: RestoreBackupStateType.BACKUP_RESTORED, restoreResult: undefined },
+      { onClose },
+    );
+
+    expect(screen.getByText("Apps and settings reinstalled on your Ledger Stax")).toBeVisible();
+    await user.press(screen.getByText("Finish"));
+
+    expect(onClose).toHaveBeenCalledTimes(1);
+  });
+
+  it("tells on the restored summary that the restore was partial", () => {
+    renderView({
+      type: RestoreBackupStateType.BACKUP_RESTORED,
+      restoreResult: {
+        restoreStatus: RestoreStatus.partial,
+        restoredLanguage: undefined,
+        restoredCLS: undefined,
+        restoredApps: undefined,
+      },
+    });
+
+    expect(screen.getByTestId("os-update-restore-banner")).toHaveTextContent(
+      /You didn't reinstall your apps and lock screen/,
+    );
+  });
+
+  it.each([
+    RestoreBackupStateType.AWAITING_ALLOW_SECURE_CONNECTION,
+    RestoreBackupStateType.AWAITING_GRANT_CONSENT,
+    RestoreBackupStateType.AWAITING_ALLOW_LIST_APPS,
+    RestoreBackupStateType.AWAITING_CONFIRM_LOAD_IMAGE,
+    RestoreBackupStateType.AWAITING_CONFIRM_COMMIT_IMAGE,
+  ] as const)("asks to continue on the device for %s", type => {
+    renderView({ type });
+
+    expect(screen.getByTestId("os-update-continue-on-device")).toBeVisible();
+  });
+
+  it("offers retry and cancel when the secure connection is refused", async () => {
+    const retry = jest.fn();
+    const cancel = jest.fn();
+    const { user } = renderView({
+      type: RestoreBackupStateType.ALLOW_SECURE_CONNECTION_REFUSED,
+      retry,
+      cancel,
+    });
+
+    expect(hasCloseButton()).toBe(false);
+
+    await user.press(screen.getByText("Retry secure connection"));
+    await user.press(screen.getByText("Cancel secure connection"));
+
+    expect(retry).toHaveBeenCalledTimes(1);
+    expect(cancel).toHaveBeenCalledTimes(1);
+  });
+
+  it.each([[RestoreBackupStateType.UNEXPECTED_ERROR, "os-update-unexpected-error"]] as const)(
+    "only offers cancel for %s",
+    async (type, testID) => {
+      const cancel = jest.fn();
+      const { user } = renderView({ type, error: new Error("boom"), cancel });
+
+      expect(screen.getByTestId(testID)).toBeVisible();
+      expect(hasCloseButton()).toBe(false);
+      await user.press(screen.getByText("Cancel OS update"));
+
+      expect(cancel).toHaveBeenCalledTimes(1);
+    },
+  );
+
+  it.each([
+    [RestoreBackupStateType.DEVICE_LOCKED, "os-update-device-locked"],
+    [RestoreBackupStateType.DEVICE_DISCONNECTED, "os-update-device-disconnected"],
+  ] as const)("shows the recoverable %s state", (type, testID) => {
+    renderView({ type });
+
+    expect(screen.getByTestId(testID)).toBeVisible();
+  });
+
+  it("restarts or cancels the update from the connection timeout", async () => {
+    const retry = jest.fn();
+    const cancel = jest.fn();
+    const { user } = renderView({
+      type: RestoreBackupStateType.CONNECTION_TIMED_OUT,
+      retry,
+      cancel,
+    });
+
+    expect(screen.getByTestId("os-update-connection-timed-out")).toBeVisible();
+    expect(hasCloseButton()).toBe(false);
+
+    await user.press(screen.getByText("Restart OS update"));
+
+    expect(retry).toHaveBeenCalledTimes(1);
+    expect(cancel).not.toHaveBeenCalled();
+
+    await user.press(screen.getByText("Cancel OS update"));
+
+    expect(cancel).toHaveBeenCalledTimes(1);
+    expect(retry).toHaveBeenCalledTimes(1);
+  });
+
+  describe("closing", () => {
+    it("asks to close from the navigation bar", async () => {
+      const onClose = jest.fn();
+      const { user } = renderView({ type: RestoreBackupStateType.LOADING }, { onClose });
+
+      await user.press(screen.getByTestId("os-update-close-button"));
+
+      expect(onClose).toHaveBeenCalledTimes(1);
+    });
+
+    it("requests its sheet while the close confirmation is closed", () => {
+      renderView({ type: RestoreBackupStateType.DEVICE_LOCKED });
+
+      expect(hasCloseButton()).toBe(true);
+
+      expect(isSheetRequested()).toBe(true);
+    });
+
+    it("yields its sheet while the close confirmation is open", () => {
+      renderView({ type: RestoreBackupStateType.DEVICE_LOCKED }, { isCloseConfirmationOpen: true });
+
+      expect(isSheetRequested()).toBe(false);
+    });
+  });
+});

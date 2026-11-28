@@ -1,9 +1,12 @@
+import { getTrendTone, type TrendTone } from "@shared/trend";
 import type { LineChartColor } from "../types";
 
-export function resolveLineChartColorFromPercentChange(percent?: number | null): LineChartColor {
-  if (percent == null || percent === 0) {
-    return "muted";
-  }
+const LINE_CHART_COLOR_BY_TONE: Record<TrendTone, LineChartColor> = {
+  positive: "success",
+  negative: "error",
+  neutral: "muted",
+};
 
-  return percent > 0 ? "success" : "error";
+export function resolveLineChartColorFromPercentChange(percent?: number | null): LineChartColor {
+  return LINE_CHART_COLOR_BY_TONE[getTrendTone(percent)];
 }

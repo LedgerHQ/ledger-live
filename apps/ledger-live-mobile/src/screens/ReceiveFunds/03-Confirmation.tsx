@@ -3,7 +3,7 @@ import { track } from "@shared/analytics";
 import React, { useCallback, useEffect, useMemo, useState } from "react";
 import { Dimensions, Linking, Platform, Share, View } from "react-native";
 import { useSelector, useDispatch } from "~/context/hooks";
-import QRCode from "react-native-qrcode-svg";
+import { QrCode } from "@shared/ui-qr-code";
 import { useTranslation } from "~/context/Locale";
 import * as Haptics from "expo-haptics";
 import type { Account, TokenAccount } from "@ledgerhq/types-live";
@@ -29,6 +29,7 @@ import { ScreenName } from "~/const";
 import byFamily from "../../generated/Confirmation";
 import byFamilyPostAlert from "../../generated/ReceiveConfirmationPostAlert";
 import byFamilyTokenAlert from "../../generated/ReceiveConfirmationTokenAlert";
+import byFamilyShouldCreateEmptyTokenAccount from "../../generated/shouldCreateEmptyTokenAccount";
 import { ReceiveFundsStackParamList } from "~/components/RootNavigator/types/ReceiveFundsNavigator";
 import { BaseComposite, StackNavigatorProps } from "~/components/RootNavigator/types/helpers";
 import styled, { BaseStyledProps } from "@ledgerhq/native-ui/components/styled";
@@ -65,6 +66,14 @@ type Props = {
 
 const StyledTouchableHightlight = styled.TouchableHighlight<BaseStyledProps>``;
 const StyledTouchableOpacity = styled.TouchableOpacity<BaseStyledProps>``;
+
+function shouldCreateEmptyTokenAccount(family = ""): boolean {
+  const familyRule = (byFamilyShouldCreateEmptyTokenAccount as Record<string, boolean | undefined>)[
+    family
+  ];
+
+  return familyRule ?? true;
+}
 
 export default function ReceiveConfirmation({ navigation }: Props) {
   const route = useRoute<ScreenProps["route"]>();
@@ -158,11 +167,13 @@ function ReceiveConfirmationInner({ navigation, route, account, parentAccount }:
           acc => (acc as TokenAccount)?.token?.id === (currency as CryptoOrTokenCurrency).id,
         )
       ) {
-        const emptyTokenAccount = makeEmptyTokenAccount(
-          newMainAccount as Account,
-          currency as TokenCurrency,
-        );
-        newMainAccount.subAccounts = [...(newMainAccount.subAccounts || []), emptyTokenAccount];
+        if (shouldCreateEmptyTokenAccount(mainAccount?.currency.family)) {
+          const emptyTokenAccount = makeEmptyTokenAccount(
+            newMainAccount as Account,
+            currency as TokenCurrency,
+          );
+          newMainAccount.subAccounts = [...(newMainAccount.subAccounts || []), emptyTokenAccount];
+        }
 
         dispatch(addOneAccount(newMainAccount as Account));
         setHasAddedTokenAccount(true);
@@ -346,7 +357,6 @@ function ReceiveConfirmationInner({ navigation, route, account, parentAccount }:
               <Flex
                 p={6}
                 borderRadius={24}
-                position="relative"
                 bg="constant.white"
                 borderWidth={1}
                 borderColor="neutral.c40"
@@ -357,17 +367,14 @@ function ReceiveConfirmationInner({ navigation, route, account, parentAccount }:
                 accessibilityLabel={t("transfer.receive.receiveConfirmation.qrCode")}
                 testID={"receive-qr-code-container-" + mainAccountName}
               >
-                <QRCode size={QRSize} value={freshAccountAddress} ecl="H" />
-                <Flex
-                  alignItems="center"
-                  justifyContent="center"
-                  width={QRSize * 0.3}
-                  height={QRSize * 0.3}
-                  bg="constant.white"
-                  position="absolute"
-                >
-                  <CurrencyIcon currency={currency} size={48} />
-                </Flex>
+                {freshAccountAddress ? (
+                  <QrCode
+                    value={freshAccountAddress}
+                    size={QRSize}
+                    foregroundColor={colors.constant.black}
+                    centerContent={<CurrencyIcon currency={currency} size={48} />}
+                  />
+                ) : null}
               </Flex>
               <Text
                 testID="receive-fresh-address"

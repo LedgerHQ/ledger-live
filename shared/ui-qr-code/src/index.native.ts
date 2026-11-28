@@ -1,2 +1,2 @@
-export * from "./QrCode.native";
+export * from "./QrCode";
 export * from "./types";

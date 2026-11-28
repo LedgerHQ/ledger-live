@@ -64,6 +64,28 @@ describe("LiveConfig provider", () => {
 });
 
 describe("fetchRemoteFlags", () => {
+  it("logs a startup event when the boot fetch settles, and not for later fetches", async () => {
+    const { fetchRemoteFlags } = await loadModule();
+    const { startupEvents } = await import("LLM/utils/logStartupTime");
+    startupEvents.splice(0);
+
+    await fetchRemoteFlags();
+    await fetchRemoteFlags();
+
+    expect(startupEvents.map(e => e.event)).toEqual(["Remote flags fetched"]);
+  });
+
+  it("logs a failed boot fetch and still rejects with its error", async () => {
+    mockFetchAndActivate.mockRejectedValue(new Error("network"));
+    const { fetchRemoteFlags } = await loadModule();
+    const { startupEvents } = await import("LLM/utils/logStartupTime");
+    startupEvents.splice(0);
+
+    await expect(fetchRemoteFlags()).rejects.toThrow("network");
+
+    expect(startupEvents.map(e => e.event)).toEqual(["Remote flags fetch failed"]);
+  });
+
   it("maps known Firebase keys to FeatureIds, drops unknown keys", async () => {
     mockGetAll.mockReturnValue({
       feature_counter_value: value(JSON.stringify({ enabled: true })),
@@ -98,7 +120,6 @@ describe("fetchRemoteFlags", () => {
     // contain digits or ≥2 consecutive uppercase letters. These flags fail the
     // round-trip and were silently dropped by the previous camelCase-based decoder.
     mockGetAll.mockReturnValue({
-      feature_llm_account_list_ui: value(JSON.stringify({ enabled: true })),
       feature_web_3_hub: value(JSON.stringify({ enabled: true })),
       feature_ptx_swap_receive_trc_20_without_trx: value(JSON.stringify({ enabled: true })),
     });
@@ -107,7 +128,6 @@ describe("fetchRemoteFlags", () => {
     const result = await fetchRemoteFlags();
 
     expect(result).toEqual({
-      llmAccountListUI: { enabled: true },
       web3hub: { enabled: true },
       ptxSwapReceiveTRC20WithoutTrx: { enabled: true },
     });

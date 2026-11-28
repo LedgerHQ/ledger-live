@@ -29,7 +29,7 @@ import { createFiatLineChartValueFormatter } from "LLD/components/LineChart/util
 import { createLineChartTooltipTitle } from "LLD/components/LineChart/utils/createLineChartTooltipTitle";
 import { DEFAULT_LINE_CHART_HEIGHT } from "LLD/components/LineChart/constants";
 import {
-  buildLineChartBottomPaddedYAxisConfig,
+  buildLineChartPaddedYAxisConfig,
   buildLineChartXAxisConfig,
 } from "LLD/components/LineChart/utils/lineChartAxisConfig";
 import { accountsSelector } from "~/renderer/reducers/accounts";
@@ -75,7 +75,7 @@ export type ChartSectionViewModelResult = Readonly<{
   showXAxis: boolean;
   showYAxis: boolean;
   xAxis: ReturnType<typeof buildLineChartXAxisConfig>;
-  yAxis: ReturnType<typeof buildLineChartBottomPaddedYAxisConfig>;
+  yAxis: ReturnType<typeof buildLineChartPaddedYAxisConfig>;
   points: LineChartPointMarker[];
   currencyId?: string;
 }>;
@@ -253,7 +253,7 @@ export function useChartSectionViewModel({
     [timestamps, formatDate, selectedRange],
   );
 
-  const yAxis = useMemo(() => buildLineChartBottomPaddedYAxisConfig(), []);
+  const yAxis = useMemo(() => buildLineChartPaddedYAxisConfig(), []);
 
   const { setSelection } = useScrubbedPrice();
 

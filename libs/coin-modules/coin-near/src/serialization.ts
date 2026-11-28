@@ -3,8 +3,26 @@ import BigNumber from "bignumber.js";
 import type { NearAccount, NearAccountRaw, NearResources, NearResourcesRaw } from "./types";
 
 export function toNearResourcesRaw(r: NearResources): NearResourcesRaw {
-  const { stakedBalance, pendingBalance, availableBalance, storageUsageBalance, stakingPositions } =
-    r;
+  const {
+    stakedBalance,
+    pendingBalance,
+    availableBalance,
+    storageUsageBalance,
+    stakingPositions,
+    accountStateFingerprint,
+    historyRecheckSince,
+    historyRecheckFingerprint,
+    historyConfirmPending,
+    historyConfirmBoundary,
+    poolListingPending,
+    pendingCandidatePools,
+    historyEmpty,
+    pendingCandidatesSince,
+    historyFailedSince,
+    historyUnsettledSince,
+    historyUnsettledHashes,
+    historyEmptySince,
+  } = r;
   return {
     stakedBalance: stakedBalance.toString(),
     pendingBalance: pendingBalance.toString(),
@@ -16,6 +34,23 @@ export function toNearResourcesRaw(r: NearResources): NearResourcesRaw {
       pending: pending.toString(),
       validatorId,
     })),
+    ...(accountStateFingerprint !== undefined && { accountStateFingerprint }),
+    ...(historyRecheckSince !== undefined && { historyRecheckSince }),
+    ...(historyRecheckFingerprint !== undefined && { historyRecheckFingerprint }),
+    ...(historyConfirmPending !== undefined && { historyConfirmPending }),
+    ...(historyConfirmBoundary !== undefined && { historyConfirmBoundary }),
+    ...(poolListingPending !== undefined && { poolListingPending }),
+    ...(pendingCandidatePools !== undefined && {
+      pendingCandidatePools: [...pendingCandidatePools],
+    }),
+    ...(historyEmpty !== undefined && { historyEmpty }),
+    ...(pendingCandidatesSince !== undefined && { pendingCandidatesSince }),
+    ...(historyFailedSince !== undefined && { historyFailedSince }),
+    ...(historyUnsettledSince !== undefined && { historyUnsettledSince }),
+    ...(historyUnsettledHashes !== undefined && {
+      historyUnsettledHashes: [...historyUnsettledHashes],
+    }),
+    ...(historyEmptySince !== undefined && { historyEmptySince }),
   };
 }
 
@@ -26,6 +61,19 @@ export function fromNearResourcesRaw(r: NearResourcesRaw): NearResources {
     availableBalance,
     storageUsageBalance,
     stakingPositions = [],
+    accountStateFingerprint,
+    historyRecheckSince,
+    historyRecheckFingerprint,
+    historyConfirmPending,
+    historyConfirmBoundary,
+    poolListingPending,
+    pendingCandidatePools,
+    historyEmpty,
+    pendingCandidatesSince,
+    historyFailedSince,
+    historyUnsettledSince,
+    historyUnsettledHashes,
+    historyEmptySince,
   } = r;
   return {
     stakedBalance: new BigNumber(stakedBalance),
@@ -38,6 +86,23 @@ export function fromNearResourcesRaw(r: NearResourcesRaw): NearResources {
       pending: new BigNumber(pending),
       validatorId,
     })),
+    ...(accountStateFingerprint !== undefined && { accountStateFingerprint }),
+    ...(historyRecheckSince !== undefined && { historyRecheckSince }),
+    ...(historyRecheckFingerprint !== undefined && { historyRecheckFingerprint }),
+    ...(historyConfirmPending !== undefined && { historyConfirmPending }),
+    ...(historyConfirmBoundary !== undefined && { historyConfirmBoundary }),
+    ...(poolListingPending !== undefined && { poolListingPending }),
+    ...(pendingCandidatePools !== undefined && {
+      pendingCandidatePools: [...pendingCandidatePools],
+    }),
+    ...(historyEmpty !== undefined && { historyEmpty }),
+    ...(pendingCandidatesSince !== undefined && { pendingCandidatesSince }),
+    ...(historyFailedSince !== undefined && { historyFailedSince }),
+    ...(historyUnsettledSince !== undefined && { historyUnsettledSince }),
+    ...(historyUnsettledHashes !== undefined && {
+      historyUnsettledHashes: [...historyUnsettledHashes],
+    }),
+    ...(historyEmptySince !== undefined && { historyEmptySince }),
   };
 }
 

@@ -1,8 +1,12 @@
 import { runSendTest } from "@e2e/specs/send/send";
 
-const transaction = new Transaction(Account.VET_1, Account.VET_2, "0.1");
-runSendTest(
+const transaction = new Transaction({
+  accountToDebit: Account.VET_1,
+  accountToCredit: Account.VET_2,
+  amount: "0.1",
+});
+runSendTest({
   transaction,
-  ["B2CQA-4247"],
-  ["@NanoSP", "@NanoX", "@Stax", "@Flex", "@NanoGen5", "@vechain", "@family-vechain"],
-);
+  tmsLinks: ["B2CQA-4247"],
+  tags: ["@NanoSP", "@NanoX", "@Stax", "@Flex", "@NanoGen5", "@vechain", "@family-vechain"],
+});

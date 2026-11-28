@@ -120,7 +120,7 @@ export class BorrowPage extends WebViewAppPage {
     const address = peekBorrowAddress();
     if (!address) return FUNDING_HINT;
     try {
-      const { latest, pending } = await readAccountNonces(address);
+      const { latest, pending } = await readAccountNonces({ address });
       if (pending > latest) {
         return (
           `Account ${address} is at nonce ${latest} with ${pending - latest} transaction(s) in ` +
@@ -209,7 +209,10 @@ export class BorrowPage extends WebViewAppPage {
   @step("Verify Introducing Crypto Loan modal is visible")
   async verifyIntroModalVisible() {
     await this.verifyElementIsVisible(this.introModal);
-    await this.verifyElementIsVisible(this.introModalTitle);
+    const webview = await this.getWebView();
+    await this.softExpect(async soft => {
+      await soft(webview.getByTestId(this.introModalTitle)).toBeVisible();
+    });
   }
 
   @step("Dismiss intro modal if shown and wait for simulate screen")

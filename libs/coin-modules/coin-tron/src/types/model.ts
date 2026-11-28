@@ -62,6 +62,8 @@ export type TrongridTxInfo = {
   feesPayer?: string;
   /** Decoded UTF-8 memo carried in the transaction's `raw_data.data`, when present. */
   memo?: string;
+  senders?: string[];
+  recipients?: string[];
 };
 
 export type TrongridExtraTxInfo = {

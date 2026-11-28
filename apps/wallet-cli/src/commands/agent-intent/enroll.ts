@@ -11,7 +11,9 @@ import {
   AGENT_NAME_MAX_LENGTH,
   AGENT_DESCRIPTION_MAX_LENGTH,
 } from "@ledgerhq/agent-intent-sdk";
+import { stateDir } from "@bunli/utils";
 import {
+  APP_NAME,
   Session,
   AGENT_INTENT_ENVIRONMENTS,
   withSessionLock,
@@ -31,6 +33,7 @@ import {
 import { assertOsKeychainAvailable } from "../../key-ring/keychain-entry";
 import { KeychainUnavailableError } from "../../key-ring/keychain-unavailable-error";
 import { authenticateEnrollmentCompletion } from "../../agent-intent/completion-auth";
+import { temporaryStateDirWarning } from "../../agent-intent/temp-state-dir";
 import { outputOption, resolveOutputFormat } from "../inputs";
 import { PROFILE_ID_RE, PROFILE_ID_MESSAGE } from "../../agent-intent/profile-format";
 import {
@@ -422,6 +425,9 @@ const enrollCommand = defineCommand({
       }
       // Held for the whole run, so `agent-intent wait` can tell a live listener from a dead one.
       await withEnrollListenerLock(flags.profile, async () => {
+        // Before any keychain access, which can block past the time a `--detach` parent relays stderr.
+        const tempStateWarning = temporaryStateDirWarning(stateDir(APP_NAME));
+        if (tempStateWarning) writeStderr(tempStateWarning);
         const startedAt = Date.now();
         const expiresInMs = parseDurationMs(flags["expires-in"]);
 

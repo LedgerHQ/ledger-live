@@ -42,12 +42,13 @@ const APPS = {
     catalog: "apps/ledger-live-mobile/src/locales/en/common.json",
   },
 };
-const BASELINE_FILE = path.join(__dirname, "unverifiable-baseline.json");
 const WEB_ONLY = /\.web\.(ts|tsx)$/;
 const NATIVE_ONLY = /\.native\.(ts|tsx)$/;
 const MAX_COMBINATIONS = 500;
 const TRANSLATE_NAMES = new Set(["t", "translate"]);
 const I18N_OWNERS = new Set(["i18n", "i18next"]);
+// Third-party packages whose types can yield key unions (z.infer of a z.enum), resolved from node_modules.
+const EXTERNAL_TYPES = new Set(["zod"]);
 
 function flatten(node, prefix, out) {
   for (const [k, v] of Object.entries(node)) {
@@ -378,7 +379,54 @@ function workspaceEntries() {
   return entries;
 }
 
-// Only relative imports and workspace packages are followed: deterministic, no built libs needed.
+function packageDirOf(file, cache) {
+  const dir = path.dirname(file);
+  if (cache.has(dir)) return cache.get(dir);
+  const parent = path.dirname(dir);
+  let found = null;
+  if (fs.existsSync(path.join(dir, "package.json"))) found = dir;
+  else if (parent !== dir) found = packageDirOf(dir, cache);
+  cache.set(dir, found);
+  return found;
+}
+
+function readTsconfigOptions(tsconfig) {
+  const { config, error } = ts.readConfigFile(tsconfig, ts.sys.readFile);
+  const { options, errors } = ts.parseJsonConfigFileContent(
+    config,
+    { ...ts.sys, readDirectory: () => [] },
+    path.dirname(tsconfig),
+    undefined,
+    tsconfig,
+  );
+  const NO_INPUTS = 18003;
+  const fatal = [error, ...errors].filter(d => d !== undefined && d.code !== NO_INPUTS);
+  if (fatal.length > 0) {
+    throw new Error(
+      `${tsconfig}: ${fatal.map(d => ts.flattenDiagnosticMessageText(d.messageText, "\n")).join("\n")}`,
+    );
+  }
+  return options;
+}
+
+// A `.native` or `.web` file resolves with its package's platform tsconfig, so a de-suffixed import
+// finds its platform twin. Shared files keep `fallback`: their twin imports stay unverifiable.
+function platformOptionsResolver(fallback) {
+  const packageDirs = new Map();
+  const byTsconfig = new Map();
+  return containingFile => {
+    const platform = /\.(native|web)\.[cm]?[jt]sx?$/.exec(containingFile)?.[1];
+    const pkg = platform && packageDirOf(containingFile, packageDirs);
+    if (!pkg) return fallback;
+    const tsconfig = path.join(pkg, `tsconfig.${platform}.json`);
+    if (!byTsconfig.has(tsconfig)) {
+      byTsconfig.set(tsconfig, fs.existsSync(tsconfig) ? readTsconfigOptions(tsconfig) : fallback);
+    }
+    return byTsconfig.get(tsconfig);
+  };
+}
+
+// Only relative imports, workspace packages and EXTERNAL_TYPES are followed: no built libs needed.
 function createProgram(files) {
   const options = {
     noEmit: true,
@@ -393,9 +441,11 @@ function createProgram(files) {
   };
   const host = ts.createCompilerHost(options);
   const entries = workspaceEntries();
+  const platformOptions = platformOptionsResolver(options);
   const resolveOne = (name, containingFile) => {
-    if (name.startsWith("."))
-      return ts.resolveModuleName(name, containingFile, options, host).resolvedModule;
+    if (name.startsWith(".") || EXTERNAL_TYPES.has(name))
+      return ts.resolveModuleName(name, containingFile, platformOptions(containingFile), host)
+        .resolvedModule;
     const entry = entries.get(name);
     if (!entry) return undefined;
     return {
@@ -494,27 +544,13 @@ function findMissingKeys(files, catalogs, consumers) {
   return analyzeFiles(files, catalogs, consumers).missing;
 }
 
-function readBaseline() {
-  const empty = { unverifiable: null, allowMissing: [] };
-  if (!fs.existsSync(BASELINE_FILE)) return empty;
-  return { ...empty, ...JSON.parse(fs.readFileSync(BASELINE_FILE, "utf8")) };
-}
-
 function main() {
   const started = Date.now();
   const catalogs = Object.fromEntries(
     Object.entries(APPS).map(([app, { catalog }]) => [app, loadCatalog(catalog)]),
   );
   const files = SCANNED_LAYERS.flatMap(layer => [...walk(path.join(ROOT, layer))]);
-  const baseline = readBaseline();
-  const analysis = analyzeFiles(files, catalogs, resolveConsumers());
-  const { unverifiable, stats } = analysis;
-  const missing = analysis.missing
-    .map(m => ({
-      ...m,
-      absentFrom: m.absentFrom.filter(app => !baseline.allowMissing.includes(`${app} ${m.key}`)),
-    }))
-    .filter(m => m.absentFrom.length > 0);
+  const { missing, unverifiable, stats } = analyzeFiles(files, catalogs, resolveConsumers());
   const seconds = ((Date.now() - started) / 1000).toFixed(1);
   console.log(
     `i18n keys: ${stats.static} static, ${stats.enumerated} type-enumerated, ${stats.unverifiable} unverifiable call sites (${seconds}s)`,
@@ -522,54 +558,29 @@ function main() {
 
   for (const u of unverifiable) console.log(`  unverifiable ${u.file}:${u.line}`);
 
-  let limit = baseline.unverifiable;
-  if (process.argv.includes("--update-baseline")) {
-    if (limit !== null && unverifiable.length > limit) {
-      console.error(
-        `\nCannot raise the baseline: ${unverifiable.length} > ${limit}. Fix the new sites.`,
-      );
-      process.exitCode = 1;
-      return;
-    }
-    fs.writeFileSync(
-      BASELINE_FILE,
-      `${JSON.stringify({ ...baseline, unverifiable: unverifiable.length }, null, 2)}\n`,
-    );
-    console.log(`Baseline updated to ${unverifiable.length}.`);
-    limit = unverifiable.length;
-  }
+  const failures = failureMessages({ missing, unverifiable });
+  for (const line of failures) console.error(line);
+  if (failures.length > 0) process.exitCode = 1;
+}
 
-  const actualMisses = new Set(
-    analysis.missing.flatMap(m => m.absentFrom.map(app => `${app} ${m.key}`)),
-  );
-  const stale = baseline.allowMissing.filter(entry => !actualMisses.has(entry));
-  if (stale.length > 0) {
-    console.error(
-      `\nStale allowMissing entries (no longer missing, remove them): ${stale.join(", ")}`,
-    );
-    process.exitCode = 1;
-  }
+function failureMessages({ missing, unverifiable }) {
+  const lines = [];
 
   if (missing.length > 0) {
-    console.error(`Missing i18n keys (${missing.length}):`);
+    lines.push(`Missing i18n keys (${missing.length}):`);
     for (const m of missing)
-      console.error(`  ${m.file}:${m.line}  "${m.key}"  missing in ${m.absentFrom.join(" + ")}`);
+      lines.push(`  ${m.file}:${m.line}  "${m.key}"  missing in ${m.absentFrom.join(" + ")}`);
     const absentApps = new Set(missing.flatMap(m => m.absentFrom));
-    console.error(`\nAdd them to: ${[...absentApps].map(app => APPS[app].catalog).join(" and ")}`);
-    process.exitCode = 1;
+    lines.push(`\nAdd them to: ${[...absentApps].map(app => APPS[app].catalog).join(" and ")}`);
   }
 
-  if (limit !== null && unverifiable.length > limit) {
-    console.error(
-      `\nUnverifiable i18n key sites increased: ${unverifiable.length} > baseline ${limit}. Use literal or literal-union keys (listed above).`,
+  if (unverifiable.length > 0) {
+    lines.push(
+      `\nUnverifiable i18n key sites (${unverifiable.length}, listed above): use literal or literal-union keys.`,
     );
-    process.exitCode = 1;
-  } else if (limit !== null && unverifiable.length < limit) {
-    console.error(
-      `\nUnverifiable i18n key sites dropped to ${unverifiable.length} (baseline ${limit}): run with --update-baseline and commit it.`,
-    );
-    process.exitCode = 1;
   }
+
+  return lines;
 }
 
 if (require.main === module) main();
@@ -579,6 +590,7 @@ module.exports = {
   appsForFile,
   createProgram,
   extractKeys,
+  failureMessages,
   findMissingKeys,
   flatten,
   hasKey,

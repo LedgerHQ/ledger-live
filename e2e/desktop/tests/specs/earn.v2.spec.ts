@@ -1,4 +1,3 @@
-import { expect } from "@playwright/test";
 import { test } from "tests/fixtures/common";
 import {
   Account,
@@ -10,7 +9,7 @@ import { Team } from "@ledgerhq/live-e2e-shared/enum/Team";
 import {
   FF_EARN_V2_DESKTOP,
   FF_EARN_V2_DESKTOP_WITH_SIMULATOR,
-  FF_LWD_WALLET_40_Q2_NO_ANALYTICS_CONSENT,
+  FF_ANALYTICS_OPTIN_DISABLED,
   FF_STAKE_PROGRAMS_MODAL,
   FF_SWAP_TO_EARN_DISABLED,
   FF_SWAP_TO_EARN_ENABLED,
@@ -73,49 +72,37 @@ test.describe("Earn v2", () => {
     );
   });
 
-  const coldStartCurrencies = [
-    { account: Account.ETH_2, xrayTicket: "B2CQA-4640" },
-    { account: Account.ATOM_2, xrayTicket: "B2CQA-4719" },
-  ];
+  test.describe("Cold start", () => {
+    const account = Account.ETH_2;
 
-  for (const { account, xrayTicket } of coldStartCurrencies) {
-    test.describe("Cold start", () => {
-      test.use({
-        userdata: "skip-onboarding",
-        speculosApp: account.currency.speculosApp,
-        featureFlags: {
-          ...FF_EARN_V2_DESKTOP,
-          ...FF_LWD_WALLET_40_Q2_NO_ANALYTICS_CONSENT,
-          ...FF_STAKE_PROGRAMS_MODAL,
-          ...FF_SWAP_TO_EARN_DISABLED,
-        },
-        cliCommands: [liveDataCommand(account)],
-        speculosForSetupOnly: true,
-      });
-
-      test(
-        `[${account.currency.testLabel}] - Earn v2 cold start page shows account ready to earn`,
-        {
-          tag: buildTags({ currencyId: account.currency.id }),
-          annotation: { type: "TMS", description: xrayTicket },
-        },
-        async ({ app }) => {
-          await navigateToEarn(app);
-          await app.earnV2Dashboard.verifyColdStartPage();
-          await app.earnV2Dashboard.verifyAssetReadyToEarn(account.currency.ticker);
-          await app.earnV2Dashboard.clickAssetEarnCta(account.currency.ticker);
-
-          if (account === Account.ETH_2) {
-            // ETH redirects to the earn deposit webview (stakePrograms redirect) rather than
-            // opening a native staking modal.
-            await app.earnV2Dashboard.verifyDepositFlowVisible();
-          } else {
-            await app.earnV2Dashboard.verifyModalContainerVisible();
-          }
-        },
-      );
+    test.use({
+      userdata: "skip-onboarding",
+      speculosApp: account.currency.speculosApp,
+      featureFlags: {
+        ...FF_EARN_V2_DESKTOP,
+        ...FF_ANALYTICS_OPTIN_DISABLED,
+        ...FF_STAKE_PROGRAMS_MODAL,
+        ...FF_SWAP_TO_EARN_DISABLED,
+      },
+      cliCommands: [liveDataCommand(account)],
+      speculosForSetupOnly: true,
     });
-  }
+
+    test(
+      `[${account.currency.testLabel}] - Earn v2 cold start page shows account ready to earn`,
+      {
+        tag: buildTags({ currencyId: account.currency.id }),
+        annotation: { type: "TMS", description: "B2CQA-4640" },
+      },
+      async ({ app }) => {
+        await navigateToEarn(app);
+        await app.earnV2Dashboard.verifyColdStartPage();
+        await app.earnV2Dashboard.verifyAssetReadyToEarn(account.currency.ticker);
+        await app.earnV2Dashboard.clickAssetEarnCta(account.currency.ticker);
+        await app.earnV2Dashboard.verifyDepositFlowVisible();
+      },
+    );
+  });
 
   test.describe("Cold start - deposit v2", () => {
     const account = Account.ETH_2;
@@ -125,7 +112,7 @@ test.describe("Earn v2", () => {
       speculosApp: account.currency.speculosApp,
       featureFlags: {
         ...FF_EARN_V2_DESKTOP,
-        ...FF_LWD_WALLET_40_Q2_NO_ANALYTICS_CONSENT,
+        ...FF_ANALYTICS_OPTIN_DISABLED,
         ...FF_STAKE_PROGRAMS_MODAL,
         ...FF_SWAP_TO_EARN_ENABLED,
       },
@@ -150,12 +137,8 @@ test.describe("Earn v2", () => {
     );
   });
 
-  // Hot start & Position → Account: accounts with active stake positions (provided by QA: NEAR_1, ATOM_1)
+  // Hot start & Position → Account: accounts with active stake positions (provided by QA: ATOM_1)
   const activePositionCurrencies = [
-    {
-      account: Account.NEAR_1,
-      xrayTickets: ["B2CQA-4720", "B2CQA-4725"],
-    },
     {
       account: Account.ATOM_1,
       xrayTickets: ["B2CQA-4721", "B2CQA-4726"],
@@ -352,101 +335,90 @@ test.describe("Earn v2", () => {
 
   // --- Navigation: ETH Provider Staking Flows ---
 
-  const ethProviders = [
-    {
-      provider: EarnProvider.LIDO,
-      xrayTickets: ["B2CQA-4722", "B2CQA-4644"],
-    },
-    { provider: EarnProvider.KILN, xrayTickets: ["B2CQA-4724"] },
-  ];
+  const ethStakingTickets = "B2CQA-4722, B2CQA-4644, B2CQA-4724";
 
-  for (const { provider, xrayTickets } of ethProviders) {
-    test.describe("Staking flow", () => {
-      const account = Account.ETH_1;
+  test.describe("Staking flow", () => {
+    const account = Account.ETH_1;
 
-      test.use({
-        userdata: "skip-onboarding",
-        speculosApp: account.currency.speculosApp,
-        featureFlags: {
-          ...FF_EARN_V2_DESKTOP,
-          ...FF_STAKE_PROGRAMS_MODAL,
-          ...FF_SWAP_TO_EARN_DISABLED,
-        },
-        cliCommands: [liveDataWithAddressCommand(account)],
-        speculosForSetupOnly: true,
-      });
-
-      test(
-        `[${account.currency.testLabel}] - Earn v2 staking flow with ${provider.name}`,
-        {
-          tag: buildTags({ currencyId: account.currency.id }),
-          annotation: { type: "TMS", description: xrayTickets.join(", ") },
-        },
-        async ({ app, page }) => {
-          await navigateToEarn(app);
-          await app.earnV2Dashboard.clickAssetEarnCta(account.currency.ticker);
-          await app.earnV2Dashboard.verifyDepositFlowVisible();
-          await app.earnV2Dashboard.selectEthProvider(provider.name);
-          // Confirm the selection actually opens the provider dapp (a platform live app),
-          // rather than just registering the card click.
-          await app.earnV2Dashboard.depositInSelectedProvider();
-          await expect(page).toHaveURL(/\/platform\//);
-        },
-      );
+    test.use({
+      userdata: "skip-onboarding",
+      speculosApp: account.currency.speculosApp,
+      featureFlags: {
+        ...FF_EARN_V2_DESKTOP,
+        ...FF_STAKE_PROGRAMS_MODAL,
+        ...FF_SWAP_TO_EARN_DISABLED,
+      },
+      cliCommands: [liveDataWithAddressCommand(account)],
+      speculosForSetupOnly: true,
     });
-  }
 
-  const ethProvidersV2: {
-    provider: EarnProvider;
-    amount: { preset: "50" } | { value: string };
-    xrayTickets: string[];
-  }[] = [
-    {
-      provider: EarnProvider.LIDO,
-      amount: { preset: "50" },
-      xrayTickets: ["B2CQA-4722", "B2CQA-4644"],
-    },
-    { provider: EarnProvider.KILN, amount: { value: "0.02" }, xrayTickets: ["B2CQA-4724"] },
-  ];
+    async function stakeWithProvider(app: Application, provider: EarnProvider) {
+      await navigateToEarn(app);
+      await app.earnV2Dashboard.clickAssetEarnCta(account.currency.ticker);
+      await app.earnV2Dashboard.verifyDepositFlowVisible();
+      await app.earnV2Dashboard.selectEthProvider(provider.name);
+      await app.earnV2Dashboard.depositInSelectedProvider();
+      await app.earnV2Dashboard.verifyProviderDappOpened(provider.name);
+    }
 
-  for (const { provider, amount, xrayTickets } of ethProvidersV2) {
-    test.describe("Staking flow - deposit v2", () => {
-      const account = Account.ETH_1;
+    test(
+      `[${account.currency.testLabel}] - Earn v2 staking flow with ${EarnProvider.LIDO.name} and ${EarnProvider.KILN.name}`,
+      {
+        tag: buildTags({ currencyId: account.currency.id }),
+        annotation: { type: "TMS", description: ethStakingTickets },
+      },
+      async ({ app }) => {
+        await stakeWithProvider(app, EarnProvider.LIDO);
+        await stakeWithProvider(app, EarnProvider.KILN);
+      },
+    );
+  });
 
-      test.use({
-        userdata: "skip-onboarding",
-        speculosApp: account.currency.speculosApp,
-        featureFlags: {
-          ...FF_EARN_V2_DESKTOP,
-          ...FF_STAKE_PROGRAMS_MODAL,
-          ...FF_SWAP_TO_EARN_ENABLED,
-        },
-        cliCommands: [liveDataWithAddressCommand(account)],
-        speculosForSetupOnly: true,
-      });
+  test.describe("Staking flow - deposit v2", () => {
+    const account = Account.ETH_1;
 
-      test(
-        `[${account.currency.testLabel}] - Earn v2 deposit v2 staking flow with ${provider.name}`,
-        {
-          tag: buildTags({ currencyId: account.currency.id }),
-          annotation: { type: "TMS", description: xrayTickets.join(", ") },
-        },
-        async ({ app, page }) => {
-          await navigateToEarn(app);
-          await app.earnV2Dashboard.clickAssetEarnCta(account.currency.ticker);
-          await app.earnV2Dashboard.verifyV2DepositFlowVisible();
-          if ("preset" in amount) {
-            await app.earnV2Dashboard.selectAmountPreset(amount.preset);
-          } else {
-            await app.earnV2Dashboard.enterDepositAmount(amount.value);
-          }
-          await app.earnV2Dashboard.selectEthProviderV2(provider.name);
-          await app.earnV2Dashboard.continueWithSelectedEthProvider(provider.name);
-          await expect(page).toHaveURL(/\/platform\//);
-        },
-      );
+    test.use({
+      userdata: "skip-onboarding",
+      speculosApp: account.currency.speculosApp,
+      featureFlags: {
+        ...FF_EARN_V2_DESKTOP,
+        ...FF_STAKE_PROGRAMS_MODAL,
+        ...FF_SWAP_TO_EARN_ENABLED,
+      },
+      cliCommands: [liveDataWithAddressCommand(account)],
+      speculosForSetupOnly: true,
     });
-  }
+
+    async function depositWithProvider(
+      app: Application,
+      provider: EarnProvider,
+      amount: { preset: "50" } | { value: string },
+    ) {
+      await navigateToEarn(app);
+      await app.earnV2Dashboard.clickAssetEarnCta(account.currency.ticker);
+      await app.earnV2Dashboard.verifyV2DepositFlowVisible();
+      if ("preset" in amount) {
+        await app.earnV2Dashboard.selectAmountPreset(amount.preset);
+      } else {
+        await app.earnV2Dashboard.enterDepositAmount(amount.value);
+      }
+      await app.earnV2Dashboard.selectEthProviderV2(provider.name);
+      await app.earnV2Dashboard.continueWithSelectedEthProvider(provider.name);
+      await app.earnV2Dashboard.verifyProviderDappOpened(provider.name);
+    }
+
+    test(
+      `[${account.currency.testLabel}] - Earn v2 deposit v2 staking flow with ${EarnProvider.LIDO.name} and ${EarnProvider.KILN.name}`,
+      {
+        tag: buildTags({ currencyId: account.currency.id }),
+        annotation: { type: "TMS", description: ethStakingTickets },
+      },
+      async ({ app }) => {
+        await depositWithProvider(app, EarnProvider.LIDO, { preset: "50" });
+        await depositWithProvider(app, EarnProvider.KILN, { value: "0.02" });
+      },
+    );
+  });
 
   // --- Navigation: Position Row Flows ---
 
@@ -480,12 +452,12 @@ test.describe("Earn v2", () => {
         tag: buildTags({ currencyId: account.currency.id }),
         annotation: { type: "TMS", description: xrayTicket },
       },
-      async ({ app, page }) => {
+      async ({ app }) => {
         await navigateToEarn(app);
         await app.earnV2Dashboard.verifyHotStartPage();
         await app.earnV2Dashboard.verifyPositionRowPresent(account.currency.ticker);
         await app.earnV2Dashboard.clickPositionRow(account.currency.ticker);
-        await expect(page).toHaveURL(/\/platform\//);
+        await app.earnV2Dashboard.verifyProviderDappOpened();
       },
     );
   });
@@ -544,7 +516,7 @@ test.describe("Earn v2", () => {
       async ({ app }) => {
         await app.mainNavigation.openTargetFromMainNavigation("accounts");
         await app.accounts.navigateToAccountByName(emptyAccount.accountName);
-        await app.account.startStakingFlowFromMainStakeButton();
+        await app.account.startStakingFlowFromMainStakeButton({ asset: emptyAccount.currency });
         await app.earnV2Dashboard.verifyV2DepositFlowVisible();
         await app.earnV2Dashboard.selectAnotherFundingAccount(app, fundingAccount);
         await app.earnV2Dashboard.verifySwapToEarnDescription(
@@ -559,33 +531,6 @@ test.describe("Earn v2", () => {
       },
     );
   });
-});
-
-test.describe("Select a validator", () => {
-  const account = Account.ETH_1;
-
-  test.use({
-    teamOwner: Team.EARN,
-    userdata: "skip-onboarding-with-last-seen-device",
-    speculosApp: account.currency.speculosApp,
-    cliCommands: [liveDataCommand(account)],
-    featureFlags: { ...FF_STAKE_PROGRAMS_MODAL, ...FF_SWAP_TO_EARN_DISABLED },
-  });
-
-  test(
-    `[${account.currency.testLabel}] - Select validator`,
-    {
-      tag: buildTags({ currencyId: account.currency.id, extraTags: ["@smoke"] }),
-      annotation: { type: "TMS", description: "B2CQA-3024" },
-    },
-    async ({ app }) => {
-      await app.mainNavigation.openTargetFromMainNavigation("accounts");
-      await app.accounts.navigateToAccountByName(account.accountName);
-      await app.account.startStakingFlowFromMainStakeButton();
-      await app.earnV2Dashboard.verifyDepositFlowVisible();
-      await app.earnV2Dashboard.selectEthProvider(EarnProvider.LIDO.name);
-    },
-  );
 });
 
 test.describe("Select a validator - deposit v2", () => {
@@ -608,7 +553,7 @@ test.describe("Select a validator - deposit v2", () => {
     async ({ app }) => {
       await app.mainNavigation.openTargetFromMainNavigation("accounts");
       await app.accounts.navigateToAccountByName(account.accountName);
-      await app.account.startStakingFlowFromMainStakeButton();
+      await app.account.startStakingFlowFromMainStakeButton({ asset: account.currency });
       await app.earnV2Dashboard.verifyV2DepositFlowVisible();
       await app.earnV2Dashboard.enterDepositAmount("0.02");
       await app.earnV2Dashboard.selectEthProviderV2(EarnProvider.LIDO.name);

@@ -19,31 +19,33 @@ import {
   saveAgentIntentKeyFile,
 } from "./agent-intent-key-file";
 import { installOutputCapture } from "../shared/ui";
+import { overridePlatform } from "../testing/os-keychain";
+import { cliStateDirIn, pointStateHomeAt } from "../testing/state-home";
 
-const origStateHome = process.env.XDG_STATE_HOME;
 let stateHome: string;
+let restoreStateHome: () => void;
 
+const isPosix = process.platform !== "win32";
 const mode = (p: string) => statSync(p).mode & 0o777;
 
 beforeEach(() => {
   stateHome = mkdtempSync(join(tmpdir(), "wallet-cli-agent-key-file-"));
-  process.env.XDG_STATE_HOME = stateHome;
+  restoreStateHome = pointStateHomeAt(stateHome);
 });
 
 afterEach(() => {
   rmSync(stateHome, { recursive: true, force: true });
-  if (origStateHome === undefined) delete process.env.XDG_STATE_HOME;
-  else process.env.XDG_STATE_HOME = origStateHome;
+  restoreStateHome();
 });
 
 describe("agent-intent key file", () => {
   it("lives under the state dir's agent-intent-keys directory, named by profile id", () => {
     expect(agentIntentKeyFilePath("bot")).toBe(
-      join(stateHome, "ledger-wallet-cli", "agent-intent-keys", "bot.key"),
+      join(cliStateDirIn(stateHome), "agent-intent-keys", "bot.key"),
     );
   });
 
-  it("writes the key at 0600 inside a 0700 directory and reads it back", () => {
+  it.skipIf(!isPosix)("writes the key at 0600 inside a 0700 directory and reads it back", () => {
     saveAgentIntentKeyFile("bot", "deadbeef");
 
     const path = agentIntentKeyFilePath("bot");
@@ -53,7 +55,7 @@ describe("agent-intent key file", () => {
     expect(hasAgentIntentKeyFile("bot")).toBe(true);
   });
 
-  it("tightens an existing key directory to 0700", () => {
+  it.skipIf(!isPosix)("tightens an existing key directory to 0700", () => {
     const dir = dirname(agentIntentKeyFilePath("bot"));
     mkdirSync(dir, { recursive: true });
     chmodSync(dir, 0o755);
@@ -63,14 +65,14 @@ describe("agent-intent key file", () => {
     expect(mode(dir)).toBe(0o700);
   });
 
-  it("tolerates a trailing newline added by hand", () => {
+  it.skipIf(!isPosix)("tolerates a trailing newline added by hand", () => {
     saveAgentIntentKeyFile("bot", "deadbeef");
     writeFileSync(agentIntentKeyFilePath("bot"), "deadbeef\r\n");
 
     expect(loadAgentIntentKeyFile("bot")).toBe("deadbeef");
   });
 
-  it("refuses a key file readable by others, with a chmod hint", () => {
+  it.skipIf(!isPosix)("refuses a key file readable by others, with a chmod hint", () => {
     saveAgentIntentKeyFile("bot", "deadbeef");
     chmodSync(agentIntentKeyFilePath("bot"), 0o644);
 
@@ -79,7 +81,7 @@ describe("agent-intent key file", () => {
     );
   });
 
-  it("refuses a symlink in place of the key file", () => {
+  it.skipIf(!isPosix)("refuses a symlink in place of the key file", () => {
     const target = join(stateHome, "elsewhere.key");
     writeFileSync(target, "deadbeef", { mode: 0o600 });
     mkdirSync(dirname(agentIntentKeyFilePath("bot")), { recursive: true });
@@ -94,17 +96,14 @@ describe("agent-intent key file", () => {
     expect(() => loadAgentIntentKeyFile("bot")).toThrow(/bot\.key is not a regular file/);
   });
 
-  it.skipIf(process.platform === "win32")(
-    "refuses a FIFO in place of the key file without blocking",
-    () => {
-      mkdirSync(dirname(agentIntentKeyFilePath("bot")), { recursive: true, mode: 0o700 });
-      execFileSync("mkfifo", ["-m", "600", agentIntentKeyFilePath("bot")]);
+  it.skipIf(!isPosix)("refuses a FIFO in place of the key file without blocking", () => {
+    mkdirSync(dirname(agentIntentKeyFilePath("bot")), { recursive: true, mode: 0o700 });
+    execFileSync("mkfifo", ["-m", "600", agentIntentKeyFilePath("bot")]);
 
-      expect(() => loadAgentIntentKeyFile("bot")).toThrow(/bot\.key is not a regular file/);
-    },
-  );
+    expect(() => loadAgentIntentKeyFile("bot")).toThrow(/bot\.key is not a regular file/);
+  });
 
-  it("refuses a key file owned by another user", () => {
+  it.skipIf(!isPosix)("refuses a key file owned by another user", () => {
     saveAgentIntentKeyFile("bot", "deadbeef");
     const realGetuid = process.getuid;
     process.getuid = () => statSync(agentIntentKeyFilePath("bot")).uid + 1;
@@ -117,7 +116,23 @@ describe("agent-intent key file", () => {
     }
   });
 
-  it("reads a 0600 key file without a permissions warning", () => {
+  it("refuses a key file on Windows, where its owner and permissions can't be checked", () => {
+    const restorePlatform = overridePlatform("win32");
+    try {
+      const path = agentIntentKeyFilePath("bot");
+      mkdirSync(dirname(path), { recursive: true });
+      writeFileSync(path, "deadbeef");
+
+      expect(() => loadAgentIntentKeyFile("bot")).toThrow(
+        `Agent key files aren't supported on Windows, where wallet-cli can't check the owner ` +
+          `and permissions of ${path}.`,
+      );
+    } finally {
+      restorePlatform();
+    }
+  });
+
+  it.skipIf(!isPosix)("reads a 0600 key file without a permissions warning", () => {
     saveAgentIntentKeyFile("bot", "deadbeef");
     const stderr: string[] = [];
     const restore = installOutputCapture({ stderr: s => stderr.push(s) });

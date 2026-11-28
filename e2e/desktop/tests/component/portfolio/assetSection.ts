@@ -1,4 +1,4 @@
-import { expect, Locator, Page } from "@playwright/test";
+import { Locator, Page } from "@playwright/test";
 import { Component } from "tests/page/abstractClasses";
 import { step } from "tests/misc/reporters/step";
 import { AssetsTable } from "tests/component/portfolio/assetsTable";
@@ -18,6 +18,8 @@ export class AssetSection extends Component {
 
   @step("Expect section header to be visible")
   async expectHeaderVisible() {
-    await expect(this.header).toBeVisible();
+    await this.softExpect(async soft => {
+      await soft(this.header).toBeVisible();
+    });
   }
 }

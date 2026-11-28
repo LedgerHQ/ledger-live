@@ -21,10 +21,8 @@
   },
   "dependencies": {
     "base64-js": "1",
-    "isomorphic-ws": "catalog:",
     "pako": "^2.0.4",
     "rxjs": "catalog:",
-    "ws": "catalog:",
     "zod": "catalog:"
   },
   "devDependencies": {
@@ -35,13 +33,14 @@
     "@types/jest": "catalog:",
     "@types/node": "catalog:",
     "@types/pako": "2.0.3",
-    "@types/ws": "8.5.10",
+    "@types/ws": "catalog:",
     "@typescript/native": "catalog:",
     "jest": "catalog:",
     "msw": "catalog:",
     "oxfmt": "catalog:",
     "oxlint": "catalog:",
     "typescript": "catalog:",
-    "@support/jest": "workspace:*"
+    "@support/jest": "workspace:*",
+    "ws": "catalog:"
   }
 }

@@ -4,6 +4,6 @@
     "noImplicitAny": false,
     "noImplicitThis": false,
     "isolatedModules": false,
-    "types": ["node", "react"]
+    "types": ["node"]
   }
 }

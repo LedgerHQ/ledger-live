@@ -1,6 +1,6 @@
 {
   "name": "@ledgerhq/hw-app-exchange",
-  "version": "0.31.0",
+  "version": "0.32.0",
   "description": "Ledger Hardware Wallet Cosmos Application API",
   "keywords": [
     "Ledger",
@@ -29,7 +29,7 @@
     "@ledgerhq/hw-transport": "catalog:",
     "bignumber.js": "^9.1.2",
     "invariant": "^2.2.2",
-    "protobufjs": "8.4.1",
+    "protobufjs": "catalog:",
     "protobufjs-cli": "2.4.1"
   },
   "devDependencies": {

@@ -2,6 +2,7 @@ import { trustchainSelector } from "@ledgerhq/ledger-key-ring-protocol/store";
 import { useDispatch, useSelector } from "LLD/hooks/redux";
 import { setFlow } from "~/renderer/actions/walletSync";
 import {
+  type ChangeFlowPayload,
   Flow,
   Step,
   walletSyncFlowSelector,
@@ -71,6 +72,20 @@ export const STEPS_WITH_BACK: Step[] = [
   Step.SynchronizeWithQRCode,
 ];
 
+export function getWelcomeScreenFlow({
+  hasTrustchain,
+  onboardingNewDevice,
+}: Readonly<{ hasTrustchain: boolean; onboardingNewDevice?: boolean }>): ChangeFlowPayload {
+  if (hasTrustchain) {
+    return { flow: Flow.LedgerSyncActivated, step: Step.LedgerSyncActivated };
+  }
+  return {
+    flow: Flow.Activation,
+    step: onboardingNewDevice ? Step.DeviceAction : Step.CreateOrSynchronize,
+    onboardingNewDevice,
+  };
+}
+
 export const useFlows = () => {
   const dispatch = useDispatch();
   const trustchain = useSelector(trustchainSelector);
@@ -94,17 +109,9 @@ export const useFlows = () => {
   };
 
   const goToWelcomeScreenWalletSync = (onboardingNewDevice?: boolean) => {
-    if (trustchain?.rootId) {
-      dispatch(setFlow({ flow: Flow.LedgerSyncActivated, step: Step.LedgerSyncActivated }));
-    } else {
-      dispatch(
-        setFlow({
-          flow: Flow.Activation,
-          step: onboardingNewDevice ? Step.DeviceAction : Step.CreateOrSynchronize,
-          onboardingNewDevice,
-        }),
-      );
-    }
+    dispatch(
+      setFlow(getWelcomeScreenFlow({ hasTrustchain: !!trustchain?.rootId, onboardingNewDevice })),
+    );
   };
 
   const goToSyncMethodScreenWalletSync = () => {

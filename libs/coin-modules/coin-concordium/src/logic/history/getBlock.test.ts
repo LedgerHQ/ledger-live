@@ -21,7 +21,6 @@ const { decodeMemoFromCbor: decodeMemoFromCborMock } = jest.requireMock(
   "@ledgerhq/concordium-core",
 );
 
-const CURRENCY = "concordium_testnet";
 const config = createFixtureConfig();
 const SENDER = "3U6m951FWryY56SKFFHgMLGVHtJtk4VaxN7V2F9hjkR7Sg1FUx";
 const RECIPIENT = "4ox4d7b4S9Mi3qA696v3yYjBQB4f6GDEVATrH9oFnoHUd5zLgh";
@@ -47,11 +46,11 @@ describe("getBlock", () => {
     getBlockTransactionEventsMock.mockResolvedValue([]);
 
     // WHEN
-    const result = await getBlock(config, 1000, CURRENCY);
+    const result = await getBlock(config, 1000);
 
     // THEN
-    expect(getBlockInfoMock).toHaveBeenCalledWith(config, 1000, CURRENCY);
-    expect(getBlockTransactionEventsMock).toHaveBeenCalledWith(config, CURRENCY, BLOCK_INFO.hash);
+    expect(getBlockInfoMock).toHaveBeenCalledWith(config, 1000);
+    expect(getBlockTransactionEventsMock).toHaveBeenCalledWith(config, BLOCK_INFO.hash);
     expect(result.info).toEqual(BLOCK_INFO);
     expect(result.transactions).toEqual([]);
   });
@@ -78,7 +77,7 @@ describe("getBlock", () => {
     ]);
 
     // WHEN
-    const { transactions } = await getBlock(config, 1000, CURRENCY);
+    const { transactions } = await getBlock(config, 1000);
 
     // THEN
     expect(transactions).toEqual([
@@ -107,6 +106,33 @@ describe("getBlock", () => {
     ]);
   });
 
+  it("keeps a transfer of nothing", async () => {
+    // GIVEN
+    getBlockTransactionEventsMock.mockResolvedValue([
+      {
+        hash: "3c".repeat(32),
+        sender: SENDER,
+        cost: "400",
+        result: {
+          outcome: "success",
+          events: [
+            { tag: "Transferred", amount: "0", from: account(SENDER), to: account(RECIPIENT) },
+          ],
+        },
+      },
+    ]);
+
+    // WHEN
+    const { transactions } = await getBlock(config, 1000);
+
+    // THEN
+    const asset = { type: "native" };
+    expect(transactions[0].operations).toEqual([
+      { type: "transfer", address: SENDER, peer: RECIPIENT, asset, amount: 0n },
+      { type: "transfer", address: RECIPIENT, peer: SENDER, asset, amount: 0n },
+    ]);
+  });
+
   it("emits a single incoming operation with no peer when the sender is a contract", async () => {
     // GIVEN
     getBlockTransactionEventsMock.mockResolvedValue([
@@ -129,7 +155,7 @@ describe("getBlock", () => {
     ]);
 
     // WHEN
-    const { transactions } = await getBlock(config, 1000, CURRENCY);
+    const { transactions } = await getBlock(config, 1000);
 
     // THEN
     expect(transactions[0].operations).toEqual([
@@ -159,7 +185,7 @@ describe("getBlock", () => {
     ]);
 
     // WHEN
-    const { transactions } = await getBlock(config, 1000, CURRENCY);
+    const { transactions } = await getBlock(config, 1000);
 
     // THEN
     expect(transactions[0].operations).toEqual([]);
@@ -189,7 +215,7 @@ describe("getBlock", () => {
     ]);
 
     // WHEN
-    const { transactions } = await getBlock(config, 1000, CURRENCY);
+    const { transactions } = await getBlock(config, 1000);
 
     // THEN
     expect(decodeMemoFromCborMock).toHaveBeenCalledWith(Buffer.from("6548656c6c6f", "hex"));
@@ -209,12 +235,160 @@ describe("getBlock", () => {
     ]);
 
     // WHEN
-    const { transactions } = await getBlock(config, 1000, CURRENCY);
+    const { transactions } = await getBlock(config, 1000);
 
     // THEN
     expect(transactions).toEqual([
       { hash: "cc".repeat(32), failed: true, fees: 500n, feesPayer: SENDER, operations: [] },
     ]);
+  });
+
+  it("charges a sponsored transaction to its sponsor, at the sponsor's cost", async () => {
+    // GIVEN
+    const sponsor = "2zJ1DNrhhdrcNN4XAGaWq3Ziw2pKvKgUC1Ua67aZVGg4A111PX";
+    getBlockTransactionEventsMock.mockResolvedValue([
+      {
+        hash: "ab".repeat(32),
+        sender: SENDER,
+        cost: "0",
+        sponsorDetails: { sponsor, cost: "800" },
+        result: { outcome: "success", events: [] },
+      },
+    ]);
+
+    // WHEN
+    const { transactions } = await getBlock(config, 1000);
+
+    // THEN
+    expect(transactions[0]).toMatchObject({ fees: 800n, feesPayer: sponsor });
+  });
+
+  it("charges the sender when the sponsor details are null", async () => {
+    // GIVEN
+    getBlockTransactionEventsMock.mockResolvedValue([
+      {
+        hash: "ab".repeat(32),
+        sender: SENDER,
+        cost: "601",
+        sponsorDetails: null,
+        result: { outcome: "success", events: [] },
+      },
+    ]);
+
+    // WHEN
+    const { transactions } = await getBlock(config, 1000);
+
+    // THEN
+    expect(transactions[0]).toMatchObject({ fees: 601n, feesPayer: SENDER });
+  });
+
+  describe("events that move CCD without a transfer", () => {
+    const CONTRACT = { type: "AddressContract", address: { index: 1, subindex: 0 } };
+    const native = { type: "native" };
+
+    const operationsOf = async (events: object[], sender: string | null = SENDER) => {
+      getBlockTransactionEventsMock.mockResolvedValue([
+        { hash: "2c".repeat(32), sender, cost: "400", result: { outcome: "success", events } },
+      ]);
+      const { transactions } = await getBlock(config, 1000);
+      return transactions[0].operations;
+    };
+
+    it("takes the amount of a contract call from the account that called it", async () => {
+      expect(
+        await operationsOf([
+          {
+            tag: "Updated",
+            amount: "500000",
+            address: CONTRACT.address,
+            instigator: account(SENDER),
+          },
+        ]),
+      ).toEqual([{ type: "transfer", address: SENDER, asset: native, amount: -500000n }]);
+    });
+
+    it.each([
+      ["less than it was sent", "20", [{ address: SENDER, amount: -80n }]],
+      ["all it was sent", "100", []],
+      ["more than it was sent", "107", [{ address: SENDER, amount: 7n }]],
+    ])("nets a deposit with the payout of a contract that returns %s", async (_, payout, net) => {
+      const operations = await operationsOf([
+        { tag: "Interrupted", address: CONTRACT.address },
+        { tag: "Transferred", amount: payout, from: CONTRACT, to: account(SENDER) },
+        { tag: "Resumed", address: CONTRACT.address, success: true },
+        { tag: "Updated", amount: "100", address: CONTRACT.address, instigator: account(SENDER) },
+      ]);
+
+      expect(operations).toEqual(
+        net.map(({ address, amount }) => ({ type: "transfer", address, asset: native, amount })),
+      );
+    });
+
+    it("keeps the accounts a contract pays apart", async () => {
+      const operations = await operationsOf([
+        { tag: "Transferred", amount: "30", from: CONTRACT, to: account(RECIPIENT) },
+        { tag: "Updated", amount: "100", address: CONTRACT.address, instigator: account(SENDER) },
+      ]);
+
+      expect(operations).toEqual([
+        { type: "transfer", address: RECIPIENT, asset: native, amount: 30n },
+        { type: "transfer", address: SENDER, asset: native, amount: -100n },
+      ]);
+    });
+
+    it("takes the amount of a contract initialization from the sender", async () => {
+      expect(await operationsOf([{ tag: "ContractInitialized", amount: "700" }])).toEqual([
+        { type: "transfer", address: SENDER, asset: native, amount: -700n },
+      ]);
+    });
+
+    it("sums the releases of a scheduled transfer", async () => {
+      expect(
+        await operationsOf([
+          {
+            tag: "TransferredWithSchedule",
+            from: SENDER,
+            to: RECIPIENT,
+            amount: [
+              [2088927886725, "3000000"],
+              [253402300799000, "1000000"],
+            ],
+          },
+        ]),
+      ).toEqual([
+        { type: "transfer", address: SENDER, peer: RECIPIENT, asset: native, amount: -4000000n },
+        { type: "transfer", address: RECIPIENT, peer: SENDER, asset: native, amount: 4000000n },
+      ]);
+    });
+
+    it("takes a shielded amount from the account", async () => {
+      expect(
+        await operationsOf([
+          { tag: "EncryptedSelfAmountAdded", account: SENDER, newAmount: "c0de", amount: "40" },
+        ]),
+      ).toEqual([{ type: "transfer", address: SENDER, asset: native, amount: -40n }]);
+    });
+
+    it("returns an unshielded amount to the account", async () => {
+      expect(
+        await operationsOf([
+          { tag: "EncryptedAmountsRemoved", account: SENDER, newAmount: "c0de", upToIndex: 0 },
+          { tag: "AmountAddedByDecryption", account: SENDER, amount: "15" },
+        ]),
+      ).toEqual([{ type: "transfer", address: SENDER, asset: native, amount: 15n }]);
+    });
+
+    it.each([
+      ["a call that carries no CCD", { tag: "Updated", amount: "0", instigator: account(SENDER) }],
+      ["a call made by a contract", { tag: "Updated", amount: "500", instigator: CONTRACT }],
+      ["an initialization without a deposit", { tag: "ContractInitialized", amount: "0" }],
+      [
+        "a payout of nothing",
+        { tag: "Transferred", amount: "0", from: CONTRACT, to: account(SENDER) },
+      ],
+    ])("reports no operation for %s", async (_name, event) => {
+      expect(await operationsOf([event])).toEqual([]);
+    });
   });
 
   it("represents non-transfer transaction types with no operations", async () => {
@@ -230,7 +404,7 @@ describe("getBlock", () => {
     ]);
 
     // WHEN
-    const { transactions } = await getBlock(config, 1000, CURRENCY);
+    const { transactions } = await getBlock(config, 1000);
 
     // THEN
     expect(transactions[0].operations).toEqual([]);
@@ -265,7 +439,7 @@ describe("getBlock", () => {
     ]);
 
     // WHEN
-    const { transactions } = await getBlock(config, 1000, CURRENCY);
+    const { transactions } = await getBlock(config, 1000);
 
     // THEN
     expect(transactions[0].details).toBeUndefined();
@@ -284,7 +458,7 @@ describe("getBlock", () => {
     ]);
 
     // WHEN
-    const { transactions } = await getBlock(config, 1000, CURRENCY);
+    const { transactions } = await getBlock(config, 1000);
 
     // THEN
     expect(transactions[0]).toEqual({

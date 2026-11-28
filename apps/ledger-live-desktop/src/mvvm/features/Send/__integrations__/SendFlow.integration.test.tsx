@@ -1,6 +1,7 @@
 import React from "react";
 import BigNumber from "bignumber.js";
 import { fireEvent, within } from "tests/testSetup";
+import { HttpResponse, http, server } from "tests/server";
 import userEvent from "@testing-library/user-event";
 import { track } from "@shared/analytics";
 import { NotEnoughBalance } from "@ledgerhq/ledger-wallet-framework/errors";
@@ -12,6 +13,7 @@ import {
   resetPendingRentsForTests,
 } from "@ledgerhq/live-common/flows/send/sponsored/pendingRents";
 import type { SponsoredCoinApi } from "@ledgerhq/live-common/bridge/generic-coin-framework/sponsored";
+import type { Operation, SignedOperation } from "@ledgerhq/types-live";
 import {
   SPONSORED_FAILURE_KIND,
   SPONSORED_PHASE,
@@ -50,12 +52,54 @@ import {
   setMockSponsoredSeam,
   setMockStatus,
   setMockStatusResolver,
+  setMockBridgeStatusResolver,
   setMockTransaction,
   VALID_BTC_RECIPIENT,
   VALID_EVM_RECIPIENT,
   VALID_XRP_RECIPIENT,
   VALID_TRON_RECIPIENT,
 } from "../__mocks__/sendFlowTestUtils";
+
+type MockExecutorProps = Readonly<{
+  intent: { onResult?: (signedOperation: SignedOperation) => void };
+  onIntentJobComplete: () => void;
+}>;
+
+let mockExecutorProps: MockExecutorProps | null = null;
+
+jest.mock("LLD/components/DeviceIntentExecutor", () => ({
+  buildDeviceInitializationInput: jest.fn(() => Promise.resolve({ appRequest: {} })),
+  DeviceIntentExecutor: (props: MockExecutorProps) => {
+    mockExecutorProps = props;
+    return <div data-testid="mock-device-intent-executor" />;
+  },
+}));
+
+const SIGNED_OPERATION = { signature: "0xsigned" } as unknown as SignedOperation;
+
+function deferBroadcast() {
+  // Mocked in sendFlowTestUtils, which loads after this file's imports.
+  const { useBroadcast } = jest.requireMock<{ useBroadcast: () => jest.Mock }>(
+    "@ledgerhq/live-common/hooks/useBroadcast",
+  );
+  const broadcast = useBroadcast();
+  const settle: { resolve: (operation: Operation) => void } = { resolve: () => undefined };
+  broadcast.mockImplementationOnce(
+    () => new Promise<Operation>(resolve => (settle.resolve = resolve)),
+  );
+  return { broadcast, resolve: (operation: Operation) => settle.resolve(operation) };
+}
+
+function refreshTransaction() {
+  const useBridgeTransaction = jest.requireMock<jest.Mock>(
+    "@ledgerhq/live-common/bridge/useBridgeTransaction",
+  );
+  const bridgeTransaction = useBridgeTransaction.mock.results.at(-1)?.value;
+  bridgeTransaction.updateTransaction((transaction: Transaction) => ({
+    ...transaction,
+    nonce: 2,
+  }));
+}
 
 const sponsoredEvents = () =>
   jest
@@ -590,6 +634,31 @@ describe("Send Flow Integration", () => {
       expect(await screen.findByTestId("send-get-funds-button")).toBeVisible();
     });
 
+    it("should keep review disabled when balance is insufficient and Buy does not support the currency", async () => {
+      let catalogServed = false;
+      server.use(
+        http.get("https://buy.api.live.ledger.com/buy/v1/provider/currencies", () => {
+          catalogServed = true;
+          return HttpResponse.json({ onRamp: { moonpay: ["bitcoin"] } });
+        }),
+      );
+      setMockTransaction(
+        createMinimalEvmTransaction({
+          amount: new BigNumber("99000000000000000000"),
+          recipient: VALID_EVM_RECIPIENT,
+        }),
+      );
+      setMockStatus(createResolvedStatus({ amount: new NotEnoughBalance() }));
+
+      const { user } = renderSendFlow(ethereumAccount);
+      await navigateToAmountScreen(user);
+
+      // An unloaded catalog also reports the currency unavailable: assert once it has answered.
+      await waitFor(() => expect(catalogServed).toBe(true));
+      expect(await screen.findByTestId("send-review-button")).toBeDisabled();
+      expect(screen.queryByTestId("send-get-funds-button")).not.toBeInTheDocument();
+    });
+
     it("should disable review when no amount is entered", async () => {
       setMockTransaction(
         createMinimalEvmTransaction({ amount: new BigNumber(0), recipient: VALID_EVM_RECIPIENT }),
@@ -647,6 +716,14 @@ describe("Send Flow Integration", () => {
       setMockTransaction(
         createMinimalEvmTransaction({ amount: new BigNumber(0), recipient: VALID_EVM_RECIPIENT }),
       );
+      const feeByStrategy: Record<string, number> = { slow: 100, medium: 200, fast: 300 };
+      setMockBridgeStatusResolver((transaction: Transaction) => {
+        const strategy = "feesStrategy" in transaction ? transaction.feesStrategy : null;
+        return createResolvedStatus(
+          {},
+          { estimatedFees: new BigNumber(feeByStrategy[strategy ?? ""] ?? 0) },
+        );
+      });
 
       const { user } = renderSendFlow(ethereumAccount);
       await navigateToAmountScreen(user);
@@ -1414,6 +1491,65 @@ describe("Send Flow Integration", () => {
 
       await user.click(sponsoredOption);
       expect(screen.getByTestId("send-fee-payment-options")).toBeVisible();
+    });
+  });
+
+  describe("Signature through the device intent executor", () => {
+    beforeEach(() => {
+      mockExecutorProps = null;
+    });
+
+    it("broadcasts once, persists the pending operation and confirms, despite a refresh during broadcast", async () => {
+      setMockTransaction(
+        createMinimalEvmTransaction({
+          amount: new BigNumber("10000000000000000"),
+          recipient: VALID_EVM_RECIPIENT,
+        }),
+      );
+      const { broadcast, resolve } = deferBroadcast();
+      const { user, store } = renderSendFlow(ethereumAccount, {}, [], {
+        flags: { lwdNewSendFlowDeviceIntent: { enabled: true } },
+      });
+
+      await navigateToAmountScreen(user);
+      await user.click(screen.getByTestId("send-review-button"));
+      expect(await screen.findByTestId("mock-device-intent-executor")).toBeVisible();
+
+      const executor = mockExecutorProps;
+      if (!executor) throw new Error("The executor was not rendered");
+      act(() => executor.intent.onResult?.(SIGNED_OPERATION));
+      act(() => executor.onIntentJobComplete());
+      act(() => executor.onIntentJobComplete());
+
+      expect(screen.queryByTestId("mock-device-intent-executor")).not.toBeInTheDocument();
+      expect(screen.getByTestId("send-signature-step")).toBeVisible();
+
+      act(() => refreshTransaction());
+      const operation = {
+        id: "op-1",
+        hash: "0xabc",
+        type: "OUT",
+        value: new BigNumber(1000),
+        fee: new BigNumber(100),
+        senders: ["sender"],
+        recipients: ["recipient"],
+        accountId: ethereumAccount.id,
+        date: new Date(),
+        blockHeight: null,
+        blockHash: null,
+        extra: {},
+      } as Operation;
+      await act(async () => resolve(operation));
+
+      expect(await screen.findByTestId("send-confirmation-step")).toBeVisible();
+      expect(broadcast).toHaveBeenCalledTimes(1);
+      expect(broadcast).toHaveBeenCalledWith(SIGNED_OPERATION);
+      const storedAccount = store
+        .getState()
+        .accounts.find((account: { id: string }) => account.id === ethereumAccount.id);
+      expect(storedAccount?.pendingOperations).toEqual([
+        expect.objectContaining({ id: "op-1", hash: "0xabc" }),
+      ]);
     });
   });
 });

@@ -1,5 +1,4 @@
 import { describe, it, expect, afterEach } from "bun:test";
-import { join } from "node:path";
 import { writeFileSync, rmSync, mkdirSync } from "node:fs";
 import { YAML } from "bun";
 import { runCli } from "../../testing/cli-runner";
@@ -17,8 +16,7 @@ const SAMPLE_ENTRIES = [
   },
 ];
 
-async function readSessionFile(xdgStateHome: string): Promise<unknown> {
-  const path = join(xdgStateHome, "ledger-wallet-cli", "session.yaml");
+async function readSessionFile(path: string): Promise<unknown> {
   return YAML.parse(await Bun.file(path).text());
 }
 
@@ -50,7 +48,7 @@ describe("session reset — human", () => {
     const fixture = makeSessionDir(SAMPLE_ENTRIES);
     cleanup = fixture.cleanup;
     await runCli(["session", "reset"], fixture.env);
-    const session = await readSessionFile(fixture.env.XDG_STATE_HOME);
+    const session = await readSessionFile(fixture.sessionPath);
     expect(session).toEqual({ accounts: [] });
   });
 
@@ -96,7 +94,7 @@ describe("session reset — json", () => {
     const fixture = makeSessionDir(SAMPLE_ENTRIES);
     cleanup = fixture.cleanup;
     await runCli(["session", "reset", "--output", "json"], fixture.env);
-    const session = await readSessionFile(fixture.env.XDG_STATE_HOME);
+    const session = await readSessionFile(fixture.sessionPath);
     expect(session).toEqual({ accounts: [] });
   });
 });
@@ -105,7 +103,7 @@ describe("session reset — corrupt file recovery", () => {
   it("refuses to overwrite an unreadable (non-YAML) session file without --force", async () => {
     const fixture = makeSessionDir([]);
     cleanup = fixture.cleanup;
-    const path = join(fixture.env.XDG_STATE_HOME, "ledger-wallet-cli", "session.yaml");
+    const path = fixture.sessionPath;
     writeFileSync(path, ": : :\n\t- ["); // not valid YAML → exercises the catch-branch fallback
     const { stdout, exitCode } = await runCli(
       ["session", "reset", "--output", "json"],
@@ -124,12 +122,12 @@ describe("session reset — corrupt file recovery", () => {
     const fixture = makeSessionDir([]);
     cleanup = fixture.cleanup;
     writeFileSync(
-      join(fixture.env.XDG_STATE_HOME, "ledger-wallet-cli", "session.yaml"),
+      fixture.sessionPath,
       ": : :\n\t- [", // not valid YAML → exercises the catch-branch fallback
     );
     const { exitCode } = await runCli(["session", "reset", "--force"], fixture.env);
     expect(exitCode).toBe(0);
-    const session = await readSessionFile(fixture.env.XDG_STATE_HOME);
+    const session = await readSessionFile(fixture.sessionPath);
     expect(session).toEqual({ accounts: [] });
   });
 
@@ -138,12 +136,12 @@ describe("session reset — corrupt file recovery", () => {
     cleanup = fixture.cleanup;
     // Malformed trustchain: readForReset salvages it to undefined without throwing.
     writeFileSync(
-      join(fixture.env.XDG_STATE_HOME, "ledger-wallet-cli", "session.yaml"),
+      fixture.sessionPath,
       YAML.stringify({ accounts: [{ label: "bad label", descriptor: 42 }], trustchain: "nope" }),
     );
     const { exitCode } = await runCli(["session", "reset"], fixture.env);
     expect(exitCode).toBe(0);
-    const session = await readSessionFile(fixture.env.XDG_STATE_HOME);
+    const session = await readSessionFile(fixture.sessionPath);
     expect(session).toEqual({ accounts: [] });
   });
 
@@ -152,7 +150,7 @@ describe("session reset — corrupt file recovery", () => {
     cleanup = fixture.cleanup;
     // Replace the session file with a directory at the same path: reading it throws an fs error
     // (EISDIR) with a `code`, which reset must surface rather than mask by overwriting.
-    const path = join(fixture.env.XDG_STATE_HOME, "ledger-wallet-cli", "session.yaml");
+    const path = fixture.sessionPath;
     rmSync(path);
     mkdirSync(path);
     const { exitCode } = await runCli(["session", "reset"], fixture.env);
@@ -164,12 +162,12 @@ describe("session reset — corrupt file recovery", () => {
     cleanup = fixture.cleanup;
     const trustchain = { rootId: "root-abc", applicationPath: "m/0'/17'/0'" };
     writeFileSync(
-      join(fixture.env.XDG_STATE_HOME, "ledger-wallet-cli", "session.yaml"),
+      fixture.sessionPath,
       YAML.stringify({ accounts: SAMPLE_ENTRIES, trustchain, passwordSalt: "0".repeat(32) }),
     );
     const { exitCode } = await runCli(["session", "reset"], fixture.env);
     expect(exitCode).toBe(0);
-    const session = await readSessionFile(fixture.env.XDG_STATE_HOME);
+    const session = await readSessionFile(fixture.sessionPath);
     expect(session).toEqual({ accounts: [], trustchain, passwordSalt: "0".repeat(32) });
   });
 });
@@ -178,12 +176,12 @@ async function resetWithProfiles(agentIntentProfiles: unknown[]): Promise<unknow
   const fixture = makeSessionDir(SAMPLE_ENTRIES);
   cleanup = fixture.cleanup;
   writeFileSync(
-    join(fixture.env.XDG_STATE_HOME, "ledger-wallet-cli", "session.yaml"),
+    fixture.sessionPath,
     YAML.stringify({ accounts: SAMPLE_ENTRIES, agentIntentProfiles }),
   );
   const { exitCode } = await runCli(["session", "reset"], fixture.env);
   expect(exitCode).toBe(0);
-  return readSessionFile(fixture.env.XDG_STATE_HOME);
+  return readSessionFile(fixture.sessionPath);
 }
 
 describe("session reset — Agent Intent profiles", () => {

@@ -32,7 +32,7 @@ The canonical, human-readable descriptor defined in the ADR, implemented by `@do
 ### String representation
 
 ```
-account:2:<type>:<network_id>:<xpub_or_address>:<path>
+account:2:<type>:<network_id>:<key>:<path>
 ```
 
 Version 1 (`account:1:<type>:<network_name>:<network_env>:…`) is still read and converted: `bitcoin:testnet` → `bitcoin_testnet`. `session.yaml` entries are rewritten to version 2 on load.
@@ -41,7 +41,7 @@ Version 1 (`account:1:<type>:<network_name>:<network_env>:…`) is still read an
 | ----------------- | -------------------------------------------------- |
 | `type`            | `utxo` (Bitcoin family) or `address` (EVM, Solana) |
 | `network_id`      | CAL network id: `bitcoin`, `bitcoin_testnet`, `ethereum_sepolia`, … |
-| `xpub_or_address` | xpub/ypub/zpub (UTXO) or derived address (ACCOUNT) |
+| `key`             | xpub (UTXO), or the account key: an address, or a public key for the families keyed on it |
 | `path`            | BIP32 derivation path (see below)                  |
 
 ### Path conventions
@@ -87,7 +87,7 @@ import { toV1, toV0, serializeV1, parseV1 } from "./index";
 
 ### `toV1(v0: AccountDescriptorV0): AccountDescriptorV1`
 
-Converts a V0 descriptor to V1. Derives the type (`utxo` vs `account`) by checking whether `seedIdentifier` looks like an xpub (starts with `xpub`, `ypub`, `zpub`). Reconstructs the BIP32 path from `derivationMode` + `index`.
+Converts a V0 descriptor to V1. Derives the type (`utxo` vs `account`) by checking whether `seedIdentifier` looks like an xpub (starts with `xpub`, `ypub`, `zpub`). Reconstructs the BIP32 path from `derivationMode` + `index`. Throws `UnsupportedFamilyError` for a currency with no known derivation, and `InvalidDerivationPathError` when the built path is not a valid BIP32 path (e.g. an index of 2^31 or more).
 
 ### `toV0(v1: AccountDescriptorV1): AccountDescriptorV0`
 

@@ -1,6 +1,6 @@
 {
   "name": "@devtools/mock-accounts",
-  "version": "0.2.0",
+  "version": "0.5.0",
   "private": true,
   "description": "DevTools page generating mock account descriptors, and the MockSource serving their data",
   "main": "src/index.ts",
@@ -21,13 +21,18 @@
   },
   "dependencies": {
     "@domain/api-account-data": "workspace:*",
+    "@domain/entity-account": "workspace:*",
     "@domain/entity-account-balance": "workspace:*",
     "@domain/entity-account-balance-history": "workspace:*",
     "@domain/entity-account-data": "workspace:*",
     "@domain/entity-account-descriptor": "workspace:*",
     "@domain/entity-account-operation": "workspace:*",
+    "@domain/entity-account-receive": "workspace:*",
+    "@domain/entity-account-status": "workspace:*",
     "@domain/entity-currency-crypto": "workspace:*",
     "@domain/entity-currency-fiat": "workspace:*",
+    "@domain/entity-derivation": "workspace:*",
+    "@domain/entity-network": "workspace:*",
     "@noble/hashes": "catalog:"
   },
   "peerDependencies": {

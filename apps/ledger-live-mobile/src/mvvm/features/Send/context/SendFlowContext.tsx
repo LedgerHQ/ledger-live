@@ -102,10 +102,3 @@ export function useSendFlowActions(): ActionsContextValue {
   }
   return context;
 }
-
-export function useSendFlow() {
-  return {
-    data: useSendFlowData(),
-    actions: useSendFlowActions(),
-  };
-}

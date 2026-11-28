@@ -121,7 +121,7 @@
     "addressCopied" : "Adres kopyalandı",
     "addressCopiedSuspicious" : "Kopyalanan adres ile panodaki adres arasında uyuşmazlık var.",
     "experimentalFeature" : "Deneysel",
-    "featureFlags" : "Özellik bayrağı",
+    "devTools" : "Geliştirme araçları",
     "ldmkEnabled" : "LDMK taşıma",
     "information" : "Bilgi",
     "search" : "Ara...",
@@ -187,6 +187,7 @@
       "FEES" : "Ücretler",
       "OPT_IN" : "Onayla",
       "OPT_OUT" : "Reddet",
+      "OPT_EDIT" : "Token güncellendi",
       "CLOSE_ACCOUNT" : "Hesabı kapat",
       "BOND" : "Bağla",
       "UNBOND" : "Çöz",
@@ -322,7 +323,7 @@
       "title" : "Kapsamlı log'lar",
       "derivationTip" : "Bu bir {{tag}} xpub'ıdır. Bunu bir üçüncü taraf cüzdana aktarırken aynı türev modunu seçin.",
       "synchronised" : "{{date}} senkronize edildi",
-      "copy" : "Log kopyala",
+      "copy" : "Log'ları kopyala",
       "copied" : "Kopyalandı"
     },
     "remove" : {
@@ -340,7 +341,15 @@
     "home" : "Ana Sayfa",
     "refer" : "Arkadaşına Öner",
     "catalog" : "Keşfet",
-    "recover" : "[L] Recover"
+    "recover" : "[L] Recover",
+    "agents" : "Ajanlar"
+  },
+  "agentIntent" : {
+    "title" : "Ajanlar",
+    "manageAgents" : {
+      "title" : "Ajanlarınızı yönetin",
+      "description" : "Yapay Zeka ajanlarının varlıklarınızı yönetmesine izin verin."
+    }
   },
   "stars" : {
     "tooltip" : "Hesabı yıldızla"
@@ -1950,13 +1959,13 @@
       "continue" : "İşleme devam ettiğiniz takdirde sorumluluk size aittir"
     },
     "info" : {
-      "title" : "{{date}} tarihinden itibaren, {{device}}™ cihazında Ledger Live™ üzerinden sağlanan {{coinName}} desteği sona erecektir",
-      "subtitle" : "Tüm Ledger Live sağlayıcılarına ve optimum müşteri desteğine erişebilmek için hemen daha yeni bir Ledger cihazına model yükseltin",
+      "title" : "{{date}} itibarıyla Ledger Wallet™ üzerinden {{device}}™ cihazlarında {{coinName}} desteği sona erecek",
+      "subtitle" : "Tüm Ledger Wallet hizmet sağlayıcılarına ve optimum müşteri desteğine erişebilmek için hemen daha yeni bir Ledger cihazına model yükseltin",
       "reminder" : "Tekrar hatırlatma"
     },
     "error" : {
       "title" : "{{device}}™ bu özelliği desteklemiyor",
-      "subtitle" : "En yeni Ledger Live özelliklerinin hepsine erişebilmek için hemen daha yeni bir Ledger cihazına model yükseltin."
+      "subtitle" : "Ledger Wallet’ın en yeni özelliklerinin tümüne erişmek için hemen daha yeni bir Ledger cihazına geçin."
     },
     "update" : "Model Yükseltme Programınızı keşfedin",
     "learnMore" : "Daha fazla bilgi",
@@ -2128,6 +2137,14 @@
       "link" : "Stellar varlıklarıyla ilgili daha çok bilgi alın",
       "seeTokens" : "Varlıkları göster ({{tokenCount}})",
       "hideTokens" : "Varlıkları gizle ({{tokenCount}})"
+    },
+    "xrp" : {
+      "title" : "Token'lar",
+      "cta" : "Token ekle",
+      "placeholder" : "{{currencyName}} hesabınıza token ekleyebilirsiniz.",
+      "link" : "XRP Ledger token'ları hakkında daha fazla bilgi edinin",
+      "seeTokens" : "Token'ları göster ({{tokenCount}})",
+      "hideTokens" : "Token'ları gizle ({{tokenCount}})"
     }
   },
   "subAccounts" : {
@@ -2756,6 +2773,39 @@
       }
     }
   },
+  "receiveAddress" : {
+    "title" : "{{asset}} al",
+    "networkLabel" : "{{network}} ağı",
+    "addressDisplayed" : {
+      "title" : "Adres güvenli bir şekilde görüntüleniyor",
+      "description" : "Yapıştırdığınız veya paylaştığınız adresin Ledger cihazınızda görünen adresle aynı olduğunu doğrulayın."
+    },
+    "addressVerified" : {
+      "title" : "Adres doğrulandı",
+      "description" : "Ledger Wallet’taki adres, Ledger cihazınızdaki adresle eşleşiyor.",
+      "doneCta" : "Tamam"
+    },
+    "addressMismatch" : {
+      "title" : "Bu adres Ledger cihazınızdaki adresle eşleşmiyor",
+      "description" : "Bu adresi kullanmayın. Bu hesabın kurulu olmadığı bir Ledger cihazı kullanıyor olabilirsiniz. Doğru cihazı bağlayın ve adresi yeniden doğrulayın. Adres hâlâ eşleşmiyorsa Ledger Destek ekibiyle iletişime geçin.",
+      "contactSupportCta" : "Ledger Destek ile iletişime geçin",
+      "closeCta" : "Kapat"
+    },
+    "selectAddress" : {
+      "title" : "Adres seçin"
+    },
+    "addressOptions" : {
+      "transparent" : "Açık adres",
+      "shielded" : "Gizli adres"
+    },
+    "close" : "Kapat",
+    "back" : "Geri",
+    "error" : {
+      "title" : "Bu adres yüklenemedi",
+      "description" : "İnternet bağlantınızı kontrol edin, ardından tekrar deneyin.",
+      "retry" : "Tekrar dene"
+    }
+  },
   "send" : {
     "title" : "Gönder",
     "totalSpent" : "Düşülecek tutar",
@@ -2983,7 +3033,13 @@
     "processingTransaction" : "İşleminiz gerçekleştiriliyor",
     "sign" : {
       "title" : "Ledger {{wording}} üzerinde devam edin",
-      "description" : "Güvenli Dokunmatik Ekranınızda gösterilen yönergeleri izleyin."
+      "description" : "Güvenli Dokunmatik Ekranınızda gösterilen yönergeleri izleyin.",
+      "cancelled" : {
+        "title" : "İşlem iptal edildi",
+        "description" : "İşlemi reddettiniz. Varlıklarınız etkilenmeyecektir.",
+        "close" : "Kapat",
+        "retry" : "Tekrar dene"
+      }
     },
     "gasOptionsSync" : {
       "warningTitle" : "Ağ ücretleri yenilenemiyor",
@@ -3019,18 +3075,19 @@
       "insufficientFunds" : "Tutarı ve {{provider}} enerji kiralama ücretini karşılamak için yeterli {{feeCurrency}} bakiyeniz yok."
     },
     "sponsoredRentSignature" : {
-      "title" : "1/2. Adım",
+      "title" : "Ağ ücreti sponsorluğunu onaylayın",
       "strategy" : "Enerji kiralama - {{provider}}",
       "crafting" : "Enerji kiralama hazırlanıyor…",
       "submitting" : "Enerji kiralama ödemesi gönderiliyor…",
-      "feeLabel" : "Kiralama ücreti"
+      "feeLabel" : "Kiralama ücreti",
+      "terms" : "Bu işlemi imzaladığınızda <0>{{provider}} Hüküm ve Koşullarını</0> kabul etmiş olursunuz."
     },
     "sponsoredTransferSignature" : {
-      "title" : "2/2. Adım"
+      "title" : "Transferi onaylayın"
     },
     "sponsoredPolling" : {
-      "title" : "Enerji teslimatı bekleniyor",
-      "waiting" : "{{provider}} kiralanan enerjiyi teslim ediyor. Bu işlem biraz sürebilir.",
+      "title" : "Enerjiniz teslim ediliyor",
+      "waiting" : "Bu, 2 dakika kadar sürebilir...",
       "elapsed" : "Geçen süre: {{time}}"
     },
     "sponsoredFailure" : {
@@ -3081,12 +3138,6 @@
         "subtitle" : "Korumalı",
         "pendingNoticeTitle" : "Vadesi dolmak üzere olan bakiye",
         "pendingNotice" : "Bazı korumalı notlar hâlâ vade ödülü üretme sürecinde olduğundan henüz harcanamayabilir"
-      },
-      "aleoPublic" : {
-        "title" : "Açık bakiye"
-      },
-      "aleoPrivate" : {
-        "title" : "Gizli bakiye"
       },
       "zeroBalance" : {
         "warning" : "Mevcut bakiye yok"
@@ -4274,6 +4325,126 @@
           "broadcastError" : "İşleminiz başarısız olmuş olabilir. Lütfen biraz bekleyin ve tekrar denemeden önce işlem geçmişini kontrol edin."
         }
       }
+    }
+  },
+  "xrp" : {
+    "addToken" : {
+      "title" : "Token ekle",
+      "steps" : {
+        "token" : {
+          "title" : "Token",
+          "selectLabel" : "Bir token seçin",
+          "empty" : "Bu hesaba eklemek için kullanılabilir token bulunmuyor.",
+          "loadError" : "Token listesi yüklenemedi.",
+          "info" : "Token eklemek, ağ ücreti ödenen bir işlem gönderir ve token’ı elinizde tuttuğunuz sürece bir miktar XRP’yi rezerv olarak ayırır. Bu işlem, işlem geçmişinizde görünür."
+        },
+        "settings" : {
+          "title" : "Ayarlar",
+          "limit" : "Güven limiti",
+          "max" : "Maks.",
+          "limitInfo" : "Güven limiti, hesabınızın tutmayı kabul ettiği en yüksek {{token}} miktarıdır. XRP Ledger'ın izin verdiği en yüksek limiti kullanmak için Maksimum seçeneğini etkinleştirin.",
+          "maximum" : "Maksimum"
+        },
+        "review" : {
+          "title" : "İncele",
+          "token" : "Token",
+          "issuer" : "İhraççı",
+          "issuerFee" : "İhraççı ücreti",
+          "issuerFeeTooltip" : "Token sahipleri arasındaki her transferden ihraççının aldığı pay.",
+          "issuerFeeError" : "İhraççı ücreti bilgileri alınamadı.",
+          "notEnoughReserve" : "Bu token’ı eklemek için kullanılabilir bakiyenizin en az {{minimumAmount}} olması gerekir.",
+          "receive" : "Al"
+        },
+        "connectDevice" : {
+          "title" : "Cihaz"
+        },
+        "confirmation" : {
+          "title" : "Onaylayın",
+          "success" : {
+            "title" : "{{token}} ekleme talebi gönderildi",
+            "text" : "Ağ işlemi onayladığında geçerli olur.",
+            "cta" : "Ayrıntıları gör"
+          },
+          "broadcastError" : "İşleminiz başarısız olmuş olabilir. Lütfen biraz bekleyin ve tekrar denemeden önce işlem geçmişini kontrol edin."
+        }
+      }
+    },
+    "tokenSettings" : {
+      "title" : "Token ayarları",
+      "currentLimitZero" : "Limitiniz 0: Bu token’ı alamazsınız.",
+      "limitBelowBalance" : "Bakiyeniz ({{balance}}) bu limitin üzerinde. Bakiyeniz bu limitin altına düşene kadar bu token’ı alamazsınız.",
+      "steps" : {
+        "confirmation" : {
+          "success" : {
+            "title" : "{{token}} güncelleme talebi gönderildi"
+          }
+        }
+      }
+    },
+    "manageAssets" : {
+      "cta" : "Yönet",
+      "title" : "Varlıkları yönetin",
+      "tokenType" : "Token türü",
+      "tokenTypeTooltip" : "Güven hattının (IOU) bir bakiye limiti ve bir rippling ayarı vardır. Multi Purpose Token’ın (MPT) ise herhangi bir ayarı yoktur.",
+      "iou" : "Güven Hattı (IOU)",
+      "mpt" : "Çok Amaçlı Token",
+      "transferFee" : "Transfer ücreti",
+      "lockedAmount" : "Kilitli tutar",
+      "balanceLimit" : "Bakiye limiti",
+      "ripplingTooltip" : "Rippling, diğer kullanıcıların ödemelerinin bakiyenizi aynı para birimi koduna sahip token’lar arasında aktarmasına olanak tanır.",
+      "activated" : "Etkin",
+      "deactivated" : "Devre dışı",
+      "edit" : "Düzenle",
+      "delete" : "Sil"
+    },
+    "manageToken" : {
+      "title" : "Token'ı yönet",
+      "settings" : {
+        "title" : "Gelişmiş ayarlar",
+        "description" : "Güven limitini veya rippling ayarını değiştirin."
+      },
+      "remove" : {
+        "description" : "Bu güven hattını kapatın ve XRP rezervini geri alın."
+      }
+    },
+    "removeToken" : {
+      "title" : "Token'ı kaldır",
+      "pending" : "Kaldırılması bekleniyor",
+      "frozen" : "Bu token donduruldu",
+      "steps" : {
+        "review" : {
+          "unlocked" : "{{amount}} serbest bırakılacak ve tekrar kullanılabilir hale gelecek.",
+          "info" : "Bu token’ı artık alamayacaksınız. Token’ı daha sonra tekrar ekleyebilirsiniz ({{amount}} yeniden kilitlenir).",
+          "balanceLeft" : "Hesabınızda hâlâ {{balance}} bulunuyor. Bu token’ı kaldırmadan önce bakiyenizi gönderin.",
+          "send" : "Gönder"
+        },
+        "connectDevice" : {
+          "limitZero" : "Cihazınızda güven limiti 0 olarak görünecek. XRP Ledger, token’ları bu şekilde kaldırır."
+        },
+        "confirmation" : {
+          "success" : {
+            "title" : "{{token}} kaldırma talebi gönderildi"
+          }
+        }
+      }
+    },
+    "tokenAccount" : {
+      "trustLimit" : "Güven limiti",
+      "trustLimitTooltip" : "Hesabınızın bu token’dan tutmayı kabul ettiği en yüksek miktar."
+    },
+    "rippling" : {
+      "label" : "Rippling",
+      "on" : "Açık",
+      "off" : "Kapalı",
+      "warning" : "Bu ayarı açmak, diğer kullanıcıların ödemelerinin bakiyenizi aynı para birimi koduna sahip token’lar arasında aktarmasına izin verir. Bu ayarı yalnızca ne yaptığınızdan eminseniz açın."
+    },
+    "send" : {
+      "issuerFee" : "İhraççı ücreti"
+    },
+    "receive" : {
+      "addToken" : "Token ekle",
+      "addTokenFirst" : "Bir XRP Ledger token'ı almak için önce onu hesabınıza ekleyin.",
+      "tokenNotHeld" : "Hesabınız artık {{token}} tutmuyor. Almadan önce tekrar ekleyin."
     }
   },
   "stellar" : {
@@ -5524,7 +5695,14 @@
       },
       "devTools" : {
         "rowTitle" : "DevTools",
-        "rowDesc" : "DevTools konsolunu (özellik bayrakları ve geliştirici araçları paneli) açın."
+        "rowDesc" : "DevTools konsolunu (özellik bayrakları ve geliştirici araçları paneli) açın.",
+        "appToggles" : {
+          "hideNightlyLayer" : {
+            "label" : "Ön sürüm katmanını gizle",
+            "description" : "Nightly derlemelerinde görünen PRERELEASE filigranını gizleyin (ör. temiz ekran görüntüleri almak için).",
+            "lockedReason" : "Bu katman yalnızca Nightly derlemelerinde görünür."
+          }
+        }
       },
       "brazeTools" : {
         "title" : "Braze Araçları",
@@ -6886,6 +7064,7 @@
       "claimRewardCompound" : "ödülleri alacak olan doğrulayıcı",
       "compoundReward" : "ödülleri alacak olan doğrulayıcı",
       "optIn" : "alıcı",
+      "changeTrust" : "alıcı",
       "tokenAssociate" : "alıcı",
       "nominate" : "doğrulayıcı",
       "stake" : "doğrulayıcı",
@@ -7064,6 +7243,9 @@
         "expiresAt" : "Süresinin dolacağı zaman:",
         "expiresIn" : "Süresinin dolmasına kalan süre:",
         "amount" : "Miktar",
+        "unknownToken" : "Bilinmeyen token",
+        "instrumentId" : "Varlık Kimliği",
+        "instrumentAdmin" : "Yönetici",
         "transaction" : "İşlem",
         "viewTransaction" : "İşlemi görüntüle",
         "action" : "Eylem",
@@ -7222,6 +7404,9 @@
     "AccountAwaitingSendPendingOperations" : {
       "title" : "Bu hesap için bekleyen bir işlem var.",
       "description" : "İşlemin tamamlanmasını bekleyin."
+    },
+    "TokenNonTransferable" : {
+      "title" : "Bu token gönderilemez. Akıllı sözleşmesi transferlere izin vermiyor."
     },
     "AccountNameRequired" : {
       "title" : "Bir hesap adı gerekli",
@@ -7725,6 +7910,14 @@
       "title" : "Ağ Hatası",
       "description" : "İnternet bağlantınızı kontrol edip tekrar deneyin."
     },
+    "WithdrawApiError" : {
+      "title" : "Çekim işleminiz gönderilmedi",
+      "description" : "Sürekli vadeli işlem bakiyenizden hiçbir tutar çıkmadı. Kapatın ve yeni bir fiyat teklifiyle tekrar deneyin."
+    },
+    "WithdrawSubmitUnknownOutcomeError" : {
+      "title" : "Çekim işleminizi onaylayamadık",
+      "description" : "İşlem yine de gerçekleşebilir. Tekrar denemeden önce Takas Geçmişini kontrol edin."
+    },
     "WrongDeviceForAccount" : {
       "title" : "Bir hata oluştu",
       "description" : "Lütfen Ledger cihazınızın, seçilen hesapla ilişkili kurtarma ifadesi veya passphrase ile ayarlandığından emin olun."
@@ -7892,6 +8085,9 @@
     "TezosStakeAmountTooSmall" : {
       "title" : "Bu tutar stake etmek için çok düşük."
     },
+    "TezosDelegateRefusesStaking" : {
+      "title" : "Doğrulayıcınız stake kabul etmiyor. Stake etmek için doğrulayıcınızı değiştirin."
+    },
     "RecommendSubAccountsToEmpty" : {
       "title" : "Lütfen önce tüm alt hesapları boşaltın"
     },
@@ -7985,7 +8181,8 @@
       "description" : "Bir hata oluştu, lütfen tekrar deneyin veya şüpheniz varsa Ledger Destek ile iletişime geçin."
     },
     "EthAppPleaseEnableContractData" : {
-      "title" : "Ethereum uygulamasında Kör İmzalamayı veya Sözleşme Verilerini etkinleştirin"
+      "title" : "Ethereum uygulamasında Kör İmzalamayı veya Sözleşme Verilerini etkinleştirin",
+      "description" : "Cihazınızda Ethereum uygulama ayarlarını açın, Kör İmzalamayı etkinleştirin ve ardından tekrar deneyin."
     },
     "CeloAppPleaseEnableContractData" : {
       "title" : "Celo uygulaması ayarlarında Sözleşme Verilerini lütfen etkinleştirin"
@@ -7995,6 +8192,96 @@
     },
     "XrpDestinationTagRequired" : {
       "title" : "Bu alıcı için bir hedef etiketi gereklidir"
+    },
+    "XrpTokenStandardNotEnabled" : {
+      "title" : "Bu token türü henüz desteklenmiyor"
+    },
+    "XrpAmountPrecisionExceeded" : {
+      "title" : "Tutarda çok fazla basamak var",
+      "description" : "XRP Ledger token’ları en fazla 16 anlamlı basamak kabul eder."
+    },
+    "XrpTrustLimitZero" : {
+      "title" : "Limit 0'ın üzerinde olmalıdır",
+      "description" : "Bu token’ı artık tutmak istemiyorsanız onu kaldırın."
+    },
+    "XrpTokenFrozen" : {
+      "title" : "Token donduruldu",
+      "description" : "İhraççısı bu token'ı dondurdu."
+    },
+    "XrpTokenNotAuthorized" : {
+      "title" : "Hesabınız onaylanmadı",
+      "description" : "Token’ın ihraççısı, hesabınızın bu token’ı tutmasını onaylamadı."
+    },
+    "XrpTokenCannotReceive" : {
+      "title" : "Bu alıcı bu token’ı alamaz",
+      "description" : "Alıcının önce bu token’ı eklemesi gerekiyor olabilir veya ihraççı bu transfere izin vermiyor olabilir."
+    },
+    "XrpTokenAmountNotDeliverable" : {
+      "title" : "Bu tutar teslim edilemiyor",
+      "description" : "Alıcının limiti veya ihraççının transfer ücreti bu işleme izin vermiyor. Daha küçük bir tutar deneyin."
+    },
+    "XrpTokenOptInRefused" : {
+      "title" : "İhraççı bu talebi reddetti",
+      "description" : "İhraççı bu token için yeni sahip kabul etmiyor veya böyle bir token mevcut değil."
+    },
+    "XrpTransactionWouldFail" : {
+      "title" : "Bu işlem başarısız olur",
+      "description" : "XRP Ledger bu işlemi {{code}} hata koduyla reddetti."
+    },
+    "XrpUnsupportedIntent" : {
+      "title" : "Bu işlem desteklenmiyor"
+    },
+    "XrpReserveIncrease" : {
+      "title" : "Bu token hesabınızda ekli olduğu sürece {{amount}} kilitli kalacaktır.",
+      "description" : "Token’ı kaldırdığınızda bu tutarı geri alırsınız."
+    },
+    "XrpAccountNotActivated" : {
+      "title" : "Hesabınız henüz etkinleştirilmedi",
+      "description" : "Hesabınızı etkinleştirmek ve bu token’ı eklemek için en az {{amount}} alın. Bu tutar, hesabın etkinleştirilmesi için gereken miktarı ve token için kilitlenen XRP’yi karşılar."
+    },
+    "XrpTrustLimitTooHigh" : {
+      "title" : "Limit, maksimum değerin üzerinde",
+      "description" : "En yüksek limiti belirlemek için Maks. butonunu kullanın."
+    },
+    "XrpTrustSetUnchanged" : {
+      "title" : "Bu ayarlar zaten uygulanmış durumda",
+      "description" : "Bu token’ı güncellemek için limiti veya rippling ayarını değiştirin."
+    },
+    "XrpRecipientNotActivated" : {
+      "title" : "Bu hesap etkinleştirilmemiş",
+      "description" : "Token alamaz."
+    },
+    "XrpRecipientTokenNotAdded" : {
+      "title" : "Bu alıcı bu token’ı henüz alamaz",
+      "description" : "Öncelikle token'ı eklemesini isteyin."
+    },
+    "XrpRecipientLimitTooLow" : {
+      "title" : "Alıcı limiti çok düşük",
+      "description" : "Alıcı, bu token’dan en fazla {{maxAmount}} alabilir."
+    },
+    "XrpSendToIssuer" : {
+      "title" : "Token ihraççısına gönderiliyor",
+      "description" : "Bu token'lar imha edilecek ve hiç kimseye aktarılmayacaktır."
+    },
+    "XrpOptOutBalanceNotZero" : {
+      "title" : "Bu token'daki bakiyeniz 0 olmalıdır",
+      "description" : "Token'ı kaldırmadan önce tamamını gönderin."
+    },
+    "XrpOptOutTokenInEscrow" : {
+      "title" : "Bu token'ın bir kısmı emanet hesabında",
+      "description" : "Emanet işlemi tamamlandıktan veya iptal edildikten sonra token’ı kaldırın."
+    },
+    "XrpOptOutTokenFrozen" : {
+      "title" : "{{assetCode}} kaldırılamıyor",
+      "description" : "İhraççısı bu token'ı hesabınızda dondurdu."
+    },
+    "XrpOptOutIncomplete" : {
+      "title" : "Bu token kaldırılamıyor",
+      "description" : "XRP Ledger bu token’ı, kilitli XRP’siyle birlikte hesabınızda tutmaya devam eder."
+    },
+    "XrpReserveRelease" : {
+      "title" : "Bu token için kilitlenen {{amount}} serbest bırakılacak.",
+      "description" : "Token kaldırıldıktan sonra bu tutarı harcayabilirsiniz."
     },
     "InvalidExplorerResponse" : {
       "title" : "{{currencyName}} tarayıcısından geçersiz yanıt"
@@ -8126,6 +8413,10 @@
     },
     "SolanaTxConfirmationTimeout" : {
       "title" : "İşleminiz başarısız olmuş olabilir. Lütfen biraz bekleyin ve tekrar denemeden önce işlem geçmişini kontrol edin."
+    },
+    "SolanaTxBlockhashExpired" : {
+      "title" : "İşlemin süresi doldu",
+      "description" : "Ağ bu işlemi artık kabul etmiyor. Lütfen yeni bir işlem oluşturmak için tekrar deneyin."
     },
     "SolanaRecipientMemoIsRequired" : {
       "title" : "Alıcı adresi için memo gereklidir"
@@ -8526,6 +8817,22 @@
     "SuiAddressBalanceAppUpdateRequired" : {
       "title" : "Sui uygulamanızı güncelleyin",
       "description" : "Ledger Sui uygulamanız, SUI adres bakiyenizden bir transferi imzalayamıyor. Ledger cihazınızdaki Sui uygulamasını güncelleyin ve tekrar deneyin."
+    },
+    "SuiRawTransactionInvalid" : {
+      "title" : "Okunamayan Sui işlemi",
+      "description" : "Uygulama, Ledger Wallet’ın okuyamadığı bir Sui işlemi gönderdi. Uygulama üzerinden tekrar deneyin veya uygulamanın destek ekibiyle iletişime geçin."
+    },
+    "SuiRawTransactionSenderMismatch" : {
+      "title" : "Yanlış Sui hesabı",
+      "description" : "Bu işlem başka bir Sui hesabı için hazırlanmış. Uygulamaya bağlı hesabı seçip tekrar deneyin."
+    },
+    "SuiRawTransactionResolutionFailed" : {
+      "title" : "Sui işlemi hazırlanamadı",
+      "description" : "İşlemde kullanılan varlıkların hâlâ mevcut olduğundan ve hesabın ağ ücretlerini karşılayabildiğinden emin olun, ardından uygulama üzerinden tekrar deneyin."
+    },
+    "SuiSponsoredTransactionBroadcastUnsupported" : {
+      "title" : "Sponsorlu Sui işlemi",
+      "description" : "Bu işlemin ağ ücretleri bir sponsor tarafından ödendiğinden Ledger Wallet işlemi ağa gönderemez. İşlemi uygulamanın kendisi göndermelidir. Sorun devam ederse uygulamanın destek ekibiyle iletişime geçin."
     },
     "NotEnoughBalanceForUnstaking" : {
       "message" : "Kullanılabilir (stake edilmemiş) bakiyeniz şu anda {{currentBalance}} ve {{assetName}} varlığınızın stake'ini durdurmak için gereken ağ ücretini karşılamıyor.",
@@ -9625,6 +9932,74 @@
     "description" : "Bu hesap sürekli vadeli (perpetual) alım satım işlemleriyle bağlantılıdır. Bu hesap üzerinde standart transfer eylemleri desteklenmemektedir",
     "cta" : "Perpetual işlemleri aç"
   },
+  "predictions" : {
+    "binding" : {
+      "preparing" : "İmza hazırlanıyor",
+      "title" : "{{productName}} cihazınızda hesap mülkiyetini onaylayın",
+      "description" : "Güvenli Ekranınızda gösterilen yönergeleri izleyin.",
+      "settingUp" : {
+        "title" : "Alım satım hesabınız kuruluyor"
+      },
+      "setUp" : {
+        "created" : "Alım satım hesabı oluşturuldu",
+        "found" : "Alım satım hesabı bulundu",
+        "description" : "Alım satım hesabınız kullanıma hazır.",
+        "continue" : "Devam"
+      },
+      "mismatch" : {
+        "title" : "Bu imza hesapla eşleşmiyor",
+        "description" : "Bu hesabın bulunduğu Ledger cihazını bağlayın ve kullanıyorsanız aynı passphrase ile tekrar deneyin."
+      },
+      "setupFailed" : {
+        "title" : "Alım satım hesabınız kurulamadı",
+        "failed-deploy" : "MoonPay, alım satım cüzdanınızı oluşturamadı.",
+        "failed-permission" : "MoonPay, alım satım cüzdanınızın izinlerini belirleyemedi.",
+        "timeout" : "Kurulum çok uzun sürüyor.",
+        "unavailable" : "MoonPay'e ulaşılamadı.",
+        "unknown" : "Kurulum sırasında bir sorun oluştu."
+      }
+    },
+    "onboarding" : {
+      "intro" : {
+        "title" : "Gelecekteki olaylar üzerine işlem yapın",
+        "subtitle" : "Artık olayların sonuçları üzerine işlem yapabileceğiniz, dünyanın en büyük tahmin piyasasına erişebilirsiniz. Bir MoonPay hizmetidir.",
+        "items" : {
+          "polymarket" : {
+            "title" : "Ledger Wallet’ta Polymarket’e erişin",
+            "subtitle" : "Şimdi Ledger Wallet’ta"
+          },
+          "markets" : {
+            "title" : "Spor, Teknoloji, Kripto, Hava Durumu, Siyaset",
+            "subtitle" : "Ve daha fazlası, tüm piyasaları keşfedin"
+          },
+          "clearSign" : {
+            "title" : "Her şeyi şeffaf bir şekilde imzalayın",
+            "subtitle" : "İşlem yapılacak tutarı siz belirler ve Şeffaf İmzalama ile siz imzalarsınız"
+          }
+        },
+        "discover" : "Tahminleri keşfet",
+        "learnMore" : "Daha fazla bilgi"
+      },
+      "terms" : {
+        "title" : "Hüküm ve Koşullar",
+        "body" : "Tahmin piyasaları spekülatif niteliktedir, önemli riskler taşır ve tüm kullanıcılar için uygun olmayabilir. Bu piyasalarda işlem yapmak; fonların tamamen kaybedilmesi (bir pozisyon, değerinin tamamını kaybedebilir), piyasa ve sonuçlandırma riski (sonuçlar her piyasanın kendi kurallarına göre belirlenir ve bu kurallar beklentilerinizden farklı olabilir), likidite riski (bir pozisyonu istediğiniz fiyattan veya hiç satamayabilirsiniz) ve akıllı sözleşme riski (koddaki güvenlik açıkları) dâhil olmak üzere önemli riskler içerir. Devam etmeden önce bu riskleri dikkatle değerlendirin ve her piyasanın nasıl işlediğini anlayın. Daha fazla bilgi için <termsLink>Kullanım Koşulları</termsLink>’na bakın.",
+        "checkbox" : "Yukarıdaki sorumluluk reddini okuyup anladığınızı ve tahmin piyasalarında işlem yapmanın risklerini kabul ettiğinizi beyan edersiniz.",
+        "cta" : "Kabul et ve devam et"
+      },
+      "consent" : {
+        "title" : "MoonPay aracılığıyla Polymarket’te Şeffaf İmzalama ile imzalanmış işlem",
+        "description" : "İşlemlerinizi imzalamak ve Tahminler bakiyenizi çekmek için bir Ledger Wallet adresi seçin.",
+        "bullets" : {
+          "dedicatedWallet" : "İşlemlere özel cüzdan: MoonPay Trade, Polymarket işlemleriniz için özel bir cüzdan oluşturur. Yalnızca işlem yapmayı planladığınız tutarı yatırın. Polymarket’te doğrudan oturum açma desteklenmemektedir.",
+          "secureSigning" : "Güvenli imzalama: Her işlem talimatı, seçtiğiniz Ledger Wallet adresi kullanılarak Şeffaf İmzalama ile imzalanır.",
+          "withdraw" : "Dilediğiniz zaman çekin: İşlem bakiyenizi istediğiniz zaman Ledger Wallet’ınıza geri aktarabilirsiniz."
+        },
+        "checkbox" : "Devam ederek bir MoonPay Trade cüzdan adresi oluşturmayı ve seçilen Ledger Wallet adresini, işlem talimatlarını imzalamak ve para çekme işlemlerinizde fonlarınızı almak üzere yetkilendirmeyi kabul edersiniz.",
+        "cta" : "Devam",
+        "footer" : "Kripto işlem hizmetleri, üçüncü taraf sağlayıcı MoonPay tarafından sunulmaktadır. Ledger herhangi bir tavsiye veya öneride bulunmaz."
+      }
+    }
+  },
   "portfolio" : {
     "title" : "Ana Sayfa",
     "today" : "Bugün",
@@ -9655,6 +10030,10 @@
     "borrow" : {
       "title" : "Krediler",
       "description" : "Stabil coin kredisi alın"
+    },
+    "predictions" : {
+      "title" : "Tahminler",
+      "description" : "Gelecek üzerine pozisyon alın"
     }
   },
   "marketBanner" : {
@@ -10112,8 +10491,8 @@
       },
       "amount" : {
         "signingTime" : {
-          "label" : "İmzalama zamanı",
-          "description" : "Ledger imzalayıcınız, bu işlemin kullandığı her kaydı ayrı ayrı onaylar. Gizli bakiyenizden daha fazla tutar göndermek daha fazla kayıt kullanılmasına ve işlemin daha uzun sürmesine neden olabilir."
+          "label" : "Tahmini süre",
+          "description" : "Gizli bakiyenizden daha fazla tutar göndermek daha fazla kayıt kullanılmasını gerektirebilir ve her kayıt işlem süresini uzatır. Daha büyük tutarların onaylanması daha uzun sürer."
         }
       },
       "mandatoryPrivateSync" : {
@@ -10546,6 +10925,7 @@
       "copied" : "Kopyalandı",
       "edit" : "Düzenle",
       "delete" : "Sil",
+      "share" : "Paylaş",
       "networkTag" : "{{name}} Ağı"
     },
     "detailActions" : {
@@ -10655,11 +11035,18 @@
     }
   },
   "accountDetail" : {
+    "analyticsIntroduction" : {
+      "title" : "Hesap performansınızı mı arıyorsunuz?",
+      "description" : "Tüm performans verileriniz artık Analiz sayfasında yer alıyor.",
+      "cta" : "Analize git",
+      "dismiss" : "Analiz tanıtımını kapat"
+    },
     "header" : {
       "settings" : "Hesap ayarları"
     },
     "assets" : {
-      "title" : "Varlıklar"
+      "title" : "Varlıklar",
+      "add" : "Ekle"
     }
   },
   "assetDetails" : {
@@ -11186,7 +11573,14 @@
     "depositDetailTitle" : "Yatırma bilgileri",
     "depositAmountLabel" : "Yatırma tutarı",
     "depositReceiveLabel" : "Alıcı hesap",
-    "depositCTA" : "Yatır"
+    "depositCTA" : "Yatır",
+    "withdrawTitle" : "SwapKit aracılığıyla çekin",
+    "withdrawSubtitle" : "Sağlayıcımız SwapKit, takas ve çekim işlemlerinizi tek bir işlem üzerinden yönetir ve tüm bu süreç Ledger cihazınız tarafından güvence altına alınır.",
+    "withdrawDetailTitle" : "Çekim bilgileri",
+    "withdrawReceiveLabel" : "Alıcı hesap",
+    "networkFeesLabel" : "Ağ ücretleri",
+    "totalDebitedLabel" : "Düşülen toplam tutar",
+    "withdrawCTA" : "Çek"
   },
   "perpsDeposit" : {
     "title" : "Yatırın",
@@ -11196,9 +11590,33 @@
     "selectCurrencyAccount" : "{{accountName}} · <balance>{{counterValue}}</balance>",
     "selectCurrencyNoAccount" : "Hesap yok",
     "review" : "İncele",
+    "learnMore" : "Daha fazla bilgi",
     "formErrors" : {
+      "offline" : "İnternet bağlantısı sorunu.",
       "amountExceedsBalance" : "Yetersiz bakiye",
+      "feeAccountEmpty" : "Ağ ücretleri için daha fazla {{ticker}} gerekiyor.",
+      "notEnoughFees" : "Ağ ücreti için {{fees}} {{ticker}} gerekiyor.",
+      "amountTooLow" : "En az {{amount}} {{ticker}} girin ve tekrar deneyin.",
+      "amountTooHigh" : "{{amount}} {{ticker}} veya daha az bir tutar girip tekrar deneyin.",
+      "feeEstimationFailed" : "Ücretler şu anda hesaplanamadı. Kripto hesaplarınız senkronize olmayabilir. Ledger Wallet uygulamasını yeniden başlatıp tekrar deneyin.",
+      "accountNotReady" : "Bu hesap henüz gönderim yapmaya hazır değil. Hesabı hesaplarınız arasından açın ve ardından tekrar deneyin.",
+      "seiEvmUnlinked" : "Takas yapmadan önce SEI EVM hesaplarının bağlanması gerekir",
+      "aleoPrivateBalance" : "Takas işlemleri yalnızca herkese açık {{ticker}} için kullanılabilir. Fonlarınız şu anda gizli olduğu için takas edilemez.",
+      "tezosUnrevealed" : "Tezos hesabınız henüz etkinleştirilmedi. Lütfen takas işleminden önce küçük bir tutarda XTZ gönderin.",
+      "dotMinimumBalance" : "Takas sonrasında en az {{minValue}} DOT bakiyesi bulundurun.",
+      "xlmMinimumBalance" : "Takas sonrasında sonra en az {{minValue}} XLM bakiyesi bulundurun.",
       "quoteUnavailable" : "{{provider}} üzerinden fiyat teklifi alamıyoruz. Farklı bir varlıkla deneyin veya daha sonra tekrar deneyin."
+    },
+    "details" : {
+      "notEnoughFees" : {
+        "title" : "Yetersiz {{ticker}}",
+        "description" : "{{account}} hesabınızda ağ ücretlerini karşılayacak kadar bakiye bulunmuyor."
+      },
+      "amountTooLow" : {
+        "title" : "{{ticker}} için gereken alt limit",
+        "description" : "Fiyat teklifi alabilmek için minimum {{amount}} {{ticker}} değerinde bir tutar gereklidir"
+      },
+      "buy" : "{{ticker}} satın al"
     }
   },
   "actionMenuDialog" : {
@@ -11222,8 +11640,15 @@
       "currenciesUnavailable" : "Çekim yapabileceğiniz varlıkları yükleyemiyoruz. Daha sonra tekrar deneyin."
     }
   },
+  "perpsWithdrawSign" : {
+    "a11yTitle" : "Çekim işlemi imzalama"
+  },
   "perpsDepositSign" : {
     "a11yTitle" : "Yatırma işlemini imzalayın",
+    "genericError" : {
+      "title" : "Bir hata oluştu",
+      "description" : "Lütfen daha sonra tekrar deneyin veya farklı bir varlık seçin."
+    },
     "terms" : "Bu işlemi imzalayarak <termsLink>SwapKit by NEAR Intents Hüküm ve Koşullarını</termsLink> kabul ediyorum"
   },
   "perpsTransactionSigned" : {
@@ -11234,6 +11659,17 @@
   "perpsTransactionStatus" : {
     "dialogTitle" : "İşlem bilgileri",
     "title" : "Sürekli Vadeli İşlemlerinizi Fonlayın",
-    "currencies" : "{{sendTicker}} → {{receiveTicker}}"
+    "withdrawTitle" : "Çek",
+    "currencies" : "{{sendTicker}} → {{receiveTicker}}",
+    "returnToPerps" : "Perpetual İşlemlere Dön"
+  },
+  "accountAnalytics" : {
+    "assets" : "Varlık filtresi",
+    "accounts" : "Hesap filtresi",
+    "allAssets" : "Tüm varlıklar",
+    "allAccounts" : "Tüm hesaplar",
+    "error" : "Analizler yüklenemiyor. Lütfen tekrar deneyin.",
+    "unavailable" : "Bu seçim için veri mevcut değil.",
+    "noResults" : "Sonuç bulunamadı"
   }
 }

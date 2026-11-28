@@ -10,9 +10,6 @@ import { createNativeStackNavigator } from "@react-navigation/native-stack";
 const INITIAL_STATE = {
   overrideInitialState: withFlagOverrides(
     {
-      llmAccountListUI: {
-        enabled: true,
-      },
       llmWalletSync: {
         enabled: true,
         params: {

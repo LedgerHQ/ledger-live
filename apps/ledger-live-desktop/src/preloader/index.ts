@@ -12,7 +12,7 @@ import { expose } from "./bridge/expose";
 import { CHANNELS } from "~/bridge/contract";
 
 // Must be first: the renderer reads bootstrap values at module-evaluation time.
-installBridge();
+const bootstrap = installBridge();
 
 // When dashboard is ready, fade out the splash screen
 const appLoaded = () => {
@@ -36,7 +36,7 @@ const params = new URLSearchParams(window.location.search);
 
 // Not `window.api = …`: that would land in the preload's own world.
 expose("api", {
-  appDirname: params.get("appDirname") || "",
+  appDirname: bootstrap.appDirname,
   appLoaded,
   reloadRenderer,
 });

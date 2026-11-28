@@ -136,4 +136,86 @@ describe("useMessageSignatureDrawerViewModel", () => {
     await waitFor(() => expect(onError).toHaveBeenCalledWith(failure));
     expect(onClose).toHaveBeenCalledTimes(1);
   });
+
+  it("rejects with the signing error instead of onCancel when the user closes the error screen", async () => {
+    const { result, onError, onCancel, onClose } = setup();
+    await waitFor(() => expect(result.current.deviceInitializationInput).not.toBeNull());
+    const signingError = new Error("Unsupported message");
+
+    act(() => {
+      result.current.onIntentJobError(signingError);
+    });
+    act(() => {
+      result.current.onUserCancel();
+    });
+
+    expect(onError).toHaveBeenCalledWith(signingError);
+    expect(onCancel).not.toHaveBeenCalled();
+    expect(onClose).toHaveBeenCalledTimes(1);
+  });
+
+  it("forgets the signing error once a retried attempt runs", async () => {
+    const { result, onError, onCancel } = setup();
+    await waitFor(() => expect(result.current.deviceInitializationInput).not.toBeNull());
+
+    act(() => {
+      result.current.onIntentJobError(new Error("Unsupported message"));
+    });
+    act(() => {
+      result.current.onIntentJobStateChanged({
+        type: "pending",
+        deviceModelId: "stax",
+      } as unknown as Parameters<typeof result.current.onIntentJobStateChanged>[0]);
+    });
+    act(() => {
+      result.current.onUserCancel();
+    });
+
+    expect(onError).not.toHaveBeenCalled();
+    expect(onCancel).toHaveBeenCalledTimes(1);
+  });
+
+  it.each(["connectingDevice", "initializingDeviceContext"] as const)(
+    "reports a cancellation when closed on %s after a failed attempt, before the next job state",
+    async executorStateType => {
+      const { result, onError, onCancel } = setup();
+      await waitFor(() => expect(result.current.deviceInitializationInput).not.toBeNull());
+
+      act(() => {
+        result.current.onIntentJobError(new Error("Device disconnected"));
+      });
+      act(() => {
+        result.current.onExecutorStateChanged({
+          type: executorStateType,
+        } as Parameters<typeof result.current.onExecutorStateChanged>[0]);
+      });
+      act(() => {
+        result.current.onUserCancel();
+      });
+
+      expect(onError).not.toHaveBeenCalled();
+      expect(onCancel).toHaveBeenCalledTimes(1);
+    },
+  );
+
+  it("keeps the signing error while the executor shows its error screens", async () => {
+    const { result, onError, onCancel } = setup();
+    await waitFor(() => expect(result.current.deviceInitializationInput).not.toBeNull());
+    const signingError = new Error("Device disconnected");
+
+    act(() => {
+      result.current.onIntentJobError(signingError);
+    });
+    act(() => {
+      result.current.onExecutorStateChanged({
+        type: "deviceDisconnected",
+      } as Parameters<typeof result.current.onExecutorStateChanged>[0]);
+    });
+    act(() => {
+      result.current.onUserCancel();
+    });
+
+    expect(onError).toHaveBeenCalledWith(signingError);
+    expect(onCancel).not.toHaveBeenCalled();
+  });
 });

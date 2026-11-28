@@ -17,16 +17,24 @@ import { revokeAllowance } from "@e2e/utils/allowanceUtils";
  */
 export async function resetCollateralAllowance(collateralAccount: TokenAccount) {
   const ownerAddress = await borrowAccountAddress(collateralAccount);
-  const spender = await resolveCollateralSpender(ownerAddress, DEFAULT_COLLATERAL, DEFAULT_LOAN);
-  await revokeAllowance(collateralAccount, spender, `borrow collateral → ${spender}`);
+  const spender = await resolveCollateralSpender({
+    address: ownerAddress,
+    collateralAmount: DEFAULT_COLLATERAL,
+    loanAmount: DEFAULT_LOAN,
+  });
+  await revokeAllowance({
+    account: collateralAccount,
+    spender,
+    label: `borrow collateral → ${spender}`,
+  });
 }
 
 /** Needs the loan to already exist: a repay is built against the open position's `marketId`. */
 export async function resetDebtAllowance(debtAccount: TokenAccount) {
   const ownerAddress = await borrowAccountAddress(debtAccount);
   const marketId = await openDebtMarketId(ownerAddress);
-  const spender = await resolveRepaySpender(ownerAddress, marketId);
-  await revokeAllowance(debtAccount, spender, `borrow debt → ${spender}`);
+  const spender = await resolveRepaySpender({ address: ownerAddress, marketId });
+  await revokeAllowance({ account: debtAccount, spender, label: `borrow debt → ${spender}` });
 }
 
 /** Resolves through the parent EOA, which is what holds the allowance and signs the revoke. */

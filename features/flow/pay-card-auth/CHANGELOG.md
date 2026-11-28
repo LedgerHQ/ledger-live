@@ -1,5 +1,101 @@
 # @features/flow-pay-card-auth
 
+## 0.14.0
+
+### Minor Changes
+
+- [#25197](https://github.com/LedgerHQ/ledger-live/pull/25197) [`ce2c91d`](https://github.com/LedgerHQ/ledger-live/commit/ce2c91dde08828cc6a213ab19ba1e13efccacc41) Thanks [@deepyjr](https://github.com/deepyjr)! - Open the Baanx manage assets page (`/manage-assets`) from the Pay card Add asset button instead of `/dashboard/accounts/crypto`
+
+- [#24902](https://github.com/LedgerHQ/ledger-live/pull/24902) [`74c967e`](https://github.com/LedgerHQ/ledger-live/commit/74c967eb7dda848648df0db683910140b5d6e906) Thanks [@ysitbon](https://github.com/ysitbon)! - Remove unused exports and move single-platform types into the file that uses them
+
+- [#24818](https://github.com/LedgerHQ/ledger-live/pull/24818) [`2267444`](https://github.com/LedgerHQ/ledger-live/commit/226744400780b00d6468f890d06a821440fb5608) Thanks [@deepyjr](https://github.com/deepyjr)! - Make the card login intro row keys verifiable by the i18n key check
+
+- [#24956](https://github.com/LedgerHQ/ledger-live/pull/24956) [`9300f96`](https://github.com/LedgerHQ/ledger-live/commit/9300f9670ca7e76be132ea6fffc24c04c0f0b3ea) Thanks [@ysitbon](https://github.com/ysitbon)! - Nest the `payCardAuth` and `payCardLoginIntro` selectors in their slices. Export names and signatures are unchanged.
+
+- [#24814](https://github.com/LedgerHQ/ledger-live/pull/24814) [`9f6f480`](https://github.com/LedgerHQ/ledger-live/commit/9f6f48031fad77047e3a6377838816229ba4da5b) Thanks [@deepyjr](https://github.com/deepyjr)! - Translate the web-only Pay wordings in the web views so Mobile no longer needs them
+
+### Patch Changes
+
+- Updated dependencies [[`5af6447`](https://github.com/LedgerHQ/ledger-live/commit/5af6447acb234632ed35feec4735b415d1993ced)]:
+  - @domain/api-card-management@0.10.0
+  - @features/platform-card@0.10.1
+  - @features/platform-pay-analytics@0.4.1
+
+## 0.14.0-next.0
+
+### Minor Changes
+
+- [#25197](https://github.com/LedgerHQ/ledger-live/pull/25197) [`ce2c91d`](https://github.com/LedgerHQ/ledger-live/commit/ce2c91dde08828cc6a213ab19ba1e13efccacc41) Thanks [@deepyjr](https://github.com/deepyjr)! - Open the Baanx manage assets page (`/manage-assets`) from the Pay card Add asset button instead of `/dashboard/accounts/crypto`
+
+- [#24902](https://github.com/LedgerHQ/ledger-live/pull/24902) [`74c967e`](https://github.com/LedgerHQ/ledger-live/commit/74c967eb7dda848648df0db683910140b5d6e906) Thanks [@ysitbon](https://github.com/ysitbon)! - Remove unused exports and move single-platform types into the file that uses them
+
+- [#24818](https://github.com/LedgerHQ/ledger-live/pull/24818) [`2267444`](https://github.com/LedgerHQ/ledger-live/commit/226744400780b00d6468f890d06a821440fb5608) Thanks [@deepyjr](https://github.com/deepyjr)! - Make the card login intro row keys verifiable by the i18n key check
+
+- [#24956](https://github.com/LedgerHQ/ledger-live/pull/24956) [`9300f96`](https://github.com/LedgerHQ/ledger-live/commit/9300f9670ca7e76be132ea6fffc24c04c0f0b3ea) Thanks [@ysitbon](https://github.com/ysitbon)! - Nest the `payCardAuth` and `payCardLoginIntro` selectors in their slices. Export names and signatures are unchanged.
+
+- [#24814](https://github.com/LedgerHQ/ledger-live/pull/24814) [`9f6f480`](https://github.com/LedgerHQ/ledger-live/commit/9f6f48031fad77047e3a6377838816229ba4da5b) Thanks [@deepyjr](https://github.com/deepyjr)! - Translate the web-only Pay wordings in the web views so Mobile no longer needs them
+
+### Patch Changes
+
+- Updated dependencies [[`5af6447`](https://github.com/LedgerHQ/ledger-live/commit/5af6447acb234632ed35feec4735b415d1993ced)]:
+  - @domain/api-card-management@0.10.0-next.0
+  - @features/platform-card@0.10.1-next.0
+  - @features/platform-pay-analytics@0.4.1-next.0
+
+## 0.13.0
+
+### Minor Changes
+
+- [#24660](https://github.com/LedgerHQ/ledger-live/pull/24660) [`8d68514`](https://github.com/LedgerHQ/ledger-live/commit/8d6851405315262fdb54a003dcad1d07f2010c31) Thanks [@ysitbon](https://github.com/ysitbon)! - Import platform files without their `.web` / `.native` suffix and let module resolution pick the twin.
+
+### Patch Changes
+
+- Updated dependencies [[`429170c`](https://github.com/LedgerHQ/ledger-live/commit/429170c6f969a90517696f2d750fc853be91e378), [`2ccdc0f`](https://github.com/LedgerHQ/ledger-live/commit/2ccdc0f0b1020daca45dfbd1444a79e2aae0bd36)]:
+  - @shared/ui-info-state@0.8.0
+  - @features/platform-card@0.10.0
+
+## 0.13.0-next.0
+
+### Minor Changes
+
+- [#24660](https://github.com/LedgerHQ/ledger-live/pull/24660) [`8d68514`](https://github.com/LedgerHQ/ledger-live/commit/8d6851405315262fdb54a003dcad1d07f2010c31) Thanks [@ysitbon](https://github.com/ysitbon)! - Import platform files without their `.web` / `.native` suffix and let module resolution pick the twin.
+
+### Patch Changes
+
+- Updated dependencies [[`429170c`](https://github.com/LedgerHQ/ledger-live/commit/429170c6f969a90517696f2d750fc853be91e378), [`2ccdc0f`](https://github.com/LedgerHQ/ledger-live/commit/2ccdc0f0b1020daca45dfbd1444a79e2aae0bd36)]:
+  - @shared/ui-info-state@0.8.0-next.0
+  - @features/platform-card@0.10.0-next.0
+
+## 0.12.0
+
+### Minor Changes
+
+- [#24392](https://github.com/LedgerHQ/ledger-live/pull/24392) [`934970a`](https://github.com/LedgerHQ/ledger-live/commit/934970adec67ed88f1d546d03b1bb555cbfd128f) Thanks [@renovate-operator-ledger](https://github.com/apps/renovate-operator-ledger)! - chore(deps): update dependency @reduxjs/toolkit to v2.13.0
+
+  - Updated `@reduxjs/toolkit` to `2.13.0`
+
+### Patch Changes
+
+- Updated dependencies [[`6196234`](https://github.com/LedgerHQ/ledger-live/commit/61962349d0487b0e1f318d2ab36753befc434624), [`49ae0f6`](https://github.com/LedgerHQ/ledger-live/commit/49ae0f60632ad4ad518b8a7420ab02239f3fa144), [`52622fa`](https://github.com/LedgerHQ/ledger-live/commit/52622fa571b8c7b549d185525f4511dc3ebdfa82), [`934970a`](https://github.com/LedgerHQ/ledger-live/commit/934970adec67ed88f1d546d03b1bb555cbfd128f)]:
+  - @shared/ui-info-state@0.7.0
+  - @domain/api-card-management@0.9.0
+  - @features/platform-card@0.9.0
+
+## 0.12.0-next.0
+
+### Minor Changes
+
+- [#24392](https://github.com/LedgerHQ/ledger-live/pull/24392) [`934970a`](https://github.com/LedgerHQ/ledger-live/commit/934970adec67ed88f1d546d03b1bb555cbfd128f) Thanks [@renovate-operator-ledger](https://github.com/apps/renovate-operator-ledger)! - chore(deps): update dependency @reduxjs/toolkit to v2.13.0
+
+  - Updated `@reduxjs/toolkit` to `2.13.0`
+
+### Patch Changes
+
+- Updated dependencies [[`6196234`](https://github.com/LedgerHQ/ledger-live/commit/61962349d0487b0e1f318d2ab36753befc434624), [`49ae0f6`](https://github.com/LedgerHQ/ledger-live/commit/49ae0f60632ad4ad518b8a7420ab02239f3fa144), [`52622fa`](https://github.com/LedgerHQ/ledger-live/commit/52622fa571b8c7b549d185525f4511dc3ebdfa82), [`934970a`](https://github.com/LedgerHQ/ledger-live/commit/934970adec67ed88f1d546d03b1bb555cbfd128f)]:
+  - @shared/ui-info-state@0.7.0-next.0
+  - @domain/api-card-management@0.9.0-next.0
+  - @features/platform-card@0.9.0-next.0
+
 ## 0.11.1
 
 ### Patch Changes
@@ -361,227 +457,5 @@
   - @domain/api-card-management@0.7.0-next.0
   - @shared/ui-queued-bottom-sheet@0.5.0-next.0
   - @features/platform-pay-analytics@0.2.0-next.0
-
-## 0.7.0
-
-### Minor Changes
-
-- [#21722](https://github.com/LedgerHQ/ledger-live/pull/21722) [`182fae7`](https://github.com/LedgerHQ/ledger-live/commit/182fae7fbfa81b42de061e67da8edf21a7f72281) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - Add a Card Details container with native artwork, Details sheet, and web composition
-
-- [#21698](https://github.com/LedgerHQ/ledger-live/pull/21698) [`25224f4`](https://github.com/LedgerHQ/ledger-live/commit/25224f463b834dba7a2811d7150aeec6dbd6a3ac) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - Move the More menu into card details and put freeze and More on one actions row
-
-- [#21777](https://github.com/LedgerHQ/ledger-live/pull/21777) [`f7fa8f0`](https://github.com/LedgerHQ/ledger-live/commit/f7fa8f0ff23c03a69933f2d6aa6e0b225af9d542) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - Resolve a single Pay Card display state so the card face, onboarding widget and login CTA no longer overlap, and hold them back until the stored session is read
-
-- [#21195](https://github.com/LedgerHQ/ledger-live/pull/21195) [`cef83ae`](https://github.com/LedgerHQ/ledger-live/commit/cef83ae58ffc5529bebda292737502e78e3b7522) Thanks [@liviuciulinaru](https://github.com/liviuciulinaru)! - Add Card session and MSW renewal controls to the Card / Pay DevTool.
-
-- [#21791](https://github.com/LedgerHQ/ledger-live/pull/21791) [`a6a7a94`](https://github.com/LedgerHQ/ledger-live/commit/a6a7a946b1c1dbdda1cfa2c049f536f7235ddde2) Thanks [@liviuciulinaru](https://github.com/liviuciulinaru)! - Complete the Card login on desktop. The provider's page opens in the Discover webview, and the
-  manifest of the live app owns its origin. The `lwdPayTab` flag carries `baanx_login_manifest_id`
-  and `baanx_hosted_manifest_id`, which default to the staging manifests. A redirect that echoes no
-  attempt id now passes the callback guards, so the app's own deep link completes the login.
-
-- [#21792](https://github.com/LedgerHQ/ledger-live/pull/21792) [`0e1e102`](https://github.com/LedgerHQ/ledger-live/commit/0e1e10227aa5cc0d19e8a142533c54838e3ed57e) Thanks [@liviuciulinaru](https://github.com/liviuciulinaru)! - The desktop Pay tab centres the Card login block, and it offers a login link to a card holder who
-  has a card already. The login reads every error message from the copy keys.
-
-- [#21915](https://github.com/LedgerHQ/ledger-live/pull/21915) [`34f8541`](https://github.com/LedgerHQ/ledger-live/commit/34f8541ae58847dcee784b3fe97f227edd644775) Thanks [@liviuciulinaru](https://github.com/liviuciulinaru)! - fix(pay-card): save the Card login intro flag after a redirect login, and give the desktop login block a title before the intro
-
-- [#21790](https://github.com/LedgerHQ/ledger-live/pull/21790) [`e7d79ac`](https://github.com/LedgerHQ/ledger-live/commit/e7d79acf1d91e98e2813755f9bebdbfd83e89f39) Thanks [@liviuciulinaru](https://github.com/liviuciulinaru)! - refactor(pay-card): accept a pending login and a host page opener
-
-  `CardProps`/`CardViewProps` now take one nested `login: CardLoginProps` instead of the loose `oauthConfig`, `callback` and `onTrackEvent` props. `CardLoginProps` carries those three and adds optional `openHostedLogin` and `openHostedPage`, so a host app can supply how the Card flow opens its hosted pages instead of the flow assuming one way to do it.
-
-  The flow also ignores a stray login redirect from an abandoned attempt. A redirect from an attempt the user had already retried away from could still land after a fresh attempt started, get exchanged against the new attempt's verifier, fail, and wipe that new attempt. The authorize URL now carries a local attempt id that the app compares against the current attempt before acting on a redirect.
-
-- [#21824](https://github.com/LedgerHQ/ledger-live/pull/21824) [`c88b5c6`](https://github.com/LedgerHQ/ledger-live/commit/c88b5c65b0488097e2a17071ca04ac06ae41763a) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - Scroll the whole Pay tab: the content no longer gets clipped and clears the tab bar
-
-- [#21789](https://github.com/LedgerHQ/ledger-live/pull/21789) [`d353658`](https://github.com/LedgerHQ/ledger-live/commit/d353658a0254e49a369ca7481c9680254e9e4851) Thanks [@liviuciulinaru](https://github.com/liviuciulinaru)! - feat(pay-card): build every hosted Card URL in the flow
-
-  Adds `buildHostedUrl` and `buildHostedPageUrl`, and an optional `hostedUiUrl` on `CardLoginOauthConfig`, so a host app can address any hosted Card page without hardcoding its origin.
-
-### Patch Changes
-
-- Updated dependencies [[`8f62cdb`](https://github.com/LedgerHQ/ledger-live/commit/8f62cdbb6d93e207efd7e551af65a41953d28242), [`de19b3e`](https://github.com/LedgerHQ/ledger-live/commit/de19b3e4e56a0c28fcc1a3ca929059e84fc7bebf), [`799219e`](https://github.com/LedgerHQ/ledger-live/commit/799219e262e80a339272113ea164fa506243b438), [`e37413b`](https://github.com/LedgerHQ/ledger-live/commit/e37413b588873a1a2a028ebf4c1971e4fa92ed2a), [`9e61582`](https://github.com/LedgerHQ/ledger-live/commit/9e61582edfcbb98046d0f74111ccf4061ec44bb3), [`3f34609`](https://github.com/LedgerHQ/ledger-live/commit/3f34609edecc5ae85a9a9ac1b76ab47e30a9c66e), [`c6f7bfe`](https://github.com/LedgerHQ/ledger-live/commit/c6f7bfead8593c148fe6e3d177ff8dd734728f5a), [`fcc2ac4`](https://github.com/LedgerHQ/ledger-live/commit/fcc2ac4c5ed270fb63df4c0079068ad6dac94612), [`eddc89e`](https://github.com/LedgerHQ/ledger-live/commit/eddc89e7b86a13aeedfc0ae4956c2dcd08494e5f), [`37f5759`](https://github.com/LedgerHQ/ledger-live/commit/37f57595f11d40562914794645cb3c7f6e55dc8b), [`a2a0288`](https://github.com/LedgerHQ/ledger-live/commit/a2a028844dbfbfa019f1f971bf6fdbed9005b9ec), [`8b3320d`](https://github.com/LedgerHQ/ledger-live/commit/8b3320d7aab0ff25eeb8930dafa536fb94962c79), [`e65a6b3`](https://github.com/LedgerHQ/ledger-live/commit/e65a6b3e67e271343b7029613498176b1da2d7d2), [`9d0b721`](https://github.com/LedgerHQ/ledger-live/commit/9d0b721dbfd8b71d32d2d16db22ad8e54f45f541), [`b49d5b5`](https://github.com/LedgerHQ/ledger-live/commit/b49d5b573e84bd63ac460ae398657f1035613141)]:
-  - @domain/api-card-management@0.6.0
-  - @shared/ui-queued-bottom-sheet@0.4.0
-  - @features/platform-card@0.5.0
-  - @shared/i18n@0.2.0
-
-## 0.7.0-next.0
-
-### Minor Changes
-
-- [#21722](https://github.com/LedgerHQ/ledger-live/pull/21722) [`182fae7`](https://github.com/LedgerHQ/ledger-live/commit/182fae7fbfa81b42de061e67da8edf21a7f72281) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - Add a Card Details container with native artwork, Details sheet, and web composition
-
-- [#21698](https://github.com/LedgerHQ/ledger-live/pull/21698) [`25224f4`](https://github.com/LedgerHQ/ledger-live/commit/25224f463b834dba7a2811d7150aeec6dbd6a3ac) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - Move the More menu into card details and put freeze and More on one actions row
-
-- [#21777](https://github.com/LedgerHQ/ledger-live/pull/21777) [`f7fa8f0`](https://github.com/LedgerHQ/ledger-live/commit/f7fa8f0ff23c03a69933f2d6aa6e0b225af9d542) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - Resolve a single Pay Card display state so the card face, onboarding widget and login CTA no longer overlap, and hold them back until the stored session is read
-
-- [#21195](https://github.com/LedgerHQ/ledger-live/pull/21195) [`cef83ae`](https://github.com/LedgerHQ/ledger-live/commit/cef83ae58ffc5529bebda292737502e78e3b7522) Thanks [@liviuciulinaru](https://github.com/liviuciulinaru)! - Add Card session and MSW renewal controls to the Card / Pay DevTool.
-
-- [#21791](https://github.com/LedgerHQ/ledger-live/pull/21791) [`a6a7a94`](https://github.com/LedgerHQ/ledger-live/commit/a6a7a946b1c1dbdda1cfa2c049f536f7235ddde2) Thanks [@liviuciulinaru](https://github.com/liviuciulinaru)! - Complete the Card login on desktop. The provider's page opens in the Discover webview, and the
-  manifest of the live app owns its origin. The `lwdPayTab` flag carries `baanx_login_manifest_id`
-  and `baanx_hosted_manifest_id`, which default to the staging manifests. A redirect that echoes no
-  attempt id now passes the callback guards, so the app's own deep link completes the login.
-
-- [#21792](https://github.com/LedgerHQ/ledger-live/pull/21792) [`0e1e102`](https://github.com/LedgerHQ/ledger-live/commit/0e1e10227aa5cc0d19e8a142533c54838e3ed57e) Thanks [@liviuciulinaru](https://github.com/liviuciulinaru)! - The desktop Pay tab centres the Card login block, and it offers a login link to a card holder who
-  has a card already. The login reads every error message from the copy keys.
-
-- [#21915](https://github.com/LedgerHQ/ledger-live/pull/21915) [`34f8541`](https://github.com/LedgerHQ/ledger-live/commit/34f8541ae58847dcee784b3fe97f227edd644775) Thanks [@liviuciulinaru](https://github.com/liviuciulinaru)! - fix(pay-card): save the Card login intro flag after a redirect login, and give the desktop login block a title before the intro
-
-- [#21790](https://github.com/LedgerHQ/ledger-live/pull/21790) [`e7d79ac`](https://github.com/LedgerHQ/ledger-live/commit/e7d79acf1d91e98e2813755f9bebdbfd83e89f39) Thanks [@liviuciulinaru](https://github.com/liviuciulinaru)! - refactor(pay-card): accept a pending login and a host page opener
-
-  `CardProps`/`CardViewProps` now take one nested `login: CardLoginProps` instead of the loose `oauthConfig`, `callback` and `onTrackEvent` props. `CardLoginProps` carries those three and adds optional `openHostedLogin` and `openHostedPage`, so a host app can supply how the Card flow opens its hosted pages instead of the flow assuming one way to do it.
-
-  The flow also ignores a stray login redirect from an abandoned attempt. A redirect from an attempt the user had already retried away from could still land after a fresh attempt started, get exchanged against the new attempt's verifier, fail, and wipe that new attempt. The authorize URL now carries a local attempt id that the app compares against the current attempt before acting on a redirect.
-
-- [#21824](https://github.com/LedgerHQ/ledger-live/pull/21824) [`c88b5c6`](https://github.com/LedgerHQ/ledger-live/commit/c88b5c65b0488097e2a17071ca04ac06ae41763a) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - Scroll the whole Pay tab: the content no longer gets clipped and clears the tab bar
-
-- [#21789](https://github.com/LedgerHQ/ledger-live/pull/21789) [`d353658`](https://github.com/LedgerHQ/ledger-live/commit/d353658a0254e49a369ca7481c9680254e9e4851) Thanks [@liviuciulinaru](https://github.com/liviuciulinaru)! - feat(pay-card): build every hosted Card URL in the flow
-
-  Adds `buildHostedUrl` and `buildHostedPageUrl`, and an optional `hostedUiUrl` on `CardLoginOauthConfig`, so a host app can address any hosted Card page without hardcoding its origin.
-
-### Patch Changes
-
-- Updated dependencies [[`8f62cdb`](https://github.com/LedgerHQ/ledger-live/commit/8f62cdbb6d93e207efd7e551af65a41953d28242), [`de19b3e`](https://github.com/LedgerHQ/ledger-live/commit/de19b3e4e56a0c28fcc1a3ca929059e84fc7bebf), [`799219e`](https://github.com/LedgerHQ/ledger-live/commit/799219e262e80a339272113ea164fa506243b438), [`e37413b`](https://github.com/LedgerHQ/ledger-live/commit/e37413b588873a1a2a028ebf4c1971e4fa92ed2a), [`9e61582`](https://github.com/LedgerHQ/ledger-live/commit/9e61582edfcbb98046d0f74111ccf4061ec44bb3), [`3f34609`](https://github.com/LedgerHQ/ledger-live/commit/3f34609edecc5ae85a9a9ac1b76ab47e30a9c66e), [`c6f7bfe`](https://github.com/LedgerHQ/ledger-live/commit/c6f7bfead8593c148fe6e3d177ff8dd734728f5a), [`fcc2ac4`](https://github.com/LedgerHQ/ledger-live/commit/fcc2ac4c5ed270fb63df4c0079068ad6dac94612), [`eddc89e`](https://github.com/LedgerHQ/ledger-live/commit/eddc89e7b86a13aeedfc0ae4956c2dcd08494e5f), [`37f5759`](https://github.com/LedgerHQ/ledger-live/commit/37f57595f11d40562914794645cb3c7f6e55dc8b), [`a2a0288`](https://github.com/LedgerHQ/ledger-live/commit/a2a028844dbfbfa019f1f971bf6fdbed9005b9ec), [`8b3320d`](https://github.com/LedgerHQ/ledger-live/commit/8b3320d7aab0ff25eeb8930dafa536fb94962c79), [`e65a6b3`](https://github.com/LedgerHQ/ledger-live/commit/e65a6b3e67e271343b7029613498176b1da2d7d2), [`9d0b721`](https://github.com/LedgerHQ/ledger-live/commit/9d0b721dbfd8b71d32d2d16db22ad8e54f45f541), [`b49d5b5`](https://github.com/LedgerHQ/ledger-live/commit/b49d5b573e84bd63ac460ae398657f1035613141)]:
-  - @domain/api-card-management@0.6.0-next.0
-  - @shared/ui-queued-bottom-sheet@0.4.0-next.0
-  - @features/platform-card@0.5.0-next.0
-  - @shared/i18n@0.2.0
-
-## 0.6.0
-
-### Minor Changes
-
-- [#21428](https://github.com/LedgerHQ/ledger-live/pull/21428) [`c3de11c`](https://github.com/LedgerHQ/ledger-live/commit/c3de11cdf58c4feac701435548bbb96819ae09f6) Thanks [@liviuciulinaru](https://github.com/liviuciulinaru)! - Show a Card login intro sheet on the first press of the card's action (LIVE-36793). The sheet has two
-  buttons. "Log in to Baanx" runs the OAuth2 hosted login. "Create an account" opens the provider's
-  own signup page, `/onboarding/signup` on the new `CARD_BAANX_HOSTED_UI` host, in the same browser. The
-  intro shows once: a new persisted `payCardLoginIntro` flag goes up when a login the card holder just
-  started reaches `ready`, and it survives an app restart inside the shared `payCard` blob. A hydrated
-  session raises nothing. A tester resets the flag from the Pay Card devtool, and the intro shows again
-  on the next press.
-
-  The same flag now picks what the login block says, from the app's new `payTab.cardLogin.*` keys. It
-  sells the card while the flag is down — "Get 1% cashback every time you spend" under a `Get card`
-  button that opens the intro — and offers a login once the flag is up: "Log in to access your card"
-  under a `Login` button that starts one. Its title is `Crypto Card`, and on mobile it is a Lumen
-  `Subheader` under the card face, so the Pay Card flow no longer draws a section title above it there.
-  Desktop keeps its host-provided title.
-
-  The virtual card row names one wallet only: Apple Pay on iOS, Google Pay on Android. Desktop cannot
-  see the phone the card will be added to, so it keeps naming both. Each row wraps its title and its
-  description over as many lines as the copy needs, instead of cutting both off at the first.
-
-  Hosts inject `onTrackEvent`. Get card, Login, the intro buttons and close fire `button_clicked`;
-  opening the intro also fires `Page card login intro`.
-
-  `CARD_BAANX_HOSTED_UI` defaults to `https://ledger-ew1uat.baanxapi.com`. Both apps read it with
-  `useEnv` and hand it to the flow as `oauthConfig.hostedUiUrl`, so a new value moves the signup page
-  to another tenant without a restart.
-
-- [#21426](https://github.com/LedgerHQ/ledger-live/pull/21426) [`3de7317`](https://github.com/LedgerHQ/ledger-live/commit/3de7317d858c570600eb0a4297876327fdc2c7b5) Thanks [@liviuciulinaru](https://github.com/liviuciulinaru)! - Replace the Card logout block with a `More` tile-button (`CardMore`). The tile opens the `More` sheet, and the sheet's `Logout` row ends the Card session.
-
-- [#21194](https://github.com/LedgerHQ/ledger-live/pull/21194) [`2bd6a1c`](https://github.com/LedgerHQ/ledger-live/commit/2bd6a1c4b9d0cd229a8c9207108672b1a580968a) Thanks [@liviuciulinaru](https://github.com/liviuciulinaru)! - Refresh Baanx Pay Card sessions after a 401, and keep the credentials out of every reader of redux.
-
-  The two OAuth2 grants are RTK Query endpoints again. Both opt out of the Bearer and out of the
-  renewal, both run with `track: false`, so no session becomes a cache entry, and neither has a hook.
-
-  The desktop redux logger and both DevTools configurations now strip every Card action, which also
-  closes a live leak: the code exchange logs its code and its code verifier in production, into the
-  file users attach to a support ticket.
-
-### Patch Changes
-
-- Updated dependencies [[`55bd216`](https://github.com/LedgerHQ/ledger-live/commit/55bd2166238ab3e03c33226bb5f5eb2e8646a818), [`08ee05c`](https://github.com/LedgerHQ/ledger-live/commit/08ee05cfb66f393b14fdf1377ed6c54c4831a87c), [`543b17d`](https://github.com/LedgerHQ/ledger-live/commit/543b17d7a6b49728001c0311c184c665e8c9bbb2), [`a7d54c0`](https://github.com/LedgerHQ/ledger-live/commit/a7d54c0d6af65abe7aa2170053b3fd07ae9b05ab), [`d60ce38`](https://github.com/LedgerHQ/ledger-live/commit/d60ce38581fe06b7f4fa72ba40259af2eabfe11f), [`7aa3071`](https://github.com/LedgerHQ/ledger-live/commit/7aa3071a532c98804a4357ff36a001b23351da73), [`3ea6abc`](https://github.com/LedgerHQ/ledger-live/commit/3ea6abc7a12a27650caf47551e328ab38c9308d6), [`2bd6a1c`](https://github.com/LedgerHQ/ledger-live/commit/2bd6a1c4b9d0cd229a8c9207108672b1a580968a)]:
-  - @domain/api-card-management@0.5.0
-  - @shared/ui-queued-bottom-sheet@0.3.0
-  - @features/platform-card@0.4.0
-  - @shared/i18n@0.2.0
-
-## 0.6.0-next.0
-
-### Minor Changes
-
-- [#21428](https://github.com/LedgerHQ/ledger-live/pull/21428) [`c3de11c`](https://github.com/LedgerHQ/ledger-live/commit/c3de11cdf58c4feac701435548bbb96819ae09f6) Thanks [@liviuciulinaru](https://github.com/liviuciulinaru)! - Show a Card login intro sheet on the first press of the card's action (LIVE-36793). The sheet has two
-  buttons. "Log in to Baanx" runs the OAuth2 hosted login. "Create an account" opens the provider's
-  own signup page, `/onboarding/signup` on the new `CARD_BAANX_HOSTED_UI` host, in the same browser. The
-  intro shows once: a new persisted `payCardLoginIntro` flag goes up when a login the card holder just
-  started reaches `ready`, and it survives an app restart inside the shared `payCard` blob. A hydrated
-  session raises nothing. A tester resets the flag from the Pay Card devtool, and the intro shows again
-  on the next press.
-
-  The same flag now picks what the login block says, from the app's new `payTab.cardLogin.*` keys. It
-  sells the card while the flag is down — "Get 1% cashback every time you spend" under a `Get card`
-  button that opens the intro — and offers a login once the flag is up: "Log in to access your card"
-  under a `Login` button that starts one. Its title is `Crypto Card`, and on mobile it is a Lumen
-  `Subheader` under the card face, so the Pay Card flow no longer draws a section title above it there.
-  Desktop keeps its host-provided title.
-
-  The virtual card row names one wallet only: Apple Pay on iOS, Google Pay on Android. Desktop cannot
-  see the phone the card will be added to, so it keeps naming both. Each row wraps its title and its
-  description over as many lines as the copy needs, instead of cutting both off at the first.
-
-  Hosts inject `onTrackEvent`. Get card, Login, the intro buttons and close fire `button_clicked`;
-  opening the intro also fires `Page card login intro`.
-
-  `CARD_BAANX_HOSTED_UI` defaults to `https://ledger-ew1uat.baanxapi.com`. Both apps read it with
-  `useEnv` and hand it to the flow as `oauthConfig.hostedUiUrl`, so a new value moves the signup page
-  to another tenant without a restart.
-
-- [#21426](https://github.com/LedgerHQ/ledger-live/pull/21426) [`3de7317`](https://github.com/LedgerHQ/ledger-live/commit/3de7317d858c570600eb0a4297876327fdc2c7b5) Thanks [@liviuciulinaru](https://github.com/liviuciulinaru)! - Replace the Card logout block with a `More` tile-button (`CardMore`). The tile opens the `More` sheet, and the sheet's `Logout` row ends the Card session.
-
-- [#21194](https://github.com/LedgerHQ/ledger-live/pull/21194) [`2bd6a1c`](https://github.com/LedgerHQ/ledger-live/commit/2bd6a1c4b9d0cd229a8c9207108672b1a580968a) Thanks [@liviuciulinaru](https://github.com/liviuciulinaru)! - Refresh Baanx Pay Card sessions after a 401, and keep the credentials out of every reader of redux.
-
-  The two OAuth2 grants are RTK Query endpoints again. Both opt out of the Bearer and out of the
-  renewal, both run with `track: false`, so no session becomes a cache entry, and neither has a hook.
-
-  The desktop redux logger and both DevTools configurations now strip every Card action, which also
-  closes a live leak: the code exchange logs its code and its code verifier in production, into the
-  file users attach to a support ticket.
-
-### Patch Changes
-
-- Updated dependencies [[`55bd216`](https://github.com/LedgerHQ/ledger-live/commit/55bd2166238ab3e03c33226bb5f5eb2e8646a818), [`08ee05c`](https://github.com/LedgerHQ/ledger-live/commit/08ee05cfb66f393b14fdf1377ed6c54c4831a87c), [`543b17d`](https://github.com/LedgerHQ/ledger-live/commit/543b17d7a6b49728001c0311c184c665e8c9bbb2), [`a7d54c0`](https://github.com/LedgerHQ/ledger-live/commit/a7d54c0d6af65abe7aa2170053b3fd07ae9b05ab), [`d60ce38`](https://github.com/LedgerHQ/ledger-live/commit/d60ce38581fe06b7f4fa72ba40259af2eabfe11f), [`7aa3071`](https://github.com/LedgerHQ/ledger-live/commit/7aa3071a532c98804a4357ff36a001b23351da73), [`3ea6abc`](https://github.com/LedgerHQ/ledger-live/commit/3ea6abc7a12a27650caf47551e328ab38c9308d6), [`2bd6a1c`](https://github.com/LedgerHQ/ledger-live/commit/2bd6a1c4b9d0cd229a8c9207108672b1a580968a)]:
-  - @domain/api-card-management@0.5.0-next.0
-  - @shared/ui-queued-bottom-sheet@0.3.0-next.0
-  - @features/platform-card@0.4.0-next.0
-  - @shared/i18n@0.2.0
-
-## 0.5.0
-
-### Minor Changes
-
-- [#21115](https://github.com/LedgerHQ/ledger-live/pull/21115) [`0500726`](https://github.com/LedgerHQ/ledger-live/commit/05007264f5b1726a21c2e545a10c18993fd2fcb5) Thanks [@philipptpunkt](https://github.com/philipptpunkt)! - Forget the cached Card user when a 401 ends the session, not only on an explicit logout.
-
-  - The logout already dispatched `resetApiState()`; the involuntary path cleared the keychain session
-    and left the RTK cache behind.
-  - That cache holds the holder name, PAN last 4 and verification state, so the next person to sign in
-    on the device could be served the previous holder's data before a refetch landed.
-  - `forgetUser` is now a login port too, called wherever the session is cleared.
-
-- [#21258](https://github.com/LedgerHQ/ledger-live/pull/21258) [`ad1c0ff`](https://github.com/LedgerHQ/ledger-live/commit/ad1c0ff93b94ba9a0b1e7409e5ddbdc2d73bcd30) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - Add the contacts section to the Pay tab, with a leading Pay tile opening the send flow. Balance, Contacts and Card now share a s24 gap and inherit their horizontal padding from the Pay tab container.
-
-### Patch Changes
-
-- Updated dependencies [[`6918e5b`](https://github.com/LedgerHQ/ledger-live/commit/6918e5b285afe016d54f95090d44db3c1467fcec), [`e8c2316`](https://github.com/LedgerHQ/ledger-live/commit/e8c23168916415e569b27b530c71785e0dd2f29e), [`9f130fb`](https://github.com/LedgerHQ/ledger-live/commit/9f130fb908ad4596ef5697189633a3470935de75)]:
-  - @domain/api-card-management@0.4.0
-  - @features/platform-card@0.3.1
-
-## 0.5.0-next.0
-
-### Minor Changes
-
-- [#21115](https://github.com/LedgerHQ/ledger-live/pull/21115) [`0500726`](https://github.com/LedgerHQ/ledger-live/commit/05007264f5b1726a21c2e545a10c18993fd2fcb5) Thanks [@philipptpunkt](https://github.com/philipptpunkt)! - Forget the cached Card user when a 401 ends the session, not only on an explicit logout.
-
-  - The logout already dispatched `resetApiState()`; the involuntary path cleared the keychain session
-    and left the RTK cache behind.
-  - That cache holds the holder name, PAN last 4 and verification state, so the next person to sign in
-    on the device could be served the previous holder's data before a refetch landed.
-  - `forgetUser` is now a login port too, called wherever the session is cleared.
-
-- [#21258](https://github.com/LedgerHQ/ledger-live/pull/21258) [`ad1c0ff`](https://github.com/LedgerHQ/ledger-live/commit/ad1c0ff93b94ba9a0b1e7409e5ddbdc2d73bcd30) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - Add the contacts section to the Pay tab, with a leading Pay tile opening the send flow. Balance, Contacts and Card now share a s24 gap and inherit their horizontal padding from the Pay tab container.
-
-### Patch Changes
-
-- Updated dependencies [[`6918e5b`](https://github.com/LedgerHQ/ledger-live/commit/6918e5b285afe016d54f95090d44db3c1467fcec), [`e8c2316`](https://github.com/LedgerHQ/ledger-live/commit/e8c23168916415e569b27b530c71785e0dd2f29e), [`9f130fb`](https://github.com/LedgerHQ/ledger-live/commit/9f130fb908ad4596ef5697189633a3470935de75)]:
-  - @domain/api-card-management@0.4.0-next.0
-  - @features/platform-card@0.3.1-next.0
 
 <!-- changelog-pruned: older entries were removed to keep this file small. Full history is in `git log -p CHANGELOG.md` and in the GitHub release for each version. -->

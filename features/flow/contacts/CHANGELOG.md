@@ -1,5 +1,87 @@
 # @features/flow-contacts
 
+## 0.18.2
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @features/flow-contacts-detail@0.5.1
+  - @features/platform-contacts@0.13.1
+  - @features/flow-contacts-add-contact@0.10.3
+  - @features/flow-contacts-delete-contact@0.5.3
+  - @features/flow-contacts-introduction@1.6.0
+  - @features/flow-contacts-list@0.12.3
+  - @domain/entity-contact@0.13.1
+
+## 0.18.2-next.0
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @features/flow-contacts-detail@0.5.1-next.0
+  - @features/platform-contacts@0.13.1-next.0
+  - @features/flow-contacts-add-contact@0.10.3-next.0
+  - @features/flow-contacts-delete-contact@0.5.3-next.0
+  - @features/flow-contacts-introduction@1.6.0
+  - @features/flow-contacts-list@0.12.3-next.0
+  - @domain/entity-contact@0.13.1-next.0
+
+## 0.18.1
+
+### Patch Changes
+
+- Updated dependencies [[`a5a5309`](https://github.com/LedgerHQ/ledger-live/commit/a5a5309e913428497dfff7e1e13ad3d18e995cf3), [`e0e1e67`](https://github.com/LedgerHQ/ledger-live/commit/e0e1e6706c6cee74a920b296587dfb32c2569ccc)]:
+  - @features/platform-contacts@0.13.0
+  - @features/flow-contacts-detail@0.5.0
+  - @features/flow-contacts-add-contact@0.10.2
+  - @features/flow-contacts-delete-contact@0.5.2
+  - @features/flow-contacts-list@0.12.2
+  - @features/flow-contacts-introduction@1.6.0
+
+## 0.18.1-next.0
+
+### Patch Changes
+
+- Updated dependencies [[`a5a5309`](https://github.com/LedgerHQ/ledger-live/commit/a5a5309e913428497dfff7e1e13ad3d18e995cf3), [`e0e1e67`](https://github.com/LedgerHQ/ledger-live/commit/e0e1e6706c6cee74a920b296587dfb32c2569ccc)]:
+  - @features/platform-contacts@0.13.0-next.0
+  - @features/flow-contacts-detail@0.5.0-next.0
+  - @features/flow-contacts-add-contact@0.10.2-next.0
+  - @features/flow-contacts-delete-contact@0.5.2-next.0
+  - @features/flow-contacts-list@0.12.2-next.0
+  - @features/flow-contacts-introduction@1.6.0
+
+## 0.18.0
+
+### Minor Changes
+
+- [#24297](https://github.com/LedgerHQ/ledger-live/pull/24297) [`6464950`](https://github.com/LedgerHQ/ledger-live/commit/6464950833e7e27eb44da0171772f3ba5be8c116) Thanks [@ysitbon](https://github.com/ysitbon)! - `@features/flow-contacts` exposes `ContactsView` and `ContactsButton` from a single `.` entry with shared `ContactsViewProps` and `ContactsButtonProps` contracts. List logic and platform contact hooks are imported from `@features/flow-contacts-list` and `@features/platform-contacts`. Desktop and mobile hosts mount feature and Ledger Sync introduction UI outside `ContactsView`.
+
+### Patch Changes
+
+- Updated dependencies [[`360d6c9`](https://github.com/LedgerHQ/ledger-live/commit/360d6c9c4e4c37284397ee3118224767bc49076b), [`298bf8d`](https://github.com/LedgerHQ/ledger-live/commit/298bf8de83301f558607d4611643ec8e54277a7e), [`cea0076`](https://github.com/LedgerHQ/ledger-live/commit/cea0076fb3fd7c19d0e73b99ac76507278e390a4), [`b582a36`](https://github.com/LedgerHQ/ledger-live/commit/b582a360738037ab8393a554f304d9e942892287), [`934970a`](https://github.com/LedgerHQ/ledger-live/commit/934970adec67ed88f1d546d03b1bb555cbfd128f)]:
+  - @domain/entity-contact@0.13.0
+  - @features/flow-contacts-detail@0.4.0
+  - @features/platform-contacts@0.12.2
+  - @features/flow-contacts-add-contact@0.10.1
+  - @features/flow-contacts-delete-contact@0.5.1
+  - @features/flow-contacts-list@0.12.1
+
+## 0.18.0-next.0
+
+### Minor Changes
+
+- [#24297](https://github.com/LedgerHQ/ledger-live/pull/24297) [`6464950`](https://github.com/LedgerHQ/ledger-live/commit/6464950833e7e27eb44da0171772f3ba5be8c116) Thanks [@ysitbon](https://github.com/ysitbon)! - `@features/flow-contacts` exposes `ContactsView` and `ContactsButton` from a single `.` entry with shared `ContactsViewProps` and `ContactsButtonProps` contracts. List logic and platform contact hooks are imported from `@features/flow-contacts-list` and `@features/platform-contacts`. Desktop and mobile hosts mount feature and Ledger Sync introduction UI outside `ContactsView`.
+
+### Patch Changes
+
+- Updated dependencies [[`360d6c9`](https://github.com/LedgerHQ/ledger-live/commit/360d6c9c4e4c37284397ee3118224767bc49076b), [`298bf8d`](https://github.com/LedgerHQ/ledger-live/commit/298bf8de83301f558607d4611643ec8e54277a7e), [`cea0076`](https://github.com/LedgerHQ/ledger-live/commit/cea0076fb3fd7c19d0e73b99ac76507278e390a4), [`b582a36`](https://github.com/LedgerHQ/ledger-live/commit/b582a360738037ab8393a554f304d9e942892287), [`934970a`](https://github.com/LedgerHQ/ledger-live/commit/934970adec67ed88f1d546d03b1bb555cbfd128f)]:
+  - @domain/entity-contact@0.13.0-next.0
+  - @features/flow-contacts-detail@0.4.0-next.0
+  - @features/platform-contacts@0.12.2-next.0
+  - @features/flow-contacts-add-contact@0.10.1-next.0
+  - @features/flow-contacts-delete-contact@0.5.1-next.0
+  - @features/flow-contacts-list@0.12.1-next.0
+
 ## 0.17.0
 
 ### Minor Changes
@@ -309,200 +391,5 @@
   - @domain/entity-contact@0.10.0-next.0
   - @features/flow-contacts-delete-contact@0.2.3-next.0
   - @features/flow-contacts-introduction@1.2.0
-
-## 0.11.0
-
-### Minor Changes
-
-- [#21651](https://github.com/LedgerHQ/ledger-live/pull/21651) [`632dd93`](https://github.com/LedgerHQ/ledger-live/commit/632dd9368616a97581d037f1503b2b16f567c02a) Thanks [@claudiiafg](https://github.com/claudiiafg)! - Align Contacts analytics events and properties with the tracking plan on desktop and mobile.
-
-- [#21920](https://github.com/LedgerHQ/ledger-live/pull/21920) [`b49d5b5`](https://github.com/LedgerHQ/ledger-live/commit/b49d5b573e84bd63ac460ae398657f1035613141) Thanks [@ysitbon](https://github.com/ysitbon)! - Give each dual-platform feature package its own web and native TypeScript project
-
-  These packages keep `.web.*` and `.native.*` sources side by side but typechecked both
-  in a single program, so `tsc` resolved suffix-free imports without knowing which
-  platform it was checking. Each package now carries a solution-style `tsconfig.json`
-  that owns no files and references one project per platform it targets, as described in
-  `docs/tsconfig-in-ddd.md`. The web project sets `moduleSuffixes: [".web", ""]` and
-  excludes the native sources, the native project does the reverse and also excludes the
-  unsuffixed web barrel, and `typecheck` runs both passes. `@features/flow-large-screen-upsell`
-  is web-only and gets a web project on its own.
-
-  Separating the two programs surfaced cross-platform leaks that a single program could
-  not see, so this also fixes them. Barrels that hard-pinned one platform's file, in the
-  Contacts button and the Market banner, now import suffix-free and let `moduleSuffixes`
-  choose, which makes their parallel `index.native.ts` barrels redundant. The three
-  packages whose web entry was `src/web.ts` now expose it as `src/index.ts`, so a native
-  program resolving the package can find the `index.native.ts` beside it instead of
-  falling through to the web barrel and dragging web components into the native program.
-  `@features/platform-style` gives its web implementations the `.web` suffix they were
-  missing, which stops its native program from typechecking web code against native
-  components. One web test reached for `require`, which only resolved because React
-  Native's global typings were leaking in from the native files sharing its program, and
-  now imports normally.
-
-### Patch Changes
-
-- Updated dependencies [[`13e3ebb`](https://github.com/LedgerHQ/ledger-live/commit/13e3ebba3ec7f10dcaf7d960f242f14a9853a191), [`16a454f`](https://github.com/LedgerHQ/ledger-live/commit/16a454fa79be46df6aec3c50ad40407f36dfdea9), [`782b197`](https://github.com/LedgerHQ/ledger-live/commit/782b197bf61a233f5c6ffe7f68e37267f8546e73), [`96a1ca9`](https://github.com/LedgerHQ/ledger-live/commit/96a1ca9fef1b0acc8113708c148890054dea143d), [`632dd93`](https://github.com/LedgerHQ/ledger-live/commit/632dd9368616a97581d037f1503b2b16f567c02a), [`036b71d`](https://github.com/LedgerHQ/ledger-live/commit/036b71d678a57c3b1c3156374122fe13bea54f79), [`5b60a96`](https://github.com/LedgerHQ/ledger-live/commit/5b60a968d3292b3897380f2c74c472a51b81e35d), [`b49d5b5`](https://github.com/LedgerHQ/ledger-live/commit/b49d5b573e84bd63ac460ae398657f1035613141)]:
-  - @features/flow-contacts-list@0.7.0
-  - @features/platform-contacts@0.7.0
-  - @features/flow-contacts-introduction@1.2.0
-  - @features/flow-contacts-add-contact@0.6.0
-  - @domain/entity-contact@0.9.0
-  - @features/flow-contacts-edit-contact@0.5.0
-  - @features/flow-contacts-delete-contact@0.2.2
-  - @features/flow-contacts-edit-address@0.3.1
-  - @shared/ui-qr-code@0.4.0
-
-## 0.11.0-next.0
-
-### Minor Changes
-
-- [#21651](https://github.com/LedgerHQ/ledger-live/pull/21651) [`632dd93`](https://github.com/LedgerHQ/ledger-live/commit/632dd9368616a97581d037f1503b2b16f567c02a) Thanks [@claudiiafg](https://github.com/claudiiafg)! - Align Contacts analytics events and properties with the tracking plan on desktop and mobile.
-
-- [#21920](https://github.com/LedgerHQ/ledger-live/pull/21920) [`b49d5b5`](https://github.com/LedgerHQ/ledger-live/commit/b49d5b573e84bd63ac460ae398657f1035613141) Thanks [@ysitbon](https://github.com/ysitbon)! - Give each dual-platform feature package its own web and native TypeScript project
-
-  These packages keep `.web.*` and `.native.*` sources side by side but typechecked both
-  in a single program, so `tsc` resolved suffix-free imports without knowing which
-  platform it was checking. Each package now carries a solution-style `tsconfig.json`
-  that owns no files and references one project per platform it targets, as described in
-  `docs/tsconfig-in-ddd.md`. The web project sets `moduleSuffixes: [".web", ""]` and
-  excludes the native sources, the native project does the reverse and also excludes the
-  unsuffixed web barrel, and `typecheck` runs both passes. `@features/flow-large-screen-upsell`
-  is web-only and gets a web project on its own.
-
-  Separating the two programs surfaced cross-platform leaks that a single program could
-  not see, so this also fixes them. Barrels that hard-pinned one platform's file, in the
-  Contacts button and the Market banner, now import suffix-free and let `moduleSuffixes`
-  choose, which makes their parallel `index.native.ts` barrels redundant. The three
-  packages whose web entry was `src/web.ts` now expose it as `src/index.ts`, so a native
-  program resolving the package can find the `index.native.ts` beside it instead of
-  falling through to the web barrel and dragging web components into the native program.
-  `@features/platform-style` gives its web implementations the `.web` suffix they were
-  missing, which stops its native program from typechecking web code against native
-  components. One web test reached for `require`, which only resolved because React
-  Native's global typings were leaking in from the native files sharing its program, and
-  now imports normally.
-
-### Patch Changes
-
-- Updated dependencies [[`13e3ebb`](https://github.com/LedgerHQ/ledger-live/commit/13e3ebba3ec7f10dcaf7d960f242f14a9853a191), [`16a454f`](https://github.com/LedgerHQ/ledger-live/commit/16a454fa79be46df6aec3c50ad40407f36dfdea9), [`782b197`](https://github.com/LedgerHQ/ledger-live/commit/782b197bf61a233f5c6ffe7f68e37267f8546e73), [`96a1ca9`](https://github.com/LedgerHQ/ledger-live/commit/96a1ca9fef1b0acc8113708c148890054dea143d), [`632dd93`](https://github.com/LedgerHQ/ledger-live/commit/632dd9368616a97581d037f1503b2b16f567c02a), [`036b71d`](https://github.com/LedgerHQ/ledger-live/commit/036b71d678a57c3b1c3156374122fe13bea54f79), [`5b60a96`](https://github.com/LedgerHQ/ledger-live/commit/5b60a968d3292b3897380f2c74c472a51b81e35d), [`b49d5b5`](https://github.com/LedgerHQ/ledger-live/commit/b49d5b573e84bd63ac460ae398657f1035613141)]:
-  - @features/flow-contacts-list@0.7.0-next.0
-  - @features/platform-contacts@0.7.0-next.0
-  - @features/flow-contacts-introduction@1.2.0-next.0
-  - @features/flow-contacts-add-contact@0.6.0-next.0
-  - @domain/entity-contact@0.9.0-next.0
-  - @features/flow-contacts-edit-contact@0.5.0-next.0
-  - @features/flow-contacts-delete-contact@0.2.2-next.0
-  - @features/flow-contacts-edit-address@0.3.1-next.0
-  - @shared/ui-qr-code@0.4.0
-
-## 0.10.0
-
-### Minor Changes
-
-- [#21367](https://github.com/LedgerHQ/ledger-live/pull/21367) [`d182d46`](https://github.com/LedgerHQ/ledger-live/commit/d182d466275f4c35ec3bf86cadf544de77c27058) Thanks [@claudiiafg](https://github.com/claudiiafg)! - Fix the Ledger Sync entry point from Contacts: align the introduction copy and artwork with the production design, only show it when the user actually tries to add a contact or an address, start the flow on "Choose your sync method", and return to Contacts instead of the Portfolio once the flow is done on Mobile.
-
-- [#21543](https://github.com/LedgerHQ/ledger-live/pull/21543) [`eea933c`](https://github.com/LedgerHQ/ledger-live/commit/eea933c21039eab89442a4caae6cf0e121f68cca) Thanks [@claudiiafg](https://github.com/claudiiafg)! - Fix the trash icon of the contact "Delete contact" action rendering white instead of red.
-
-- [#21453](https://github.com/LedgerHQ/ledger-live/pull/21453) [`3b0dbae`](https://github.com/LedgerHQ/ledger-live/commit/3b0dbae4ae5df48bd4eb58146675747d7e3593c2) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - Add the web `ContactAddressPicker` dialog to the Pay contact flow and open it from the desktop Pay tab when a contact is pressed. The picker lists the contact's addresses segmented by network with asset-aware icons, resolved through the view model, and exposes an optional add-address action that routes to the contact's add-address flow. Address grouping, icon resolution and truncation are shared from `@features/flow-contacts`. The account/send handoff on address selection lands in a follow-up.
-
-- [#21401](https://github.com/LedgerHQ/ledger-live/pull/21401) [`8c40cc1`](https://github.com/LedgerHQ/ledger-live/commit/8c40cc1c2054d12fc546e341a18e966d6ab23986) Thanks [@claudiiafg](https://github.com/claudiiafg)! - Skip the extra confirmation modal when editing a contact or address name. Apply changes now starts the device action directly when needed, and the Apply CTA shows the Ledger logo in that case.
-
-- [#21619](https://github.com/LedgerHQ/ledger-live/pull/21619) [`23d2e1e`](https://github.com/LedgerHQ/ledger-live/commit/23d2e1e0a0a83516fb9f5c12f54a2afc15208702) Thanks [@LucasWerey](https://github.com/LucasWerey)! - Keep mobile contact address detail action buttons full width by applying horizontal padding only to the summary.
-
-- [#21614](https://github.com/LedgerHQ/ledger-live/pull/21614) [`6ccfc64`](https://github.com/LedgerHQ/ledger-live/commit/6ccfc644e6b5c00e2e0bafb10e8519a09d7fb589) Thanks [@LucasWerey](https://github.com/LucasWerey)! - Fix contact detail page scroll — full page now scrolls as one unit with safe area inset support
-
-### Patch Changes
-
-- Updated dependencies [[`d182d46`](https://github.com/LedgerHQ/ledger-live/commit/d182d466275f4c35ec3bf86cadf544de77c27058), [`5b79eb3`](https://github.com/LedgerHQ/ledger-live/commit/5b79eb3c5b1e2e7aca86fb0a8c4b7af085e57f9d), [`c06bd2e`](https://github.com/LedgerHQ/ledger-live/commit/c06bd2ee99e9d76609d628a41698a16c37a0c0c7), [`8c40cc1`](https://github.com/LedgerHQ/ledger-live/commit/8c40cc1c2054d12fc546e341a18e966d6ab23986), [`0089a4b`](https://github.com/LedgerHQ/ledger-live/commit/0089a4b80512c2c8f8eb3a03b9e3245492380647), [`e601584`](https://github.com/LedgerHQ/ledger-live/commit/e6015847b44e86dd9c4733559d591874099e1f4e), [`000eac0`](https://github.com/LedgerHQ/ledger-live/commit/000eac03eacf0093f241f8a05d9f525bbcf5de13), [`9672658`](https://github.com/LedgerHQ/ledger-live/commit/967265820c38ad0b2f8f45fd0a892ca07c58d23a), [`a55d4ca`](https://github.com/LedgerHQ/ledger-live/commit/a55d4ca3a804f6ab27f039926255f2c410ef7221), [`52f573c`](https://github.com/LedgerHQ/ledger-live/commit/52f573c045c52805d250079dd300870c4468493d), [`2d42e64`](https://github.com/LedgerHQ/ledger-live/commit/2d42e647d55f79cf2eb821ec30a232cc07891219), [`b7d0367`](https://github.com/LedgerHQ/ledger-live/commit/b7d03671db1aa022d3ff375465c7d8470bf2b215), [`a9e389f`](https://github.com/LedgerHQ/ledger-live/commit/a9e389fc59ca30abf53d0ba8decc6290752ba1db), [`2744267`](https://github.com/LedgerHQ/ledger-live/commit/2744267da72f342ca2dc67d95f34d512d7f4c7f6), [`08ae9c2`](https://github.com/LedgerHQ/ledger-live/commit/08ae9c2bf7b2b509fa23d9b4bf33360f18f7f39f)]:
-  - @features/flow-contacts-introduction@1.1.0
-  - @features/platform-contacts@0.6.0
-  - @features/flow-contacts-edit-address@0.3.0
-  - @features/flow-contacts-edit-contact@0.4.0
-  - @features/flow-contacts-list@0.6.0
-  - @domain/entity-currency-crypto@0.12.0
-  - @features/flow-contacts-add-contact@0.5.1
-  - @features/flow-contacts-delete-contact@0.2.1
-  - @domain/entity-contact@0.8.2
-  - @shared/ui-qr-code@0.4.0
-
-## 0.10.0-next.1
-
-### Patch Changes
-
-- Updated dependencies []:
-  - @features/platform-contacts@0.6.0-next.1
-  - @features/flow-contacts-add-contact@0.5.1-next.1
-  - @features/flow-contacts-delete-contact@0.2.1-next.1
-  - @features/flow-contacts-edit-address@0.3.0-next.1
-  - @features/flow-contacts-edit-contact@0.4.0-next.1
-  - @features/flow-contacts-list@0.6.0-next.1
-
-## 0.10.0-next.0
-
-### Minor Changes
-
-- [#21367](https://github.com/LedgerHQ/ledger-live/pull/21367) [`d182d46`](https://github.com/LedgerHQ/ledger-live/commit/d182d466275f4c35ec3bf86cadf544de77c27058) Thanks [@claudiiafg](https://github.com/claudiiafg)! - Fix the Ledger Sync entry point from Contacts: align the introduction copy and artwork with the production design, only show it when the user actually tries to add a contact or an address, start the flow on "Choose your sync method", and return to Contacts instead of the Portfolio once the flow is done on Mobile.
-
-- [#21543](https://github.com/LedgerHQ/ledger-live/pull/21543) [`eea933c`](https://github.com/LedgerHQ/ledger-live/commit/eea933c21039eab89442a4caae6cf0e121f68cca) Thanks [@claudiiafg](https://github.com/claudiiafg)! - Fix the trash icon of the contact "Delete contact" action rendering white instead of red.
-
-- [#21453](https://github.com/LedgerHQ/ledger-live/pull/21453) [`3b0dbae`](https://github.com/LedgerHQ/ledger-live/commit/3b0dbae4ae5df48bd4eb58146675747d7e3593c2) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - Add the web `ContactAddressPicker` dialog to the Pay contact flow and open it from the desktop Pay tab when a contact is pressed. The picker lists the contact's addresses segmented by network with asset-aware icons, resolved through the view model, and exposes an optional add-address action that routes to the contact's add-address flow. Address grouping, icon resolution and truncation are shared from `@features/flow-contacts`. The account/send handoff on address selection lands in a follow-up.
-
-- [#21401](https://github.com/LedgerHQ/ledger-live/pull/21401) [`8c40cc1`](https://github.com/LedgerHQ/ledger-live/commit/8c40cc1c2054d12fc546e341a18e966d6ab23986) Thanks [@claudiiafg](https://github.com/claudiiafg)! - Skip the extra confirmation modal when editing a contact or address name. Apply changes now starts the device action directly when needed, and the Apply CTA shows the Ledger logo in that case.
-
-- [#21619](https://github.com/LedgerHQ/ledger-live/pull/21619) [`23d2e1e`](https://github.com/LedgerHQ/ledger-live/commit/23d2e1e0a0a83516fb9f5c12f54a2afc15208702) Thanks [@LucasWerey](https://github.com/LucasWerey)! - Keep mobile contact address detail action buttons full width by applying horizontal padding only to the summary.
-
-- [#21614](https://github.com/LedgerHQ/ledger-live/pull/21614) [`6ccfc64`](https://github.com/LedgerHQ/ledger-live/commit/6ccfc644e6b5c00e2e0bafb10e8519a09d7fb589) Thanks [@LucasWerey](https://github.com/LucasWerey)! - Fix contact detail page scroll — full page now scrolls as one unit with safe area inset support
-
-### Patch Changes
-
-- Updated dependencies [[`d182d46`](https://github.com/LedgerHQ/ledger-live/commit/d182d466275f4c35ec3bf86cadf544de77c27058), [`5b79eb3`](https://github.com/LedgerHQ/ledger-live/commit/5b79eb3c5b1e2e7aca86fb0a8c4b7af085e57f9d), [`c06bd2e`](https://github.com/LedgerHQ/ledger-live/commit/c06bd2ee99e9d76609d628a41698a16c37a0c0c7), [`8c40cc1`](https://github.com/LedgerHQ/ledger-live/commit/8c40cc1c2054d12fc546e341a18e966d6ab23986), [`0089a4b`](https://github.com/LedgerHQ/ledger-live/commit/0089a4b80512c2c8f8eb3a03b9e3245492380647), [`e601584`](https://github.com/LedgerHQ/ledger-live/commit/e6015847b44e86dd9c4733559d591874099e1f4e), [`000eac0`](https://github.com/LedgerHQ/ledger-live/commit/000eac03eacf0093f241f8a05d9f525bbcf5de13), [`9672658`](https://github.com/LedgerHQ/ledger-live/commit/967265820c38ad0b2f8f45fd0a892ca07c58d23a), [`a55d4ca`](https://github.com/LedgerHQ/ledger-live/commit/a55d4ca3a804f6ab27f039926255f2c410ef7221), [`52f573c`](https://github.com/LedgerHQ/ledger-live/commit/52f573c045c52805d250079dd300870c4468493d), [`2d42e64`](https://github.com/LedgerHQ/ledger-live/commit/2d42e647d55f79cf2eb821ec30a232cc07891219), [`b7d0367`](https://github.com/LedgerHQ/ledger-live/commit/b7d03671db1aa022d3ff375465c7d8470bf2b215), [`a9e389f`](https://github.com/LedgerHQ/ledger-live/commit/a9e389fc59ca30abf53d0ba8decc6290752ba1db), [`2744267`](https://github.com/LedgerHQ/ledger-live/commit/2744267da72f342ca2dc67d95f34d512d7f4c7f6), [`08ae9c2`](https://github.com/LedgerHQ/ledger-live/commit/08ae9c2bf7b2b509fa23d9b4bf33360f18f7f39f)]:
-  - @features/flow-contacts-introduction@1.1.0-next.0
-  - @features/platform-contacts@0.6.0-next.0
-  - @features/flow-contacts-edit-address@0.3.0-next.0
-  - @features/flow-contacts-edit-contact@0.4.0-next.0
-  - @features/flow-contacts-list@0.6.0-next.0
-  - @domain/entity-currency-crypto@0.12.0-next.0
-  - @features/flow-contacts-add-contact@0.5.1-next.0
-  - @features/flow-contacts-delete-contact@0.2.1-next.0
-  - @domain/entity-contact@0.8.2-next.0
-  - @shared/ui-qr-code@0.4.0
-
-## 0.9.0
-
-### Minor Changes
-
-- [#20973](https://github.com/LedgerHQ/ledger-live/pull/20973) [`7d02f4b`](https://github.com/LedgerHQ/ledger-live/commit/7d02f4bbdc49f57df242d47b55ebd21c5176f4de) Thanks [@claudiiafg](https://github.com/claudiiafg)! - Fix mobile bottom sheets that could not be reopened after being closed.
-
-- [#21255](https://github.com/LedgerHQ/ledger-live/pull/21255) [`37cc17e`](https://github.com/LedgerHQ/ledger-live/commit/37cc17ea60f5a6c779aa7c5b5b6ae39d0bfea229) Thanks [@deepyjr](https://github.com/deepyjr)! - Restore the Ledger Wallet addresses entry background on Desktop.
-
-- [#21262](https://github.com/LedgerHQ/ledger-live/pull/21262) [`f99b720`](https://github.com/LedgerHQ/ledger-live/commit/f99b7205490cb4712eff99519444d7dd6903c02a) Thanks [@deepyjr](https://github.com/deepyjr)! - Compact the desktop contact detail header while scrolling addresses.
-
-- [#21128](https://github.com/LedgerHQ/ledger-live/pull/21128) [`31223eb`](https://github.com/LedgerHQ/ledger-live/commit/31223ebdd9335ef14a3ae8712658d17de60924e5) Thanks [@OlivierFreyssinet](https://github.com/OlivierFreyssinet)! - Orchestrate Contacts device confirmations through the Device Intent Executor.
-
-- [#21320](https://github.com/LedgerHQ/ledger-live/pull/21320) [`0639bea`](https://github.com/LedgerHQ/ledger-live/commit/0639bea01c594c335fb9b0604ad9ffc331936d54) Thanks [@deepyjr](https://github.com/deepyjr)! - Extract the reusable Contact deletion journey into its own flow package and move shared Contacts confirmation presentation to Platform Contacts.
-
-- [#21112](https://github.com/LedgerHQ/ledger-live/pull/21112) [`cdbc3ac`](https://github.com/LedgerHQ/ledger-live/commit/cdbc3acac0045ab860206e32062cc5c417d75196) Thanks [@deepyjr](https://github.com/deepyjr)! - Extract the shared Contacts Edit address journey into an independent flow package.
-
-- [#21209](https://github.com/LedgerHQ/ledger-live/pull/21209) [`a334296`](https://github.com/LedgerHQ/ledger-live/commit/a334296eaeca54451650fc3a3d1c36d5c8b93b8d) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - Wire the Pay contacts empty state to the shared Add contact dialog, Ledger Sync gate, and a host-injected `createContactCreationPort`.
-
-- [#21267](https://github.com/LedgerHQ/ledger-live/pull/21267) [`c20677f`](https://github.com/LedgerHQ/ledger-live/commit/c20677f1b5d13973883196e5665d6dd0ef7c58ba) Thanks [@deepyjr](https://github.com/deepyjr)! - Fix the native address QR code format and present the Contacts QR code in its dedicated dark,
-  framed layout.
-
-- [#21342](https://github.com/LedgerHQ/ledger-live/pull/21342) [`9a3746d`](https://github.com/LedgerHQ/ledger-live/commit/9a3746d7442c10649e183aaefeca2d7f51d4797f) Thanks [@deepyjr](https://github.com/deepyjr)! - Use a white QR card with black modules in Contact details for reliable dark mode scanning.
-
-### Patch Changes
-
-- Updated dependencies [[`545e419`](https://github.com/LedgerHQ/ledger-live/commit/545e4191a1b059058a20f30bdd1925b7c78e682c), [`7fae8f5`](https://github.com/LedgerHQ/ledger-live/commit/7fae8f5f7f22aa84933b734266de73cd9fa8a79c), [`e6d6ed6`](https://github.com/LedgerHQ/ledger-live/commit/e6d6ed6eda460eb614680b31a42ba8067cc28d2a), [`46f41d2`](https://github.com/LedgerHQ/ledger-live/commit/46f41d2787191684f52e5dc85b0cd629901b13d8), [`f99b720`](https://github.com/LedgerHQ/ledger-live/commit/f99b7205490cb4712eff99519444d7dd6903c02a), [`bb44e2c`](https://github.com/LedgerHQ/ledger-live/commit/bb44e2c4f8ce29b88394b15a17f7c698cb647e74), [`31223eb`](https://github.com/LedgerHQ/ledger-live/commit/31223ebdd9335ef14a3ae8712658d17de60924e5), [`c62986b`](https://github.com/LedgerHQ/ledger-live/commit/c62986b76467651009a571d64908405988b13571), [`cef29a0`](https://github.com/LedgerHQ/ledger-live/commit/cef29a0cd39ee1a7cfb6428ae650595b4479e4d6), [`0639bea`](https://github.com/LedgerHQ/ledger-live/commit/0639bea01c594c335fb9b0604ad9ffc331936d54), [`cdbc3ac`](https://github.com/LedgerHQ/ledger-live/commit/cdbc3acac0045ab860206e32062cc5c417d75196), [`60c41bd`](https://github.com/LedgerHQ/ledger-live/commit/60c41bddad7f1d02028d237cd10fc781baf8f674), [`46d23e1`](https://github.com/LedgerHQ/ledger-live/commit/46d23e1c719201910c0811da2a7a5a6849d93e25), [`a8c34d0`](https://github.com/LedgerHQ/ledger-live/commit/a8c34d0d9469b4e11339edfbef53445e58194fd8), [`34fc080`](https://github.com/LedgerHQ/ledger-live/commit/34fc080bb0c4ec01528404dde38f7c25559ecebe), [`a334296`](https://github.com/LedgerHQ/ledger-live/commit/a334296eaeca54451650fc3a3d1c36d5c8b93b8d), [`3b3c696`](https://github.com/LedgerHQ/ledger-live/commit/3b3c696a3d857f474a64b25cff6389f4df3b2063), [`6f4814b`](https://github.com/LedgerHQ/ledger-live/commit/6f4814b8c0e0c1c06b6729f036d756206ed19d77), [`c20677f`](https://github.com/LedgerHQ/ledger-live/commit/c20677f1b5d13973883196e5665d6dd0ef7c58ba), [`45ea28b`](https://github.com/LedgerHQ/ledger-live/commit/45ea28b19d1e950bf4e705388a06181a9a7543aa), [`f0f9990`](https://github.com/LedgerHQ/ledger-live/commit/f0f999034f698b4e0e35928d5cf43a365ed3fef0)]:
-  - @features/platform-contacts@0.5.0
-  - @features/flow-contacts-add-contact@0.5.0
-  - @features/flow-contacts-edit-contact@0.3.0
-  - @domain/entity-currency-crypto@0.11.0
-  - @features/flow-contacts-introduction@1.0.0
-  - @features/flow-contacts-list@0.5.0
-  - @features/flow-contacts-delete-contact@0.2.0
-  - @features/flow-contacts-edit-address@0.2.0
-  - @shared/ui-qr-code@0.4.0
-  - @domain/entity-contact@0.8.1
 
 <!-- changelog-pruned: older entries were removed to keep this file small. Full history is in `git log -p CHANGELOG.md` and in the GitHub release for each version. -->

@@ -26,14 +26,17 @@ const PerpsDepositSignRoot = lazy(
 const PerpsTransactionSignedRoot = lazy(
   () => import("LLD/features/Perps/screens/PerpsTransactionSigned/PerpsTransactionSignedDialog"),
 );
-const PredictionsBindingRoot = lazy(
-  () => import("LLD/features/Predictions/bindingIntent/PredictionsBindingRoot"),
+const PredictionsSigningRoot = lazy(
+  () => import("LLD/features/Predictions/signingIntent/PredictionsSigningRoot"),
 );
 const PredictionsDialogRoot = lazy(() =>
   import("@features/flow-predictions").then(module => ({ default: module.PredictionsSheet })),
 );
 const PredictionsSetupRoot = lazy(() =>
   import("@features/flow-predictions").then(module => ({ default: module.PredictionsSetupSheet })),
+);
+const PredictionsOrderRoot = lazy(() =>
+  import("@features/flow-predictions").then(module => ({ default: module.PredictionsOrderSheet })),
 );
 const ReleaseNotes = lazy(() => import("LLD/features/ReleaseNotes"));
 const BuyDevice = lazy(() => import("LLD/features/BuyDevice"));
@@ -47,9 +50,11 @@ const SwapTransactionStatusDialog = lazy(() => import("LLD/features/SwapTransact
 const CurrencyRegionRestrictedDialog = lazy(
   () => import("LLD/features/CurrencyRegionRestrictedDialog"),
 );
+const FamilyDialogs = lazy(() => import("LLD/features/FamilyDialogs"));
 const AccountPublicKeyUnavailableDialog = lazy(
   () => import("LLD/features/AccountPublicKeyUnavailableDialog"),
 );
+const ReceiveAddressDialog = lazy(() => import("LLD/features/Receive/screens/ReceiveAddress"));
 
 /** Mounts all root-level dialogs and flows. Add new global dialogs here. */
 const GlobalDialogs = () => (
@@ -86,10 +91,13 @@ const GlobalDialogs = () => (
       <PredictionsDialogRoot />
     </Suspense>
     <Suspense fallback={null}>
-      <PredictionsBindingRoot />
+      <PredictionsSigningRoot />
     </Suspense>
     <Suspense fallback={null}>
       <PredictionsSetupRoot />
+    </Suspense>
+    <Suspense fallback={null}>
+      <PredictionsOrderRoot />
     </Suspense>
     <ActionConfirmationDialog />
     <ActionMenuDialog />
@@ -118,7 +126,13 @@ const GlobalDialogs = () => (
       <AccountPublicKeyUnavailableDialog />
     </Suspense>
     <Suspense fallback={null}>
+      <ReceiveAddressDialog />
+    </Suspense>
+    <Suspense fallback={null}>
       <CurrencyRegionRestrictedDialog />
+    </Suspense>
+    <Suspense fallback={null}>
+      <FamilyDialogs />
     </Suspense>
   </>
 );

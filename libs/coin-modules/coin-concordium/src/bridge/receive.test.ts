@@ -1,7 +1,7 @@
 import { firstValueFrom, toArray } from "rxjs";
 import type { SignerContext } from "@ledgerhq/ledger-wallet-framework/signer";
 import type { ConcordiumSigner } from "../types";
-import { VALID_ADDRESS, PUBLIC_KEY } from "../test/fixtures";
+import { VALID_ADDRESS, PUBLIC_KEY, createFixtureContext } from "../test/fixtures";
 import { buildReceive } from "./receive";
 import {
   createFixtureConcordiumAccount,
@@ -9,12 +9,7 @@ import {
   createFixtureSignerContext,
 } from "./bridge.fixture";
 
-jest.mock("../config", () => ({
-  __esModule: true,
-  default: {
-    getCoinConfig: jest.fn().mockReturnValue({ networkType: "testnet" }),
-  },
-}));
+const context = createFixtureContext();
 
 /**
  * Creates a mock SignerContext that is a jest.fn() for call tracking.
@@ -29,7 +24,7 @@ describe("receive", () => {
     it("should return address info from account", async () => {
       // GIVEN
       const signerContext = createMockSignerContext();
-      const receive = buildReceive(signerContext);
+      const receive = buildReceive(signerContext, context);
       const account = createFixtureConcordiumAccount();
 
       // WHEN
@@ -48,7 +43,7 @@ describe("receive", () => {
     it("should use account freshAddress", async () => {
       // GIVEN
       const signerContext = createMockSignerContext();
-      const receive = buildReceive(signerContext);
+      const receive = buildReceive(signerContext, context);
       const customAddress = "3kBx2h5Y2veb4hZgAJWPrr8RyQESKm5TjzF3ti1QQ4VSYLwK1G";
       const account = createFixtureConcordiumAccount({ freshAddress: customAddress });
 
@@ -63,7 +58,7 @@ describe("receive", () => {
     it("should use account freshAddressPath", async () => {
       // GIVEN
       const signerContext = createMockSignerContext();
-      const receive = buildReceive(signerContext);
+      const receive = buildReceive(signerContext, context);
       const customPath = "44'/1'/0'/0'/0'/5'";
       const account = createFixtureConcordiumAccount({ freshAddressPath: customPath });
 
@@ -78,7 +73,7 @@ describe("receive", () => {
     it("should return empty string for publicKey when concordiumResources is missing", async () => {
       // GIVEN
       const signerContext = createMockSignerContext();
-      const receive = buildReceive(signerContext);
+      const receive = buildReceive(signerContext, context);
       const account = createFixtureConcordiumAccount();
       delete (account as { concordiumResources?: unknown }).concordiumResources;
 
@@ -93,7 +88,7 @@ describe("receive", () => {
     it("should return empty string for publicKey when publicKey is missing in resources", async () => {
       // GIVEN
       const signerContext = createMockSignerContext();
-      const receive = buildReceive(signerContext);
+      const receive = buildReceive(signerContext, context);
       const account = createFixtureConcordiumAccount({
         concordiumResources: {
           isOnboarded: true,
@@ -112,7 +107,7 @@ describe("receive", () => {
     it("should complete the observable after emitting", async () => {
       // GIVEN
       const signerContext = createMockSignerContext();
-      const receive = buildReceive(signerContext);
+      const receive = buildReceive(signerContext, context);
       const account = createFixtureConcordiumAccount();
 
       // WHEN
@@ -135,7 +130,7 @@ describe("receive", () => {
     it("should not call signerContext (no device interaction needed)", async () => {
       // GIVEN
       const signerContext = createMockSignerContext();
-      const receive = buildReceive(signerContext);
+      const receive = buildReceive(signerContext, context);
       const account = createFixtureConcordiumAccount();
 
       // WHEN
@@ -149,7 +144,7 @@ describe("receive", () => {
     it("should propagate errors through observable", async () => {
       // GIVEN
       const signerContext = createMockSignerContext();
-      const receive = buildReceive(signerContext);
+      const receive = buildReceive(signerContext, context);
       const errorMessage = "Property access failed";
       const account = {
         get freshAddress(): string {
@@ -171,7 +166,7 @@ describe("receive", () => {
         // GIVEN
         const signer = createFixtureSigner();
         const signerContext = createFixtureSignerContext(signer);
-        const receive = buildReceive(signerContext);
+        const receive = buildReceive(signerContext, context);
         const account = createFixtureConcordiumAccount();
 
         // WHEN
@@ -190,7 +185,7 @@ describe("receive", () => {
         // GIVEN
         const signer = createFixtureSigner();
         const signerContext = createFixtureSignerContext(signer);
-        const receive = buildReceive(signerContext);
+        const receive = buildReceive(signerContext, context);
         const account = createFixtureConcordiumAccount();
 
         // WHEN
@@ -212,7 +207,7 @@ describe("receive", () => {
           verifyAddress: jest.fn().mockRejectedValue(new Error("device error")),
         });
         const signerContext = createFixtureSignerContext(signer);
-        const receive = buildReceive(signerContext);
+        const receive = buildReceive(signerContext, context);
         const account = createFixtureConcordiumAccount();
 
         // WHEN

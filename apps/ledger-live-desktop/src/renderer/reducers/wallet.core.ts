@@ -1,7 +1,6 @@
 import { combineReducers, type Dispatch } from "@reduxjs/toolkit";
 import { accountNamesSlice, initFromUserData } from "@domain/entity-account-name";
 import { setContacts, type ContactsState } from "@domain/entity-contact";
-import { starredAccountsSlice, initStarredFromIds } from "@domain/entity-starred-account";
 import { walletSyncSlice, walletSyncUpdate, type WSState } from "@domain/entity-wallet-sync";
 import {
   nonImportedAccountsSlice,
@@ -17,7 +16,6 @@ import type { State } from ".";
 
 export const walletReducer = combineReducers({
   accountNames: accountNamesSlice.reducer,
-  starredAccountIds: starredAccountsSlice.reducer,
   walletSync: walletSyncSlice.reducer,
   nonImportedAccountInfos: nonImportedAccountsSlice.reducer,
   recentAddresses: recentAddressesSlice.reducer,
@@ -32,7 +30,6 @@ export type ExportedWalletState = {
   nonImportedAccountInfos: NonImportedAccountInfo[];
   accountsData: {
     accountNames: Array<[string, string]>;
-    starredAccountIds: string[];
   };
   contacts: ContactsState["contacts"];
   recentAddresses: RecentAddressesState;
@@ -45,7 +42,6 @@ export const exportWalletState = (state: WalletPersistenceState): ExportedWallet
   nonImportedAccountInfos: state.wallet.nonImportedAccountInfos,
   accountsData: {
     accountNames: Array.from(state.wallet.accountNames),
-    starredAccountIds: Array.from(state.wallet.starredAccountIds),
   },
   contacts: state.contacts.contacts,
   recentAddresses: state.wallet.recentAddresses,
@@ -58,7 +54,6 @@ export const walletStateExportShouldDiffer = (
   a.wallet.walletSync.walletSyncState !== b.wallet.walletSync.walletSyncState ||
   a.wallet.nonImportedAccountInfos !== b.wallet.nonImportedAccountInfos ||
   a.wallet.accountNames !== b.wallet.accountNames ||
-  a.wallet.starredAccountIds !== b.wallet.starredAccountIds ||
   a.contacts.contacts !== b.contacts.contacts ||
   a.wallet.recentAddresses !== b.wallet.recentAddresses;
 
@@ -69,9 +64,6 @@ export const importWalletState =
       dispatch(
         initFromUserData(payload.accountsData.accountNames.map(([id, name]) => ({ id, name }))),
       );
-    }
-    if (payload.accountsData?.starredAccountIds) {
-      dispatch(initStarredFromIds(payload.accountsData.starredAccountIds));
     }
     if (payload.walletSyncState !== undefined) {
       dispatch(walletSyncUpdate(payload.walletSyncState));
@@ -86,6 +78,3 @@ export const importWalletState =
       dispatch(updateRecentAddresses(payload.recentAddresses));
     }
   };
-
-export { updateRecentAddresses };
-export { bulkSetAccountNames } from "@domain/entity-account-name";

@@ -1,12 +1,9 @@
 import BigNumber from "bignumber.js";
 import { Scenario, ScenarioTransaction } from "@ledgerhq/coin-tester/main";
-import { createBridges } from "@ledgerhq/coin-zcash";
 import type {
   Transaction as ZcashTransaction,
   ZcashAccount,
 } from "@ledgerhq/coin-zcash/types/bridge";
-import type { SignerContext } from "@ledgerhq/coin-zcash/types/signer";
-import type { ZcashCoinConfig } from "@ledgerhq/coin-zcash";
 import { ZCASH_SHIELDED_SPENDABILITY_DELAY_BLOCKS } from "@ledgerhq/coin-zcash/constants";
 import {
   LEGACY_MARGINAL_FEE,
@@ -14,12 +11,6 @@ import {
   computeShieldingFee,
   computeZip317Fee,
 } from "@ledgerhq/coin-zcash/logic/coin-selection";
-import resolver from "@ledgerhq/coin-zcash/signer/getAddress";
-import { orchardAddressFromUfvk } from "@ledgerhq/zcash-utils";
-import { setZcashShieldedEnabled } from "@ledgerhq/live-common/bridge/zcashRouting";
-import { getCryptoCurrencyById } from "@ledgerhq/ledger-wallet-framework/currencies";
-import { LiveConfig } from "@ledgerhq/live-config/LiveConfig";
-import { SYNC_TYPE_SHIELDED, SYNC_TYPE_TRANSPARENT } from "@ledgerhq/types-live";
 import {
   assertCommonTxProperties,
   assertIronwoodBalanceDelta,
@@ -29,12 +20,11 @@ import {
   newOperationTypes,
   transparentBalance,
 } from "../assert";
-import { EXPLORER_ORIGIN, startIndexer, stopIndexer } from "../indexer";
-import { makeAccount } from "../fixtures";
-import { generateBlocks, generateBlocksToAddress } from "../helpers";
+import { createBridgeSetup } from "../bridgeSetup";
+import { startIndexer, stopIndexer } from "../indexer";
+import { generateBlocks, generateBlocksToAddress, waitForZainoTip } from "../helpers";
 import { randomMainnetBurnAddress, randomRegtestBurnAddress } from "../regtestAddress";
-import { killRegtestNode, spawnRegtestNode, ZAINO_GRPC_URL } from "../regtestNode";
-import { buildSigner } from "../signer";
+import { killRegtestNode, spawnRegtestNode } from "../regtestNode";
 import { findNewUtxo } from "../utils";
 
 type ZcashScenarioTransaction = ScenarioTransaction<ZcashTransaction, ZcashAccount>;
@@ -340,54 +330,10 @@ const makeScenarioTransactions = (): ZcashScenarioTransaction[] => {
 export const scenarioZcash: Scenario<ZcashTransaction, ZcashAccount> = {
   name: "Ledger Live Basic Zcash Transactions",
   setup: async () => {
-    const { signer, ufvk, xpub, accountIndex } = buildSigner();
-    const signerContext: SignerContext = (_deviceId, fn) => fn(signer);
+    const { accountBridge, currencyBridge, account, address, shieldedAddress } =
+      await createBridgeSetup();
 
-    setZcashShieldedEnabled(true);
-
-    // The local zaino node and explorer. Zaino is addressed as "mainnet" (the
-    // network coin-zcash gives zcash_regtest), like every zcash-utils call here, to match
-    // the mainnet-prefixed addresses coin-zcash's own classifier requires -- see
-    // zcash_regtest.ts and signer.ts for the full rationale.
-    const coinConfig: ZcashCoinConfig = {
-      status: { type: "active" },
-      name: "Zcash Regtest",
-      unit: { name: "zcash", code: "𝚝ZEC", magnitude: 8 },
-      zaino: { url: ZAINO_GRPC_URL },
-      explorer: { url: EXPLORER_ORIGIN },
-    };
-    LiveConfig.setConfig({
-      config_currency_zcash_regtest: {
-        type: "object",
-        default: {
-          status: { type: "active" },
-          name: "Zcash Regtest",
-          unit: { name: "zcash", code: "𝚝ZEC", magnitude: 8 },
-        },
-      },
-    });
-
-    // The scenarios exercise the shielded engine, so the bridge runs it.
-    const { accountBridge, currencyBridge } = createBridges(
-      signerContext,
-      {
-        config: async () => coinConfig,
-        logger: () => {},
-      },
-      { isShieldedEnabled: () => true },
-    );
-    const ZCASH_REGTEST = getCryptoCurrencyById("zcash_regtest");
-
-    const getAddress = resolver(signerContext);
-    const { address, publicKey } = await getAddress("", {
-      path: `44'/${ZCASH_REGTEST.coinType}'/${accountIndex}'/0/0`,
-      currency: ZCASH_REGTEST,
-      derivationMode: "",
-    });
-
-    const account = makeAccount(xpub, publicKey, address, ZCASH_REGTEST, "", ufvk);
-
-    shieldedRecipientAddress = orchardAddressFromUfvk(ufvk);
+    shieldedRecipientAddress = shieldedAddress;
     transparentRecipientAddress = address;
     externalTransparentAddress = randomMainnetBurnAddress();
 
@@ -398,6 +344,7 @@ export const scenarioZcash: Scenario<ZcashTransaction, ZcashAccount> = {
     // with blocks mined to the burn address instead, plus a small margin.
     await generateBlocks(1);
     await generateBlocksToAddress(COINBASE_MATURITY_BLOCKS + 5, burnAddress);
+    await waitForZainoTip();
 
     // Must start before setup() returns: executeScenario (coin-tester/main.ts)
     // runs the account's *first* sync right after setup(), and only calls the
@@ -407,26 +354,8 @@ export const scenarioZcash: Scenario<ZcashTransaction, ZcashAccount> = {
     startIndexer();
 
     return {
-      // `@ledgerhq/coin-tester`'s executeScenario calls accountBridge.sync
-      // with just `{ paginationConfig: {} }` -- coin-tester's own SyncConfig
-      // is chain-agnostic, and has no notion of coin-zcash's own `syncType`
-      // bitmask extension (`SYNC_TYPE_SHIELDED`, in `@ledgerhq/types-live`).
-      // Without it, `buildExtraSyncObservable` (bridge/sync.ts) returns
-      // `undefined` unconditionally and the Ironwood/Orchard scan never runs
-      // at all -- ironwoodBalance stays exactly 0 forever, empirically
-      // confirmed (not a slow-catch-up timing issue: 20 retries over 100s
-      // made no difference). Forcing both bits on every sync call this
-      // package's own scenario ever makes is the fix, entirely inside this
-      // package -- coin-tester's shared core and coin-zcash's own source stay
-      // untouched.
-      accountBridge: {
-        ...accountBridge,
-        sync: (syncAccount, syncConfig) =>
-          accountBridge.sync(syncAccount, {
-            ...syncConfig,
-            syncType: (syncConfig.syncType ?? 0) | SYNC_TYPE_TRANSPARENT | SYNC_TYPE_SHIELDED,
-          }),
-      },
+      // The bridge forces both sync-type bits on every sync, see bridgeSetup.ts.
+      accountBridge,
       currencyBridge,
       account,
       retryLimit: 20,
@@ -444,6 +373,8 @@ export const scenarioZcash: Scenario<ZcashTransaction, ZcashAccount> = {
   // transaction that can never confirm on its own (empirically confirmed).
   mockIndexer: async () => {
     await generateBlocksToAddress(BLOCKS_BETWEEN_TRANSACTIONS, burnAddress);
+    // The next transaction is crafted against zaino's tip (see waitForZainoTip).
+    await waitForZainoTip();
   },
   afterAll: async account => {
     // Deterministic total, but NOT simply "one operation per transaction":

@@ -14,6 +14,7 @@ import {
 import { setContentAbTestCopy } from "@features/platform-content-ab-tests";
 import { FEATURE_FLAGS_DEFAULTS } from "@shared/feature-flags";
 import type { PartialFeatures } from "@shared/feature-flags";
+import { logStartupEvent } from "LLM/utils/logStartupTime";
 
 type Subscriber = (event: { fetchedAt: number }) => void;
 
@@ -29,7 +30,14 @@ LiveConfig.setProvider(
 
 let configured = false;
 let lastFetchedAt: number | null = null;
+let bootFetchLogged = false;
 const subscribers = new Set<Subscriber>();
+
+function logBootFetchSettled(event: string) {
+  if (bootFetchLogged) return;
+  bootFetchLogged = true;
+  logStartupEvent(event);
+}
 
 // RNFB chains these setters in a JS queue; `activate` and `fetchAndActivate` both wait for it.
 // RNFB drops their promises, so a native setter failure is an unhandled rejection, not retried.
@@ -100,8 +108,14 @@ export async function readCachedFlags(): Promise<PartialFeatures> {
  * already served whatever this device knew.
  */
 export async function fetchRemoteFlags(): Promise<PartialFeatures> {
-  configure();
-  await fetchAndActivate(rc);
+  try {
+    configure();
+    await fetchAndActivate(rc);
+  } catch (error) {
+    logBootFetchSettled("Remote flags fetch failed");
+    throw error;
+  }
+  logBootFetchSettled("Remote flags fetched");
   const flags = hydrateRemoteConfigValues(getAll(rc));
   const fetchedAt = Date.now();
   lastFetchedAt = fetchedAt;

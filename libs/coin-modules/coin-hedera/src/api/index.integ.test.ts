@@ -13,6 +13,7 @@ import type { FeeEstimation } from "@ledgerhq/coin-module-framework/api/types";
 import { NotEnoughBalance, RecipientRequired } from "@ledgerhq/ledger-wallet-framework/errors";
 import invariant from "invariant";
 import { createApi } from "../api";
+import { hederaDefaults } from "../config";
 import {
   HEDERA_TRANSACTION_MODES,
   STAKING_REWARD_ACCOUNT_ID,
@@ -30,17 +31,10 @@ import { getSyntheticBlock } from "../logic/utils";
 import { HEDERA_MAX_MEMO_SIZE } from "../logic/validateMemo";
 import { rpcClient } from "../network/rpc";
 import { MAINNET_TEST_ACCOUNTS } from "../test/fixtures/account.fixture";
-import { getMockedConfig, getMockedContext } from "../test/fixtures/config.fixture";
+import { getMockedContext } from "../test/fixtures/config.fixture";
 
 describe("createApi", () => {
-  const apiConfig = {
-    ...getMockedConfig(),
-    useNetworkTimestamp: true,
-    apiUrls: {
-      mirrorNode: "https://hedera.coin.ledger.com",
-      hgraph: "https://hedera-indexer-mainnet.coin.ledger.com/v1/graphql",
-    },
-  };
+  const apiConfig = hederaDefaults.hedera;
   const api = createApi("hedera");
   const context = getMockedContext(apiConfig);
 

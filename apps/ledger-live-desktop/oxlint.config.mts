@@ -2,6 +2,7 @@ import { defineConfig } from "oxlint";
 import {
   ACCOUNT_DATA_SETUP_FILES,
   ACCOUNT_DATA_SOURCES,
+  ACCOUNT_DESCRIPTOR,
   BIGNUMBER_NAMED_IMPORT,
   ELECTRON_CLIPBOARD,
   EXPO_CLIPBOARD,
@@ -12,6 +13,14 @@ import {
   NAVIGATOR_CLIPBOARD,
   WALLET_FRAMEWORK_CURRENCY_TYPES,
 } from "@support/lint/restricted-imports";
+import { SUFFIX_IMPORTS_PLUGIN } from "@support/lint/plugins";
+import { coinFamiliesLint } from "@support/lint/coin-families";
+
+const coinFamilies = coinFamiliesLint({
+  familiesDir: "src/renderer/families",
+  barrel: "contract",
+  allow: ["modals-loaders"],
+});
 
 export default defineConfig({
   env: { browser: true, es6: true, node: true },
@@ -22,6 +31,7 @@ export default defineConfig({
     SharedArrayBuffer: "readonly",
     __APP_VERSION__: "readonly",
     __GIT_REVISION__: "readonly",
+    __PRODUCTION__: "readonly",
     __PRERELEASE__: "readonly",
     __CHANNEL__: "readonly",
     __static: "readonly",
@@ -29,6 +39,7 @@ export default defineConfig({
   },
   categories: { correctness: "error", suspicious: "warn", pedantic: "off" },
   plugins: ["eslint", "import", "oxc", "unicorn", "typescript", "react", "jest"],
+  jsPlugins: [SUFFIX_IMPORTS_PLUGIN, ...coinFamilies.jsPlugins],
   ignorePatterns: ["*.min.js", "src/mvvm/hooks/redux.ts", "tests/artifacts/**"],
   rules: {
     "eslint/no-unused-vars": "warn",
@@ -61,6 +72,8 @@ export default defineConfig({
     "typescript/no-deprecated": "error",
     "eslint/no-restricted-properties": ["error", NAVIGATOR_CLIPBOARD],
     "import/no-duplicates": "error",
+    "suffix-imports/no-platform-suffix": "error",
+    ...coinFamilies.rules,
     "import/no-named-as-default": "off",
     "eslint/no-restricted-imports": [
       "error",
@@ -83,6 +96,7 @@ export default defineConfig({
               "The app no longer initialises the i18next global singleton. Import the app instance (or its 't') from '~/renderer/i18n/init'.",
           },
           ...WALLET_FRAMEWORK_CURRENCY_TYPES,
+          ...ACCOUNT_DESCRIPTOR,
         ],
         patterns: [
           LIVE_COMMON_LIB,
@@ -90,11 +104,6 @@ export default defineConfig({
             group: ["~/mvvm/**"],
             message:
               "Use 'LLD' alias instead of '~/mvvm'. Replace '~/mvvm' with 'LLD' in your imports.",
-          },
-          {
-            group: ["**/renderer/families/*/**", "~/renderer/families/*/**"],
-            message:
-              "families files must not be imported directly. use the bridge or export them through the LLDCoinFamily interface instead.",
           },
           LIVE_COMMON_FEATURE_FLAGS,
           LIVE_COMMON_CURRENCY_ACCESSORS,
@@ -106,7 +115,12 @@ export default defineConfig({
   overrides: [
     {
       files: ["src/main/systemHandlers.ts", "src/main/systemHandlers.test.ts"],
-      rules: { "eslint/no-restricted-imports": ["error", { paths: [BIGNUMBER_NAMED_IMPORT] }] },
+      rules: {
+        "eslint/no-restricted-imports": [
+          "error",
+          { paths: [BIGNUMBER_NAMED_IMPORT, ...ACCOUNT_DESCRIPTOR] },
+        ],
+      },
     },
     {
       files: ACCOUNT_DATA_SETUP_FILES,
@@ -114,7 +128,12 @@ export default defineConfig({
     },
     {
       files: ["src/renderer/families/**"],
-      rules: { "eslint/no-restricted-imports": ["error", { paths: [BIGNUMBER_NAMED_IMPORT] }] },
+      rules: {
+        "eslint/no-restricted-imports": [
+          "error",
+          { paths: [BIGNUMBER_NAMED_IMPORT, ...ACCOUNT_DESCRIPTOR] },
+        ],
+      },
     },
     {
       files: [
@@ -128,6 +147,20 @@ export default defineConfig({
       env: { jest: true },
       plugins: ["jest"],
       rules: { "typescript/no-explicit-any": "warn" },
+    },
+    {
+      files: [
+        "**/*.test.*",
+        "**/__tests__/**",
+        "**/__integrations__/**",
+        "**/__mocks__/**",
+        "tests/**",
+      ],
+      rules: {
+        "coin-families/no-coin-specific-import": "off",
+        "coin-families/no-family-branch": "off",
+        "coin-families/no-currency-id-branch": "off",
+      },
     },
   ],
 });

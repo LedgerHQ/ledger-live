@@ -10,6 +10,7 @@ import type {
 } from "@ledgerhq/ledger-key-ring-protocol/types";
 import type { CreateSessionSdk } from "../../session";
 import type { LedgerSyncJobState } from "../../jobState";
+import type { LedgerSyncResultOrder } from "../../ledgerSyncResultOrder";
 
 /** What the app passes to remove another instance from the Ledger Sync trustchain. */
 export type RemoveMemberIntentInput = Readonly<{
@@ -21,6 +22,8 @@ export type RemoveMemberIntentInput = Readonly<{
   member: TrustchainMember;
   /** Builds the SDK on the DIE session of the run. */
   createSessionSdk: CreateSessionSdk;
+  /** The host's one result order, shared by add member and remove member runs. */
+  resultOrder: LedgerSyncResultOrder;
 }>;
 
 /** The states the remove member job emits. */

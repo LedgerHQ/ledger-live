@@ -1,5 +1,33 @@
 # @ledgerhq/wallet-api-exchange-module
 
+## 0.35.0
+
+### Minor Changes
+
+- [#24780](https://github.com/LedgerHQ/ledger-live/pull/24780) [`4049cdf`](https://github.com/LedgerHQ/ledger-live/commit/4049cdfd20d5fb9185d5caa98fa23b5d87e04b02) Thanks [@ishaba](https://github.com/ishaba)! - Add getTronifyQuote, createTronifyRentRecord and uploadTronifyHash so the Swap live app can rent TRON energy from Tronify
+
+## 0.35.0-next.0
+
+### Minor Changes
+
+- [#24780](https://github.com/LedgerHQ/ledger-live/pull/24780) [`4049cdf`](https://github.com/LedgerHQ/ledger-live/commit/4049cdfd20d5fb9185d5caa98fa23b5d87e04b02) Thanks [@ishaba](https://github.com/ishaba)! - Add getTronifyQuote, createTronifyRentRecord and uploadTronifyHash so the Swap live app can rent TRON energy from Tronify
+
+## 0.34.0
+
+### Minor Changes
+
+- [#24519](https://github.com/LedgerHQ/ledger-live/pull/24519) [`120891d`](https://github.com/LedgerHQ/ledger-live/commit/120891d4dbd9e9bba22dbf552f1bbe0ab34685cc) Thanks [@vpenskyi-ledger](https://github.com/vpenskyi-ledger)! - List perps withdrawals in the swap history, anchored to their payout transaction, and show their payout and Hyperliquid fees on the swap status screen. Keep unknown fields in the perps withdraw payload so the SwapKit submit gets it back unmodified
+
+- [#24569](https://github.com/LedgerHQ/ledger-live/pull/24569) [`c72e5c3`](https://github.com/LedgerHQ/ledger-live/commit/c72e5c334206fcb1e83fea43c68cc5b359ba70f6) Thanks [@lysyi3m](https://github.com/lysyi3m)! - feat: add `custom.exchange.tronify.isEnergyDelivered` so the Swap live app can wait for rented TRON energy, and re-check a TRON swap fee shortfall against freshly synced native balances. Exchange wallet API errors now carry their code to the live app in `cause`.
+
+## 0.34.0-next.0
+
+### Minor Changes
+
+- [#24519](https://github.com/LedgerHQ/ledger-live/pull/24519) [`120891d`](https://github.com/LedgerHQ/ledger-live/commit/120891d4dbd9e9bba22dbf552f1bbe0ab34685cc) Thanks [@vpenskyi-ledger](https://github.com/vpenskyi-ledger)! - List perps withdrawals in the swap history, anchored to their payout transaction, and show their payout and Hyperliquid fees on the swap status screen. Keep unknown fields in the perps withdraw payload so the SwapKit submit gets it back unmodified
+
+- [#24569](https://github.com/LedgerHQ/ledger-live/pull/24569) [`c72e5c3`](https://github.com/LedgerHQ/ledger-live/commit/c72e5c334206fcb1e83fea43c68cc5b359ba70f6) Thanks [@lysyi3m](https://github.com/lysyi3m)! - feat: add `custom.exchange.tronify.isEnergyDelivered` so the Swap live app can wait for rented TRON energy, and re-check a TRON swap fee shortfall against freshly synced native balances. Exchange wallet API errors now carry their code to the live app in `cause`.
+
 ## 0.33.0
 
 ### Minor Changes
@@ -167,17 +195,5 @@
 ### Minor Changes
 
 - [#15109](https://github.com/LedgerHQ/ledger-live/pull/15109) [`acd1dd2`](https://github.com/LedgerHQ/ledger-live/commit/acd1dd241dc900408fc480ef155dad3bdf56d786) Thanks [@CremaFR](https://github.com/CremaFR)! - Propagate `uiUseCase` through wallet API account request and align wallet API package dependencies.
-
-## 0.24.0
-
-### Minor Changes
-
-- [#14913](https://github.com/LedgerHQ/ledger-live/pull/14913) [`dceb492`](https://github.com/LedgerHQ/ledger-live/commit/dceb4921a811ffc3cba96ff532ffcb5d1205431f) Thanks [@gre-ledger](https://github.com/gre-ledger)! - Update TypeScript to latest 5.8.x
-
-## 0.24.0-next.0
-
-### Minor Changes
-
-- [#14913](https://github.com/LedgerHQ/ledger-live/pull/14913) [`dceb492`](https://github.com/LedgerHQ/ledger-live/commit/dceb4921a811ffc3cba96ff532ffcb5d1205431f) Thanks [@gre-ledger](https://github.com/gre-ledger)! - Update TypeScript to latest 5.8.x
 
 <!-- changelog-pruned: older entries were removed to keep this file small. Full history is in `git log -p CHANGELOG.md` and in the GitHub release for each version. -->

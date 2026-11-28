@@ -35,6 +35,7 @@ import PasswordModifyFlowNavigator from "./PasswordModifyFlowNavigator";
 import SwapNavigator from "./SwapNavigator";
 import SwapSubScreensNavigator from "./SwapSubScreensNavigator";
 import PerpsNavigator from "./PerpsNavigator";
+import { ReceiveNavigator } from "LLM/features/Receive/Navigator";
 import GlobalSearchNavigator from "LLM/features/GlobalSearch/Navigator";
 import NotificationCenterNavigator from "./NotificationCenterNavigator";
 import AnalyticsOperations from "~/screens/Analytics/Operations";
@@ -72,6 +73,7 @@ import PerpsSign from "LLM/features/Perps/screens/PerpsSign/PerpsSignScreen";
 import PerpsDeposit from "LLM/features/Perps/screens/PerpsDeposit/PerpsDepositScreen";
 import PerpsWithdraw from "LLM/features/Perps/screens/PerpsWithdraw/PerpsWithdrawScreen";
 import PerpsTransactionSigned from "LLM/features/Perps/screens/PerpsTransactionSigned/PerpsTransactionSignedScreen";
+import PredictionsOrderResult from "LLM/features/Predictions/screens/PredictionsOrderResult/PredictionsOrderResultScreen";
 import NoFundsFlowNavigator from "./NoFundsFlowNavigator";
 import StakeFlowNavigator from "./StakeFlowNavigator";
 import { RecoverPlayer } from "~/screens/Protect/Player";
@@ -99,6 +101,7 @@ import Web3HubTabNavigator from "LLM/features/Web3Hub/TabNavigator";
 import { useFeature } from "@features/platform-feature-flags";
 import MyLedgerNavigator from "./MyLedgerNavigator";
 import MyWalletNavigator from "LLM/features/MyWallet/Navigator";
+import { AgentIntentNavigator } from "LLM/features/AgentIntent";
 import BackupHubNavigator from "LLM/features/BackupHub/Navigator";
 import DiscoverNavigator from "./DiscoverNavigator";
 import AddAccountsV2Navigator from "LLM/features/Accounts/Navigator";
@@ -196,7 +199,6 @@ export default function BaseNavigator() {
   const isAccountsEmpty = useSelector(hasNoAccountsSelector);
   const readOnlyModeEnabled = useSelector(readOnlyModeEnabledSelector) && isAccountsEmpty;
   const web3hub = useFeature("web3hub");
-  const llmAccountListUI = useFeature("llmAccountListUI");
   const swapToEarnFlag = useFeature("swapToEarn");
   const isSwapToEarnEnabled = swapToEarnFlag?.enabled ?? false;
 
@@ -213,6 +215,11 @@ export default function BaseNavigator() {
         <Stack.Screen
           name={NavigatorName.MyWallet}
           component={MyWalletNavigator}
+          options={{ headerShown: false }}
+        />
+        <Stack.Screen
+          name={NavigatorName.AgentIntent}
+          component={AgentIntentNavigator}
           options={{ headerShown: false }}
         />
 
@@ -325,6 +332,11 @@ export default function BaseNavigator() {
           {...noNanoBuyNanoWallScreenOptions}
         />
         <Stack.Screen
+          name={ScreenName.DeviceOnboardingRecover}
+          component={RecoverPlayer}
+          options={{ headerShown: false, headerStyle: styles.headerNoShadow }}
+        />
+        <Stack.Screen
           name={NavigatorName.SignMessage}
           component={SignMessageNavigator}
           options={{ headerShown: false }}
@@ -372,6 +384,11 @@ export default function BaseNavigator() {
         <Stack.Screen
           name={NavigatorName.Perps}
           component={PerpsNavigator}
+          options={{ headerShown: false }}
+        />
+        <Stack.Screen
+          name={NavigatorName.Receive}
+          component={ReceiveNavigator}
           options={{ headerShown: false }}
         />
         <Stack.Screen
@@ -610,6 +627,14 @@ export default function BaseNavigator() {
           }}
         />
         <Stack.Screen
+          name={ScreenName.PredictionsOrderResult}
+          component={PredictionsOrderResult}
+          options={{
+            headerShown: false,
+            contentStyle: { backgroundColor: lumenTheme.colors.bg.canvasSheet },
+          }}
+        />
+        <Stack.Screen
           name={ScreenName.RedirectToOnboardingRecoverFlow}
           options={{ ...TransparentHeaderNavigationOptions, title: "" }}
           component={RedirectToOnboardingRecoverFlowScreen}
@@ -711,13 +736,11 @@ export default function BaseNavigator() {
           options={{ headerShown: false }}
         />
 
-        {llmAccountListUI?.enabled && (
-          <Stack.Screen
-            name={NavigatorName.Assets}
-            component={AssetsListNavigator}
-            options={{ headerShown: false }}
-          />
-        )}
+        <Stack.Screen
+          name={NavigatorName.Assets}
+          component={AssetsListNavigator}
+          options={{ headerShown: false }}
+        />
 
         <Stack.Screen
           name={NavigatorName.AssetDetail}

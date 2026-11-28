@@ -18,7 +18,7 @@ import PerpsWithdrawRoot, { openPerpsWithdraw } from "../PerpsWithdrawDialog";
 import type { PerpsWithdrawData } from "../usePerpsWithdrawViewModel";
 
 const mockOpenAssetAndAccount = jest.fn();
-jest.mock("LLD/features/ModularDialog/Web3AppWebview/AssetAndAccountDrawer", () => ({
+jest.mock("LLD/features/ModularDialog/hooks/useOpenAssetAndAccount", () => ({
   useOpenAssetAndAccount: () => ({
     openAssetAndAccountPromise: (params: unknown) => mockOpenAssetAndAccount(params),
   }),
@@ -57,6 +57,11 @@ jest.mock("@ledgerhq/live-common/wallet-api/Perps/withdraw/useWithdrawCurrencies
 const mockUsePerpsWithdrawQuote = jest.fn();
 jest.mock("@ledgerhq/live-common/wallet-api/Perps/withdraw/useWithdrawQuote", () => ({
   usePerpsWithdrawQuote: (params: unknown) => mockUsePerpsWithdrawQuote(params),
+}));
+
+const mockUseSourceBalanceRefresh = jest.fn();
+jest.mock("@ledgerhq/live-common/wallet-api/Perps/withdraw/useSourceBalanceRefresh", () => ({
+  useSourceBalanceRefresh: (accountId: string) => mockUseSourceBalanceRefresh(accountId),
 }));
 
 function createAccount(id: string, currencyId: string, balance: BigNumber.Value): Account {
@@ -115,6 +120,7 @@ describe("PerpsWithdraw integration", () => {
     });
     mockUsePerpsWithdrawQuote.mockReturnValue({ quote, isLoading: false, error: null });
     mockOpenAssetAndAccount.mockResolvedValue({ account: btcAccount });
+    mockUseSourceBalanceRefresh.mockReturnValue(false);
   });
 
   it("should not render until a withdrawal is opened", () => {
@@ -152,6 +158,20 @@ describe("PerpsWithdraw integration", () => {
     expect(screen.getByRole("dialog", { name: "Withdraw" })).toHaveAccessibleDescription(
       /\$2,001\.00/,
     );
+  });
+
+  it("should hide the old balance and block the ratios and Review while it is refreshed", () => {
+    mockUseSourceBalanceRefresh.mockReturnValue(true);
+    renderWithdraw();
+    openWithdraw();
+
+    expect(mockUseSourceBalanceRefresh).toHaveBeenCalledWith(sourceAccount.id);
+    expect(screen.getByRole("dialog", { name: "Withdraw" })).not.toHaveAccessibleDescription(
+      /\$2,001\.00/,
+    );
+    expect(screen.getByTestId("perps-withdraw-ratio-25%")).toBeDisabled();
+    expect(screen.getByTestId("perps-withdraw-ratio-MAX")).toBeDisabled();
+    expect(reviewCta()).toBeDisabled();
   });
 
   it("should read the balance from the wallet's copy of the source account", () => {

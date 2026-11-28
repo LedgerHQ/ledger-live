@@ -1,14 +1,10 @@
 import React from "react";
-import { BottomSheetHeader, BottomSheetView, Box, Button, Text } from "@ledgerhq/lumen-ui-rnative";
+import { Box, Button, Text } from "@ledgerhq/lumen-ui-rnative";
 import { useTheme } from "@ledgerhq/lumen-ui-rnative/styles";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
-import { QueuedBottomSheet } from "@shared/ui-queued-bottom-sheet";
+import { TrackScreen } from "@shared/analytics-react";
 import { Lottie, resolveLottieSource, type LottieSource } from "LLM/components/Lottie";
-import { DeviceActionContent } from "LLM/components/DeviceActionContent";
-import FirmwareUpdateAvailableDrawer from "LLM/components/FirmwareUpdateAvailableDrawer";
-import GenuineCheckErrorDrawer from "LLM/components/GenuineCheckErrorDrawer";
-import GenuineCheckNonGenuineDrawer from "LLM/components/GenuineCheckNonGenuineDrawer";
-import UnsupportedUpdateDrawer from "LLM/components/UnsupportedUpdateDrawer";
+import { ChecksDrawers } from "LLM/features/DeviceOnboarding/components/ChecksDrawers";
 import { DeviceOnboardingCloseBar } from "LLM/features/DeviceOnboarding/components/CloseBar";
 import { checksTestIds } from "LLM/features/DeviceOnboarding/testIds";
 import type { ChecksIllustration, ChecksViewProps } from "./useChecksScreenViewModel";
@@ -66,8 +62,10 @@ export function ChecksView({
   primaryTestID,
   primaryLoading,
   onPrimary,
+  secondary,
   onQuit,
   closeLabel,
+  screenTracking,
   allowSheet,
   firmwareUpdate,
   unsupportedUpdate,
@@ -78,6 +76,9 @@ export function ChecksView({
 
   return (
     <Box testID={checksTestIds.screen} lx={{ flex: 1, backgroundColor: "canvas" }}>
+      {screenTracking.map(({ key, tracking }) => (
+        <TrackScreen key={key} {...tracking} />
+      ))}
       <Box lx={{ flex: 1, gap: "s24" }}>
         <DeviceOnboardingCloseBar label={closeLabel} testID={checksTestIds.quit} onPress={onQuit} />
         {illustration ? <Illustration kind={illustration} /> : null}
@@ -93,64 +94,44 @@ export function ChecksView({
         </Box>
         {primaryLabel ? (
           <Box lx={{ paddingHorizontal: "s16" }} style={{ paddingBottom: bottomInset }}>
-            {primaryLoading ? (
-              <Button appearance="transparent" size="lg" isFull loading>
-                {primaryLabel}
-              </Button>
-            ) : (
-              <Button appearance="base" size="lg" isFull testID={primaryTestID} onPress={onPrimary}>
-                {primaryLabel}
-              </Button>
-            )}
+            <Box lx={{ gap: "s16" }}>
+              {primaryLoading ? (
+                <Button appearance="transparent" size="lg" isFull loading>
+                  {primaryLabel}
+                </Button>
+              ) : (
+                <Button
+                  appearance="base"
+                  size="lg"
+                  isFull
+                  testID={primaryTestID}
+                  onPress={onPrimary}
+                >
+                  {primaryLabel}
+                </Button>
+              )}
+              {secondary ? (
+                <Button
+                  appearance="transparent"
+                  size="lg"
+                  isFull
+                  testID={secondary.testID}
+                  onPress={secondary.onPress}
+                >
+                  {secondary.label}
+                </Button>
+              ) : null}
+            </Box>
           </Box>
         ) : null}
       </Box>
-      {allowSheet ? (
-        <QueuedBottomSheet
-          isRequestingToBeOpened={allowSheet.isOpen}
-          noCloseButton={!allowSheet.onClose}
-          onHeaderClosePressed={allowSheet.onClose}
-          preventBackdropClick
-          enablePanDownToClose={false}
-          testID={checksTestIds.allowSheet}
-          enableDynamicSizing
-          contentHasBottomSpace
-        >
-          <BottomSheetView style={{ paddingBottom: bottomInset + 24 }}>
-            <BottomSheetHeader />
-            <Box lx={{ paddingHorizontal: "s16" }}>
-              <DeviceActionContent
-                action="continue"
-                deviceModelId={allowSheet.deviceModelId}
-                deviceName={allowSheet.deviceName}
-                title={allowSheet.title}
-              />
-            </Box>
-          </BottomSheetView>
-        </QueuedBottomSheet>
-      ) : null}
-      <FirmwareUpdateAvailableDrawer {...firmwareUpdate} />
-      {unsupportedUpdate.mounted ? (
-        <UnsupportedUpdateDrawer
-          isOpen={unsupportedUpdate.isOpen}
-          isUsbRequired={unsupportedUpdate.isUsbRequired}
-          productName={unsupportedUpdate.productName}
-          onClose={unsupportedUpdate.onClose}
-        />
-      ) : null}
-      <GenuineCheckErrorDrawer
-        isOpen={errorDrawer.isOpen}
-        error={null}
-        showProviderSettings={errorDrawer.kind === "provider"}
-        productName={errorDrawer.productName}
-        onRetry={errorDrawer.onRetry}
-        onCancel={errorDrawer.onCancel}
-        onClose={errorDrawer.onClose}
-      />
-      <GenuineCheckNonGenuineDrawer
-        isOpen={notGenuineDrawer.isOpen}
-        productName={notGenuineDrawer.productName}
-        onClose={notGenuineDrawer.onClose}
+      <ChecksDrawers
+        testIds={checksTestIds}
+        allowSheet={allowSheet}
+        firmwareUpdate={firmwareUpdate}
+        unsupportedUpdate={unsupportedUpdate}
+        errorDrawer={errorDrawer}
+        notGenuineDrawer={notGenuineDrawer}
       />
     </Box>
   );

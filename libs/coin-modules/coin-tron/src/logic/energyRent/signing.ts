@@ -1,6 +1,8 @@
 import BigNumber from "bignumber.js";
-import { TronifyApiError } from "../../types/errors";
+import { utils } from "tronweb";
+import { EnergyRentSignatureMismatch, TronifyApiError } from "../../types/errors";
 import { recoverDeviceSignature } from "../combine";
+import { decodeRawData, tronTxIdFromRawDataHex } from "../utils";
 import {
   TRONIFY_PAY_ASSET,
   payAssetBaseUnits,
@@ -21,16 +23,44 @@ export function getEnergyRentSignaturePayload(transaction: EnergyRentUnsignedTra
   return { toSign: transaction.raw_data_hex, paymentTxId: transaction.txID };
 }
 
+/**
+ * Requires the payment to be signed by its owner key, which crafting bound to the payer. It does
+ * not prove the network accepts it: an account whose owner permission was changed (multisig) can
+ * still reject it.
+ */
+function assertSignedByOwner(rawDataHex: string, signature: string): void {
+  let owner: unknown;
+  let signer: string;
+  try {
+    const contracts: unknown[] = decodeRawData(rawDataHex).contract ?? [];
+    owner =
+      contracts.length === 1
+        ? (contracts[0] as { parameter?: { value?: { owner_address?: unknown } } }).parameter?.value
+            ?.owner_address
+        : undefined;
+    // Recovered over the hash of the bytes themselves, not the provider's `txID`.
+    signer = utils.crypto.ecRecover(tronTxIdFromRawDataHex(rawDataHex), signature);
+  } catch (cause) {
+    throw new EnergyRentSignatureMismatch("Cannot check who signed the energy-rent payment", {
+      cause,
+    });
+  }
+  if (typeof owner !== "string" || signer.toLowerCase() !== owner.toLowerCase()) {
+    throw new EnergyRentSignatureMismatch(
+      "Energy-rent payment is not signed by the account that pays it",
+    );
+  }
+}
+
 /** Inverse of `combine`: rebuilds the Tronify-signed payload the generic flow can't, since the wire
  * shape is coin-tron's. */
 export function buildSignedEnergyRentTransaction(
   transaction: EnergyRentUnsignedTransaction,
   combinedSignature: string,
 ): EnergyRentSignedTransaction {
-  return {
-    ...transaction,
-    signature: [recoverDeviceSignature(transaction.raw_data_hex, combinedSignature)],
-  };
+  const signature = recoverDeviceSignature(transaction.raw_data_hex, combinedSignature);
+  assertSignedByOwner(transaction.raw_data_hex, signature);
+  return { ...transaction, signature: [signature] };
 }
 
 /** Local dedup key for the pending TX-A reservation; TRON has no nonce. Non-integer so the generic

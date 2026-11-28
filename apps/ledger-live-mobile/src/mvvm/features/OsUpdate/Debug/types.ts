@@ -1,5 +1,5 @@
 import type { DeviceStatus } from "@ledgerhq/device-management-kit";
-import type { OsUpdatesOrchestratorUseCaseInput } from "@ledgerhq/live-dmk-shared";
+import type { OsUpdatesOrchestratorProps } from "@features/platform-device-os-update";
 
 export type OrchestratorRunPhase =
   | "idle"
@@ -11,6 +11,7 @@ export type OrchestratorRunPhase =
 
 /** The last OS version the device will target, shown before the user starts the update. */
 export type WhatsNew = {
+  name: string;
   version: string;
   notes: string | null;
 };
@@ -23,8 +24,8 @@ export type DebugDiscoveredDevice = {
 
 /** What the generic orchestrator component needs while a run is in progress. */
 export type OrchestratorRun = Pick<
-  OsUpdatesOrchestratorUseCaseInput,
-  "dmk" | "connectedDevice" | "osUpdates" | "storage" | "onStop"
+  OsUpdatesOrchestratorProps,
+  "dmk" | "connectedDevice" | "osUpdates" | "backupStorage" | "onStop"
 >;
 
 export type OsUpdatesOrchestratorDebugScreenViewModel = {

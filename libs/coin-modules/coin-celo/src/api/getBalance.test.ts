@@ -3,6 +3,7 @@ import type { Context, CurrencyConfig } from "@ledgerhq/coin-module-framework/co
 
 jest.mock("./getStakes", () => ({ buildCeloStakes: jest.fn() }));
 
+import { CELO_ERC20_ADDRESS } from "../constants";
 import { makeGetBalance } from "./getBalance";
 import { buildCeloStakes } from "./getStakes";
 
@@ -66,6 +67,33 @@ describe("makeGetBalance", () => {
     expect(balances.some(b => b.stake?.uid === "evm-shim")).toBe(false);
     expect(balances[1].stake?.uid).toBe("celo-vote");
   });
+
+  it.each([
+    ["checksummed", CELO_ERC20_ADDRESS],
+    ["lower-case", CELO_ERC20_ADDRESS.toLowerCase()],
+  ])(
+    "leaves out GoldToken (%s contract), which mirrors the native balance",
+    async (_, contract) => {
+      const goldToken: Balance = {
+        value: NATIVE.value,
+        asset: { type: "erc20", assetReference: contract, assetOwner: ADDR },
+      };
+      const usdc: Balance = {
+        value: 7n,
+        asset: {
+          type: "erc20",
+          assetReference: "0xcebA9300f2b948710d2653dD7B07f33A8B32118C",
+          assetOwner: ADDR,
+        },
+      };
+      const base = jest.fn(async (): Promise<Balance[]> => [NATIVE, goldToken, usdc]);
+      (buildCeloStakes as jest.Mock).mockResolvedValue([stake("s1", 100n)]);
+
+      const balances = await makeGetBalance(base)(mockCtx, ADDR);
+
+      expect(balances).toEqual([NATIVE, usdc, expect.objectContaining({ value: 0n })]);
+    },
+  );
 
   it("passes balance options through to the base getBalance", async () => {
     const base = jest.fn(async (): Promise<Balance[]> => [NATIVE]);

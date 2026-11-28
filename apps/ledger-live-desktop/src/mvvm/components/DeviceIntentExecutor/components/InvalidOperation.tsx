@@ -1,7 +1,7 @@
 import React from "react";
 import { useTranslation } from "react-i18next";
 import type { InvalidOperationComponent } from "@features/platform-device-intent";
-import { useDeviceIntentTracking } from "@ledgerhq/live-dmk-shared";
+import { useDeviceIntentTracking } from "@ledgerhq/live-dmk-shared/react";
 import { InfoState } from "@shared/ui-info-state";
 import { TrackDIEScreen } from "./TrackDIEScreen";
 import {

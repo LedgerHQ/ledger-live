@@ -1,103 +1,398 @@
 import { Scenario, ScenarioTransaction } from "@ledgerhq/coin-tester/main";
-import type { Account } from "@ledgerhq/types-live";
-import type { GenericTransaction } from "@ledgerhq/live-common/bridge/generic-coin-framework/types";
-import { getCryptoCurrencyById } from "@ledgerhq/ledger-wallet-framework/currencies";
-import { LiveConfig } from "@ledgerhq/live-config/LiveConfig";
-import type { BitcoinCoinConfig } from "@ledgerhq/coin-bitcoin/config";
+import type { Account, AccountBridge } from "@ledgerhq/types-live";
+import { NotEnoughBalance } from "@ledgerhq/ledger-wallet-framework/errors";
+import { bitcoinPickingStrategy } from "@ledgerhq/coin-bitcoin/types";
 import BigNumber from "bignumber.js";
-import { mineToWalletAddress } from "../helpers";
-import { killSandbox, spawnSandbox } from "../sandbox";
+import { getNodeTransaction, getRawMempool, mineToWalletAddress, spentOutpoints } from "../helpers";
+import { holdingsAfter, listAllHoldings } from "../holdings";
+import type { HoldingSummary } from "../holdings";
+import { killSandbox } from "../sandbox";
+import { setupGenericAccount } from "../genericSetup";
 import { waitForExplorerSync } from "../utils";
-import { makeGenericAdapterAccount } from "../fixtures";
-import { buildGenericSigner } from "../signer";
-import { getBitcoinGenericBridges } from "../genericBridges";
+import type { BitcoinGenericTransaction } from "../genericBridges";
 
 // Native SegWit address of another wallet (regtest): the send destination.
 const RECIPIENT = "bcrt1qajglhjtctn88f5l6rajzz52fy78fhxspjajjwz";
 
-// The account's single address: first native SegWit receive address on regtest (coin type 1).
-const ADDRESS_PATH = "84'/1'/0'/0/0";
+// Values (BTC) of the UTXOs the account is funded with, one airdrop each.
+const FUNDING = [2, 3, 4, 5, 6];
+const sats = (btc: number) => (btc * 1e8).toString();
 
-const expectOutgoing =
-  (amount?: BigNumber) => (previousAccount: Account, currentAccount: Account) => {
-    const [latestOperation] = currentAccount.operations;
+/**
+ * A step, and what it needs from the account's UTXOs (`prepare`): their ids and values only exist
+ * once the sandbox has funded the address. `prepare` returns what it fills in the step, as the user
+ * would on the coin control screen; it runs before the step, from what the account holds then.
+ */
+type Step = ScenarioTransaction<BitcoinGenericTransaction, Account> & {
+  prepare?: (holdings: HoldingSummary[]) => Partial<BitcoinGenericTransaction>;
+};
 
-    expect(currentAccount.operations.length - previousAccount.operations.length).toBe(1);
-    expect(latestOperation.type).toBe("OUT");
-    if (amount) {
-      // The operation value includes the fees (the generic framework re-adds them).
-      expect(latestOperation.value.toFixed()).toBe(latestOperation.fee.plus(amount).toFixed());
-    }
-    expect(currentAccount.balance.toFixed()).toBe(
-      previousAccount.balance.minus(latestOperation.value).toFixed(),
-    );
+let bridge: AccountBridge<BitcoinGenericTransaction>;
+// The step running, and what the account held before it: the steps that spend a precise output
+// are given its id once `listHoldings` has it.
+let steps: Step[] = [];
+let stepIndex = -1;
+let holdingsBefore: HoldingSummary[] = [];
+// The step's transaction as the bridge prepares it before signing: the fee and the inputs the user
+// is shown.
+let prepared: BitcoinGenericTransaction;
+// What the step must spend, or keep, when its `prepare` works it out from the holdings.
+let expectedSpent: string[] = [];
+let kept: HoldingSummary;
+
+// The data the OP_RETURN step carries, and the output script it must produce: OP_RETURN, the push.
+const OP_RETURN_DATA = Buffer.from("ledger coin tester");
+const OP_RETURN_SCRIPT = Buffer.concat([
+  Buffer.from([0x6a, OP_RETURN_DATA.length]),
+  OP_RETURN_DATA,
+]).toString("hex");
+
+const idOfValue = (holdings: HoldingSummary[], btc: number): string => {
+  const holding = holdings.find(h => h.value === sats(btc));
+  if (!holding) throw new Error(`no ${btc} BTC UTXO in ${JSON.stringify(holdings)}`);
+  return holding.id;
+};
+
+const compareValues = (a: HoldingSummary, b: HoldingSummary): number => {
+  const difference = BigInt(a.value) - BigInt(b.value);
+  if (difference === 0n) return 0;
+  return difference < 0n ? -1 : 1;
+};
+
+/** The holdings, smallest value first. */
+const byValue = (holdings: HoldingSummary[]): HoldingSummary[] => [...holdings].sort(compareValues);
+
+// A selection that cannot pay the amount is refused in the transaction status, which the coin
+// tester treats as a failed step: so it is checked here, on its own, and nothing is broadcast.
+const expectSmallSelectionRefused = async (account: Account) => {
+  const holdings = await listAllHoldings(account.freshAddress);
+  const smallest = holdings.reduce((a, b) => (BigInt(b.value) < BigInt(a.value) ? b : a));
+  const transaction = await bridge.prepareTransaction(account, {
+    ...bridge.createTransaction(account),
+    recipient: RECIPIENT,
+    amount: new BigNumber(smallest.value).plus(1e8),
+    utxoStrategy: { selectedUtxos: [smallest.id] },
+  });
+  const status = await bridge.getTransactionStatus(account, transaction);
+  expect(status.errors.amount).toBeInstanceOf(NotEnoughBalance);
+  expect(await getRawMempool()).toEqual([]);
+};
+
+const makeScenarioTransactions = (): Step[] => {
+  const excludingOldest: Step = {
+    name: "Send 1 BTC, excluding the oldest UTXO",
+    amount: new BigNumber(1e8),
+    recipient: RECIPIENT,
+    prepare: holdings => ({ utxoStrategy: { excludedUtxos: [idOfValue(holdings, FUNDING[0])] } }),
+    expect: async (previousAccount, currentAccount) => {
+      const [latestOperation] = currentAccount.operations;
+      expect(currentAccount.operations.length - previousAccount.operations.length).toBe(1);
+      expect(latestOperation.type).toBe("OUT");
+      expect(latestOperation.value.toFixed()).toBe(latestOperation.fee.plus(1e8).toFixed());
+      expect(latestOperation.fee.toFixed()).toBe(prepared.fees?.toFixed());
+      expect(currentAccount.balance.toFixed()).toBe(
+        previousAccount.balance.minus(latestOperation.value).toFixed(),
+      );
+      const tx = await getNodeTransaction(latestOperation.hash);
+      const spent = spentOutpoints(tx);
+      expect(spent).toHaveLength(Number(prepared.feeParameters?.inputCount));
+      expect(spent).not.toContain(idOfValue(holdingsBefore, FUNDING[0]));
+      expect(await listAllHoldings(currentAccount.freshAddress)).toEqual(
+        holdingsAfter(holdingsBefore, spent, tx, currentAccount.freshAddress),
+      );
+    },
   };
 
-const makeScenarioTransactions = (): ScenarioTransaction<GenericTransaction, Account>[] => [
-  {
+  const excludingOldestLegacy: Step = {
+    name: "Send 1 BTC, excluding the oldest UTXO with the legacy coin control",
+    amount: new BigNumber(1e8),
+    recipient: RECIPIENT,
+    // In the shape Ledger Live's coin control screen builds.
+    prepare: holdings => {
+      const [hash, outputIndex] = idOfValue(holdings, FUNDING[0]).split(":");
+      return {
+        utxoStrategy: {
+          strategy: bitcoinPickingStrategy.CUSTOM,
+          excludeUTXOs: [{ hash, outputIndex: Number(outputIndex) }],
+        },
+      };
+    },
+    expect: async (previousAccount, currentAccount) => {
+      const [latestOperation] = currentAccount.operations;
+      expect(currentAccount.operations.length - previousAccount.operations.length).toBe(1);
+      expect(latestOperation.type).toBe("OUT");
+      expect(latestOperation.value.toFixed()).toBe(latestOperation.fee.plus(1e8).toFixed());
+      expect(latestOperation.fee.toFixed()).toBe(prepared.fees?.toFixed());
+      expect(currentAccount.balance.toFixed()).toBe(
+        previousAccount.balance.minus(latestOperation.value).toFixed(),
+      );
+      const tx = await getNodeTransaction(latestOperation.hash);
+      const spent = spentOutpoints(tx);
+      expect(spent).toHaveLength(Number(prepared.feeParameters?.inputCount));
+      expect(spent).not.toContain(idOfValue(holdingsBefore, FUNDING[0]));
+      expect(await listAllHoldings(currentAccount.freshAddress)).toEqual(
+        holdingsAfter(holdingsBefore, spent, tx, currentAccount.freshAddress),
+      );
+    },
+  };
+
+  const selecting: Step = {
+    name: "Send 1 BTC, spending only the selected UTXO",
+    amount: new BigNumber(1e8),
+    recipient: RECIPIENT,
+    prepare: holdings => ({ utxoStrategy: { selectedUtxos: [idOfValue(holdings, FUNDING[3])] } }),
+    expect: async (previousAccount, currentAccount) => {
+      const [latestOperation] = currentAccount.operations;
+      expect(currentAccount.operations.length - previousAccount.operations.length).toBe(1);
+      expect(latestOperation.type).toBe("OUT");
+      expect(latestOperation.value.toFixed()).toBe(latestOperation.fee.plus(1e8).toFixed());
+      expect(latestOperation.fee.toFixed()).toBe(prepared.fees?.toFixed());
+      expect(currentAccount.balance.toFixed()).toBe(
+        previousAccount.balance.minus(latestOperation.value).toFixed(),
+      );
+      const tx = await getNodeTransaction(latestOperation.hash);
+      const spent = spentOutpoints(tx);
+      expect(spent).toHaveLength(Number(prepared.feeParameters?.inputCount));
+      expect(spent).toEqual([idOfValue(holdingsBefore, FUNDING[3])]);
+      expect(await listAllHoldings(currentAccount.freshAddress)).toEqual(
+        holdingsAfter(holdingsBefore, spent, tx, currentAccount.freshAddress),
+      );
+    },
+  };
+
+  const send: Step = {
     name: "Send 1 BTC",
     amount: new BigNumber(1e8),
     recipient: RECIPIENT,
-    expect: expectOutgoing(new BigNumber(1e8)),
-  },
-  {
+    expect: async (previousAccount, currentAccount) => {
+      const [latestOperation] = currentAccount.operations;
+      expect(currentAccount.operations.length - previousAccount.operations.length).toBe(1);
+      expect(latestOperation.type).toBe("OUT");
+      expect(latestOperation.value.toFixed()).toBe(latestOperation.fee.plus(1e8).toFixed());
+      expect(latestOperation.fee.toFixed()).toBe(prepared.fees?.toFixed());
+      expect(currentAccount.balance.toFixed()).toBe(
+        previousAccount.balance.minus(latestOperation.value).toFixed(),
+      );
+      const tx = await getNodeTransaction(latestOperation.hash);
+      const spent = spentOutpoints(tx);
+      expect(spent).toHaveLength(Number(prepared.feeParameters?.inputCount));
+      expect(await listAllHoldings(currentAccount.freshAddress)).toEqual(
+        holdingsAfter(holdingsBefore, spent, tx, currentAccount.freshAddress),
+      );
+    },
+  };
+
+  const sendFast: Step = {
     name: "Send with the fast fees strategy",
     feesStrategy: "fast",
     amount: new BigNumber(1e6),
     recipient: RECIPIENT,
-    expect: expectOutgoing(new BigNumber(1e6)),
-  },
-  {
+    expect: async (previousAccount, currentAccount) => {
+      const [latestOperation] = currentAccount.operations;
+      expect(currentAccount.operations.length - previousAccount.operations.length).toBe(1);
+      expect(latestOperation.type).toBe("OUT");
+      expect(latestOperation.value.toFixed()).toBe(latestOperation.fee.plus(1e6).toFixed());
+      expect(latestOperation.fee.toFixed()).toBe(prepared.fees?.toFixed());
+      expect(currentAccount.balance.toFixed()).toBe(
+        previousAccount.balance.minus(latestOperation.value).toFixed(),
+      );
+      const tx = await getNodeTransaction(latestOperation.hash);
+      const spent = spentOutpoints(tx);
+      expect(spent).toHaveLength(Number(prepared.feeParameters?.inputCount));
+      expect(await listAllHoldings(currentAccount.freshAddress)).toEqual(
+        holdingsAfter(holdingsBefore, spent, tx, currentAccount.freshAddress),
+      );
+    },
+  };
+
+  const sendSlow: Step = {
     name: "Send with the slow fees strategy",
     feesStrategy: "slow",
     amount: new BigNumber(1e6),
     recipient: RECIPIENT,
-    expect: expectOutgoing(new BigNumber(1e6)),
-  },
-  {
+    expect: async (previousAccount, currentAccount) => {
+      const [latestOperation] = currentAccount.operations;
+      expect(currentAccount.operations.length - previousAccount.operations.length).toBe(1);
+      expect(latestOperation.type).toBe("OUT");
+      expect(latestOperation.value.toFixed()).toBe(latestOperation.fee.plus(1e6).toFixed());
+      expect(latestOperation.fee.toFixed()).toBe(prepared.fees?.toFixed());
+      expect(currentAccount.balance.toFixed()).toBe(
+        previousAccount.balance.minus(latestOperation.value).toFixed(),
+      );
+      const tx = await getNodeTransaction(latestOperation.hash);
+      const spent = spentOutpoints(tx);
+      expect(spent).toHaveLength(Number(prepared.feeParameters?.inputCount));
+      expect(await listAllHoldings(currentAccount.freshAddress)).toEqual(
+        holdingsAfter(holdingsBefore, spent, tx, currentAccount.freshAddress),
+      );
+    },
+  };
+
+  const sendOpReturn: Step = {
+    name: "Send with OP_RETURN data",
+    amount: new BigNumber(1e6),
+    recipient: RECIPIENT,
+    opReturnData: OP_RETURN_DATA,
+    expect: async (previousAccount, currentAccount) => {
+      const [latestOperation] = currentAccount.operations;
+      expect(currentAccount.operations.length - previousAccount.operations.length).toBe(1);
+      expect(latestOperation.type).toBe("OUT");
+      expect(latestOperation.value.toFixed()).toBe(latestOperation.fee.plus(1e6).toFixed());
+      expect(latestOperation.fee.toFixed()).toBe(prepared.fees?.toFixed());
+      expect(currentAccount.balance.toFixed()).toBe(
+        previousAccount.balance.minus(latestOperation.value).toFixed(),
+      );
+      const tx = await getNodeTransaction(latestOperation.hash);
+      const spent = spentOutpoints(tx);
+      expect(spent).toHaveLength(Number(prepared.feeParameters?.inputCount));
+      const data = tx.vout.filter(output => output.scriptPubKey.type === "nulldata");
+      expect(data).toHaveLength(1);
+      expect(data[0].value).toBe(0);
+      expect(data[0].scriptPubKey.hex).toBe(OP_RETURN_SCRIPT);
+      expect(await listAllHoldings(currentAccount.freshAddress)).toEqual(
+        holdingsAfter(holdingsBefore, spent, tx, currentAccount.freshAddress),
+      );
+    },
+  };
+
+  const optimizeSize: Step = {
+    name: "Send with the optimize-size strategy",
+    recipient: RECIPIENT,
+    utxoStrategy: { strategy: "optimize-size" },
+    // An amount only the largest UTXO covers alone, where deepest first would add older ones.
+    prepare: holdings => {
+      const [secondLargest, largest] = byValue(holdings).slice(-2);
+      // It must cover the amount and the fee alone, with room: 0.2 BTC above the second largest.
+      if (BigInt(largest.value) - BigInt(secondLargest.value) < 20_000_000n) {
+        throw new Error(`the largest UTXO must exceed the others: ${JSON.stringify(holdings)}`);
+      }
+      expectedSpent = [largest.id];
+      return { amount: new BigNumber(secondLargest.value).plus(1e7) };
+    },
+    expect: async (previousAccount, currentAccount) => {
+      const [latestOperation] = currentAccount.operations;
+      expect(currentAccount.operations.length - previousAccount.operations.length).toBe(1);
+      expect(latestOperation.type).toBe("OUT");
+      expect(latestOperation.fee.toFixed()).toBe(prepared.fees?.toFixed());
+      expect(currentAccount.balance.toFixed()).toBe(
+        previousAccount.balance.minus(latestOperation.value).toFixed(),
+      );
+      const tx = await getNodeTransaction(latestOperation.hash);
+      const spent = spentOutpoints(tx);
+      expect(spent).toHaveLength(Number(prepared.feeParameters?.inputCount));
+      expect(spent).toEqual(expectedSpent);
+      expect(await listAllHoldings(currentAccount.freshAddress)).toEqual(
+        holdingsAfter(holdingsBefore, spent, tx, currentAccount.freshAddress),
+      );
+    },
+  };
+
+  const mergeOutputs: Step = {
+    name: "Send with the merge-outputs strategy",
+    recipient: RECIPIENT,
+    utxoStrategy: { strategy: "merge-outputs" },
+    // An amount just above the smallest UTXO: the smallest ones are merged.
+    prepare: holdings => ({ amount: new BigNumber(byValue(holdings)[0].value).plus(1e6) }),
+    expect: async (previousAccount, currentAccount) => {
+      const [latestOperation] = currentAccount.operations;
+      expect(currentAccount.operations.length - previousAccount.operations.length).toBe(1);
+      expect(latestOperation.type).toBe("OUT");
+      expect(latestOperation.fee.toFixed()).toBe(prepared.fees?.toFixed());
+      expect(currentAccount.balance.toFixed()).toBe(
+        previousAccount.balance.minus(latestOperation.value).toFixed(),
+      );
+      const tx = await getNodeTransaction(latestOperation.hash);
+      const spent = spentOutpoints(tx);
+      expect(spent).toHaveLength(Number(prepared.feeParameters?.inputCount));
+      const smallestFirst = byValue(holdingsBefore).map(holding => holding.id);
+      expect(spent.length).toBeGreaterThanOrEqual(2);
+      expect([...spent].sort()).toEqual(smallestFirst.slice(0, spent.length).sort());
+      expect(await listAllHoldings(currentAccount.freshAddress)).toEqual(
+        holdingsAfter(holdingsBefore, spent, tx, currentAccount.freshAddress),
+      );
+    },
+  };
+
+  const sendMaxExcluding: Step = {
+    name: "Send max, excluding one UTXO",
+    useAllAmount: true,
+    recipient: RECIPIENT,
+    // Every UTXO is swept but the largest, which stays.
+    prepare: holdings => {
+      kept = byValue(holdings).at(-1) as HoldingSummary;
+      return { utxoStrategy: { excludedUtxos: [kept.id] } };
+    },
+    expect: async (previousAccount, currentAccount) => {
+      const [latestOperation] = currentAccount.operations;
+      expect(currentAccount.operations.length - previousAccount.operations.length).toBe(1);
+      expect(latestOperation.type).toBe("OUT");
+      expect(latestOperation.fee.toFixed()).toBe(prepared.fees?.toFixed());
+      expect(currentAccount.balance.toFixed()).toBe(
+        previousAccount.balance.minus(latestOperation.value).toFixed(),
+      );
+      const tx = await getNodeTransaction(latestOperation.hash);
+      const spent = spentOutpoints(tx);
+      expect(spent).toHaveLength(Number(prepared.feeParameters?.inputCount));
+      expect(spent).not.toContain(kept.id);
+      expect(await listAllHoldings(currentAccount.freshAddress)).toEqual([kept]);
+      expect(currentAccount.balance.toFixed()).toBe(kept.value);
+    },
+  };
+
+  const sendMax: Step = {
     name: "Send max",
     useAllAmount: true,
     recipient: RECIPIENT,
-    expect: (previousAccount, currentAccount) => {
-      expectOutgoing()(previousAccount, currentAccount);
+    expect: async (previousAccount, currentAccount) => {
+      const [latestOperation] = currentAccount.operations;
+      expect(currentAccount.operations.length - previousAccount.operations.length).toBe(1);
+      expect(latestOperation.type).toBe("OUT");
+      expect(latestOperation.fee.toFixed()).toBe(prepared.fees?.toFixed());
+      expect(currentAccount.balance.toFixed()).toBe(
+        previousAccount.balance.minus(latestOperation.value).toFixed(),
+      );
+      const tx = await getNodeTransaction(latestOperation.hash);
+      const spent = spentOutpoints(tx);
+      expect(spent).toHaveLength(Number(prepared.feeParameters?.inputCount));
+      expect(await listAllHoldings(currentAccount.freshAddress)).toEqual([]);
       expect(currentAccount.balance.toFixed()).toBe("0");
     },
-  },
-];
+  };
 
-export const scenarioBitcoinGeneric: Scenario<GenericTransaction, Account> = {
+  return [
+    excludingOldest,
+    excludingOldestLegacy,
+    selecting,
+    send,
+    sendFast,
+    sendSlow,
+    sendOpReturn,
+    optimizeSize,
+    mergeOutputs,
+    sendMaxExcluding,
+    sendMax,
+  ];
+};
+
+export const scenarioBitcoinGeneric: Scenario<BitcoinGenericTransaction, Account> = {
   name: "Ledger Live Bitcoin — generic adapter (single address)",
   setup: async () => {
-    const { sandbox, explorerUrl } = await spawnSandbox();
+    const { sandbox, address, account, accountBridge, currencyBridge } =
+      await setupGenericAccount();
+    bridge = accountBridge;
 
-    const coinConfig: BitcoinCoinConfig = {
-      status: { type: "active" },
-      name: "Bitcoin Regtest",
-      unit: { name: "bitcoin", code: "𝚝BTC", magnitude: 8 },
-      explorerId: "btc_regtest",
-      explorer: { url: explorerUrl },
-      // As Ledger Live configures regtest: app-bitcoin-new's version 2, RBF-signalling inputs.
-      transaction: { version: 2, signalsRbf: true },
-    };
-    LiveConfig.setConfig({
-      config_currency_bitcoin_regtest: { type: "object", default: coinConfig },
-    });
-
-    const BITCOIN = getCryptoCurrencyById("bitcoin_regtest");
-    const signer = await buildGenericSigner();
-    const { address, publicKey } = await signer.getAddress(ADDRESS_PATH);
-    const { accountBridge, currencyBridge } = await getBitcoinGenericBridges(signer);
-    const account = makeGenericAdapterAccount(address, publicKey, ADDRESS_PATH, BITCOIN);
-
-    // Fund the address with three UTXOs. Each airdrop mines its block, so the funding is confirmed
-    // before the first sync (history and balance are confirmed-only).
-    await sandbox.airdrop(address, 2);
-    await sandbox.airdrop(address, 3);
-    await sandbox.airdrop(address, 2);
+    // Fund the address with distinct UTXOs, for the steps to choose among. Each airdrop mines its
+    // block, so the funding is confirmed before the first sync (history and balance are
+    // confirmed-only).
+    for (const btc of FUNDING) await sandbox.airdrop(address, btc);
 
     return { accountBridge, currencyBridge, account, retryLimit: 15, retryInterval: 1_000 };
   },
-  getTransactions: () => makeScenarioTransactions(),
+  getTransactions: () => {
+    steps = makeScenarioTransactions();
+    stepIndex = -1;
+    return steps;
+  },
   // The coin-tester checks a send's expectations right after broadcasting it, before `afterEach`.
   // coin-bitcoin's Alpaca API reports confirmed history and balance only, so the send must be
   // mined before that sync: `beforeSync` runs before every sync, including the post-broadcast ones.
@@ -105,16 +400,28 @@ export const scenarioBitcoinGeneric: Scenario<GenericTransaction, Account> = {
     await mineToWalletAddress("1");
     await waitForExplorerSync();
   },
-  beforeEach: async () => {
+  beforeEach: async account => {
     await waitForExplorerSync();
+    stepIndex++;
+    holdingsBefore = await listAllHoldings(account.freshAddress);
+    // The coin tester spreads the step into the transaction after this hook.
+    const step = steps[stepIndex];
+    Object.assign(step, step.prepare?.(holdingsBefore));
+    // The transaction the coin tester signs next, prepared the same way: what the user is shown.
+    prepared = await bridge.prepareTransaction(account, {
+      ...bridge.createTransaction(account),
+      ...step,
+    });
   },
-  afterEach: async () => {
+  afterEach: async account => {
     await waitForExplorerSync();
+    if (steps[stepIndex].name === "Send 1 BTC, spending only the selected UTXO")
+      await expectSmallSelectionRefused(account);
   },
   afterAll: async account => {
     await waitForExplorerSync();
-    // Three funding payments in, four sends out.
-    expect(account.operations.length).toBeGreaterThanOrEqual(7);
+    // The funding payments in, the sends out: the refused selection left no operation.
+    expect(account.operations.length).toBe(FUNDING.length + steps.length);
   },
   teardown: async () => {
     await killSandbox();

@@ -1,12 +1,9 @@
+import { API_ENDPOINT, DELEGATION_API_ENDPOINT } from "../../test/integEndpoints";
 /**
  * Integration tests — hit real MultiversX API.
  */
 import { createNetworkApi } from "../../network/api";
 import { lastBlock } from "./lastBlock";
-
-const API_ENDPOINT = process.env.MULTIVERSX_API_ENDPOINT ?? "https://api.multiversx.com";
-const DELEGATION_API_ENDPOINT =
-  process.env.MULTIVERSX_DELEGATION_API_ENDPOINT ?? "https://delegation-api.multiversx.com";
 
 describe("lastBlock (integration)", () => {
   const api = createNetworkApi(API_ENDPOINT, DELEGATION_API_ENDPOINT);

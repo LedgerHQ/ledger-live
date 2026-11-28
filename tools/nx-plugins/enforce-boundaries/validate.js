@@ -325,22 +325,23 @@ function findBannedDependencyViolations(graph, workspaceRoot, bannedDependencies
 /**
  * Check every project carrying a rule's source tag for a third-party package it may not use:
  * declared in any dependency field of its manifest, or imported by a source file under its root.
+ * A project named in the rule's `exceptProjects` is skipped for that rule.
  *
  * @param {ProjectGraphLike} graph
  * @param {string} workspaceRoot
- * @param {Array<{sourceTag: string, packages: string[]}>} rules
+ * @param {Array<{sourceTag: string, packages: string[], exceptProjects?: string[]}>} rules
  * @returns {BannedExternalViolation[]}
  */
 function findBannedExternalViolations(graph, workspaceRoot, rules = []) {
   const violations = [];
 
-  for (const node of Object.values(graph.nodes)) {
+  for (const [nodeName, node] of Object.entries(graph.nodes)) {
     const root = node.data?.root;
     if (!root) continue;
     const tags = node.data?.tags ?? [];
 
-    for (const { sourceTag, packages } of rules) {
-      if (!tags.includes(sourceTag)) continue;
+    for (const { sourceTag, packages, exceptProjects = [] } of rules) {
+      if (!tags.includes(sourceTag) || exceptProjects.includes(nodeName)) continue;
       const banned = new Set(packages);
 
       const read = readManifest(workspaceRoot, root);
@@ -652,7 +653,7 @@ function findDevtoolsHostViolations(workspaceRoot, hostApps) {
       const rel = path.relative(realRoot, file);
       const isTest = TEST_FILE.test(path.relative(appRoot, file).split(path.sep).join("/"));
 
-      for (const { specifier, kind, line } of moduleReferences(sourceFiles.parse(file))) {
+      for (const { specifier, line } of moduleReferences(sourceFiles.parse(file))) {
         if (specifier.startsWith("@devtools/")) {
           violations.push({ file: rel, line, specifier, rule: "DEVTOOLS_HOST_APP_RULE" });
           continue;
@@ -660,12 +661,7 @@ function findDevtoolsHostViolations(workspaceRoot, hostApps) {
         const { target, resolved } = load(file, specifier);
         if (isUnder(target, devtoolsRoot)) {
           violations.push({ file: rel, line, specifier, rule: "DEVTOOLS_HOST_APP_RULE" });
-        } else if (
-          !isTest &&
-          kind !== "dynamic" &&
-          isUnder(target, folder) &&
-          !(resolved && entryFiles.has(target))
-        ) {
+        } else if (!isTest && isUnder(target, folder) && !(resolved && entryFiles.has(target))) {
           violations.push({ file: rel, line, specifier, rule: "DEVTOOLS_HOST_FOLDER_RULE" });
         }
       }

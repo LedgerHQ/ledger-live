@@ -1,7 +1,7 @@
 import { defineCommand, option } from "@bunli/core";
 import { z } from "zod";
 import { WalletAdapter } from "../wallet";
-import { serializeV1, toV0, currencyIdFromNetwork } from "../shared/accountDescriptor";
+import { addressOfV1, serializeV1, toV0, currencyIdFromNetwork } from "../shared/accountDescriptor";
 import { WALLET_CLI_DMK_DEVICE_ID } from "../device/register-dmk-transport";
 import { WalletCliDeviceError } from "../device/wallet-cli-device-error";
 import {
@@ -49,7 +49,7 @@ export default defineCommand({
       const managerAppName = getManagerAppNameForCurrencyId(currencyId);
       const address =
         v1.type === "address"
-          ? v1.address
+          ? await addressOfV1(v1)
           : await out.withActivity(
               `Scanning ${v1.network} blockchain for fresh address…`,
               "Fresh address resolved",

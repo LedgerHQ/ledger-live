@@ -17,7 +17,18 @@ jobs:
       contents: read
       id-token: write
     if: ${{!github.event.pull_request.head.repo.fork}}
-    uses: ./.github/workflows/renovate-sync-reusable.yml
+    uses: LedgerHQ/ledger-wallet-actions/.github/workflows/renovate-sync-reusable.yml@main
+    with:
+      runs-on: ledger-wallet-2cpu-aws-public
+      minor-packages: |
+        ledger-live-desktop
+        live-mobile
+      bundled-paths: apps/
+      registry: ${{ vars.ARTIFACTORY_URL }}
+      install-command: pnpm i --frozen-lockfile --filter="@ledgerhq/ledger-live" --filter="live-mobile..." --unsafe-perm --ignore-scripts
+      command: tools/scripts/renovate-pod-lockfile.sh
+      files: apps/ledger-live-mobile/ios/Podfile.lock
+      commit-message: "chore(deps): sync Podfile.lock and changeset"
     secrets:
       GH_BOT_APP_ID: ${{ secrets.GH_BOT_APP_ID }}
       GH_BOT_PRIVATE_KEY: ${{ secrets.GH_BOT_PRIVATE_KEY }}
@@ -33,6 +44,20 @@ jobs:
     with:
       head_branch: ${{ github.event.pull_request.head.ref }}
       base_branch: ${{ github.event.pull_request.base.ref }}
+      # Keep in sync with build-test-mobile's inputs.
+      mobile_e2e_plan: true
+      mobile_e2e_speculos_device: nanoX
+      mobile_e2e_smoke_tests: true
+      mobile_e2e_max_shards: 1
+    secrets:
+      AWS_ACCOUNT_ID_PROD: ${{ secrets.AWS_ACCOUNT_ID_PROD }}
+      AWS_CACHE_OIDC_ROLE_ARN_BRANCH: ${{ secrets.AWS_CACHE_OIDC_ROLE_ARN_BRANCH }}
+      AWS_CACHE_OIDC_ROLE_ARN_DEVELOP: ${{ secrets.AWS_CACHE_OIDC_ROLE_ARN_DEVELOP }}
+      AWS_CACHE_REGION: ${{ secrets.AWS_CACHE_REGION }}
+      AWS_CACHE_ROLE_NAME: ${{ secrets.AWS_CACHE_ROLE_NAME }}
+      R2_ACCESS_KEY_ID: ${{ secrets.R2_ACCESS_KEY_ID }}
+      R2_ENDPOINT: ${{ secrets.R2_ENDPOINT }}
+      R2_SECRET_ACCESS_KEY: ${{ secrets.R2_SECRET_ACCESS_KEY }}
 
   # LLD
   build-desktop:
@@ -41,7 +66,7 @@ jobs:
       id-token: write
       contents: read
     needs: [determine-affected]
-    if: ${{contains(needs.determine-affected.outputs.paths, 'ledger-live-desktop') && !github.event.pull_request.head.repo.fork}}
+    if: ${{contains(fromJSON(needs.determine-affected.outputs.path_prefixes), 'apps/ledger-live-desktop') && !github.event.pull_request.head.repo.fork}}
     uses: LedgerHQ/ledger-live/.github/workflows/build-desktop-reusable.yml@develop
     secrets:
       AWS_ACCOUNT_ID_PROD: ${{ secrets.AWS_ACCOUNT_ID_PROD }}
@@ -61,7 +86,7 @@ jobs:
       id-token: write
       contents: read
     needs: determine-affected
-    if: ${{contains(needs.determine-affected.outputs.paths, 'ledger-live-desktop') && !github.event.pull_request.head.repo.fork}}
+    if: ${{contains(fromJSON(needs.determine-affected.outputs.path_prefixes), 'apps/ledger-live-desktop') && !github.event.pull_request.head.repo.fork}}
     uses: LedgerHQ/ledger-live/.github/workflows/test-desktop-reusable.yml@develop
     secrets:
       ALLURE_LEDGER_LIVE_PASSWORD: ${{ secrets.ALLURE_LEDGER_LIVE_PASSWORD }}
@@ -85,7 +110,7 @@ jobs:
       id-token: write
       contents: read
     needs: determine-affected
-    if: ${{contains(needs.determine-affected.outputs.paths, 'ledger-live-desktop') && !github.event.pull_request.head.repo.fork}}
+    if: ${{contains(fromJSON(needs.determine-affected.outputs.path_prefixes), 'apps/ledger-live-desktop') && !github.event.pull_request.head.repo.fork}}
     uses: LedgerHQ/ledger-live/.github/workflows/test-desktop-codechecks-reusable.yml@develop
     secrets:
       AWS_ACCOUNT_ID_PROD: ${{ secrets.AWS_ACCOUNT_ID_PROD }}
@@ -102,7 +127,7 @@ jobs:
       id-token: write
       contents: read
     needs: determine-affected
-    if: ${{contains(needs.determine-affected.outputs.paths, 'ledger-live-mobile') && !github.event.pull_request.head.repo.fork}}
+    if: ${{contains(fromJSON(needs.determine-affected.outputs.path_prefixes), 'apps/ledger-live-mobile') && !github.event.pull_request.head.repo.fork}}
     uses: LedgerHQ/ledger-live/.github/workflows/test-mobile-reusable.yml@develop
     secrets:
       AWS_ACCOUNT_ID_PROD: ${{ secrets.AWS_ACCOUNT_ID_PROD }}
@@ -118,7 +143,7 @@ jobs:
       id-token: write
       contents: read
     needs: determine-affected
-    if: ${{contains(needs.determine-affected.outputs.paths, 'ledger-live-mobile') && !github.event.pull_request.head.repo.fork}}
+    if: ${{contains(fromJSON(needs.determine-affected.outputs.path_prefixes), 'apps/ledger-live-mobile') && !github.event.pull_request.head.repo.fork}}
     uses: LedgerHQ/ledger-live/.github/workflows/test-mobile-e2e-reusable.yml@develop
     secrets:
       ALLURE_LEDGER_LIVE_PASSWORD: ${{ secrets.ALLURE_LEDGER_LIVE_PASSWORD }}
@@ -152,6 +177,9 @@ jobs:
       check_pod_lockfile: true
       js_bundle_hash_ios: ${{ needs.determine-affected.outputs.mobile_js_hash_ios }}
       js_bundle_hash_android: ${{ needs.determine-affected.outputs.mobile_js_hash_android }}
+      native_fingerprint_ios: ${{ needs.determine-affected.outputs.mobile_native_fingerprint_ios }}
+      native_fingerprint_android: ${{ needs.determine-affected.outputs.mobile_native_fingerprint_android }}
+      build_plan: ${{ needs.determine-affected.outputs.mobile_e2e_plan }}
 
   # Tests
   test-libraries:
@@ -160,7 +188,7 @@ jobs:
       id-token: write
       contents: read
     needs: determine-affected
-    if: ${{contains(needs.determine-affected.outputs.paths, 'libs') && !github.event.pull_request.head.repo.fork}}
+    if: ${{contains(fromJSON(needs.determine-affected.outputs.path_prefixes), 'libs') && !github.event.pull_request.head.repo.fork}}
     uses: LedgerHQ/ledger-live/.github/workflows/test-libs-reusable.yml@develop
     secrets:
       AWS_ACCOUNT_ID_PROD: ${{ secrets.AWS_ACCOUNT_ID_PROD }}
@@ -178,7 +206,7 @@ jobs:
       id-token: write
       contents: read
     needs: determine-affected
-    if: ${{contains(needs.determine-affected.outputs.paths, 'features') && !github.event.pull_request.head.repo.fork}}
+    if: ${{contains(fromJSON(needs.determine-affected.outputs.path_prefixes), 'features') && !github.event.pull_request.head.repo.fork}}
     uses: LedgerHQ/ledger-live/.github/workflows/test-features-reusable.yml@develop
     secrets:
       AWS_ACCOUNT_ID_PROD: ${{ secrets.AWS_ACCOUNT_ID_PROD }}
@@ -194,7 +222,7 @@ jobs:
       id-token: write
       contents: read
     needs: determine-affected
-    if: ${{contains(needs.determine-affected.outputs.paths, 'shared') && !github.event.pull_request.head.repo.fork}}
+    if: ${{contains(fromJSON(needs.determine-affected.outputs.path_prefixes), 'shared') && !github.event.pull_request.head.repo.fork}}
     uses: LedgerHQ/ledger-live/.github/workflows/test-shared-reusable.yml@develop
     secrets:
       AWS_ACCOUNT_ID_PROD: ${{ secrets.AWS_ACCOUNT_ID_PROD }}
@@ -210,7 +238,7 @@ jobs:
       id-token: write
       contents: read
     needs: determine-affected
-    if: ${{contains(needs.determine-affected.outputs.paths, 'domain') && !github.event.pull_request.head.repo.fork}}
+    if: ${{contains(fromJSON(needs.determine-affected.outputs.path_prefixes), 'domain') && !github.event.pull_request.head.repo.fork}}
     uses: LedgerHQ/ledger-live/.github/workflows/test-domain-reusable.yml@develop
     secrets:
       AWS_ACCOUNT_ID_PROD: ${{ secrets.AWS_ACCOUNT_ID_PROD }}
@@ -226,7 +254,7 @@ jobs:
       id-token: write
       contents: read
     needs: determine-affected
-    if: ${{contains(needs.determine-affected.outputs.paths, 'devtools') && !github.event.pull_request.head.repo.fork}}
+    if: ${{contains(fromJSON(needs.determine-affected.outputs.path_prefixes), 'devtools') && !github.event.pull_request.head.repo.fork}}
     uses: LedgerHQ/ledger-live/.github/workflows/test-devtools-reusable.yml@develop
     secrets:
       AWS_ACCOUNT_ID_PROD: ${{ secrets.AWS_ACCOUNT_ID_PROD }}
@@ -242,7 +270,7 @@ jobs:
       id-token: write
       contents: read
     needs: determine-affected
-    if: ${{contains(needs.determine-affected.outputs.paths, 'support') && !github.event.pull_request.head.repo.fork}}
+    if: ${{contains(fromJSON(needs.determine-affected.outputs.path_prefixes), 'support') && !github.event.pull_request.head.repo.fork}}
     uses: LedgerHQ/ledger-live/.github/workflows/test-support-reusable.yml@develop
     secrets:
       AWS_ACCOUNT_ID_PROD: ${{ secrets.AWS_ACCOUNT_ID_PROD }}
@@ -274,7 +302,7 @@ jobs:
       id-token: write
       contents: read
     needs: determine-affected
-    if: ${{contains(needs.determine-affected.outputs.paths, 'libs/ui') && !github.event.pull_request.head.repo.fork}}
+    if: ${{contains(fromJSON(needs.determine-affected.outputs.path_prefixes), 'libs/ui') && !github.event.pull_request.head.repo.fork}}
     uses: LedgerHQ/ledger-live/.github/workflows/test-design-system-reusable.yml@develop
     secrets:
       AWS_ACCOUNT_ID_PROD: ${{ secrets.AWS_ACCOUNT_ID_PROD }}
@@ -304,7 +332,7 @@ jobs:
       VERCEL_LEDGER_WALLET_TOKEN: ${{ secrets.VERCEL_LEDGER_WALLET_TOKEN }}
       VERCEL_PROJECT_WEBTOOLS: ${{ secrets.VERCEL_PROJECT_WEBTOOLS }}
     with:
-      build-web-tools: ${{ contains(needs.determine-affected.outputs.paths, 'apps/web-tools') }}
+      build-web-tools: ${{ contains(fromJSON(needs.determine-affected.outputs.path_prefixes), 'apps/web-tools') }}
 
   test-cli:
     name: "Test CLI"
@@ -312,7 +340,7 @@ jobs:
       id-token: write
       contents: read
     needs: determine-affected
-    if: ${{contains(needs.determine-affected.outputs.paths, 'apps/cli') && !github.event.pull_request.head.repo.fork}}
+    if: ${{contains(fromJSON(needs.determine-affected.outputs.path_prefixes), 'apps/cli') && !github.event.pull_request.head.repo.fork}}
     uses: LedgerHQ/ledger-live/.github/workflows/test-cli-reusable.yml@develop
     secrets:
       AWS_ACCOUNT_ID_PROD: ${{ secrets.AWS_ACCOUNT_ID_PROD }}
@@ -328,7 +356,7 @@ jobs:
       id-token: write
       contents: read
     needs: determine-affected
-    if: ${{contains(needs.determine-affected.outputs.paths, 'wallet-cli') && !github.event.pull_request.head.repo.fork}}
+    if: ${{contains(fromJSON(needs.determine-affected.outputs.path_prefixes), 'apps/wallet-cli') && !github.event.pull_request.head.repo.fork}}
     uses: LedgerHQ/ledger-live/.github/workflows/build-wallet-cli-reusable.yml@develop
     secrets:
       AWS_ACCOUNT_ID_PROD: ${{ secrets.AWS_ACCOUNT_ID_PROD }}
@@ -337,14 +365,6 @@ jobs:
       AWS_CACHE_REGION: ${{ secrets.AWS_CACHE_REGION }}
       AWS_CACHE_ROLE_NAME: ${{ secrets.AWS_CACHE_ROLE_NAME }}
       NX_KEY: ${{ secrets.NX_KEY }}
-
-  test-wallet-cli-windows:
-    name: "Test Wallet CLI (Windows)"
-    permissions:
-      contents: read
-    needs: determine-affected
-    if: ${{contains(needs.determine-affected.outputs.paths, 'wallet-cli') && !github.event.pull_request.head.repo.fork}}
-    uses: ./.github/workflows/test-wallet-cli-windows-reusable.yml
 
   test-additional:
     name: "Test Additional"
@@ -362,7 +382,7 @@ jobs:
       id-token: write
       contents: read
     needs: determine-affected
-    if: ${{!github.event.pull_request.head.repo.fork && (contains(needs.determine-affected.outputs.paths, 'e2e/mobile') || contains(needs.determine-affected.outputs.paths, 'apps/ledger-live-mobile'))}}
+    if: ${{!github.event.pull_request.head.repo.fork && (contains(fromJSON(needs.determine-affected.outputs.path_prefixes), 'e2e/mobile') || contains(fromJSON(needs.determine-affected.outputs.path_prefixes), 'apps/ledger-live-mobile'))}}
     uses: LedgerHQ/ledger-live/.github/workflows/test-mobile-e2e-lint-reusable.yml@develop
     secrets:
       AWS_ACCOUNT_ID_PROD: ${{ secrets.AWS_ACCOUNT_ID_PROD }}
@@ -378,7 +398,7 @@ jobs:
       id-token: write
       contents: read
     needs: determine-affected
-    if: ${{!github.event.pull_request.head.repo.fork && contains(needs.determine-affected.outputs.paths, 'e2e/desktop')}}
+    if: ${{!github.event.pull_request.head.repo.fork && contains(fromJSON(needs.determine-affected.outputs.path_prefixes), 'e2e/desktop')}}
     uses: LedgerHQ/ledger-live/.github/workflows/test-desktop-e2e-lint-reusable.yml@develop
     secrets:
       AWS_ACCOUNT_ID_PROD: ${{ secrets.AWS_ACCOUNT_ID_PROD }}
@@ -398,7 +418,7 @@ jobs:
       issues: read
       actions: read
     needs: determine-affected
-    if: ${{ (contains(needs.determine-affected.outputs.paths, 'ledger-live-desktop') || contains(needs.determine-affected.outputs.paths, 'ledger-live-mobile')) && !github.event.pull_request.head.repo.fork }}
+    if: ${{ (contains(fromJSON(needs.determine-affected.outputs.path_prefixes), 'apps/ledger-live-desktop') || contains(fromJSON(needs.determine-affected.outputs.path_prefixes), 'apps/ledger-live-mobile')) && !github.event.pull_request.head.repo.fork }}
     uses: LedgerHQ/ledger-live/.github/workflows/rsdoctor-reusable.yml@develop
     secrets:
       AWS_ACCOUNT_ID_PROD: ${{ secrets.AWS_ACCOUNT_ID_PROD }}
@@ -414,7 +434,7 @@ jobs:
       id-token: write
       contents: read
     needs: determine-affected
-    if: ${{!github.event.pull_request.head.repo.fork && contains(needs.determine-affected.outputs.paths, 'e2e/tooling')}}
+    if: ${{!github.event.pull_request.head.repo.fork && contains(fromJSON(needs.determine-affected.outputs.path_prefixes), 'e2e/tooling')}}
     uses: ./.github/workflows/test-e2e-tooling-reusable.yml
     secrets:
       AWS_ACCOUNT_ID_PROD: ${{ secrets.AWS_ACCOUNT_ID_PROD }}
@@ -430,7 +450,7 @@ jobs:
       id-token: write
       contents: read
     needs: determine-affected
-    if: ${{!github.event.pull_request.head.repo.fork && github.event.pull_request.base.ref == 'develop' && contains(needs.determine-affected.outputs.paths, 'tools/nx-plugins/generators')}}
+    if: ${{!github.event.pull_request.head.repo.fork && github.event.pull_request.base.ref == 'develop' && contains(fromJSON(needs.determine-affected.outputs.path_prefixes), 'tools/nx-plugins/generators')}}
     uses: ./.github/workflows/test-nx-generators-reusable.yml
     secrets:
       AWS_ACCOUNT_ID_PROD: ${{ secrets.AWS_ACCOUNT_ID_PROD }}
@@ -467,7 +487,7 @@ jobs:
       - build-wallet-cli
       - determine-affected
     uses: LedgerHQ/ledger-live/.github/workflows/scan-sonar-reusable.yml@develop
-    if: ${{ always() && !cancelled() && !github.event.pull_request.head.repo.fork && !contains(needs.*.result, 'failure') && (needs.codecheck-desktop.result == 'success' || needs.test-mobile.result == 'success' || needs.test-libraries.result == 'success' || needs.test-features.result == 'success' || needs.test-shared.result == 'success' || needs.test-domain.result == 'success' || needs.test-devtools.result == 'success' || needs.build-wallet-cli.result == 'success' || contains(needs.determine-affected.outputs.paths, 'e2e')) }}
+    if: ${{ always() && !cancelled() && !github.event.pull_request.head.repo.fork && !contains(needs.*.result, 'failure') && (needs.codecheck-desktop.result == 'success' || needs.test-mobile.result == 'success' || needs.test-libraries.result == 'success' || needs.test-features.result == 'success' || needs.test-shared.result == 'success' || needs.test-domain.result == 'success' || needs.test-devtools.result == 'success' || needs.build-wallet-cli.result == 'success' || (needs.determine-affected.result == 'success' && contains(fromJSON(needs.determine-affected.outputs.path_prefixes), 'e2e'))) }}
     secrets:
       SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
     with:

@@ -1,5 +1,125 @@
 # @ledgerhq/live-dmk
 
+## 0.41.0
+
+### Minor Changes
+
+- [#24692](https://github.com/LedgerHQ/ledger-live/pull/24692) [`ffe7941`](https://github.com/LedgerHQ/ledger-live/commit/ffe794109361069c813d36d198f547d40eb79b7f) Thanks [@benruseau](https://github.com/benruseau)! - Mobile runs the OS update through `@features/flow-device-os-update` and `@features/platform-device-os-update`. `live-dmk-shared` no longer exports the os-update API and `live-common` drops `os-update/*`.
+
+- [#24850](https://github.com/LedgerHQ/ledger-live/pull/24850) [`a1f1062`](https://github.com/LedgerHQ/ledger-live/commit/a1f1062c50e1093d09dc5c20bd7bd9b2678f8b37) Thanks [@OlivierFreyssinet](https://github.com/OlivierFreyssinet)! - Add an embedded mode to the connect new device state machine (`embedded: true`), so that a parent state machine can run it with its own discovery service, and add `EmbeddedConnectNewDeviceUIState`
+
+- [#24866](https://github.com/LedgerHQ/ledger-live/pull/24866) [`3d9e16e`](https://github.com/LedgerHQ/ledger-live/commit/3d9e16e2de416fabd1a06e74dfc1235e4cb5c48d) Thanks [@OlivierFreyssinet](https://github.com/OlivierFreyssinet)! - Add the connect known or new device state machine: it lists the known, connected and discovered devices, connects, disconnects and removes a device, and embeds the connect new device state machine to add a new device
+
+- [#24875](https://github.com/LedgerHQ/ledger-live/pull/24875) [`cbb1cc6`](https://github.com/LedgerHQ/ledger-live/commit/cbb1cc65fb0ac744eac9fd46eee90f3fd87595fd) Thanks [@OlivierFreyssinet](https://github.com/OlivierFreyssinet)! - Add `connectKnownOrNewDeviceUseCase`: it returns the UI states of the connect known or new device state machine as an `Observable`, with `pause` and `resume`
+
+- [#25009](https://github.com/LedgerHQ/ledger-live/pull/25009) [`c98e265`](https://github.com/LedgerHQ/ledger-live/commit/c98e2659c3236ec7c4664ea28393cfb1eab0e8b0) Thanks [@OlivierFreyssinet](https://github.com/OlivierFreyssinet)! - The connectDevice and connectNewDevice state machines start the disconnection of the other devices' sessions when they connect, so that Ledger Wallet keeps one DMK session at a time. The connectNewDevice state machine uses the open session of the selected device instead of opening a second one, and no longer disconnects a session that it opened when it stops before calling onConnected
+
+- [#24835](https://github.com/LedgerHQ/ledger-live/pull/24835) [`d5357b4`](https://github.com/LedgerHQ/ledger-live/commit/d5357b4060ca40b0dbb86119bb614fa4e45fe2ed) Thanks [@OlivierFreyssinet](https://github.com/OlivierFreyssinet)! - Save the last use time of each known device when the app saves a connection to it
+
+- [#24884](https://github.com/LedgerHQ/ledger-live/pull/24884) [`54dbb60`](https://github.com/LedgerHQ/ledger-live/commit/54dbb60cde959955f5965bf6710520a05c2cd1da) Thanks [@ysitbon](https://github.com/ysitbon)! - Move the React exports of live-dmk-shared to a `@ledgerhq/live-dmk-shared/react` entry point so the root entry imports no React
+
+- [#25107](https://github.com/LedgerHQ/ledger-live/pull/25107) [`161ebff`](https://github.com/LedgerHQ/ledger-live/commit/161ebff460d0a96a53c707bd8d386e52596e1815) Thanks [@mdomanski-ext-ledger](https://github.com/mdomanski-ext-ledger)! - XRP: delete a token from Manage assets on mobile
+
+## 0.41.0-next.0
+
+### Minor Changes
+
+- [#24692](https://github.com/LedgerHQ/ledger-live/pull/24692) [`ffe7941`](https://github.com/LedgerHQ/ledger-live/commit/ffe794109361069c813d36d198f547d40eb79b7f) Thanks [@benruseau](https://github.com/benruseau)! - Mobile runs the OS update through `@features/flow-device-os-update` and `@features/platform-device-os-update`. `live-dmk-shared` no longer exports the os-update API and `live-common` drops `os-update/*`.
+
+- [#24850](https://github.com/LedgerHQ/ledger-live/pull/24850) [`a1f1062`](https://github.com/LedgerHQ/ledger-live/commit/a1f1062c50e1093d09dc5c20bd7bd9b2678f8b37) Thanks [@OlivierFreyssinet](https://github.com/OlivierFreyssinet)! - Add an embedded mode to the connect new device state machine (`embedded: true`), so that a parent state machine can run it with its own discovery service, and add `EmbeddedConnectNewDeviceUIState`
+
+- [#24866](https://github.com/LedgerHQ/ledger-live/pull/24866) [`3d9e16e`](https://github.com/LedgerHQ/ledger-live/commit/3d9e16e2de416fabd1a06e74dfc1235e4cb5c48d) Thanks [@OlivierFreyssinet](https://github.com/OlivierFreyssinet)! - Add the connect known or new device state machine: it lists the known, connected and discovered devices, connects, disconnects and removes a device, and embeds the connect new device state machine to add a new device
+
+- [#24875](https://github.com/LedgerHQ/ledger-live/pull/24875) [`cbb1cc6`](https://github.com/LedgerHQ/ledger-live/commit/cbb1cc65fb0ac744eac9fd46eee90f3fd87595fd) Thanks [@OlivierFreyssinet](https://github.com/OlivierFreyssinet)! - Add `connectKnownOrNewDeviceUseCase`: it returns the UI states of the connect known or new device state machine as an `Observable`, with `pause` and `resume`
+
+- [#25009](https://github.com/LedgerHQ/ledger-live/pull/25009) [`c98e265`](https://github.com/LedgerHQ/ledger-live/commit/c98e2659c3236ec7c4664ea28393cfb1eab0e8b0) Thanks [@OlivierFreyssinet](https://github.com/OlivierFreyssinet)! - The connectDevice and connectNewDevice state machines start the disconnection of the other devices' sessions when they connect, so that Ledger Wallet keeps one DMK session at a time. The connectNewDevice state machine uses the open session of the selected device instead of opening a second one, and no longer disconnects a session that it opened when it stops before calling onConnected
+
+- [#24835](https://github.com/LedgerHQ/ledger-live/pull/24835) [`d5357b4`](https://github.com/LedgerHQ/ledger-live/commit/d5357b4060ca40b0dbb86119bb614fa4e45fe2ed) Thanks [@OlivierFreyssinet](https://github.com/OlivierFreyssinet)! - Save the last use time of each known device when the app saves a connection to it
+
+- [#24884](https://github.com/LedgerHQ/ledger-live/pull/24884) [`54dbb60`](https://github.com/LedgerHQ/ledger-live/commit/54dbb60cde959955f5965bf6710520a05c2cd1da) Thanks [@ysitbon](https://github.com/ysitbon)! - Move the React exports of live-dmk-shared to a `@ledgerhq/live-dmk-shared/react` entry point so the root entry imports no React
+
+- [#25107](https://github.com/LedgerHQ/ledger-live/pull/25107) [`161ebff`](https://github.com/LedgerHQ/ledger-live/commit/161ebff460d0a96a53c707bd8d386e52596e1815) Thanks [@mdomanski-ext-ledger](https://github.com/mdomanski-ext-ledger)! - XRP: delete a token from Manage assets on mobile
+
+## 0.40.0
+
+### Minor Changes
+
+- [#24832](https://github.com/LedgerHQ/ledger-live/pull/24832) [`3374abb`](https://github.com/LedgerHQ/ledger-live/commit/3374abbb9491f94fb98417b696b4e30c1bced021) Thanks [@OlivierFreyssinet](https://github.com/OlivierFreyssinet)! - Add `isRunning` and `ignoredTransportIds` to `DeviceDiscoveryService`, and make the connect device and connect new device state machines read the discovery state from the service, so that two state machines can share one service
+
+- [#24811](https://github.com/LedgerHQ/ledger-live/pull/24811) [`13a6d68`](https://github.com/LedgerHQ/ledger-live/commit/13a6d687f486e1fcb3001a15f437a84b26ea5609) Thanks [@OlivierFreyssinet](https://github.com/OlivierFreyssinet)! - Emit the unknown error when a connection state machine fails while it runs, instead of freezing the UI
+
+- [#24827](https://github.com/LedgerHQ/ledger-live/pull/24827) [`c24caff`](https://github.com/LedgerHQ/ledger-live/commit/c24cafffbc8b6fd0f05c6ec13e70d70fd4557697) Thanks [@OlivierFreyssinet](https://github.com/OlivierFreyssinet)! - Match devices with one findMatchingDevice for connectDevice and the known devices, a BLE match by id before a match by name
+
+### Patch Changes
+
+- Updated dependencies [[`6baeada`](https://github.com/LedgerHQ/ledger-live/commit/6baeadaca277a70109580c0d939278ebf729922b)]:
+  - @domain/entity-client-identity@0.6.0
+
+## 0.40.0-next.0
+
+### Minor Changes
+
+- [#24832](https://github.com/LedgerHQ/ledger-live/pull/24832) [`3374abb`](https://github.com/LedgerHQ/ledger-live/commit/3374abbb9491f94fb98417b696b4e30c1bced021) Thanks [@OlivierFreyssinet](https://github.com/OlivierFreyssinet)! - Add `isRunning` and `ignoredTransportIds` to `DeviceDiscoveryService`, and make the connect device and connect new device state machines read the discovery state from the service, so that two state machines can share one service
+
+- [#24811](https://github.com/LedgerHQ/ledger-live/pull/24811) [`13a6d68`](https://github.com/LedgerHQ/ledger-live/commit/13a6d687f486e1fcb3001a15f437a84b26ea5609) Thanks [@OlivierFreyssinet](https://github.com/OlivierFreyssinet)! - Emit the unknown error when a connection state machine fails while it runs, instead of freezing the UI
+
+- [#24827](https://github.com/LedgerHQ/ledger-live/pull/24827) [`c24caff`](https://github.com/LedgerHQ/ledger-live/commit/c24cafffbc8b6fd0f05c6ec13e70d70fd4557697) Thanks [@OlivierFreyssinet](https://github.com/OlivierFreyssinet)! - Match devices with one findMatchingDevice for connectDevice and the known devices, a BLE match by id before a match by name
+
+### Patch Changes
+
+- Updated dependencies [[`6baeada`](https://github.com/LedgerHQ/ledger-live/commit/6baeadaca277a70109580c0d939278ebf729922b)]:
+  - @domain/entity-client-identity@0.6.0-next.0
+
+## 0.39.0
+
+### Minor Changes
+
+- [#24607](https://github.com/LedgerHQ/ledger-live/pull/24607) [`b282f26`](https://github.com/LedgerHQ/ledger-live/commit/b282f26a470c5f3519d252eb301b5ddb98fe68e9) Thanks [@benruseau](https://github.com/benruseau)! - Bump `@ledgerhq/device-management-kit` to 1.11.1 and `@ledgerhq/dmk-ledger-wallet` to 0.9.0, so the OS update restore ends with an out-of-memory status when the app storage restore (0x6733) or the custom lock screen upload (0x5102) runs out of memory
+
+- [#24527](https://github.com/LedgerHQ/ledger-live/pull/24527) [`62bdc34`](https://github.com/LedgerHQ/ledger-live/commit/62bdc344261d600a3d7d2b78a8cdb9e7b3c97c25) Thanks [@ysitbon](https://github.com/ysitbon)! - Add the Ledger Sync add member and remove member Device Intents, which run the Ledger Sync SDK on the Device Intent Executor session, a `ledger_sync` source flow, and the `lwmLedgerSyncDie` and `lwdLedgerSyncDie` flags, off by default
+
+- [#24310](https://github.com/LedgerHQ/ledger-live/pull/24310) [`2cee99e`](https://github.com/LedgerHQ/ledger-live/commit/2cee99e4b728ef315e5df94271c2bd6b695a7ade) Thanks [@benruseau](https://github.com/benruseau)! - Show when the existing backup was saved in the OS update backup selection sheet, and update its wording and icon
+
+- [#24301](https://github.com/LedgerHQ/ledger-live/pull/24301) [`8777c73`](https://github.com/LedgerHQ/ledger-live/commit/8777c73879acf3e38b8cef00fb88213c55011f96) Thanks [@benruseau](https://github.com/benruseau)! - Offer to restart the OS update or send a report once the device has stayed disconnected for 60 seconds, and track the connection timeout
+
+- [#24451](https://github.com/LedgerHQ/ledger-live/pull/24451) [`49ae0f6`](https://github.com/LedgerHQ/ledger-live/commit/49ae0f60632ad4ad518b8a7420ab02239f3fa144) Thanks [@benruseau](https://github.com/benruseau)! - Align the OS update screens with the latest designs and add an OS update screen gallery to the debug menu
+
+- [#24355](https://github.com/LedgerHQ/ledger-live/pull/24355) [`52622fa`](https://github.com/LedgerHQ/ledger-live/commit/52622fa571b8c7b549d185525f4511dc3ebdfa82) Thanks [@benruseau](https://github.com/benruseau)! - Show the OS update success screen for full, partial and out-of-memory restores, with the installed OS version and a banner about what was not reinstalled, drop the backup in every case, and track an out-of-memory restore with its own `outOfMemory` restore status
+
+- [#24277](https://github.com/LedgerHQ/ledger-live/pull/24277) [`7282cc0`](https://github.com/LedgerHQ/ledger-live/commit/7282cc0d6d7431ecb4d49534d267f5f562652965) Thanks [@benruseau](https://github.com/benruseau)! - Let the user retry the OS update install after refusing it on the device, track the retry, and take the progress bar back to where an install, flash or restore starts when it restarts
+
+- [#24050](https://github.com/LedgerHQ/ledger-live/pull/24050) [`6a70efc`](https://github.com/LedgerHQ/ledger-live/commit/6a70efc3eb1e625206286d913d7f5d07b01ee8ad) Thanks [@OlivierFreyssinet](https://github.com/OlivierFreyssinet)! - Share the device mock server session client and URL helpers in @features/platform-device-mock-server and the legacy transport in live-dmk-shared, and use them in Ledger Wallet Desktop
+
+### Patch Changes
+
+- Updated dependencies [[`934970a`](https://github.com/LedgerHQ/ledger-live/commit/934970adec67ed88f1d546d03b1bb555cbfd128f)]:
+  - @domain/entity-client-identity@0.5.0
+
+## 0.39.0-next.0
+
+### Minor Changes
+
+- [#24607](https://github.com/LedgerHQ/ledger-live/pull/24607) [`b282f26`](https://github.com/LedgerHQ/ledger-live/commit/b282f26a470c5f3519d252eb301b5ddb98fe68e9) Thanks [@benruseau](https://github.com/benruseau)! - Bump `@ledgerhq/device-management-kit` to 1.11.1 and `@ledgerhq/dmk-ledger-wallet` to 0.9.0, so the OS update restore ends with an out-of-memory status when the app storage restore (0x6733) or the custom lock screen upload (0x5102) runs out of memory
+
+- [#24527](https://github.com/LedgerHQ/ledger-live/pull/24527) [`62bdc34`](https://github.com/LedgerHQ/ledger-live/commit/62bdc344261d600a3d7d2b78a8cdb9e7b3c97c25) Thanks [@ysitbon](https://github.com/ysitbon)! - Add the Ledger Sync add member and remove member Device Intents, which run the Ledger Sync SDK on the Device Intent Executor session, a `ledger_sync` source flow, and the `lwmLedgerSyncDie` and `lwdLedgerSyncDie` flags, off by default
+
+- [#24310](https://github.com/LedgerHQ/ledger-live/pull/24310) [`2cee99e`](https://github.com/LedgerHQ/ledger-live/commit/2cee99e4b728ef315e5df94271c2bd6b695a7ade) Thanks [@benruseau](https://github.com/benruseau)! - Show when the existing backup was saved in the OS update backup selection sheet, and update its wording and icon
+
+- [#24301](https://github.com/LedgerHQ/ledger-live/pull/24301) [`8777c73`](https://github.com/LedgerHQ/ledger-live/commit/8777c73879acf3e38b8cef00fb88213c55011f96) Thanks [@benruseau](https://github.com/benruseau)! - Offer to restart the OS update or send a report once the device has stayed disconnected for 60 seconds, and track the connection timeout
+
+- [#24451](https://github.com/LedgerHQ/ledger-live/pull/24451) [`49ae0f6`](https://github.com/LedgerHQ/ledger-live/commit/49ae0f60632ad4ad518b8a7420ab02239f3fa144) Thanks [@benruseau](https://github.com/benruseau)! - Align the OS update screens with the latest designs and add an OS update screen gallery to the debug menu
+
+- [#24355](https://github.com/LedgerHQ/ledger-live/pull/24355) [`52622fa`](https://github.com/LedgerHQ/ledger-live/commit/52622fa571b8c7b549d185525f4511dc3ebdfa82) Thanks [@benruseau](https://github.com/benruseau)! - Show the OS update success screen for full, partial and out-of-memory restores, with the installed OS version and a banner about what was not reinstalled, drop the backup in every case, and track an out-of-memory restore with its own `outOfMemory` restore status
+
+- [#24277](https://github.com/LedgerHQ/ledger-live/pull/24277) [`7282cc0`](https://github.com/LedgerHQ/ledger-live/commit/7282cc0d6d7431ecb4d49534d267f5f562652965) Thanks [@benruseau](https://github.com/benruseau)! - Let the user retry the OS update install after refusing it on the device, track the retry, and take the progress bar back to where an install, flash or restore starts when it restarts
+
+- [#24050](https://github.com/LedgerHQ/ledger-live/pull/24050) [`6a70efc`](https://github.com/LedgerHQ/ledger-live/commit/6a70efc3eb1e625206286d913d7f5d07b01ee8ad) Thanks [@OlivierFreyssinet](https://github.com/OlivierFreyssinet)! - Share the device mock server session client and URL helpers in @features/platform-device-mock-server and the legacy transport in live-dmk-shared, and use them in Ledger Wallet Desktop
+
+### Patch Changes
+
+- Updated dependencies [[`934970a`](https://github.com/LedgerHQ/ledger-live/commit/934970adec67ed88f1d546d03b1bb555cbfd128f)]:
+  - @domain/entity-client-identity@0.5.0-next.0
+
 ## 0.38.0
 
 ### Minor Changes
@@ -249,57 +369,5 @@
 
 - Updated dependencies [[`a7b0bae`](https://github.com/LedgerHQ/ledger-live/commit/a7b0baeaa4e7b2fb180e7ab28ce92a6287b46a68)]:
   - @ledgerhq/types-devices@7.0.0-next.0
-
-## 0.30.0
-
-### Minor Changes
-
-- [#20503](https://github.com/LedgerHQ/ledger-live/pull/20503) [`8a3a0bb`](https://github.com/LedgerHQ/ledger-live/commit/8a3a0bbd8361706daac364d4c89894f56431fc57) Thanks [@OlivierFreyssinet](https://github.com/OlivierFreyssinet)! - Export the shared Device Intent Executor tracking context.
-
-### Patch Changes
-
-- Updated dependencies [[`1e9db75`](https://github.com/LedgerHQ/ledger-live/commit/1e9db750a4882f9db7f95278e33c00262487b37b)]:
-  - @ledgerhq/types-devices@6.32.0
-
-## 0.30.0-next.0
-
-### Minor Changes
-
-- [#20503](https://github.com/LedgerHQ/ledger-live/pull/20503) [`8a3a0bb`](https://github.com/LedgerHQ/ledger-live/commit/8a3a0bbd8361706daac364d4c89894f56431fc57) Thanks [@OlivierFreyssinet](https://github.com/OlivierFreyssinet)! - Export the shared Device Intent Executor tracking context.
-
-### Patch Changes
-
-- Updated dependencies [[`1e9db75`](https://github.com/LedgerHQ/ledger-live/commit/1e9db750a4882f9db7f95278e33c00262487b37b)]:
-  - @ledgerhq/types-devices@6.32.0-next.0
-
-## 0.29.1
-
-### Patch Changes
-
-- Updated dependencies []:
-  - @ledgerhq/hw-transport@6.35.7
-
-## 0.29.1-next.0
-
-### Patch Changes
-
-- Updated dependencies []:
-  - @ledgerhq/hw-transport@6.35.7-next.0
-
-## 0.29.0
-
-### Minor Changes
-
-- [#19794](https://github.com/LedgerHQ/ledger-live/pull/19794) [`2388d41`](https://github.com/LedgerHQ/ledger-live/commit/2388d4171bd2e5caa2009e8eadcd06548d2209ef) Thanks [@OlivierFreyssinet](https://github.com/OlivierFreyssinet)! - Handle non-onboarded devices according to the requirements of each Connect App flow
-
-- [#19681](https://github.com/LedgerHQ/ledger-live/pull/19681) [`762b5eb`](https://github.com/LedgerHQ/ledger-live/commit/762b5ebf332566879a10ab1f16ef85a3da360fe7) Thanks [@OlivierFreyssinet](https://github.com/OlivierFreyssinet)! - Fix USB transport routing for Device Intent Executor legacy `withDevice` intents.
-
-## 0.29.0-next.0
-
-### Minor Changes
-
-- [#19794](https://github.com/LedgerHQ/ledger-live/pull/19794) [`2388d41`](https://github.com/LedgerHQ/ledger-live/commit/2388d4171bd2e5caa2009e8eadcd06548d2209ef) Thanks [@OlivierFreyssinet](https://github.com/OlivierFreyssinet)! - Handle non-onboarded devices according to the requirements of each Connect App flow
-
-- [#19681](https://github.com/LedgerHQ/ledger-live/pull/19681) [`762b5eb`](https://github.com/LedgerHQ/ledger-live/commit/762b5ebf332566879a10ab1f16ef85a3da360fe7) Thanks [@OlivierFreyssinet](https://github.com/OlivierFreyssinet)! - Fix USB transport routing for Device Intent Executor legacy `withDevice` intents.
 
 <!-- changelog-pruned: older entries were removed to keep this file small. Full history is in `git log -p CHANGELOG.md` and in the GitHub release for each version. -->

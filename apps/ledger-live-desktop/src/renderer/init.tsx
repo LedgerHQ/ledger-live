@@ -12,22 +12,28 @@ import {
   restoreLargeScreenUpsellModalState,
 } from "@features/flow-large-screen-upsell";
 import { restorePayCardBalanceFilter } from "@features/flow-pay-balance/state";
+import { hasOnboardedWithDeviceSelector } from "LLD/features/AccountDetail/utils/hasOnboardedWithDevice";
 import { restoreAccountAnalyticsIntroductionFromStorage } from "./restoreAccountAnalyticsIntroduction";
 import { restorePayCardFeatureTour } from "@features/flow-pay-feature-tour/state";
-import { restoreReceiveVerifyHint } from "@features/flow-pay-request/state";
+import { restoreReceiveVerifyHint } from "@features/flow-receive/state";
 import { restorePayCardLoginIntro } from "@features/flow-pay-card-auth/state";
 import { restorePayCardOnboardingWidget } from "@features/flow-pay-card-widget/state";
 import i18n from "~/renderer/i18n/init";
 import { setVisualZoomLevelLimits } from "~/renderer/webFrame";
-import { deeplink } from "~/renderer/bridge";
+import { db, deeplink } from "~/renderer/bridge";
 import { startDomainCheckViolationReporting } from "~/renderer/components/Web3AppWebview/domainCheckReport";
 import each from "lodash/each";
-import { reload, getKey } from "~/renderer/storage";
+import { reload, getKey, flushPendingWrites } from "~/renderer/storage";
 import "~/renderer/styles/global";
 import { registerTransportModules } from "~/renderer/live-common-setup";
 import { bootstrapMockServerTransport } from "~/renderer/mockServerTransport";
 import { seedMockServerKnownDevice } from "~/renderer/reducers/knownDevices";
-import { getMockServerSessionToken, setFirmwareDistributionSalt } from "@ledgerhq/live-dmk-desktop";
+import {
+  getDeviceManagementKit,
+  getMockServerSessionToken,
+  setFirmwareDistributionSalt,
+} from "@ledgerhq/live-dmk-desktop";
+import { speculosIdentifier } from "@ledgerhq/device-transport-kit-speculos";
 import { getLocalStorageEnvs } from "~/renderer/experimental";
 import "~/renderer/analytics/registerTransactionObserver";
 import "~/datadog/registerObservers";
@@ -39,7 +45,7 @@ import { restoreTokensToCache, parsePersistedCAL } from "@domain/api-currency-to
 import logger, { enableDebugLogger, type LogEntry } from "./logger";
 import { enableGlobalTab, disableGlobalTab, isGlobalTabEnabled } from "~/config/global-tab";
 import { setEnvOnAllThreads } from "~/helpers/env";
-import dbMiddleware from "~/renderer/middlewares/db";
+import dbMiddleware, { flushCryptoAssetsCache } from "~/renderer/middlewares/db";
 import type { ReduxStore, AppDispatch } from "~/state-manager/configureStore";
 import createStore from "~/state-manager/configureStore";
 import { appCountervaluesSources } from "../state-manager/middleware/countervalues";
@@ -73,7 +79,6 @@ import { importMarketState } from "./actions/market";
 import { importMarketBannerState } from "./reducers/marketBanner";
 import { restorePredictionsState } from "@domain/entity-predictions";
 import { importKnownDevices, mapPersistedKnownDeviceToKnownDevice } from "./reducers/knownDevices";
-import { fetchWallet } from "./actions/wallet";
 import { fetchTrustchain } from "./actions/trustchain";
 import { connectRecentAddressesStore } from "@domain/entity-recent-addresses";
 import { recentAddressesSelector } from "~/renderer/reducers/wallet";
@@ -97,7 +102,10 @@ import { installLiveConfigProvider } from "~/firebase/remoteConfig";
 import { setAnalyticsFeatureFlagMethod } from "~/renderer/analytics/segment";
 import { getVersionedRedirects } from "LLD/hooks/useVersionedStakePrograms";
 import { initHistory } from "~/renderer/reducers/history";
-import { installEarnLifecycleHost } from "@ledgerhq/transaction-observability";
+import {
+  installBorrowLifecycleHost,
+  installEarnLifecycleHost,
+} from "@ledgerhq/transaction-observability";
 import {
   coinObservabilityConfigFor,
   setCoinObservabilityConfigReader,
@@ -110,6 +118,11 @@ const rootNode = document.getElementById("react-root");
 async function init() {
   // at this step. we know the app error handling will happen here. so we can unset the global onerror
   window.onerror = null;
+
+  db.onFlushRequest(() => {
+    flushCryptoAssetsCache();
+    return flushPendingWrites();
+  });
 
   const logVerbose = getEnv("VERBOSE");
 
@@ -198,7 +211,24 @@ async function init() {
       readStakePrograms: () => selectFeature(store.getState(), "stakePrograms"),
       resolveVersionedRedirects: getVersionedRedirects,
       readAppVersion: () => LiveConfig.instance.appVersion || "0.0.0",
+      readManifestId: () => {
+        const earnFlag = selectFeature(store.getState(), "ptxEarnLiveApp");
+        return earnFlag?.enabled
+          ? earnFlag.params?.manifest_id
+          : process.env.DEFAULT_EARN_MANIFEST_ID;
+      },
       apiBaseUrl: process.env.EARN_API_BASE_URL,
+    }),
+  );
+  store.subscribe(
+    installBorrowLifecycleHost({
+      platform: "desktop",
+      readEnabled: () =>
+        selectFeature(store.getState(), "borrowTxLifecycleMonitoring")?.enabled ?? false,
+      readManifestId: () =>
+        selectFeature(store.getState(), "ptxBorrowLiveApp")?.params?.manifest_id ||
+        process.env.DEFAULT_BORROW_MANIFEST_ID,
+      apiBaseUrl: process.env.BORROW_API_BASE_URL,
     }),
   );
   setCoinObservabilityConfigReader(() => {
@@ -312,9 +342,12 @@ async function init() {
       return currency ? hydrateCurrency(currency) : null;
     }),
   );
-  const accountData = await getKey("app", "accounts", []);
+  const [accountData, walletData] = await Promise.all([
+    getKey("app", "accounts", []),
+    getKey("app", "wallet"),
+  ]);
   if (accountData) {
-    dispatch(initAccounts(accountData));
+    dispatch(initAccounts(accountData, walletData));
   } else {
     // if accountData is falsy, it's a lock case, we need to globally decrypted the app data, we use app.accounts as general safe guard for possible other app.* encrypted fields
     store.dispatch(lock());
@@ -396,11 +429,18 @@ async function init() {
     store.dispatch(restoreLargeScreenUpsellModalState(largeScreenUpsellModalState));
   }
 
-  await restoreAccountAnalyticsIntroductionFromStorage(store.dispatch);
+  await restoreAccountAnalyticsIntroductionFromStorage(
+    store.dispatch,
+    hasOnboardedWithDeviceSelector(store.getState()),
+  );
+  const receiveVerifyHintState = await getKey("app", "receiveVerifyHint");
+  if (receiveVerifyHintState !== undefined) {
+    store.dispatch(restoreReceiveVerifyHint(receiveVerifyHintState));
+  }
+
   const payCardState = await getKey("app", "payCard");
   if (payCardState !== undefined) {
     store.dispatch(restorePayCardFeatureTour(payCardState));
-    store.dispatch(restoreReceiveVerifyHint(payCardState));
     store.dispatch(restorePayCardBalanceFilter(payCardState));
     store.dispatch(restorePayCardLoginIntro(payCardState));
     store.dispatch(restorePayCardOnboardingWidget(payCardState));
@@ -418,7 +458,6 @@ async function init() {
   r(<ReactRoot store={store} language={language} />);
 
   await dispatch(fetchTrustchain());
-  await dispatch(fetchWallet());
 
   const marketState = await getKey("app", "market");
   if (marketState) {
@@ -501,14 +540,22 @@ async function init() {
       store.dispatch(resetDevices());
     },
     getMockServerSessionToken,
-    // E2E: a relaunched remote Speculos comes back on a new URL with a new session token.
-    setSpeculosTarget: (address: string, sessionToken?: string) => {
+    // E2E: a relaunched remote Speculos comes back on a new URL with a new session token, so the
+    // sessions to the previous one are closed.
+    setSpeculosTarget: async (address: string, sessionToken?: string) => {
       process.env.SPECULOS_ADDRESS = address;
       if (sessionToken) {
         process.env.SPECULOS_SESSION_TOKEN = sessionToken;
       } else {
         delete process.env.SPECULOS_SESSION_TOKEN;
       }
+      const dmk = getDeviceManagementKit();
+      await Promise.all(
+        dmk
+          .listConnectedDevices()
+          .filter(device => device.transport === speculosIdentifier)
+          .map(({ sessionId }) => dmk.disconnect({ sessionId }).catch(() => {})),
+      );
     },
   };
 }

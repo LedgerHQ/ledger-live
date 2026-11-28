@@ -3,6 +3,11 @@ import { SyncOfferScreen } from "./index";
 import { useSyncOfferRouteViewModel } from "./useSyncOfferRouteViewModel";
 
 export function SyncOfferRoute() {
-  const props = useSyncOfferRouteViewModel();
-  return <SyncOfferScreen {...props} />;
+  const { deviceIntentStepElement, ...props } = useSyncOfferRouteViewModel();
+  return (
+    <>
+      <SyncOfferScreen {...props} />
+      {deviceIntentStepElement}
+    </>
+  );
 }

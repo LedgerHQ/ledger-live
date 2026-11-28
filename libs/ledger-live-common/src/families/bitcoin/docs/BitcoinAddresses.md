@@ -7,7 +7,6 @@ In Ledger Live, the Bitcoin family includes the following cryptocurrencies:
 - Litecoin
 - DigiByte
 - Zcash (ZEC)
-- Horizen (ZEN)
 - Dash
 - Komodo
 - Bitcoin Gold

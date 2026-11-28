@@ -31,6 +31,7 @@ export const bootstrap: Bootstrap = {
     userData: "/tmp/ledger-live-test/userdata",
     home: "/tmp/ledger-live-test/home",
   },
+  appDirname: "/tmp/ledger-live-test/app",
   distributionChannel: "direct",
   store: {},
 };
@@ -46,6 +47,7 @@ export const db: jest.Mocked<DbBridge> = {
   resetAll: jest.fn().mockResolvedValue(undefined),
   reload: jest.fn().mockResolvedValue(undefined),
   cleanCache: jest.fn().mockResolvedValue(undefined),
+  onFlushRequest: jest.fn((_callback: () => Promise<void>) => () => {}),
 };
 
 // `on*` must return an unsubscribe closure.
@@ -77,7 +79,6 @@ export const app: jest.Mocked<AppBridge> = {
 export const files: jest.Mocked<FilesBridge> = {
   saveLogs: jest.fn().mockResolvedValue("saved"),
   exportOperations: jest.fn().mockResolvedValue("saved"),
-  savePng: jest.fn().mockResolvedValue("saved"),
   openUserDataDirectory: jest.fn().mockResolvedValue(undefined),
 };
 
@@ -87,8 +88,8 @@ export const power: jest.Mocked<PowerBridge> = {
 };
 
 export const store: jest.Mocked<StoreBridge> = {
-  set: jest.fn(),
-  clear: jest.fn(),
+  set: jest.fn().mockResolvedValue(undefined),
+  clear: jest.fn().mockResolvedValue(undefined),
 };
 
 export const shell: jest.Mocked<ShellBridge> = {

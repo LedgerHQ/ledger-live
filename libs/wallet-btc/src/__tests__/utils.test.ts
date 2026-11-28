@@ -145,7 +145,6 @@ describe("Unit tests for various utils functions", () => {
     validateAddrs(["D8cMCRimfjwQ9E8jJvgUswt18WnZbCUAaW"], "dogecoin", true);
     validateAddrs(["dgb1q7zjgqa23xzf602ljfrc94248a9u27xml08nhct"], "digibyte", true);
     validateAddrs(["REnTkuvjsmfshAZ3vukYfuS3ZGvfUatqFc"], "komodo", true);
-    validateAddrs(["zndVnjbrzRxvhPGRea4jgsfSWE1hXFja1dc"], "zencash", true);
     validateAddrs(["Dso59DoPRkfATcZgHGgfh9mpku7taw9srAv"], "decred", true);
     validateAddrs(["Dcck4QrFF5wuLzQpwxb5evhSRD7ZTsJZwuh"], "decred", true);
 
@@ -165,9 +164,43 @@ describe("Unit tests for various utils functions", () => {
     validateAddrs(["D8cMCRimfjwQ9E8jJvgUswt18WnZbCUAaa"], "dogecoin", false);
     validateAddrs(["dgb1q7zjgqa23xzf602ljfrc94248a9u27xml08nhcc"], "digibyte", false);
     validateAddrs(["REnTkuvjsmfshAZ3vukYfuS3ZGvfUatqFF"], "komodo", false);
-    validateAddrs(["zndVnjbrzRxvhPGRea4jgsfSWE1hXFja1dd"], "zencash", false);
     validateAddrs(["Dso59DoPRkfATcZgHGgff9mpku7taw9srAv"], "decred", false);
     validateAddrs(["Dcck4QrFF5wuLQzpwxb5evhSRD7ZTsJZwuh"], "decred", false);
+  });
+});
+
+describe("bitcoin_signet addresses", () => {
+  it("accepts the testnet address formats", () => {
+    validateAddrs(
+      [
+        "mkpZhYtJu2r87Js3pDiWJDmPte2NRZ8bJV", // P2PKH
+        "tb1qrp33g0q5c5txsp9arysrx4k6zdkfs4nce4xj0gdcccefvpysxf3q0sl5k7", // P2WSH
+        "tb1pqqqqp399et2xygdj5xreqhjjvcmzhxw4aywxecjdzew6hylgvsesf3hn0c", // P2TR
+      ],
+      "bitcoin_signet",
+      true,
+    );
+  });
+
+  it("refuses mainnet addresses", () => {
+    validateAddrs(
+      [
+        "BC1QW508D6QEJXTDG4Y5R3ZARVARY0C5XW7KV8F3T4",
+        "bc1p0xlxvlhemja6c4dqv22uapctqupfhlxm9h8z3k2e72q4k9hcz7vqzk5jj0",
+      ],
+      "bitcoin_signet",
+      false,
+    );
+  });
+
+  it.each([
+    ["tb1pqqqqp399et2xygdj5xreqhjjvcmzhxw4aywxecjdzew6hylgvsesf3hn0c", true],
+    ["tb1qrp33g0q5c5txsp9arysrx4k6zdkfs4nce4xj0gdcccefvpysxf3q0sl5k7", false],
+    ["mkpZhYtJu2r87Js3pDiWJDmPte2NRZ8bJV", false],
+    ["bc1p0xlxvlhemja6c4dqv22uapctqupfhlxm9h8z3k2e72q4k9hcz7vqzk5jj0", false],
+    ["tb1pnotanaddress", false],
+  ])("isTaprootAddress(%s) is %s", (address, expected) => {
+    expect(utils.isTaprootAddress(address, "bitcoin_signet")).toBe(expected);
   });
 });
 

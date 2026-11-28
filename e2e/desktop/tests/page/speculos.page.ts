@@ -4,9 +4,11 @@ import { step } from "tests/misc/reporters/step";
 import type { PageLogCollector } from "tests/utils/pageLogCollector";
 import {
   activateLedgerSync,
+  rejectLedgerSync,
   expectValidAddressDevice,
   signSendTransaction,
   signDelegationTransaction,
+  acceptPerpsDeposit,
   verifyAmountsAndAcceptSwap,
   verifyAmountsAndAcceptSwapForDifferentSeed,
   verifyAmountsAndRejectSwap,
@@ -22,6 +24,7 @@ import {
   enableBlindSigningOnNanoS,
   resetSpeculosEvents,
   waitForSendReviewTransaction,
+  type PerpsDepositReview,
 } from "@ledgerhq/live-e2e-shared/speculos";
 import { signTronRentPayment } from "@ledgerhq/live-e2e-shared/families/tronSponsored";
 import { Account } from "@ledgerhq/live-e2e-shared/enum/Account";
@@ -68,6 +71,11 @@ export class SpeculosPage extends AppPage {
     await activateLedgerSync();
   }
 
+  @step("Refuse Ledger Sync on device")
+  async rejectLedgerSync() {
+    await rejectLedgerSync();
+  }
+
   @step("Sign Send Transaction")
   async signSendTransaction(tx: Transaction) {
     await signSendTransaction(tx);
@@ -102,6 +110,11 @@ export class SpeculosPage extends AppPage {
       if (error instanceof Error) error.message += `\n↳ Swap scenario: ${scenario}`;
       throw error;
     }
+  }
+
+  @step("Accept the Perps deposit on the device")
+  async acceptPerpsDeposit(review: PerpsDepositReview) {
+    await acceptPerpsDeposit(review);
   }
 
   @step("Verify amounts and accept swap for different seed")

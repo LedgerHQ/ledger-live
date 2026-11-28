@@ -1,16 +1,11 @@
 import React from "react";
-import {
-  BottomSheetHeader,
-  BottomSheetView,
-  Box,
-  Button,
-  Spot,
-  Text,
-} from "@ledgerhq/lumen-ui-rnative";
-import { InformationFill } from "@ledgerhq/lumen-ui-rnative/symbols";
+import { BottomSheetHeader, BottomSheetView, Box, Text } from "@ledgerhq/lumen-ui-rnative";
+import { InfoState } from "@shared/ui-info-state";
+import { QueuedBottomSheet, useBottomSheetBottomInset } from "@shared/ui-queued-bottom-sheet";
 import { Trans } from "~/context/Locale";
-import { QueuedBottomSheet } from "@shared/ui-queued-bottom-sheet";
 import type { CounterfeitWarningDrawerViewProps } from "./useCounterfeitWarningDrawerViewModel";
+
+const CONTENT_BOTTOM_SPACING = 24;
 
 type BodyLinkProps = Readonly<{
   children?: React.ReactNode;
@@ -43,28 +38,45 @@ const CounterfeitWarningDrawerView = ({
     isRequestingToBeOpened={isOpen}
     onClose={onDismiss}
     enableDynamicSizing
+    contentHasBottomSpace
     testID="counterfeit-warning-drawer"
   >
-    <BottomSheetView>
+    <CounterfeitWarningContent
+      title={title}
+      primaryCtaLabel={primaryCtaLabel}
+      secondaryCtaLabel={secondaryCtaLabel}
+      onProceed={onProceed}
+      onConcern={onConcern}
+      onLedgerComLink={onLedgerComLink}
+      onResellerLink={onResellerLink}
+    />
+  </QueuedBottomSheet>
+);
+
+type CounterfeitWarningContentProps = Omit<
+  CounterfeitWarningDrawerViewProps,
+  "isOpen" | "onDismiss"
+>;
+
+const CounterfeitWarningContent = ({
+  title,
+  primaryCtaLabel,
+  secondaryCtaLabel,
+  onProceed,
+  onConcern,
+  onLedgerComLink,
+  onResellerLink,
+}: CounterfeitWarningContentProps) => {
+  const bottomInset = useBottomSheetBottomInset();
+  return (
+    <BottomSheetView style={{ paddingBottom: bottomInset + CONTENT_BOTTOM_SPACING }}>
       <BottomSheetHeader />
-      <Box
-        lx={{
-          width: "full",
-          gap: "s24",
-          paddingHorizontal: "s16",
-          paddingTop: "s8",
-          alignItems: "center",
-        }}
-      >
-        <Spot appearance="muted" icon={InformationFill} size={72} />
-        <Box lx={{ width: "full", gap: "s12", alignItems: "center" }}>
-          <Text
-            typography="heading4SemiBold"
-            lx={{ color: "base", textAlign: "center", width: "full" }}
-          >
-            {title}
-          </Text>
-          <Text typography="body2" lx={{ color: "muted", textAlign: "center", width: "full" }}>
+      <Box lx={{ paddingHorizontal: "s16" }}>
+        <InfoState
+          preset="info"
+          size="hug"
+          title={title}
+          description={
             <Trans
               i18nKey="onboarding.counterfeitWarning.body"
               components={{
@@ -72,19 +84,13 @@ const CounterfeitWarningDrawerView = ({
                 resellerLink: <BodyLink onPress={onResellerLink} />,
               }}
             />
-          </Text>
-        </Box>
-        <Box lx={{ width: "full", gap: "s16" }}>
-          <Button appearance="base" size="lg" lx={{ width: "full" }} onPress={onProceed}>
-            {primaryCtaLabel}
-          </Button>
-          <Button appearance="gray" size="lg" lx={{ width: "full" }} onPress={onConcern}>
-            {secondaryCtaLabel}
-          </Button>
-        </Box>
+          }
+          primaryCta={{ label: primaryCtaLabel, onPress: onProceed }}
+          secondaryCta={{ label: secondaryCtaLabel, onPress: onConcern }}
+        />
       </Box>
     </BottomSheetView>
-  </QueuedBottomSheet>
-);
+  );
+};
 
 export default CounterfeitWarningDrawerView;

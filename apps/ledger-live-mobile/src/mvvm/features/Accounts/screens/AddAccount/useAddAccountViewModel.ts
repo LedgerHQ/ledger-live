@@ -14,6 +14,7 @@ import { useFeature } from "@features/platform-feature-flags";
 import { useModularDrawerController } from "LLM/features/ModularDrawer";
 import { CryptoCurrency } from "@domain/entity-currency-crypto";
 import { TokenCurrency } from "@domain/entity-currency-token";
+import { useActivationDeviceIntentStep } from "LLM/features/WalletSync/screens/Activation/useActivationDeviceIntentStep";
 
 type AddAccountDrawerProps = {
   isOpened: boolean;
@@ -31,6 +32,7 @@ const useAddAccountViewModel = ({ isOpened, onClose, currency }: AddAccountDrawe
   const trustchain = useSelector(trustchainSelector);
   const ledgerSyncOptimisationFlag = useFeature("lwmLedgerSyncOptimisation");
   const { openDrawer } = useModularDrawerController();
+  const deviceIntentStep = useActivationDeviceIntentStep();
 
   const shouldOpenModularDrawerDirectly = ledgerSyncOptimisationFlag?.enabled && trustchain?.rootId;
 
@@ -105,7 +107,18 @@ const useAddAccountViewModel = ({ isOpened, onClose, currency }: AddAccountDrawe
     currentOption,
   });
 
+  // One sheet at a time: this drawer closes, then the device step opens over the screen.
+  const startDeviceIntentStep = () => {
+    onClose();
+    reset();
+    deviceIntentStep.start();
+  };
+
   const onCreateKey = () => {
+    if (deviceIntentStep.isEnabled) {
+      startDeviceIntentStep();
+      return;
+    }
     navigation.navigate(NavigatorName.WalletSync, {
       screen: ScreenName.WalletSyncActivationProcess,
     });
@@ -129,6 +142,8 @@ const useAddAccountViewModel = ({ isOpened, onClose, currency }: AddAccountDrawe
       pinCode,
     },
     onCreateKey,
+    onConnectWithLedger: deviceIntentStep.isEnabled ? startDeviceIntentStep : undefined,
+    deviceIntentStepElement: deviceIntentStep.element,
   };
 };
 

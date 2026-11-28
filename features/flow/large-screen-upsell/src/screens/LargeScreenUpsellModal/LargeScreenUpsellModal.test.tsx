@@ -7,7 +7,7 @@ import type { LargeScreenUpsellModalViewModel } from "./types";
 jest.mock("./useLargeScreenUpsellModalViewModel", () => ({
   useLargeScreenUpsellModalViewModel: jest.fn(),
 }));
-jest.mock("./LargeScreenUpsellModalView.web", () => ({
+jest.mock("./LargeScreenUpsellModalView", () => ({
   LargeScreenUpsellModalView: ({ title }: LargeScreenUpsellModalViewModel) => <p>{title}</p>,
 }));
 

@@ -33,7 +33,7 @@ function FirmwareUpdateAvailableDrawer({
 
   return (
     <QueuedDrawer onClose={onClose} isRequestingToBeOpened={isOpen} preventBackdropClick>
-      <Flex justifyContent="center" alignItems="center">
+      <Flex justifyContent="center" alignItems="center" testID="firmware-update-available-drawer">
         <GenericInformationBody
           Icon={Icons.InformationFill}
           iconColor="primary.c80"
@@ -49,7 +49,14 @@ function FirmwareUpdateAvailableDrawer({
           }
         />
       </Flex>
-      <Button mt={8} mb={7} type="main" onPress={onUpdate} size={"large"}>
+      <Button
+        mt={8}
+        mb={7}
+        type="main"
+        onPress={onUpdate}
+        size={"large"}
+        testID="firmware-update-available-drawer-update"
+      >
         {t("earlySecurityCheck.firmwareUpdateAvailableDrawer.updateCta")}
       </Button>
       <Link onPress={onUpdate} size={"large"} Icon={IconsLegacy.ExternalLinkMedium}>

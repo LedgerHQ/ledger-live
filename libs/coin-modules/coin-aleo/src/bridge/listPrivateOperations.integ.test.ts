@@ -1,6 +1,5 @@
 import BigNumber from "bignumber.js";
-import aleoConfig from "../config";
-import { getTestnetIntegConfig } from "../__tests__/fixtures/config.fixture";
+import aleoConfig, { aleoDefaults } from "../config";
 import {
   testnetAddress,
   testnetConsumedRecordTag,
@@ -15,7 +14,7 @@ import { getPristineAccount } from "../__tests__/helpers/account";
 import { listPrivateOperations } from "./listPrivateOperations";
 
 describe("listPrivateOperations", () => {
-  const config = getTestnetIntegConfig();
+  const config = aleoDefaults.aleo_testnet;
   let emptyAddress: string;
 
   beforeAll(async () => {

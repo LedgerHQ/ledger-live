@@ -25,11 +25,11 @@ import {
   setupLedgerSyncSeed,
   verifyLedgerSyncEnvironment,
 } from "@e2e/helpers/ledgerSyncHelpers";
-import { FF_LWM_WALLET_40_Q2 } from "@e2e/utils/featureFlagUtils";
 import { TIMEOUT } from "@e2e/utils/timeouts";
 
 import type { ApplicationOptions } from "@e2e/page/index";
 import type { PartialFeatures } from "@shared/feature-flags";
+import type { TestMetaOptions } from "@e2e/models/testOptions";
 
 // Pinned: the Contacts entry point lives on My Wallet, which the Q1 preset turns off.
 const CONTACTS_FEATURE_FLAGS: PartialFeatures = {
@@ -40,7 +40,6 @@ const CONTACTS_FEATURE_FLAGS: PartialFeatures = {
   // Contacts gates every mutation behind a Ledger Sync status of exactly "ready", which needs both
   // this flag and a hydrated trustchain — see `useContactsLedgerSyncMutationGuard`.
   ...LEDGER_SYNC_FEATURE_FLAGS,
-  ...FF_LWM_WALLET_40_Q2,
 };
 
 // skip-onboarding with the one-time Contacts introduction already dismissed.
@@ -49,7 +48,8 @@ const CONTACTS_USERDATA = "contacts";
 const CONTACT_NAME = generateContactName();
 const RENAMED_CONTACT_NAME = generateContactName();
 
-function tagContactsScenario(tmsLinks: string[], tags: string[]) {
+function tagContactsScenario(options: TestMetaOptions) {
+  const { tmsLinks, tags } = options;
   setTeamOwner(Team.WALLET_XP);
   tmsLinks.forEach(tmsLink => $TmsLink(tmsLink));
   tags.forEach(tag => $Tag(tag));
@@ -115,7 +115,8 @@ async function initAppWithContactDevice() {
  * in the test itself: Contacts blocks create/rename/delete until Ledger Sync reports "ready", and
  * pre-seeding is what gets it there without the in-app activation prompt.
  */
-export function runCreateRenameDeleteContactTest(tmsLinks: string[], tags: string[]) {
+export function runCreateRenameDeleteContactTest(options: TestMetaOptions) {
+  const { tmsLinks, tags } = options;
   describeIfNotNanoS("Contacts", () => {
     setupLedgerSyncSeed();
     cleanupLedgerSyncAfterAll();
@@ -137,7 +138,10 @@ export function runCreateRenameDeleteContactTest(tmsLinks: string[], tags: strin
       await app.contacts.addContact(CONTACT_NAME);
 
       await app.contacts.expectSavedContactDisplayed(CONTACT_NAME);
-      await app.contacts.expectSavedContactAddressCount(CONTACT_NAME, NO_ADDRESS_LABEL);
+      await app.contacts.expectSavedContactAddressCount({
+        name: CONTACT_NAME,
+        expectedLabel: NO_ADDRESS_LABEL,
+      });
 
       // Resolved before the rename: the row id survives it, the name does not.
       const contactRowId = await app.contacts.getSavedContactRowId(CONTACT_NAME);
@@ -151,7 +155,10 @@ export function runCreateRenameDeleteContactTest(tmsLinks: string[], tags: strin
 
       await app.common.goToPreviousPage();
       await app.contacts.expectScreenVisible();
-      await app.contacts.expectSavedContactRowName(contactRowId, RENAMED_CONTACT_NAME);
+      await app.contacts.expectSavedContactRowName({
+        rowId: contactRowId,
+        name: RENAMED_CONTACT_NAME,
+      });
 
       await app.contacts.deleteContact(contactRowId);
 
@@ -166,7 +173,8 @@ export function runCreateRenameDeleteContactTest(tmsLinks: string[], tags: strin
  * B2CQA-6240. Contacts are pulled from a pre-seeded Ledger Sync document rather than created in
  * the UI, so browse/search starts from a populated list the app must sort alphabetically.
  */
-export function runBrowseAndSearchContactsTest(tmsLinks: string[], tags: string[]) {
+export function runBrowseAndSearchContactsTest(options: TestMetaOptions) {
+  const { tmsLinks, tags } = options;
   describeIfNotNanoS("Contacts", () => {
     setupLedgerSyncSeed();
     cleanupLedgerSyncAfterAll();
@@ -219,7 +227,8 @@ const ETHEREUM_ADDRESS = CONTACT_ADDRESS_DATASET.find(
   row => row.networkId === "ethereum" && !row.isEns,
 );
 
-export function runRenameContactOnDeviceTest(tmsLinks: string[], tags: string[]) {
+export function runRenameContactOnDeviceTest(options: TestMetaOptions) {
+  const { tmsLinks, tags } = options;
   describeIfContactsDeviceSupported("Contacts - rename with an address (mock server)", () => {
     if (!ETHEREUM_ADDRESS) {
       throw new Error("No Ethereum address in the contact dataset");
@@ -254,7 +263,7 @@ export function runRenameContactOnDeviceTest(tmsLinks: string[], tags: string[])
         apps,
       };
       session = await provisionMockServerSession([config]);
-      mockServer = new MockServerDevicePage(session.baseUrl, session.token);
+      mockServer = new MockServerDevicePage(session);
 
       const port = await launchApp({
         newInstance: true,
@@ -285,13 +294,13 @@ export function runRenameContactOnDeviceTest(tmsLinks: string[], tags: string[])
     afterAll(async () => {
       if (!session) return;
       try {
-        await disposeMockServerSession(session.baseUrl, session.token);
+        await disposeMockServerSession(session);
       } catch {
         // The session expires on its own. A failed dispose must not hide the spec result.
       }
     });
 
-    tagContactsScenario(tmsLinks, tags);
+    tagContactsScenario({ tmsLinks, tags });
 
     it("Register an address and rename the contact on the device", async () => {
       const contactRowId = await addContactAndOpenIt(CONTACT_NAME);
@@ -305,10 +314,10 @@ export function runRenameContactOnDeviceTest(tmsLinks: string[], tags: string[])
       await app.common.disableSynchronizationForiOS();
       await app.contacts.detail.tapAddressNameContinue();
       await mockServer.confirmDeviceIntent(REGISTER_DEVICE_PROMPT_ID);
-      await app.contacts.detail.expectAddressSaved(
-        ETHEREUM_ADDRESS.savedValue,
-        ETHEREUM_ADDRESS.networkId,
-      );
+      await app.contacts.detail.expectAddressSaved({
+        address: ETHEREUM_ADDRESS.savedValue,
+        networkId: ETHEREUM_ADDRESS.networkId,
+      });
 
       await mockServer.mockDashboardRename();
       await app.contacts.detail.renameContact(RENAMED_CONTACT_NAME);
@@ -324,7 +333,8 @@ export function runRenameContactOnDeviceTest(tmsLinks: string[], tags: string[])
   });
 }
 
-export function runCreateDeleteContactWithAddressesTest(tmsLinks: string[], tags: string[]) {
+export function runCreateDeleteContactWithAddressesTest(options: TestMetaOptions) {
+  const { tmsLinks, tags } = options;
   describeIfContactsDeviceSupported("Contacts", () => {
     setupLedgerSyncSeed();
     cleanupLedgerSyncAfterAll();
@@ -333,7 +343,7 @@ export function runCreateDeleteContactWithAddressesTest(tmsLinks: string[], tags
       await initAppWithContactDevice();
     });
 
-    tagContactsScenario(tmsLinks, tags);
+    tagContactsScenario({ tmsLinks, tags });
 
     it("Create and delete a contact with addresses", async () => {
       const contactRowId = await addContactAndOpenIt(CONTACT_NAME);
@@ -341,11 +351,14 @@ export function runCreateDeleteContactWithAddressesTest(tmsLinks: string[], tags
       for (const [index, addressData] of CONTACT_ADDRESS_DATASET.entries()) {
         await app.contacts.detail.addAddress(addressData);
         await app.speculos.confirmContactAction();
-        await app.contacts.detail.expectAddressSaved(addressData.savedValue, addressData.networkId);
-        await app.contacts.detail.expectAddressLabel(
-          addressData.savedValue,
-          addressData.addressLabel,
-        );
+        await app.contacts.detail.expectAddressSaved({
+          address: addressData.savedValue,
+          networkId: addressData.networkId,
+        });
+        await app.contacts.detail.expectAddressLabel({
+          address: addressData.savedValue,
+          expectedLabel: addressData.addressLabel,
+        });
         await app.contacts.detail.expectAddressCount(addressCountLabel(index + 1));
       }
 
@@ -356,8 +369,11 @@ export function runCreateDeleteContactWithAddressesTest(tmsLinks: string[], tags
 
       await app.common.goToPreviousPage();
       await app.contacts.expectScreenVisible();
-      await app.contacts.expectSavedContactRowName(contactRowId, CONTACT_NAME);
-      await app.contacts.expectSavedContactAddressCount(CONTACT_NAME, remainingAddressCount);
+      await app.contacts.expectSavedContactRowName({ rowId: contactRowId, name: CONTACT_NAME });
+      await app.contacts.expectSavedContactAddressCount({
+        name: CONTACT_NAME,
+        expectedLabel: remainingAddressCount,
+      });
 
       await app.contacts.deleteContact(contactRowId);
       await app.contacts.expectScreenVisible();

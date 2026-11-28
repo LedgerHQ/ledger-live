@@ -1,4 +1,8 @@
-import type { DeviceOnboardingExitReason } from "@features/platform-device-onboarding";
+import { DeviceModelId as DmkDeviceModelId } from "@ledgerhq/device-management-kit";
+import type {
+  DeviceOnboardingContext,
+  DeviceOnboardingExitReason,
+} from "@features/platform-device-onboarding";
 import type { Device } from "@ledgerhq/live-common/hw/actions/types";
 import { DeviceModelId } from "@ledgerhq/types-devices";
 import {
@@ -11,7 +15,16 @@ import {
 } from "~/actions/settings";
 import { StackActions } from "@react-navigation/native";
 import { NavigatorName, ScreenName } from "~/const";
-import { exitActions } from "./exitActions";
+import type { SeededResult } from "@features/platform-device-onboarding-analytics";
+import { exitActions, exitOutcome } from "./exitActions";
+
+const seededResult: SeededResult = {
+  deviceType: DmkDeviceModelId.STAX,
+  ledgerSyncEligible: false,
+  firmwareUpdateAvailability: "no",
+  firmwareUpdateStarted: false,
+  firmwareUpdateDone: false,
+};
 
 type ExitDeps = Parameters<(typeof exitActions)[DeviceOnboardingExitReason]>[0];
 type Route = { name: string; params?: unknown; state?: { routes: Route[] } };
@@ -23,9 +36,20 @@ const stax: Device = {
   wired: false,
 };
 
+const nanoS: Device = {
+  deviceId: "nano-s-id",
+  deviceName: "Nano S",
+  modelId: DeviceModelId.nanoS,
+  wired: true,
+};
+
 const portfolio = [NavigatorName.Base, NavigatorName.Main];
 
 describe("exitActions", () => {
+  beforeEach(() => {
+    jest.clearAllMocks();
+  });
+
   it.each([
     [
       "resumeFirmwareUpdate",
@@ -36,108 +60,6 @@ describe("exitActions", () => {
     const { opened } = leave(reason);
 
     expect(opened).toEqual({ path, params });
-  });
-
-  it("should open the old checks above the previous screen when an unseeded touchscreen falls back", () => {
-    const { reset, onboardingReset, baseOnboardingReset } = leave("legacyFallback", {}, undefined, [
-      ScreenName.OnboardingWelcome,
-      ScreenName.OnboardingPostWelcomeSelection,
-      ScreenName.OnboardingWelcomeBack,
-      ScreenName.OnboardingPairNew,
-    ]);
-
-    expect(reset).toBeNull();
-    expect(onboardingReset).toBeNull();
-    expect(baseOnboardingReset).toEqual({
-      index: 1,
-      routes: [
-        {
-          name: NavigatorName.Onboarding,
-          state: {
-            index: 2,
-            routes: [
-              { name: ScreenName.OnboardingWelcome },
-              { name: ScreenName.OnboardingPostWelcomeSelection },
-              { name: ScreenName.OnboardingWelcomeBack },
-            ],
-          },
-        },
-        {
-          name: NavigatorName.SyncOnboarding,
-          state: {
-            routes: [
-              {
-                name: ScreenName.SyncOnboardingCompanion,
-                params: { device: stax, backReturnsToPrevious: true },
-              },
-            ],
-          },
-        },
-      ],
-    });
-  });
-
-  it("should open the use case above the previous screen when an unseeded Nano falls back", () => {
-    const nanoX: Device = { ...stax, modelId: DeviceModelId.nanoX };
-    const { reset, onboardingReset, baseOnboardingReset } = leave(
-      "legacyFallback",
-      { device: nanoX },
-      undefined,
-      [ScreenName.OnboardingWelcomeBack, ScreenName.OnboardingPairNew],
-    );
-
-    expect(reset).toBeNull();
-    expect(baseOnboardingReset).toBeNull();
-    expect(onboardingReset).toEqual({
-      index: 1,
-      routes: [
-        { name: ScreenName.OnboardingWelcomeBack },
-        { name: ScreenName.OnboardingUseCase, params: { deviceModelId: DeviceModelId.nanoX } },
-      ],
-    });
-  });
-
-  it("should keep the previous screen params when an unseeded touchscreen falls back", () => {
-    const { parentReset } = fallBackFrom([
-      {
-        name: ScreenName.OnboardingPostWelcomeSelection,
-        params: { userHasDevice: true },
-      },
-      { name: ScreenName.OnboardingPairNew },
-    ]);
-
-    expect(parentReset?.mock.calls[0][0].routes[0].state.routes[0]).toEqual({
-      name: ScreenName.OnboardingPostWelcomeSelection,
-      params: { userHasDevice: true },
-    });
-  });
-
-  it("should open the old checks without an onboarding history when pairing was the only screen", () => {
-    const { parentReset } = fallBackFrom([{ name: ScreenName.OnboardingPairNew }]);
-
-    expect(parentReset?.mock.calls[0][0].routes[0]).toEqual({ name: NavigatorName.Onboarding });
-  });
-
-  it("should leave the stack untouched when the onboarding navigator has no parent", () => {
-    const { onboardingReset, parentReset } = fallBackFrom(
-      [{ name: ScreenName.OnboardingPairNew }],
-      false,
-    );
-
-    expect(onboardingReset).not.toHaveBeenCalled();
-    expect(parentReset).toBeNull();
-  });
-
-  it("should drop the funnel from the stack when an unseeded device falls back from it", () => {
-    const { baseOnboardingReset } = leave("legacyFallback", {}, undefined, [
-      ScreenName.OnboardingWelcomeBack,
-      ScreenName.DeviceOnboardingFunnel,
-    ]);
-
-    expect(baseOnboardingReset?.routes[0]).toEqual({
-      name: NavigatorName.Onboarding,
-      state: { index: 0, routes: [{ name: ScreenName.OnboardingWelcomeBack }] },
-    });
   });
 
   it("should complete and open the portfolio when the device is already synced", () => {
@@ -156,13 +78,24 @@ describe("exitActions", () => {
   });
 
   it("should go back to the screen that opened onboarding", () => {
-    const { opened, popped } = leave("completed", { isGenuine: true }, [
+    const { opened, popped } = leave("completed", { outcome: "done" }, [
       NavigatorName.Base,
       NavigatorName.BaseOnboarding,
     ]);
 
     expect(opened).toBeNull();
     expect(popped).toEqual(StackActions.pop(1));
+  });
+
+  it("should close the device flow and onboarding together", () => {
+    const { opened, popped } = leave("completed", { outcome: "done" }, [
+      NavigatorName.Base,
+      NavigatorName.BaseOnboarding,
+      NavigatorName.DeviceOnboarding,
+    ]);
+
+    expect(opened).toBeNull();
+    expect(popped).toEqual(StackActions.pop(2));
   });
 
   it("should leave the post-onboarding redirect untouched when the user was not read-only", () => {
@@ -191,6 +124,7 @@ describe("exitActions", () => {
       params: {
         device: stax,
         wasReadOnlyAtEntry: true,
+        seededResult,
       },
     });
   });
@@ -205,7 +139,7 @@ describe("exitActions", () => {
   });
 
   it("should leave without completing when the device is not genuine", () => {
-    const { opened, dispatched, wentBack } = leave("userQuit", { isGenuine: false });
+    const { opened, dispatched, wentBack } = leave("userQuit", { outcome: "aborted" });
 
     expect(opened).toBeNull();
     expect(dispatched).toEqual([]);
@@ -214,7 +148,7 @@ describe("exitActions", () => {
 
   it("should complete and open the portfolio when a genuine device quits", () => {
     const { opened, dispatched, wentBack } = leave("userQuit", {
-      isGenuine: true,
+      outcome: "done",
       wasReadOnlyAtEntry: true,
     });
 
@@ -233,7 +167,7 @@ describe("exitActions", () => {
   it("should leave without completing when a seeded read fails after a supported firmware", () => {
     const { opened, dispatched, wentBack } = leave("legacyFallback", {
       deviceWasSeeded: true,
-      firmwareNeedsLegacyFlow: false,
+      outcome: "aborted",
     });
 
     expect(opened).toBeNull();
@@ -244,7 +178,7 @@ describe("exitActions", () => {
   it("should open the old checks above onboarding when seeded firmware cannot be verified here", () => {
     const { dispatched, wentBack, reset } = leave("legacyFallback", {
       deviceWasSeeded: true,
-      firmwareNeedsLegacyFlow: true,
+      outcome: "legacy",
     });
 
     expect(wentBack).toBe(false);
@@ -276,10 +210,92 @@ describe("exitActions", () => {
     });
   });
 
+  it.each([
+    ["completed", {}, "done"],
+    ["offerLedgerSync", {}, "syncOffer"],
+    ["resumeFirmwareUpdate", {}, "aborted"],
+    ["userQuit", { genuine: true }, "done"],
+    ["userQuit", { genuine: false }, "aborted"],
+    ["legacyFallback", { seeded: false }, "legacy"],
+    ["legacyFallback", { genuine: true }, "done"],
+    ["legacyFallback", { genuine: false }, "aborted"],
+    ["legacyFallback", { genuine: false, firmwareVersion: null }, "legacy"],
+    [
+      "legacyFallback",
+      { genuine: true, onboardedOnEntry: true, connectSeededDevice: false },
+      "legacy",
+    ],
+  ] as const)("should end the funnel on %s %o as %s", (reason, overrides, outcome) => {
+    expect(exitOutcome(reason, exitContext(overrides))).toBe(outcome);
+  });
+
+  it("should open the legacy setup when an unseeded device falls back", () => {
+    const { rootNavigated, wentBack, dispatched } = leave("legacyFallback", { outcome: "legacy" });
+
+    expect(wentBack).toBe(false);
+    expect(dispatched).toEqual([]);
+    expect(rootNavigated).toBe(NavigatorName.BaseOnboarding);
+  });
+
+  it("should open the nano pairing step when a seeded nano s cannot be checked here", () => {
+    const { wentBack, reset } = leave("legacyFallback", {
+      device: nanoS,
+      deviceWasSeeded: true,
+      outcome: "legacy",
+    });
+
+    expect(wentBack).toBe(false);
+    expect(reset).toEqual({
+      index: 0,
+      routes: [
+        {
+          name: NavigatorName.BaseOnboarding,
+          state: {
+            index: 0,
+            routes: [
+              {
+                name: NavigatorName.Onboarding,
+                state: {
+                  index: 1,
+                  routes: [
+                    { name: ScreenName.OnboardingWelcome },
+                    {
+                      name: ScreenName.OnboardingPairNew,
+                      params: {
+                        deviceModelId: DeviceModelId.nanoS,
+                        fromAccessExistingWallet: true,
+                        resetPostOnboardingRedirect: false,
+                      },
+                    },
+                  ],
+                },
+              },
+            ],
+          },
+        },
+      ],
+    });
+  });
+
+  it("should ask the nano pairing step to bring a read-only user to post-onboarding", () => {
+    const { opened } = leave("legacyFallback", {
+      device: nanoS,
+      deviceWasSeeded: true,
+      outcome: "legacy",
+      wasReadOnlyAtEntry: true,
+    });
+
+    expect(opened?.params).toEqual({
+      deviceModelId: DeviceModelId.nanoS,
+      fromAccessExistingWallet: true,
+      resetPostOnboardingRedirect: true,
+    });
+  });
+
   it("should finish a seeded fallback only after a current genuine verdict", () => {
     const { opened, dispatched, wentBack } = leave("legacyFallback", {
       deviceWasSeeded: true,
-      isGenuine: true,
+      outcome: "done",
     });
 
     expect(wentBack).toBe(false);
@@ -294,32 +310,10 @@ describe("exitActions", () => {
   });
 });
 
-function fallBackFrom(routes: { name: string; params?: unknown }[], withParent = true) {
-  const parentReset = jest.fn();
-  const onboardingReset = jest.fn();
-  exitActions.legacyFallback({
-    dispatch: jest.fn() as unknown as ExitDeps["dispatch"],
-    navigation: {
-      getState: () => ({ routes }),
-      reset: onboardingReset,
-      getParent: () => (withParent ? { reset: parentReset } : undefined),
-    } as unknown as ExitDeps["navigation"],
-    device: stax,
-    wasReadOnlyAtEntry: false,
-    isGenuine: false,
-    deviceWasSeeded: false,
-    firmwareNeedsLegacyFlow: false,
-    hasCompletedOnboarding: false,
-  });
-
-  return { onboardingReset, parentReset: withParent ? parentReset : null };
-}
-
 function leave(
   reason: DeviceOnboardingExitReason,
   overrides: Partial<ExitDeps> = {},
-  rootRoutes: string[] = [NavigatorName.BaseOnboarding],
-  onboardingRoutes: string[] = [ScreenName.OnboardingPairNew],
+  rootRoutes: string[] = [NavigatorName.BaseOnboarding, NavigatorName.DeviceOnboarding],
 ) {
   const dispatch = jest.fn();
   const outer = {
@@ -330,26 +324,22 @@ function leave(
     goBack: jest.fn(),
     getParent: () => undefined,
   };
-  const baseOnboarding = {
-    reset: jest.fn(),
-    getParent: () => outer,
-  };
-  const inner = {
-    getState: () => ({ routes: onboardingRoutes.map(name => ({ name })) }),
+  const flow = {
+    getState: () => ({ routes: [{ name: ScreenName.DeviceOnboardingFunnel }] }),
     reset: jest.fn(),
     navigate: jest.fn(),
     goBack: jest.fn(),
-    getParent: () => baseOnboarding,
+    getParent: () => outer,
   };
 
   exitActions[reason]({
     dispatch: dispatch as unknown as ExitDeps["dispatch"],
-    navigation: inner as unknown as ExitDeps["navigation"],
+    navigation: flow as unknown as ExitDeps["navigation"],
     device: stax,
     wasReadOnlyAtEntry: false,
-    isGenuine: false,
     deviceWasSeeded: false,
-    firmwareNeedsLegacyFlow: false,
+    outcome: "done",
+    seededResult,
     hasCompletedOnboarding: false,
     ...overrides,
   });
@@ -359,14 +349,13 @@ function leave(
   return {
     dispatched: dispatch.mock.calls.map(([action]) => action),
     reset: reset ?? null,
-    baseOnboardingReset: baseOnboarding.reset.mock.calls[0]?.[0] ?? null,
-    onboardingReset: inner.reset.mock.calls[0]?.[0] ?? null,
     opened: reset ? lastRoute(reset.routes) : null,
-    navigated: (inner.navigate.mock.calls[0]?.[0]
-      ? { name: inner.navigate.mock.calls[0][0], params: inner.navigate.mock.calls[0][1] }
+    navigated: (flow.navigate.mock.calls[0]?.[0]
+      ? { name: flow.navigate.mock.calls[0][0], params: flow.navigate.mock.calls[0][1] }
       : null) as { name: string; params: unknown } | null,
-    wentBack: inner.goBack.mock.calls.length > 0,
+    wentBack: flow.goBack.mock.calls.length > 0,
     popped: outer.dispatch.mock.calls[0]?.[0] ?? null,
+    rootNavigated: outer.navigate.mock.calls[0]?.[0] ?? null,
   };
 }
 
@@ -374,4 +363,28 @@ function lastRoute(routes: Route[], path: string[] = []): { path: string[]; para
   const route = routes[routes.length - 1];
   const next = [...path, route.name];
   return route.state ? lastRoute(route.state.routes, next) : { path: next, params: route.params };
+}
+
+function exitContext({
+  genuine = false,
+  seeded = true,
+  firmwareVersion = "2.4.0",
+  onboardedOnEntry,
+  connectSeededDevice,
+}: {
+  genuine?: boolean;
+  seeded?: boolean;
+  firmwareVersion?: string | null;
+  onboardedOnEntry?: boolean;
+  connectSeededDevice?: boolean;
+}): DeviceOnboardingContext {
+  return {
+    sessionId: "session-1",
+    isOnboarded: seeded,
+    firmwareVersion,
+    deviceModelId: DmkDeviceModelId.STAX,
+    genuineVerdict: { sessionId: "session-1", isGenuine: genuine },
+    onboardedOnEntry,
+    connectSeededDevice,
+  } as DeviceOnboardingContext;
 }

@@ -1,5 +1,1715 @@
 # ledger-live-desktop
 
+## 4.30.0
+
+### Minor Changes
+
+- [#23224](https://github.com/LedgerHQ/ledger-live/pull/23224) [`79e96f7`](https://github.com/LedgerHQ/ledger-live/commit/79e96f7f41181a20bcee56c39fe528c2186eeede) Thanks [@cted-ledger](https://github.com/cted-ledger)! - give the zcash currencies their own zcash family: served by coin-zcash and the desktop zcash family module, and still presented to live apps as bitcoin-family currencies
+
+- [#25112](https://github.com/LedgerHQ/ledger-live/pull/25112) [`1212cce`](https://github.com/LedgerHQ/ledger-live/commit/1212ccec295fecbb8fd023f5a13ded5851b4d208) Thanks [@deepyjr](https://github.com/deepyjr)! - Cap the Asset and Account Detail back history at three pages so Back reaches the entry point
+
+- [#24874](https://github.com/LedgerHQ/ledger-live/pull/24874) [`e1db61a`](https://github.com/LedgerHQ/ledger-live/commit/e1db61afaa383e6c5f0f5608ac0c7cf83436fff6) Thanks [@LucasWerey](https://github.com/LucasWerey)! - Report how a verify-address intent ended as a Result, stop the remaining device requests and the running signer action of a cancelled verification, and give the Device Intent Executor wrappers the error screen the user closed
+
+- [#25150](https://github.com/LedgerHQ/ledger-live/pull/25150) [`0402a49`](https://github.com/LedgerHQ/ledger-live/commit/0402a49664305a1d23056cad9b288576331f7ffb) Thanks [@deepyjr](https://github.com/deepyjr)! - Load the wallet state together with the accounts at startup so custom account names no longer reset to the default
+
+- [#25015](https://github.com/LedgerHQ/ledger-live/pull/25015) [`0ed522e`](https://github.com/LedgerHQ/ledger-live/commit/0ed522eb7807af4e815f2aa3fd7d2bc18a1d35fc) Thanks [@deepyjr](https://github.com/deepyjr)! - Add an app-toggles DevTools tool with a toggle to hide the pre-release overlay on nightly builds
+
+- [#25127](https://github.com/LedgerHQ/ledger-live/pull/25127) [`aff97a0`](https://github.com/LedgerHQ/ledger-live/commit/aff97a0a8888e85a66b8d121f41adfa2ea884673) Thanks [@LucasWerey](https://github.com/LucasWerey)! - Verify the receive address on the device with the Device Intent Executor, and show whether it matches once the user confirms on the device
+
+- [#24968](https://github.com/LedgerHQ/ledger-live/pull/24968) [`929daee`](https://github.com/LedgerHQ/ledger-live/commit/929daee1dfbc309739a3b27af971b588e052f76a) Thanks [@cted-ledger](https://github.com/cted-ledger)! - Bump `@ledgerhq/zcash-utils` to 2.10.0. `parsePczt` returns the unified address the user entered for an output (`userAddress`, `userAddressReceivers`), and the Windows binary links the C runtime statically, so it loads on a machine without the Visual C++ Redistributable.
+
+- [#24864](https://github.com/LedgerHQ/ledger-live/pull/24864) [`4f46643`](https://github.com/LedgerHQ/ledger-live/commit/4f466432512683457cbdca0ce7b64ddbf678c64d) Thanks [@gre-ledger](https://github.com/gre-ledger)! - Add the `accountStatus` and `assetStatus` account data kinds: whether an account was ever used and the onboarding it needs before it receives or sends, and per asset the activation it needs before holding it. No source answers them yet
+
+- [#24947](https://github.com/LedgerHQ/ledger-live/pull/24947) [`27f3e4e`](https://github.com/LedgerHQ/ledger-live/commit/27f3e4eb74ac31f0f53aa55803ad7f082f669fe3) Thanks [@deepyjr](https://github.com/deepyjr)! - Show the Agent Intent new badge from the agentIntent flag and track it
+
+- [#25197](https://github.com/LedgerHQ/ledger-live/pull/25197) [`ce2c91d`](https://github.com/LedgerHQ/ledger-live/commit/ce2c91dde08828cc6a213ab19ba1e13efccacc41) Thanks [@deepyjr](https://github.com/deepyjr)! - Open the Baanx manage assets page (`/manage-assets`) from the Pay card Add asset button instead of `/dashboard/accounts/crypto`
+
+- [#25170](https://github.com/LedgerHQ/ledger-live/pull/25170) [`3d08df9`](https://github.com/LedgerHQ/ledger-live/commit/3d08df951fb2c440e7411131c4d3b42f7134b336) Thanks [@mateuszpalosz-ext](https://github.com/mateuszpalosz-ext)! - Add a Manage button on the XRP account that opens a Manage assets dialog listing its tokens, and remove the Manage token and Remove token actions from XRP token accounts
+
+- [#25042](https://github.com/LedgerHQ/ledger-live/pull/25042) [`fe1f525`](https://github.com/LedgerHQ/ledger-live/commit/fe1f5257edcee5b92db6153e9f7d619104446294) Thanks [@valeriiboiko-ext-ops](https://github.com/valeriiboiko-ext-ops)! - Enable the `currencyInjective` flag by default, so Injective stays available when remote config fails to load.
+
+- [#25176](https://github.com/LedgerHQ/ledger-live/pull/25176) [`e53d295`](https://github.com/LedgerHQ/ledger-live/commit/e53d295fcb840a2e8a8433daac282a6f22098707) Thanks [@LucasWerey](https://github.com/LucasWerey)! - Show the asset, its network and a close button in the header of the new receive address dialog
+
+- [#24744](https://github.com/LedgerHQ/ledger-live/pull/24744) [`a50e346`](https://github.com/LedgerHQ/ledger-live/commit/a50e34633e76c5e78472a5d50378ab16b5064d7b) Thanks [@thesan](https://github.com/thesan)! - Honor the updater feed, signature feed and public key overrides in every build that is not a production release, not only in prereleases
+
+- [#25005](https://github.com/LedgerHQ/ledger-live/pull/25005) [`671a1c8`](https://github.com/LedgerHQ/ledger-live/commit/671a1c822ddbc4d86276cc58c6da54fc55ebb48e) Thanks [@qperrot](https://github.com/qperrot)! - Update @ledgerhq/coin-stellar to 12.2.3: validate a send against the spendable balance, show trustline changes with a zero value and split liquidity pool operations per reserve
+
+- [#24742](https://github.com/LedgerHQ/ledger-live/pull/24742) [`8fbb9be`](https://github.com/LedgerHQ/ledger-live/commit/8fbb9beb39ff3ed1d1051d7df0b3e31a809f21f7) Thanks [@gre-ledger](https://github.com/gre-ledger)! - Bump ts-libs packages (`@ledgerhq/live-network` 3.4.0, `@ledgerhq/ledger-key-ring-protocol` 1.2.1, `@ledgerhq/live-currency-format` 0.17.1).
+
+- [#25179](https://github.com/LedgerHQ/ledger-live/pull/25179) [`347dbb6`](https://github.com/LedgerHQ/ledger-live/commit/347dbb6c160a61827cfe69b7568426399ee56ae0) Thanks [@gre-ledger](https://github.com/gre-ledger)! - Bump ts-libs packages (`@ledgerhq/live-network` 3.4.1, `@ledgerhq/ledger-key-ring-protocol` 1.2.2, `@ledgerhq/domain-service` 1.10.1, `@ledgerhq/evm-tools` 2.1.1), `axios` to 1.21.1 and `ws` to 8.23.0.
+
+- [#24710](https://github.com/LedgerHQ/ledger-live/pull/24710) [`7f9d635`](https://github.com/LedgerHQ/ledger-live/commit/7f9d635ec37270cad9b67e4082363716c1b1b464) Thanks [@liviuciulinaru](https://github.com/liviuciulinaru)! - Store CAL token categories and return them in Wallet API currency.list
+
+- [#24786](https://github.com/LedgerHQ/ledger-live/pull/24786) [`99b6ac4`](https://github.com/LedgerHQ/ledger-live/commit/99b6ac42226db15f35b9b2ea26f8d54847741ad7) Thanks [@gre-ledger](https://github.com/gre-ledger)! - Show a placeholder for unreadable card amounts and keep crypto address sorting stable when a countervalue is missing
+
+- [#24972](https://github.com/LedgerHQ/ledger-live/pull/24972) [`f3de33e`](https://github.com/LedgerHQ/ledger-live/commit/f3de33e5a7f9ea0865863b40170a7165449e479c) Thanks [@gre-ledger](https://github.com/gre-ledger)! - Bump color to v5, which ships its own types, and drop @types/color
+
+- [#25210](https://github.com/LedgerHQ/ledger-live/pull/25210) [`f7ac0a4`](https://github.com/LedgerHQ/ledger-live/commit/f7ac0a49b09243671e62772d1dea4b9e868b0f77) Thanks [@LL782](https://github.com/LL782)! - Run 1 renderer storage flush at a time, so a second close or quit waits for the writes of the first
+
+- [#24933](https://github.com/LedgerHQ/ledger-live/pull/24933) [`0ca351c`](https://github.com/LedgerHQ/ledger-live/commit/0ca351cd87534645d48b7f6350ae77f0894263a6) Thanks [@amaslakov](https://github.com/amaslakov)! - Show a Canton offer in CC or a CAL token's unit only when both its instrument id and admin match, looking a CAL token up in CAL when its sub-account is missing, and label any other offer's amount "Unknown token", with its instrument id and admin in the details
+
+- [#25202](https://github.com/LedgerHQ/ledger-live/pull/25202) [`7d53e6d`](https://github.com/LedgerHQ/ledger-live/commit/7d53e6d00fee463c822628e73421c6d4daee59f8) Thanks [@semeano](https://github.com/semeano)! - Show the UTXO notice again on the Zcash receive flow
+
+- [#24984](https://github.com/LedgerHQ/ledger-live/pull/24984) [`1965b3b`](https://github.com/LedgerHQ/ledger-live/commit/1965b3bf273684efccf61f389d5affe64a168900) Thanks [@kentoforik](https://github.com/kentoforik)! - Skip the Perps withdraw submit and the deposit swap tracking when transaction broadcast is disabled
+
+- [#24905](https://github.com/LedgerHQ/ledger-live/pull/24905) [`7517a80`](https://github.com/LedgerHQ/ledger-live/commit/7517a800a3d4b2f813c4e155db69bcf417d64e40) Thanks [@ysitbon](https://github.com/ysitbon)! - Remove unused exports from the Engagement code and the dead SyncDesktop onboarding scene
+
+- [#25063](https://github.com/LedgerHQ/ledger-live/pull/25063) [`1c9fff0`](https://github.com/LedgerHQ/ledger-live/commit/1c9fff0cf0d461add56e9349790373d5b582625a) Thanks [@semeano](https://github.com/semeano)! - Show the Send "Get {ticker}" CTA on insufficient funds only when Buy is available for the currency
+
+- [#24904](https://github.com/LedgerHQ/ledger-live/pull/24904) [`c6deea6`](https://github.com/LedgerHQ/ledger-live/commit/c6deea63c07bcde78d315bcbdabb73fec24bd09c) Thanks [@ysitbon](https://github.com/ysitbon)! - Remove unused exports from the Swap, Earn, Card, Borrow, Perps and Wallet API exchange code
+
+- [#25149](https://github.com/LedgerHQ/ledger-live/pull/25149) [`d4171a1`](https://github.com/LedgerHQ/ledger-live/commit/d4171a1120cf3f121c1618a2c55171db09d4e00c) Thanks [@deepyjr](https://github.com/deepyjr)! - Open the Ledger Sync main screen from the Ledger Sync deeplink instead of the last screen viewed
+
+- [#24953](https://github.com/LedgerHQ/ledger-live/pull/24953) [`4f58ecb`](https://github.com/LedgerHQ/ledger-live/commit/4f58ecb0b7ccff4059975de8be53c8d1d0ffa184) Thanks [@henri-ly](https://github.com/henri-ly)! - Block sends of tokens that CAL tags `non_transferable`, instead of a hardcoded list
+
+- [#24865](https://github.com/LedgerHQ/ledger-live/pull/24865) [`c47814c`](https://github.com/LedgerHQ/ledger-live/commit/c47814c94967febb435d0dcb77cc2f8de7f2c3f7) Thanks [@cted-ledger](https://github.com/cted-ledger)! - Make the `coin_module_call` tiers remotely configurable: a new `methodTiers` param of the `coinObservability` flag moves a coin-module method to the `transaction`, `preparation`, `sync` or `off` tier without a release. `craftTransactionData` moves to the `preparation` tier, since the bridge calls it on every edit of a transaction, and each `coin_module_call` now carries its `tier`. `shouldTransmitCoinModuleCall` is removed: `createCoinModuleCallTransmitter` holds the whole policy.
+
+- [#25172](https://github.com/LedgerHQ/ledger-live/pull/25172) [`5c0fdd1`](https://github.com/LedgerHQ/ledger-live/commit/5c0fdd126d68326f30d4ab911a69c79d718ed493) Thanks [@dilaouid](https://github.com/dilaouid)! - feat(solana): report the network fee, account deposit, locked reserve and shortfall apart in Solana insufficient SOL errors, including the token account rent of `token.createATA`
+
+- [#24782](https://github.com/LedgerHQ/ledger-live/pull/24782) [`a2a5926`](https://github.com/LedgerHQ/ledger-live/commit/a2a5926407deefc147511c80e786ec5298bd0f1c) Thanks [@Moustafa-Koterba](https://github.com/Moustafa-Koterba)! - Remove the redundant memo field from Cosmos transactions and keep memoType and memoValue
+
+- [#24712](https://github.com/LedgerHQ/ledger-live/pull/24712) [`52989bd`](https://github.com/LedgerHQ/ledger-live/commit/52989bd859af9f162d0a01758fb1d0c366f767de) Thanks [@LL782](https://github.com/LL782)! - Fix lost app.json saves when a window params save comes within the debounce delay.
+
+- [#24868](https://github.com/LedgerHQ/ledger-live/pull/24868) [`2306c28`](https://github.com/LedgerHQ/ledger-live/commit/2306c2891e5ed4b13c36496bf22e184fa0dbf9d2) Thanks [@gre-ledger](https://github.com/gre-ledger)! - Add the account-status DevTools tool, reading the `accountStatus` and `assetStatus` kinds per account and asset with the gates they make, and both kinds to the mock source
+
+- [#25020](https://github.com/LedgerHQ/ledger-live/pull/25020) [`cba4e59`](https://github.com/LedgerHQ/ledger-live/commit/cba4e590cd5adbcc11d4cdb809642ad223ac561a) Thanks [@LL782](https://github.com/LL782)! - Read and write the discover record through 1 useDiscoverDB hook in each app
+
+- [#25155](https://github.com/LedgerHQ/ledger-live/pull/25155) [`6942305`](https://github.com/LedgerHQ/ledger-live/commit/694230569140fdc32c9ea7a0f0e906c4d2ded0a7) Thanks [@gre-ledger](https://github.com/gre-ledger)! - Add an account discovery DevTools page: scan a currency with the scan accounts Device Intent and list the accounts found with what the scan cost
+
+- [#24974](https://github.com/LedgerHQ/ledger-live/pull/24974) [`6934be2`](https://github.com/LedgerHQ/ledger-live/commit/6934be2edd36794a5b6b892cedd8be235b568585) Thanks [@gre-ledger](https://github.com/gre-ledger)! - Replace react-motion with a CSS transition in the device swivel icons
+
+- [#25012](https://github.com/LedgerHQ/ledger-live/pull/25012) [`c80f5de`](https://github.com/LedgerHQ/ledger-live/commit/c80f5de17b263d8e111ddd3b3247b04f7b9a687a) Thanks [@dilaouid](https://github.com/dilaouid)! - Add Bitcoin Signet currency (bitcoin_signet)
+
+- [#25085](https://github.com/LedgerHQ/ledger-live/pull/25085) [`291cc2d`](https://github.com/LedgerHQ/ledger-live/commit/291cc2d4bcc47fb69bcc8c7cd62fb6332a68ba4c) Thanks [@deepyjr](https://github.com/deepyjr)! - Move the History CSV export dialog into the shared @features/flow-history-export flow, with no visible change on desktop
+
+- [#25139](https://github.com/LedgerHQ/ledger-live/pull/25139) [`0201072`](https://github.com/LedgerHQ/ledger-live/commit/0201072c5e4d8b91d2da5f5e9430f84b31486b42) Thanks [@LL782](https://github.com/LL782)! - Keep the OFAC blocked screen when a refetch of the check fails after a 451
+
+- [#24901](https://github.com/LedgerHQ/ledger-live/pull/24901) [`ec37034`](https://github.com/LedgerHQ/ledger-live/commit/ec370344705f2be7985729e901879d96138d6e47) Thanks [@ysitbon](https://github.com/ysitbon)! - Remove unused exports from the device action and device intent executor files
+
+- [#24882](https://github.com/LedgerHQ/ledger-live/pull/24882) [`76bab76`](https://github.com/LedgerHQ/ledger-live/commit/76bab76cf7009c9d5f6f54b2608157b3f0419a4e) Thanks [@ysitbon](https://github.com/ysitbon)! - Keep the Ledger Sync result of an add or remove member run when the device disconnects after the user approved it, unless Ledger Sync was reset in between. Each app orders late results with its own result order, passed in every add and remove member input. Ledger Wallet Desktop tracks the activation when the result arrives, so a late activation is tracked too.
+
+- [#24613](https://github.com/LedgerHQ/ledger-live/pull/24613) [`3b117a7`](https://github.com/LedgerHQ/ledger-live/commit/3b117a73628de3dc530c2fa8cd20486c7a2718b3) Thanks [@YazhuEth](https://github.com/YazhuEth)! - Animate the Send and Predictions dialog heights with Lumen's `animated` Dialog prop instead of `@shared/ui-animated-height`, which is removed
+
+- [#25336](https://github.com/LedgerHQ/ledger-live/pull/25336) [`bbd329b`](https://github.com/LedgerHQ/ledger-live/commit/bbd329b9fd0f63766fcb7c3c9f6fbea3c45d0286) Thanks [@ben778899](https://github.com/ben778899)! - Add release notes for Ledger Wallet Desktop 4.30.0.
+
+- [#24992](https://github.com/LedgerHQ/ledger-live/pull/24992) [`287cc7c`](https://github.com/LedgerHQ/ledger-live/commit/287cc7cacb509edd92326b7c6271dfdba42ddd22) Thanks [@ysitbon](https://github.com/ysitbon)! - Keep the side drawer close button after a device step: a reader of the device blocked state mounted while the last blocker unmounts no longer stays blocked
+
+- [#24799](https://github.com/LedgerHQ/ledger-live/pull/24799) [`90db489`](https://github.com/LedgerHQ/ledger-live/commit/90db48910c3525f69fcef5a3644b666febd6a434) Thanks [@live-github-bot](https://github.com/apps/live-github-bot)! - Update @ledgerhq/coin-evm, handle EVM operations with no nonce, and stop including in a native send's amount a fee another account paid, such as a zkSync paymaster
+
+- [#24846](https://github.com/LedgerHQ/ledger-live/pull/24846) [`5030038`](https://github.com/LedgerHQ/ledger-live/commit/50300388e60a2afd79f14935309bf44d07de0afa) Thanks [@ooke-ledger](https://github.com/ooke-ledger)! - Share the Perps deposit execution between desktop and mobile
+
+- [#24860](https://github.com/LedgerHQ/ledger-live/pull/24860) [`c8b2a04`](https://github.com/LedgerHQ/ledger-live/commit/c8b2a04b0cf138801a9ccea3934c6bdc3f8b0406) Thanks [@ooke-ledger](https://github.com/ooke-ledger)! - Share the Perps deposit review details and success params between desktop and mobile
+
+- [#25173](https://github.com/LedgerHQ/ledger-live/pull/25173) [`a8363ee`](https://github.com/LedgerHQ/ledger-live/commit/a8363eeb2cd97ce1942bfe0938ec317536e630c6) Thanks [@LucasWerey](https://github.com/LucasWerey)! - Name the asset received and its network on the new receive address screen
+
+- [#25092](https://github.com/LedgerHQ/ledger-live/pull/25092) [`3f3d812`](https://github.com/LedgerHQ/ledger-live/commit/3f3d812c1f1bdc4b5a9eab4706bb88e079e1b31e) Thanks [@YazhuEth](https://github.com/YazhuEth)! - Show the Learn more link under the binding error's explanation instead of in its title, and say how to enable blind signing
+
+- [#24945](https://github.com/LedgerHQ/ledger-live/pull/24945) [`f5045dc`](https://github.com/LedgerHQ/ledger-live/commit/f5045dc9e69cf20b791779042acbaaf52b73b516) Thanks [@LucasWerey](https://github.com/LucasWerey)! - Add the receive list and deeplink sections to the receive DevTools tool: the bindings list each account and token from the account model, and the apps open receive through their current receive openers
+
+- [#24861](https://github.com/LedgerHQ/ledger-live/pull/24861) [`16bc82a`](https://github.com/LedgerHQ/ledger-live/commit/16bc82a772d61b5c2ca659922ffa8e74eab283d7) Thanks [@henri-ly](https://github.com/henri-ly)! - Check a Solana transaction's blockhash before simulating it and report an expired one as `SolanaTxBlockhashExpired`, shown as is in the send flows with wording that asks the user to try again. Durable-nonce transactions skip the check, and a simulation that cannot find the blockhash runs once more after 500 ms
+
+- [#25136](https://github.com/LedgerHQ/ledger-live/pull/25136) [`915ff18`](https://github.com/LedgerHQ/ledger-live/commit/915ff18f05bdd1b267d98a3e3793330e2d99cab1) Thanks [@lysyi3m](https://github.com/lysyi3m)! - Read the Celo fee asset from coin-evm: fees in their token's units, a FEES operation for a fee paid in a token, and operation details in that token. `getCeloTransactionFeeCurrency` is deprecated
+
+- [#24885](https://github.com/LedgerHQ/ledger-live/pull/24885) [`f6b0bd4`](https://github.com/LedgerHQ/ledger-live/commit/f6b0bd4699b8e8dad4865b0ee6cfbcd60177ed7c) Thanks [@ysitbon](https://github.com/ysitbon)! - Remove unused exports from the Send, Canton, Aleo, EVM delegation and Web3 Hub code
+
+- [#25118](https://github.com/LedgerHQ/ledger-live/pull/25118) [`81a7507`](https://github.com/LedgerHQ/ledger-live/commit/81a75074d037b08333f228d6fa7d593e1dc87060) Thanks [@LL782](https://github.com/LL782)! - Flush the pending storage writes before the window closes or the app quits
+
+- [#24884](https://github.com/LedgerHQ/ledger-live/pull/24884) [`54dbb60`](https://github.com/LedgerHQ/ledger-live/commit/54dbb60cde959955f5965bf6710520a05c2cd1da) Thanks [@ysitbon](https://github.com/ysitbon)! - Move the React exports of live-dmk-shared to a `@ledgerhq/live-dmk-shared/react` entry point so the root entry imports no React
+
+- [#24843](https://github.com/LedgerHQ/ledger-live/pull/24843) [`7dcd783`](https://github.com/LedgerHQ/ledger-live/commit/7dcd783f05b13b8433250c6a9aa48dec6d63ef8e) Thanks [@mdomanski-ext-ledger](https://github.com/mdomanski-ext-ledger)! - XRP tokens: bump coin-xrp to 13.8.0, offer Max when sending a token, show the issuer fee and Receive/Buy for an unactivated account on the review step, add new error messages, list a token settings edit on the XRP account only
+
+- [#25203](https://github.com/LedgerHQ/ledger-live/pull/25203) [`3962b9a`](https://github.com/LedgerHQ/ledger-live/commit/3962b9a38998a5ff4e39cd045aa03bf8fe3dba3a) Thanks [@LL782](https://github.com/LL782)! - Resolve db.setKey once main holds the value, so the quit flush does not wait for each debounced disk write
+
+- [#25202](https://github.com/LedgerHQ/ledger-live/pull/25202) [`7d53e6d`](https://github.com/LedgerHQ/ledger-live/commit/7d53e6d00fee463c822628e73421c6d4daee59f8) Thanks [@semeano](https://github.com/semeano)! - Move the desktop Zcash UI out of the bitcoin family into its own family module
+
+- [#25007](https://github.com/LedgerHQ/ledger-live/pull/25007) [`4110ced`](https://github.com/LedgerHQ/ledger-live/commit/4110ced7d44e38a5e5acf71ae090425ca5972c1a) Thanks [@deepyjr](https://github.com/deepyjr)! - chore(lumen): bump ui-react to 0.1.73 (LIVE-41584)
+
+  `SegmentedControl` fixes its RTL scroll overflow and its scroll arrows no longer fade, size-32 `Spot` icons grow from 12 to 16 px, size-32 `DotSymbol` corners from 10 to 12, decorative `ProgressBar` fills use the `decorativeStrong*` tokens and `Dialog` gains an optional `animated` prop.
+
+- [#24632](https://github.com/LedgerHQ/ledger-live/pull/24632) [`0d2408b`](https://github.com/LedgerHQ/ledger-live/commit/0d2408b512c57c64a1060088181c1eb22205f1c9) Thanks [@vladyslavchupovskiy-ext-art](https://github.com/vladyslavchupovskiy-ext-art)! - Sign raw Sui transactions through Wallet API
+
+- [#25098](https://github.com/LedgerHQ/ledger-live/pull/25098) [`f9c75e0`](https://github.com/LedgerHQ/ledger-live/commit/f9c75e0aacaa5776225257a9c23b8fc674ba7ae5) Thanks [@mateuszpalosz-ext](https://github.com/mateuszpalosz-ext)! - Let a coin family register an account dialog, mounted once in GlobalDialogs and opened with `openFamilyDialog`
+
+- [#24254](https://github.com/LedgerHQ/ledger-live/pull/24254) [`90af53f`](https://github.com/LedgerHQ/ledger-live/commit/90af53fdcab2448e07ced5f4cc8d37efad261c6b) Thanks [@qperrot](https://github.com/qperrot)! - Disable speed up and cancel (RBF) on transactions broadcast by a sell flow
+
+- [#25054](https://github.com/LedgerHQ/ledger-live/pull/25054) [`9924d57`](https://github.com/LedgerHQ/ledger-live/commit/9924d57433212aaaf4491573b5777236e01c3559) Thanks [@cted-ledger](https://github.com/cted-ledger)! - Make `DEFAULT_METHOD_TIERS` a whitelist of the observed coin-module methods: a method it does not list is `off` unless the `coinObservability` flag gives it a tier, and live-common no longer checks at compile time that it names every method of the contract, so a coin-module-framework release that adds a method no longer breaks the build.
+
+- [#25175](https://github.com/LedgerHQ/ledger-live/pull/25175) [`832b6fd`](https://github.com/LedgerHQ/ledger-live/commit/832b6fd06c64a879c95b4baccc6dd8b111e3f4ac) Thanks [@vladyslavchupovskiy-ext-art](https://github.com/vladyslavchupovskiy-ext-art)! - Show not enough balance for a Sui token amount above its balance, and compute token send max from the token balance
+
+- [#24862](https://github.com/LedgerHQ/ledger-live/pull/24862) [`14ab34d`](https://github.com/LedgerHQ/ledger-live/commit/14ab34dbbf4c1768fcdc8928f6db43d9ec58f10b) Thanks [@mdomanski-ext-ledger](https://github.com/mdomanski-ext-ledger)! - XRP tokens: opt-out mode for removing a token, its pending row and device fields, a token missing from the balance drops its account, and the opt-out error messages
+
+- [#24976](https://github.com/LedgerHQ/ledger-live/pull/24976) [`e516034`](https://github.com/LedgerHQ/ledger-live/commit/e5160345b50c0dc9e7c490da72d641c631d2ef7f) Thanks [@gre-ledger](https://github.com/gre-ledger)! - Remove unused lodash, invariant, prop-types and @types dependencies, and stop relying on the global React namespace in types-live
+
+- [#25133](https://github.com/LedgerHQ/ledger-live/pull/25133) [`ac052f5`](https://github.com/LedgerHQ/ledger-live/commit/ac052f5c42e9151f445e3ff4b20e811fbcfa84b4) Thanks [@LucasWerey](https://github.com/LucasWerey)! - Lay out the zones of the new receive address screen
+
+- [#25225](https://github.com/LedgerHQ/ledger-live/pull/25225) [`fa94370`](https://github.com/LedgerHQ/ledger-live/commit/fa943701719e0fd0d6f9fb28f1c8bb90f6a7c5c9) Thanks [@LucasWerey](https://github.com/LucasWerey)! - Animate the receive QR code on desktop too: a shimmer while the address loads, and a ripple when it is copied from the code or the Copy button
+
+- [#24917](https://github.com/LedgerHQ/ledger-live/pull/24917) [`3321629`](https://github.com/LedgerHQ/ledger-live/commit/3321629d1a473d0e2eb49e92ae12a8a3c9a05131) Thanks [@dilaouid](https://github.com/dilaouid)! - feat(send): margin header and contact match in new send flow lwd
+
+- [#24647](https://github.com/LedgerHQ/ledger-live/pull/24647) [`af01e1d`](https://github.com/LedgerHQ/ledger-live/commit/af01e1d6d4b930c8ad6887e93201d38d4f434940) Thanks [@renovate-operator-ledger](https://github.com/apps/renovate-operator-ledger)! - chore(deps): update dependency oxlint to v1.93.0
+
+  - Updated `oxlint` to `1.93.0`
+
+- [#24916](https://github.com/LedgerHQ/ledger-live/pull/24916) [`8b667f3`](https://github.com/LedgerHQ/ledger-live/commit/8b667f33e565cabb793f128b78f3b6bfb83037b5) Thanks [@renovate-operator-ledger](https://github.com/apps/renovate-operator-ledger)! - chore(deps): update dependency electron to v45.3.2
+
+  - Updated `electron` to `45.3.2`
+
+- [#24936](https://github.com/LedgerHQ/ledger-live/pull/24936) [`92190a5`](https://github.com/LedgerHQ/ledger-live/commit/92190a5c957c3a9336cc58bb35a7cf55210a7853) Thanks [@renovate-operator-ledger](https://github.com/apps/renovate-operator-ledger)! - chore(deps): update nx monorepo to v24.0.6
+
+  - Updated `nx` to `24.0.6`
+
+- [#24938](https://github.com/LedgerHQ/ledger-live/pull/24938) [`a93c5f7`](https://github.com/LedgerHQ/ledger-live/commit/a93c5f71a19f2459309af5ed67538501bda6f39a) Thanks [@renovate-operator-ledger](https://github.com/apps/renovate-operator-ledger)! - chore(deps): update rstack
+
+  - Updated `@rsbuild/core` to `2.3.2`
+  - Updated `@rsdoctor/core` to `2.0.3`
+  - Updated `@rslib/core` to `1.0.7`
+  - Updated `@rspack/cli` to `2.3.2`
+  - Updated `@rspack/core` to `2.3.2`
+  - Updated `@rspack/plugin-react-refresh` to `2.0.3`
+
+- [#24987](https://github.com/LedgerHQ/ledger-live/pull/24987) [`2959603`](https://github.com/LedgerHQ/ledger-live/commit/29596039c7129ac7a5dd216e1f1c172936bed43b) Thanks [@KVNLS](https://github.com/KVNLS)! - Restore account balance history from its saved cache and compute only the periods since it was saved, also when the history is shown before the account syncs
+
+- [#25221](https://github.com/LedgerHQ/ledger-live/pull/25221) [`35fa0ca`](https://github.com/LedgerHQ/ledger-live/commit/35fa0ca78c4675376df8ac8882994e703ccefb57) Thanks [@LL782](https://github.com/LL782)! - Share the read of a storage file between concurrent calls, so a later read does not replace a value that a setKey just set
+
+- [#24981](https://github.com/LedgerHQ/ledger-live/pull/24981) [`317d45a`](https://github.com/LedgerHQ/ledger-live/commit/317d45adf36c1ae3361c9596c9f4bc4734e62be4) Thanks [@thesan](https://github.com/thesan)! - Check the signature of an app update before downloading it
+
+- [#25107](https://github.com/LedgerHQ/ledger-live/pull/25107) [`161ebff`](https://github.com/LedgerHQ/ledger-live/commit/161ebff460d0a96a53c707bd8d386e52596e1815) Thanks [@mdomanski-ext-ledger](https://github.com/mdomanski-ext-ledger)! - XRP: delete a token from Manage assets on mobile
+
+- [#25108](https://github.com/LedgerHQ/ledger-live/pull/25108) [`fa0438d`](https://github.com/LedgerHQ/ledger-live/commit/fa0438d5bbad6e77164b5ab10ce2b878205b8b27) Thanks [@semeano](https://github.com/semeano)! - Show a single network fee option in Send when every estimated fee preset costs the same
+
+- [#25047](https://github.com/LedgerHQ/ledger-live/pull/25047) [`b15271c`](https://github.com/LedgerHQ/ledger-live/commit/b15271ca307f00e929474a1560e64fd2af49b75e) Thanks [@LucasWerey](https://github.com/LucasWerey)! - Route every receive entry point through one rule that opens the new receive dialog behind the newReceiveFlow flag
+
+- [#24912](https://github.com/LedgerHQ/ledger-live/pull/24912) [`b7fb0c1`](https://github.com/LedgerHQ/ledger-live/commit/b7fb0c1ff2d2522d2062e781f2fc592599b1922a) Thanks [@dilaouid](https://github.com/dilaouid)! - feat(send): Give the Add contact and Send buttons of the new send flow recipient card the same width in every language in LWD
+
+- [#25192](https://github.com/LedgerHQ/ledger-live/pull/25192) [`85a7d14`](https://github.com/LedgerHQ/ledger-live/commit/85a7d14d54b4f7f411a3789e310e6f1b8d2d79bb) Thanks [@LucasWerey](https://github.com/LucasWerey)! - Read the address shown on the new receive address screen, with the Zcash choice between its public and private addresses
+
+- [#25196](https://github.com/LedgerHQ/ledger-live/pull/25196) [`c4792da`](https://github.com/LedgerHQ/ledger-live/commit/c4792da62785d15ebbb543c81f444aeb6a62bafc) Thanks [@LucasWerey](https://github.com/LucasWerey)! - Show the QR card and the address on the new receive address dialog, and the Zcash choice between public and private addresses
+
+- [#25160](https://github.com/LedgerHQ/ledger-live/pull/25160) [`f7f5295`](https://github.com/LedgerHQ/ledger-live/commit/f7f529560de8f7ee9d2ddf98f048610b9335d550) Thanks [@LucasWerey](https://github.com/LucasWerey)! - Read the new receive screen data from the account model, and tell Tron's inactive account from its account status
+
+- [#24952](https://github.com/LedgerHQ/ledger-live/pull/24952) [`6078fe6`](https://github.com/LedgerHQ/ledger-live/commit/6078fe6dd0352e0e5faedb3973db6c3812fb775f) Thanks [@vpenskyi-ledger](https://github.com/vpenskyi-ledger)! - Wait for the Perps withdraw to show in the HyperCore balance, and refresh it when the withdraw form opens
+
+- [#25222](https://github.com/LedgerHQ/ledger-live/pull/25222) [`c5ad33d`](https://github.com/LedgerHQ/ledger-live/commit/c5ad33db466f7a5eaf24a70f571afdbf2496979a) Thanks [@LucasWerey](https://github.com/LucasWerey)! - Show a skeleton on the new receive address screen while the address loads, and an error with Retry when it cannot be read
+
+- [#23784](https://github.com/LedgerHQ/ledger-live/pull/23784) [`f31669c`](https://github.com/LedgerHQ/ledger-live/commit/f31669c66b754675f8004372543f5c296cd12163) Thanks [@KVNLS](https://github.com/KVNLS)! - Report failed renderer store writes and wait for the store to clear before relaunching after a hard reset
+
+- [#24903](https://github.com/LedgerHQ/ledger-live/pull/24903) [`e03eb3f`](https://github.com/LedgerHQ/ledger-live/commit/e03eb3f25e8fd4eb3e5d17af6907fbf8a5174e76) Thanks [@ysitbon](https://github.com/ysitbon)! - Remove unused navigation exports and route names from the apps
+
+- [#24989](https://github.com/LedgerHQ/ledger-live/pull/24989) [`79d8899`](https://github.com/LedgerHQ/ledger-live/commit/79d8899115c08d2e62bde0f180ef2dd2edacdfb6) Thanks [@ysitbon](https://github.com/ysitbon)! - Remove unused exports in Wallet XP desktop code, including the unused `Page.MarketCoin`, `GraphTrackingScreenName.Asset` and `GraphTrackingScreenName.Market` analytics names
+
+- [#24913](https://github.com/LedgerHQ/ledger-live/pull/24913) [`79da9a3`](https://github.com/LedgerHQ/ledger-live/commit/79da9a3dd691d66e3d10e63307839964ed740805) Thanks [@deepyjr](https://github.com/deepyjr)! - Show delegation amounts with at most 4 decimals, the exact amount in a tooltip, and hide the Solana active column
+
+- [#24639](https://github.com/LedgerHQ/ledger-live/pull/24639) [`a36827d`](https://github.com/LedgerHQ/ledger-live/commit/a36827d7be2d435960eb1689e9ffda6a5736d6b0) Thanks [@ishaba](https://github.com/ishaba)! - Tronify: say the energy delivery may take up to 2 minutes, and link to the provider terms without a source flag
+
+- [#24962](https://github.com/LedgerHQ/ledger-live/pull/24962) [`d3b0f92`](https://github.com/LedgerHQ/ledger-live/commit/d3b0f92aadd5743ec190f72e2212d665a776ce43) Thanks [@mdomanski-ext-ledger](https://github.com/mdomanski-ext-ledger)! - Rename the XRP currency to XRPL, after its network like other currencies, so default XRP accounts are named "XRPL 1"
+
+- [#24967](https://github.com/LedgerHQ/ledger-live/pull/24967) [`b004476`](https://github.com/LedgerHQ/ledger-live/commit/b0044764e765d48ff2edabb567a6e71dbd820276) Thanks [@mdomanski-ext-ledger](https://github.com/mdomanski-ext-ledger)! - Fix XRPL token issues found in manual testing:
+
+  - XRPL history skips operations newer than the synced ledger, which narrows the gap with the balance
+  - Add token: missing XRP shows on the review with a Receive action, instead of as a trust limit error
+  - Add token: the review waits for the issuer fee, and says when it can't be fetched with a Try again action
+  - Add token: trust limit errors show their description, such as "Use Max to set the highest limit."
+  - Add, edit and remove token: the success screen says the request was sent and applies once the network confirms it
+  - Send: the issuer fee row shows a placeholder while the fee is computed
+  - Send: token refusals have short titles, such as "Token is frozen"
+  - Send: a frozen or unauthorized token blocks the recipient step instead of asking the recipient to add the token
+  - Receive and empty token accounts name the account's token types (IOU, MPT)
+  - Token add, edit and remove rows in history show the token issuer instead of the token code
+
+- [#24894](https://github.com/LedgerHQ/ledger-live/pull/24894) [`f008404`](https://github.com/LedgerHQ/ledger-live/commit/f0084046d8db55822fc30a27acb2dee3dccfcfa1) Thanks [@mdomanski-ext-ledger](https://github.com/mdomanski-ext-ledger)! - XRP: remove a token, behind `enabledTokenStandards`. Token account pages get one header action: Manage token for an IOU, which offers Advanced settings and Remove token, and Remove token for an MPT. Remove token is disabled while the token is frozen or its removal pending, and signs an `optOut`, asks to send a held balance first, and shows the XRP it unlocks. The trust limit edit moves from the balance footer into Manage token.
+
+- [#24855](https://github.com/LedgerHQ/ledger-live/pull/24855) [`a650f44`](https://github.com/LedgerHQ/ledger-live/commit/a650f4490c10c997ea31debe198ab6988a78d1e5) Thanks [@mdomanski-ext-ledger](https://github.com/mdomanski-ext-ledger)! - XRP tokens: rippling switch on a trust line and Max switch for the trust limit
+
+- [#24888](https://github.com/LedgerHQ/ledger-live/pull/24888) [`0a659c3`](https://github.com/LedgerHQ/ledger-live/commit/0a659c3a71c902aaf951d76cfd9362f939711487) Thanks [@mdomanski-ext-ledger](https://github.com/mdomanski-ext-ledger)! - XRP token send: issuer fee row on the send flow's amount step
+
+  Send flow: address warnings that have a support article show a Learn more link, such as the XRP warning when sending a token to its issuer
+
+  XRP recipient errors and warnings: a short title and a description, so the address banners no longer cut them
+
+### Patch Changes
+
+- Updated dependencies [[`79e96f7`](https://github.com/LedgerHQ/ledger-live/commit/79e96f7f41181a20bcee56c39fe528c2186eeede), [`081c422`](https://github.com/LedgerHQ/ledger-live/commit/081c422494180f04d0fbaf9de4d59370d7927863), [`ed22b28`](https://github.com/LedgerHQ/ledger-live/commit/ed22b28719c1beff10352eb33901035a02b8555c), [`d1f10fb`](https://github.com/LedgerHQ/ledger-live/commit/d1f10fbe2b9a1c9a90d28e0b79a7113932437bdc), [`e1db61a`](https://github.com/LedgerHQ/ledger-live/commit/e1db61afaa383e6c5f0f5608ac0c7cf83436fff6), [`a869e8b`](https://github.com/LedgerHQ/ledger-live/commit/a869e8b37d098ba06c01d36516ad7a6abb9aa0a5), [`aff97a0`](https://github.com/LedgerHQ/ledger-live/commit/aff97a0a8888e85a66b8d121f41adfa2ea884673), [`929daee`](https://github.com/LedgerHQ/ledger-live/commit/929daee1dfbc309739a3b27af971b588e052f76a), [`98fb89f`](https://github.com/LedgerHQ/ledger-live/commit/98fb89f13d32e56709360157f71c67ff1eccd458), [`15c9095`](https://github.com/LedgerHQ/ledger-live/commit/15c9095eb614c8bda7b5c47f18031667b3047a4a), [`4f46643`](https://github.com/LedgerHQ/ledger-live/commit/4f466432512683457cbdca0ce7b64ddbf678c64d), [`27f3e4e`](https://github.com/LedgerHQ/ledger-live/commit/27f3e4eb74ac31f0f53aa55803ad7f082f669fe3), [`57fb0bf`](https://github.com/LedgerHQ/ledger-live/commit/57fb0bfb2bbae6f63434c7a5c023244d4d372304), [`f8afe58`](https://github.com/LedgerHQ/ledger-live/commit/f8afe58413ae68f5331031c27d9655dca1a56143), [`ce2c91d`](https://github.com/LedgerHQ/ledger-live/commit/ce2c91dde08828cc6a213ab19ba1e13efccacc41), [`5af6447`](https://github.com/LedgerHQ/ledger-live/commit/5af6447acb234632ed35feec4735b415d1993ced), [`a68bf6d`](https://github.com/LedgerHQ/ledger-live/commit/a68bf6de157e806306ab3d991a1fade06a7bcfc0), [`842aec2`](https://github.com/LedgerHQ/ledger-live/commit/842aec20f45ccf672a3a04b93f8f1056d5917f08), [`99b84d2`](https://github.com/LedgerHQ/ledger-live/commit/99b84d26e7fe249a2d322d54472790afffaa4807), [`e09bb31`](https://github.com/LedgerHQ/ledger-live/commit/e09bb313b8a57ca7a0b410b6959be0ec78b81191), [`fe1f525`](https://github.com/LedgerHQ/ledger-live/commit/fe1f5257edcee5b92db6153e9f7d619104446294), [`e53d295`](https://github.com/LedgerHQ/ledger-live/commit/e53d295fcb840a2e8a8433daac282a6f22098707), [`6157b78`](https://github.com/LedgerHQ/ledger-live/commit/6157b78b2e7055b1389f7ed64a2fcccf26200c39), [`671a1c8`](https://github.com/LedgerHQ/ledger-live/commit/671a1c822ddbc4d86276cc58c6da54fc55ebb48e), [`e3d0630`](https://github.com/LedgerHQ/ledger-live/commit/e3d063017d281be326dbca1a4504ee559a9e9f22), [`f82d808`](https://github.com/LedgerHQ/ledger-live/commit/f82d8080480437ccb351d111cabb1e3ee110d63b), [`8fbb9be`](https://github.com/LedgerHQ/ledger-live/commit/8fbb9beb39ff3ed1d1051d7df0b3e31a809f21f7), [`347dbb6`](https://github.com/LedgerHQ/ledger-live/commit/347dbb6c160a61827cfe69b7568426399ee56ae0), [`7f9d635`](https://github.com/LedgerHQ/ledger-live/commit/7f9d635ec37270cad9b67e4082363716c1b1b464), [`f3de33e`](https://github.com/LedgerHQ/ledger-live/commit/f3de33e5a7f9ea0865863b40170a7165449e479c), [`28984f6`](https://github.com/LedgerHQ/ledger-live/commit/28984f653f0a7e549352e89feea59a634365c62a), [`5ebd183`](https://github.com/LedgerHQ/ledger-live/commit/5ebd183fc24a0fa50e61fd66273cbfb17a37868a), [`2e761cc`](https://github.com/LedgerHQ/ledger-live/commit/2e761ccb7416b0ba60b5f325c8237761e75a9b8d), [`4060186`](https://github.com/LedgerHQ/ledger-live/commit/40601866b3d1903e03be990373f9152ac3418223), [`0ca351c`](https://github.com/LedgerHQ/ledger-live/commit/0ca351cd87534645d48b7f6350ae77f0894263a6), [`1965b3b`](https://github.com/LedgerHQ/ledger-live/commit/1965b3bf273684efccf61f389d5affe64a168900), [`1c9fff0`](https://github.com/LedgerHQ/ledger-live/commit/1c9fff0cf0d461add56e9349790373d5b582625a), [`f04c3ec`](https://github.com/LedgerHQ/ledger-live/commit/f04c3ec7af3bfec56b14facc2a103d5d496492e2), [`4f58ecb`](https://github.com/LedgerHQ/ledger-live/commit/4f58ecb0b7ccff4059975de8be53c8d1d0ffa184), [`8d983e8`](https://github.com/LedgerHQ/ledger-live/commit/8d983e84c8762207b4af82ef8d877986061d8282), [`40352f0`](https://github.com/LedgerHQ/ledger-live/commit/40352f0168431eb69c44832e80e07e5660bd090f), [`b138196`](https://github.com/LedgerHQ/ledger-live/commit/b138196145d8581a78bfb721151d3eee1d37e071), [`c47814c`](https://github.com/LedgerHQ/ledger-live/commit/c47814c94967febb435d0dcb77cc2f8de7f2c3f7), [`301aafa`](https://github.com/LedgerHQ/ledger-live/commit/301aafac69656abedfccbf8acbd4634d9eb6f9bb), [`a2a5926`](https://github.com/LedgerHQ/ledger-live/commit/a2a5926407deefc147511c80e786ec5298bd0f1c), [`b770536`](https://github.com/LedgerHQ/ledger-live/commit/b77053689b942642434c55e0de68fc987cbb661c), [`94093ac`](https://github.com/LedgerHQ/ledger-live/commit/94093ace3ca8b077b832e9366f7edfdb36e5fd4f), [`ffe7941`](https://github.com/LedgerHQ/ledger-live/commit/ffe794109361069c813d36d198f547d40eb79b7f), [`2306c28`](https://github.com/LedgerHQ/ledger-live/commit/2306c2891e5ed4b13c36496bf22e184fa0dbf9d2), [`b3b30ca`](https://github.com/LedgerHQ/ledger-live/commit/b3b30ca316c00c6cb15ab071e7805f4a7fc0f05e), [`6942305`](https://github.com/LedgerHQ/ledger-live/commit/694230569140fdc32c9ea7a0f0e906c4d2ded0a7), [`e0888fd`](https://github.com/LedgerHQ/ledger-live/commit/e0888fd78c1a9152c4b1641533b7f8061fa11d80), [`91e2fd8`](https://github.com/LedgerHQ/ledger-live/commit/91e2fd88699d0c2fbed156aab8af4d8ed78b5a68), [`02e892d`](https://github.com/LedgerHQ/ledger-live/commit/02e892ddfc1db6c12889d78b374a003e47912de3), [`a1f1062`](https://github.com/LedgerHQ/ledger-live/commit/a1f1062c50e1093d09dc5c20bd7bd9b2678f8b37), [`dc0e3ad`](https://github.com/LedgerHQ/ledger-live/commit/dc0e3ad24843961f7f71772b288c2dba473e93b0), [`1f4db3d`](https://github.com/LedgerHQ/ledger-live/commit/1f4db3d7f2c77858c66b503321127c91586bac61), [`c80f5de`](https://github.com/LedgerHQ/ledger-live/commit/c80f5de17b263d8e111ddd3b3247b04f7b9a687a), [`36284d6`](https://github.com/LedgerHQ/ledger-live/commit/36284d633c1961face1500f58fa2fc271cfb8ab5), [`0b3bf6b`](https://github.com/LedgerHQ/ledger-live/commit/0b3bf6b17426b5b60e3cbbc9dbca4e2207673c74), [`291cc2d`](https://github.com/LedgerHQ/ledger-live/commit/291cc2d4bcc47fb69bcc8c7cd62fb6332a68ba4c), [`0201072`](https://github.com/LedgerHQ/ledger-live/commit/0201072c5e4d8b91d2da5f5e9430f84b31486b42), [`74c967e`](https://github.com/LedgerHQ/ledger-live/commit/74c967eb7dda848648df0db683910140b5d6e906), [`3d9e16e`](https://github.com/LedgerHQ/ledger-live/commit/3d9e16e2de416fabd1a06e74dfc1235e4cb5c48d), [`cbb1cc6`](https://github.com/LedgerHQ/ledger-live/commit/cbb1cc65fb0ac744eac9fd46eee90f3fd87595fd), [`114ab5f`](https://github.com/LedgerHQ/ledger-live/commit/114ab5f12a49550b01305bd131db441c472b230c), [`76bab76`](https://github.com/LedgerHQ/ledger-live/commit/76bab76cf7009c9d5f6f54b2608157b3f0419a4e), [`d5ff357`](https://github.com/LedgerHQ/ledger-live/commit/d5ff357b5df4d890cd22574d1cabd96168d0aa84), [`3b117a7`](https://github.com/LedgerHQ/ledger-live/commit/3b117a73628de3dc530c2fa8cd20486c7a2718b3), [`90db489`](https://github.com/LedgerHQ/ledger-live/commit/90db48910c3525f69fcef5a3644b666febd6a434), [`2267444`](https://github.com/LedgerHQ/ledger-live/commit/226744400780b00d6468f890d06a821440fb5608), [`4ef9ecd`](https://github.com/LedgerHQ/ledger-live/commit/4ef9ecde87b79d3667170d74e69443203f4b2280), [`c98e265`](https://github.com/LedgerHQ/ledger-live/commit/c98e2659c3236ec7c4664ea28393cfb1eab0e8b0), [`9300f96`](https://github.com/LedgerHQ/ledger-live/commit/9300f9670ca7e76be132ea6fffc24c04c0f0b3ea), [`d27f68a`](https://github.com/LedgerHQ/ledger-live/commit/d27f68ac780099cbd47e533709ebef83f9345d89), [`9f6f480`](https://github.com/LedgerHQ/ledger-live/commit/9f6f48031fad77047e3a6377838816229ba4da5b), [`5030038`](https://github.com/LedgerHQ/ledger-live/commit/50300388e60a2afd79f14935309bf44d07de0afa), [`c8b2a04`](https://github.com/LedgerHQ/ledger-live/commit/c8b2a04b0cf138801a9ccea3934c6bdc3f8b0406), [`a8363ee`](https://github.com/LedgerHQ/ledger-live/commit/a8363eeb2cd97ce1942bfe0938ec317536e630c6), [`b832756`](https://github.com/LedgerHQ/ledger-live/commit/b83275606480975ee139c431b076a4826b4def95), [`f5045dc`](https://github.com/LedgerHQ/ledger-live/commit/f5045dc9e69cf20b791779042acbaaf52b73b516), [`16bc82a`](https://github.com/LedgerHQ/ledger-live/commit/16bc82a772d61b5c2ca659922ffa8e74eab283d7), [`8e67516`](https://github.com/LedgerHQ/ledger-live/commit/8e675166ba8dc7eefef71933a27f3e844e5dabc5), [`d5357b4`](https://github.com/LedgerHQ/ledger-live/commit/d5357b4060ca40b0dbb86119bb614fa4e45fe2ed), [`bda46c4`](https://github.com/LedgerHQ/ledger-live/commit/bda46c496fdacc801de3264d2854e00eb38b8499), [`915ff18`](https://github.com/LedgerHQ/ledger-live/commit/915ff18f05bdd1b267d98a3e3793330e2d99cab1), [`cdf122f`](https://github.com/LedgerHQ/ledger-live/commit/cdf122fb665e1738355d95cf93d75f3c759a8816), [`7692d02`](https://github.com/LedgerHQ/ledger-live/commit/7692d02a905fd17f638b71fe868e63576462371b), [`54dbb60`](https://github.com/LedgerHQ/ledger-live/commit/54dbb60cde959955f5965bf6710520a05c2cd1da), [`7dcd783`](https://github.com/LedgerHQ/ledger-live/commit/7dcd783f05b13b8433250c6a9aa48dec6d63ef8e), [`4878776`](https://github.com/LedgerHQ/ledger-live/commit/4878776b5f223d14a0604862b892361a1af88ca5), [`916c78e`](https://github.com/LedgerHQ/ledger-live/commit/916c78e11cddbee3b5836e8d455c93e6b811e417), [`4ea6c56`](https://github.com/LedgerHQ/ledger-live/commit/4ea6c566069a55a0345df95add6dc62e37a30b01), [`7c824f3`](https://github.com/LedgerHQ/ledger-live/commit/7c824f377ec4a7bcc86f3edb71a198d7ea6ca9a5), [`90af53f`](https://github.com/LedgerHQ/ledger-live/commit/90af53fdcab2448e07ced5f4cc8d37efad261c6b), [`9924d57`](https://github.com/LedgerHQ/ledger-live/commit/9924d57433212aaaf4491573b5777236e01c3559), [`14ab34d`](https://github.com/LedgerHQ/ledger-live/commit/14ab34dbbf4c1768fcdc8928f6db43d9ec58f10b), [`3ac77a8`](https://github.com/LedgerHQ/ledger-live/commit/3ac77a877a5e0dedfc67b595d88b26535aefd5d1), [`e516034`](https://github.com/LedgerHQ/ledger-live/commit/e5160345b50c0dc9e7c490da72d641c631d2ef7f), [`ac052f5`](https://github.com/LedgerHQ/ledger-live/commit/ac052f5c42e9151f445e3ff4b20e811fbcfa84b4), [`fa94370`](https://github.com/LedgerHQ/ledger-live/commit/fa943701719e0fd0d6f9fb28f1c8bb90f6a7c5c9), [`de9c09c`](https://github.com/LedgerHQ/ledger-live/commit/de9c09c26ebca7c2dbceb9494de70a2c16c75a70), [`c20c157`](https://github.com/LedgerHQ/ledger-live/commit/c20c157c991dbfcd47f9300b997f74fac0f6d303), [`2959603`](https://github.com/LedgerHQ/ledger-live/commit/29596039c7129ac7a5dd216e1f1c172936bed43b), [`2cdf737`](https://github.com/LedgerHQ/ledger-live/commit/2cdf737ce9d268e248253d1f98bd614c0e30da3f), [`d77070a`](https://github.com/LedgerHQ/ledger-live/commit/d77070a51ec5e8c3cbb9457044991917b3b33a94), [`161ebff`](https://github.com/LedgerHQ/ledger-live/commit/161ebff460d0a96a53c707bd8d386e52596e1815), [`3ee9499`](https://github.com/LedgerHQ/ledger-live/commit/3ee9499c13c4c9f0fa02c396736d8b953c662703), [`fa0438d`](https://github.com/LedgerHQ/ledger-live/commit/fa0438d5bbad6e77164b5ab10ce2b878205b8b27), [`3c9c36d`](https://github.com/LedgerHQ/ledger-live/commit/3c9c36d4b6aba6232f04e124157bd8df08cf89da), [`b15271c`](https://github.com/LedgerHQ/ledger-live/commit/b15271ca307f00e929474a1560e64fd2af49b75e), [`85a7d14`](https://github.com/LedgerHQ/ledger-live/commit/85a7d14d54b4f7f411a3789e310e6f1b8d2d79bb), [`c6cc201`](https://github.com/LedgerHQ/ledger-live/commit/c6cc2011f7a2ccc1ac3afd9d3c62195a0fafcedc), [`c4792da`](https://github.com/LedgerHQ/ledger-live/commit/c4792da62785d15ebbb543c81f444aeb6a62bafc), [`4ff1d9a`](https://github.com/LedgerHQ/ledger-live/commit/4ff1d9a587abb474300d0e1c188eeb62b0de66ea), [`bb23f63`](https://github.com/LedgerHQ/ledger-live/commit/bb23f63969464f78d1e736b4d9d95881e7016e73), [`f7f5295`](https://github.com/LedgerHQ/ledger-live/commit/f7f529560de8f7ee9d2ddf98f048610b9335d550), [`aeab021`](https://github.com/LedgerHQ/ledger-live/commit/aeab021a770f44f773a482aef4e84d59f1f8ce74), [`6078fe6`](https://github.com/LedgerHQ/ledger-live/commit/6078fe6dd0352e0e5faedb3973db6c3812fb775f), [`c5ad33d`](https://github.com/LedgerHQ/ledger-live/commit/c5ad33db466f7a5eaf24a70f571afdbf2496979a), [`e49ec73`](https://github.com/LedgerHQ/ledger-live/commit/e49ec73d6b7585296733111b455a20766f9a7e8a), [`2e6c630`](https://github.com/LedgerHQ/ledger-live/commit/2e6c630470a92067b3f4e653787b755c21fb433b), [`7fffee2`](https://github.com/LedgerHQ/ledger-live/commit/7fffee2e21d1a9b056d026bd2ff50431a1b2793a), [`79da9a3`](https://github.com/LedgerHQ/ledger-live/commit/79da9a3dd691d66e3d10e63307839964ed740805), [`13a1746`](https://github.com/LedgerHQ/ledger-live/commit/13a1746e2f3a76a0b0f36d3818b7a18e524e46da), [`3cd826e`](https://github.com/LedgerHQ/ledger-live/commit/3cd826e45ed303ae0d6bb3990bfcf994ca9c4701), [`d3b0f92`](https://github.com/LedgerHQ/ledger-live/commit/d3b0f92aadd5743ec190f72e2212d665a776ce43), [`b004476`](https://github.com/LedgerHQ/ledger-live/commit/b0044764e765d48ff2edabb567a6e71dbd820276), [`a650f44`](https://github.com/LedgerHQ/ledger-live/commit/a650f4490c10c997ea31debe198ab6988a78d1e5), [`0a659c3`](https://github.com/LedgerHQ/ledger-live/commit/0a659c3a71c902aaf951d76cfd9362f939711487), [`118d19c`](https://github.com/LedgerHQ/ledger-live/commit/118d19c07df9b751e4a96fa2dc4ea0e235378d9e)]:
+  - @ledgerhq/live-common@38.9.0
+  - @ledgerhq/live-wallet@1.3.0
+  - @domain/entity-currency-crypto@0.20.0
+  - @ledgerhq/types-live@6.133.0
+  - @ledgerhq/ledger-wallet-framework@3.13.0
+  - @ledgerhq/coin-zcash@1.3.0
+  - @features/platform-device-onboarding@0.7.0
+  - @features/platform-intent-verify-address@0.5.0
+  - @features/flow-receive@0.3.0
+  - @domain/entity-account-alias@0.3.0
+  - @features/flow-account-detail-hero@0.5.0
+  - @domain/entity-account-status@0.1.0
+  - @shared/feature-flags@0.32.0
+  - @features/flow-agent-intent-entry-points@0.3.0
+  - @ledgerhq/coin-canton@3.0.0
+  - @features/flow-pay-card-auth@0.14.0
+  - @features/flow-pay-card-transactions@0.8.0
+  - @domain/api-card-management@0.10.0
+  - @ledgerhq/wallet-btc@1.3.0
+  - @ledgerhq/coin-bitcoin@1.4.0
+  - @ledgerhq/coin-cardano@3.1.0
+  - @ledgerhq/coin-casper@3.9.0
+  - @ledgerhq/coin-concordium@1.9.0
+  - @ledgerhq/coin-filecoin@3.0.0
+  - @ledgerhq/coin-stacks@0.38.0
+  - @domain/entity-currency-token@0.6.0
+  - @domain/api-currency-token@0.9.0
+  - @ledgerhq/react-ui@0.57.0
+  - @features/flow-pay-card-details@0.12.0
+  - @features/flow-app-availability@0.4.0
+  - @features/platform-coin-observability@0.3.0
+  - @features/platform-account-source-coin-module@0.4.0
+  - @features/platform-market-countervalues@0.6.0
+  - @domain/entity-market-countervalues@0.6.0
+  - @ledgerhq/live-dmk-shared@0.41.0
+  - @devtools/bindings@0.17.0
+  - @features/flow-history-export@0.2.0
+  - @devtools/shell@0.16.0
+  - @features/flow-contacts-add-address@0.11.0
+  - @features/flow-pay-contact@0.10.0
+  - @features/platform-device-intent@5.6.0
+  - @shared/analytics@0.5.0
+  - @features/platform-intent-wallet-sync@0.4.0
+  - @shared/live-config-overrides@0.3.0
+  - @features/flow-predictions@0.4.0
+  - @domain/entity-account-name@0.5.0
+  - @domain/entity-starred-account@0.2.0
+  - @features/flow-pay-card-widget@0.8.0
+  - @features/flow-pay-balance@0.11.0
+  - @ledgerhq/asset-aggregation@0.20.0
+  - @ledgerhq/transaction-observability@0.7.0
+  - @features/flow-pay-feature-tour@0.11.0
+  - @features/flow-pay-bank-transfer@0.6.0
+  - @features/flow-account-detail-delegations@0.4.0
+  - @ledgerhq/asset-detail@0.13.2
+  - @ledgerhq/live-dmk-desktop@0.27.2
+  - @ledgerhq/live-send@0.2.2
+  - @domain/api-aggregated-assets@0.7.2
+  - @domain/api-market-countervalues@0.4.1
+  - @domain/entity-currency@0.5.1
+  - @features/flow-account-analytics@0.3.1
+  - @features/flow-account-detail-notices@0.3.0
+  - @features/flow-account-detail-settings@0.3.3
+  - @features/flow-contacts-detail@0.5.1
+  - @features/platform-account-analytics@0.2.0
+  - @features/platform-assets-table@0.3.2
+  - @features/platform-contacts@0.13.1
+  - @features/platform-currencies@0.14.1
+  - @ledgerhq/wallet-analytics@0.5.7
+  - @ledgerhq/wallet-pnl@0.10.1
+  - @ledgerhq/live-signer-evm@0.24.7
+  - @features/flow-account-detail@0.5.1
+  - @features/flow-large-screen-upsell@2.5.1
+  - @features/flow-portfolio-services-entry-points@0.3.2
+  - @features/platform-feature-flags@0.13.1
+  - @features/platform-feature-flags-firebase@0.1.6
+  - @domain/api-account-data@0.6.1
+  - @domain/entity-account@0.4.1
+  - @domain/entity-account-balance@0.3.2
+  - @domain/entity-account-balance-history@0.3.1
+  - @domain/entity-account-data@0.6.1
+  - @domain/entity-account-operation@0.3.1
+  - @domain/entity-account-receive@0.1.1
+  - @features/flow-pay-card@0.9.2
+  - @features/flow-pay-card-assets@0.7.2
+  - @features/platform-card@0.10.1
+  - @ledgerhq/live-signer-tron@0.2.7
+  - @features/platform-predictions@0.4.2
+  - @features/flow-fear-and-greed@0.6.1
+  - @features/platform-pay-analytics@0.4.1
+  - @shared/analytics-react@0.5.1
+  - @features/flow-account-detail-analytics-notice@0.4.0
+  - @features/flow-account-detail-balance-summary@0.1.0
+  - @features/flow-analytics-consent@0.2.15
+  - @features/flow-contacts@0.18.2
+  - @features/flow-contacts-add-contact@0.10.3
+  - @features/flow-contacts-delete-address@0.4.3
+  - @features/flow-contacts-delete-contact@0.5.3
+  - @features/flow-contacts-edit-address@0.8.1
+  - @features/flow-contacts-edit-contact@0.9.3
+  - @features/flow-contacts-introduction@1.6.0
+  - @features/flow-contacts-list@0.12.3
+  - @features/flow-pay-deposit@0.7.1
+  - @features/flow-pay-request@0.11.1
+  - @features/platform-aggregated-assets@0.7.2
+  - @domain/entity-contact@0.13.1
+  - @features/platform-content-ab-tests@0.2.6
+
+## 4.30.0-next.1
+
+### Minor Changes
+
+- [#25336](https://github.com/LedgerHQ/ledger-live/pull/25336) [`bbd329b`](https://github.com/LedgerHQ/ledger-live/commit/bbd329b9fd0f63766fcb7c3c9f6fbea3c45d0286) Thanks [@ben778899](https://github.com/ben778899)! - Add release notes for Ledger Wallet Desktop 4.30.0.
+
+## 4.30.0-next.0
+
+### Minor Changes
+
+- [#23224](https://github.com/LedgerHQ/ledger-live/pull/23224) [`79e96f7`](https://github.com/LedgerHQ/ledger-live/commit/79e96f7f41181a20bcee56c39fe528c2186eeede) Thanks [@cted-ledger](https://github.com/cted-ledger)! - give the zcash currencies their own zcash family: served by coin-zcash and the desktop zcash family module, and still presented to live apps as bitcoin-family currencies
+
+- [#25112](https://github.com/LedgerHQ/ledger-live/pull/25112) [`1212cce`](https://github.com/LedgerHQ/ledger-live/commit/1212ccec295fecbb8fd023f5a13ded5851b4d208) Thanks [@deepyjr](https://github.com/deepyjr)! - Cap the Asset and Account Detail back history at three pages so Back reaches the entry point
+
+- [#24874](https://github.com/LedgerHQ/ledger-live/pull/24874) [`e1db61a`](https://github.com/LedgerHQ/ledger-live/commit/e1db61afaa383e6c5f0f5608ac0c7cf83436fff6) Thanks [@LucasWerey](https://github.com/LucasWerey)! - Report how a verify-address intent ended as a Result, stop the remaining device requests and the running signer action of a cancelled verification, and give the Device Intent Executor wrappers the error screen the user closed
+
+- [#25150](https://github.com/LedgerHQ/ledger-live/pull/25150) [`0402a49`](https://github.com/LedgerHQ/ledger-live/commit/0402a49664305a1d23056cad9b288576331f7ffb) Thanks [@deepyjr](https://github.com/deepyjr)! - Load the wallet state together with the accounts at startup so custom account names no longer reset to the default
+
+- [#25015](https://github.com/LedgerHQ/ledger-live/pull/25015) [`0ed522e`](https://github.com/LedgerHQ/ledger-live/commit/0ed522eb7807af4e815f2aa3fd7d2bc18a1d35fc) Thanks [@deepyjr](https://github.com/deepyjr)! - Add an app-toggles DevTools tool with a toggle to hide the pre-release overlay on nightly builds
+
+- [#25127](https://github.com/LedgerHQ/ledger-live/pull/25127) [`aff97a0`](https://github.com/LedgerHQ/ledger-live/commit/aff97a0a8888e85a66b8d121f41adfa2ea884673) Thanks [@LucasWerey](https://github.com/LucasWerey)! - Verify the receive address on the device with the Device Intent Executor, and show whether it matches once the user confirms on the device
+
+- [#24968](https://github.com/LedgerHQ/ledger-live/pull/24968) [`929daee`](https://github.com/LedgerHQ/ledger-live/commit/929daee1dfbc309739a3b27af971b588e052f76a) Thanks [@cted-ledger](https://github.com/cted-ledger)! - Bump `@ledgerhq/zcash-utils` to 2.10.0. `parsePczt` returns the unified address the user entered for an output (`userAddress`, `userAddressReceivers`), and the Windows binary links the C runtime statically, so it loads on a machine without the Visual C++ Redistributable.
+
+- [#24864](https://github.com/LedgerHQ/ledger-live/pull/24864) [`4f46643`](https://github.com/LedgerHQ/ledger-live/commit/4f466432512683457cbdca0ce7b64ddbf678c64d) Thanks [@gre-ledger](https://github.com/gre-ledger)! - Add the `accountStatus` and `assetStatus` account data kinds: whether an account was ever used and the onboarding it needs before it receives or sends, and per asset the activation it needs before holding it. No source answers them yet
+
+- [#24947](https://github.com/LedgerHQ/ledger-live/pull/24947) [`27f3e4e`](https://github.com/LedgerHQ/ledger-live/commit/27f3e4eb74ac31f0f53aa55803ad7f082f669fe3) Thanks [@deepyjr](https://github.com/deepyjr)! - Show the Agent Intent new badge from the agentIntent flag and track it
+
+- [#25197](https://github.com/LedgerHQ/ledger-live/pull/25197) [`ce2c91d`](https://github.com/LedgerHQ/ledger-live/commit/ce2c91dde08828cc6a213ab19ba1e13efccacc41) Thanks [@deepyjr](https://github.com/deepyjr)! - Open the Baanx manage assets page (`/manage-assets`) from the Pay card Add asset button instead of `/dashboard/accounts/crypto`
+
+- [#25170](https://github.com/LedgerHQ/ledger-live/pull/25170) [`3d08df9`](https://github.com/LedgerHQ/ledger-live/commit/3d08df951fb2c440e7411131c4d3b42f7134b336) Thanks [@mateuszpalosz-ext](https://github.com/mateuszpalosz-ext)! - Add a Manage button on the XRP account that opens a Manage assets dialog listing its tokens, and remove the Manage token and Remove token actions from XRP token accounts
+
+- [#25042](https://github.com/LedgerHQ/ledger-live/pull/25042) [`fe1f525`](https://github.com/LedgerHQ/ledger-live/commit/fe1f5257edcee5b92db6153e9f7d619104446294) Thanks [@valeriiboiko-ext-ops](https://github.com/valeriiboiko-ext-ops)! - Enable the `currencyInjective` flag by default, so Injective stays available when remote config fails to load.
+
+- [#25176](https://github.com/LedgerHQ/ledger-live/pull/25176) [`e53d295`](https://github.com/LedgerHQ/ledger-live/commit/e53d295fcb840a2e8a8433daac282a6f22098707) Thanks [@LucasWerey](https://github.com/LucasWerey)! - Show the asset, its network and a close button in the header of the new receive address dialog
+
+- [#24744](https://github.com/LedgerHQ/ledger-live/pull/24744) [`a50e346`](https://github.com/LedgerHQ/ledger-live/commit/a50e34633e76c5e78472a5d50378ab16b5064d7b) Thanks [@thesan](https://github.com/thesan)! - Honor the updater feed, signature feed and public key overrides in every build that is not a production release, not only in prereleases
+
+- [#25005](https://github.com/LedgerHQ/ledger-live/pull/25005) [`671a1c8`](https://github.com/LedgerHQ/ledger-live/commit/671a1c822ddbc4d86276cc58c6da54fc55ebb48e) Thanks [@qperrot](https://github.com/qperrot)! - Update @ledgerhq/coin-stellar to 12.2.3: validate a send against the spendable balance, show trustline changes with a zero value and split liquidity pool operations per reserve
+
+- [#24742](https://github.com/LedgerHQ/ledger-live/pull/24742) [`8fbb9be`](https://github.com/LedgerHQ/ledger-live/commit/8fbb9beb39ff3ed1d1051d7df0b3e31a809f21f7) Thanks [@gre-ledger](https://github.com/gre-ledger)! - Bump ts-libs packages (`@ledgerhq/live-network` 3.4.0, `@ledgerhq/ledger-key-ring-protocol` 1.2.1, `@ledgerhq/live-currency-format` 0.17.1).
+
+- [#25179](https://github.com/LedgerHQ/ledger-live/pull/25179) [`347dbb6`](https://github.com/LedgerHQ/ledger-live/commit/347dbb6c160a61827cfe69b7568426399ee56ae0) Thanks [@gre-ledger](https://github.com/gre-ledger)! - Bump ts-libs packages (`@ledgerhq/live-network` 3.4.1, `@ledgerhq/ledger-key-ring-protocol` 1.2.2, `@ledgerhq/domain-service` 1.10.1, `@ledgerhq/evm-tools` 2.1.1), `axios` to 1.21.1 and `ws` to 8.23.0.
+
+- [#24710](https://github.com/LedgerHQ/ledger-live/pull/24710) [`7f9d635`](https://github.com/LedgerHQ/ledger-live/commit/7f9d635ec37270cad9b67e4082363716c1b1b464) Thanks [@liviuciulinaru](https://github.com/liviuciulinaru)! - Store CAL token categories and return them in Wallet API currency.list
+
+- [#24786](https://github.com/LedgerHQ/ledger-live/pull/24786) [`99b6ac4`](https://github.com/LedgerHQ/ledger-live/commit/99b6ac42226db15f35b9b2ea26f8d54847741ad7) Thanks [@gre-ledger](https://github.com/gre-ledger)! - Show a placeholder for unreadable card amounts and keep crypto address sorting stable when a countervalue is missing
+
+- [#24972](https://github.com/LedgerHQ/ledger-live/pull/24972) [`f3de33e`](https://github.com/LedgerHQ/ledger-live/commit/f3de33e5a7f9ea0865863b40170a7165449e479c) Thanks [@gre-ledger](https://github.com/gre-ledger)! - Bump color to v5, which ships its own types, and drop @types/color
+
+- [#25210](https://github.com/LedgerHQ/ledger-live/pull/25210) [`f7ac0a4`](https://github.com/LedgerHQ/ledger-live/commit/f7ac0a49b09243671e62772d1dea4b9e868b0f77) Thanks [@LL782](https://github.com/LL782)! - Run 1 renderer storage flush at a time, so a second close or quit waits for the writes of the first
+
+- [#24933](https://github.com/LedgerHQ/ledger-live/pull/24933) [`0ca351c`](https://github.com/LedgerHQ/ledger-live/commit/0ca351cd87534645d48b7f6350ae77f0894263a6) Thanks [@amaslakov](https://github.com/amaslakov)! - Show a Canton offer in CC or a CAL token's unit only when both its instrument id and admin match, looking a CAL token up in CAL when its sub-account is missing, and label any other offer's amount "Unknown token", with its instrument id and admin in the details
+
+- [#25202](https://github.com/LedgerHQ/ledger-live/pull/25202) [`7d53e6d`](https://github.com/LedgerHQ/ledger-live/commit/7d53e6d00fee463c822628e73421c6d4daee59f8) Thanks [@semeano](https://github.com/semeano)! - Show the UTXO notice again on the Zcash receive flow
+
+- [#24984](https://github.com/LedgerHQ/ledger-live/pull/24984) [`1965b3b`](https://github.com/LedgerHQ/ledger-live/commit/1965b3bf273684efccf61f389d5affe64a168900) Thanks [@kentoforik](https://github.com/kentoforik)! - Skip the Perps withdraw submit and the deposit swap tracking when transaction broadcast is disabled
+
+- [#24905](https://github.com/LedgerHQ/ledger-live/pull/24905) [`7517a80`](https://github.com/LedgerHQ/ledger-live/commit/7517a800a3d4b2f813c4e155db69bcf417d64e40) Thanks [@ysitbon](https://github.com/ysitbon)! - Remove unused exports from the Engagement code and the dead SyncDesktop onboarding scene
+
+- [#25063](https://github.com/LedgerHQ/ledger-live/pull/25063) [`1c9fff0`](https://github.com/LedgerHQ/ledger-live/commit/1c9fff0cf0d461add56e9349790373d5b582625a) Thanks [@semeano](https://github.com/semeano)! - Show the Send "Get {ticker}" CTA on insufficient funds only when Buy is available for the currency
+
+- [#24904](https://github.com/LedgerHQ/ledger-live/pull/24904) [`c6deea6`](https://github.com/LedgerHQ/ledger-live/commit/c6deea63c07bcde78d315bcbdabb73fec24bd09c) Thanks [@ysitbon](https://github.com/ysitbon)! - Remove unused exports from the Swap, Earn, Card, Borrow, Perps and Wallet API exchange code
+
+- [#25149](https://github.com/LedgerHQ/ledger-live/pull/25149) [`d4171a1`](https://github.com/LedgerHQ/ledger-live/commit/d4171a1120cf3f121c1618a2c55171db09d4e00c) Thanks [@deepyjr](https://github.com/deepyjr)! - Open the Ledger Sync main screen from the Ledger Sync deeplink instead of the last screen viewed
+
+- [#24953](https://github.com/LedgerHQ/ledger-live/pull/24953) [`4f58ecb`](https://github.com/LedgerHQ/ledger-live/commit/4f58ecb0b7ccff4059975de8be53c8d1d0ffa184) Thanks [@henri-ly](https://github.com/henri-ly)! - Block sends of tokens that CAL tags `non_transferable`, instead of a hardcoded list
+
+- [#24865](https://github.com/LedgerHQ/ledger-live/pull/24865) [`c47814c`](https://github.com/LedgerHQ/ledger-live/commit/c47814c94967febb435d0dcb77cc2f8de7f2c3f7) Thanks [@cted-ledger](https://github.com/cted-ledger)! - Make the `coin_module_call` tiers remotely configurable: a new `methodTiers` param of the `coinObservability` flag moves a coin-module method to the `transaction`, `preparation`, `sync` or `off` tier without a release. `craftTransactionData` moves to the `preparation` tier, since the bridge calls it on every edit of a transaction, and each `coin_module_call` now carries its `tier`. `shouldTransmitCoinModuleCall` is removed: `createCoinModuleCallTransmitter` holds the whole policy.
+
+- [#25172](https://github.com/LedgerHQ/ledger-live/pull/25172) [`5c0fdd1`](https://github.com/LedgerHQ/ledger-live/commit/5c0fdd126d68326f30d4ab911a69c79d718ed493) Thanks [@dilaouid](https://github.com/dilaouid)! - feat(solana): report the network fee, account deposit, locked reserve and shortfall apart in Solana insufficient SOL errors, including the token account rent of `token.createATA`
+
+- [#24782](https://github.com/LedgerHQ/ledger-live/pull/24782) [`a2a5926`](https://github.com/LedgerHQ/ledger-live/commit/a2a5926407deefc147511c80e786ec5298bd0f1c) Thanks [@Moustafa-Koterba](https://github.com/Moustafa-Koterba)! - Remove the redundant memo field from Cosmos transactions and keep memoType and memoValue
+
+- [#24712](https://github.com/LedgerHQ/ledger-live/pull/24712) [`52989bd`](https://github.com/LedgerHQ/ledger-live/commit/52989bd859af9f162d0a01758fb1d0c366f767de) Thanks [@LL782](https://github.com/LL782)! - Fix lost app.json saves when a window params save comes within the debounce delay.
+
+- [#24868](https://github.com/LedgerHQ/ledger-live/pull/24868) [`2306c28`](https://github.com/LedgerHQ/ledger-live/commit/2306c2891e5ed4b13c36496bf22e184fa0dbf9d2) Thanks [@gre-ledger](https://github.com/gre-ledger)! - Add the account-status DevTools tool, reading the `accountStatus` and `assetStatus` kinds per account and asset with the gates they make, and both kinds to the mock source
+
+- [#25020](https://github.com/LedgerHQ/ledger-live/pull/25020) [`cba4e59`](https://github.com/LedgerHQ/ledger-live/commit/cba4e590cd5adbcc11d4cdb809642ad223ac561a) Thanks [@LL782](https://github.com/LL782)! - Read and write the discover record through 1 useDiscoverDB hook in each app
+
+- [#25155](https://github.com/LedgerHQ/ledger-live/pull/25155) [`6942305`](https://github.com/LedgerHQ/ledger-live/commit/694230569140fdc32c9ea7a0f0e906c4d2ded0a7) Thanks [@gre-ledger](https://github.com/gre-ledger)! - Add an account discovery DevTools page: scan a currency with the scan accounts Device Intent and list the accounts found with what the scan cost
+
+- [#24974](https://github.com/LedgerHQ/ledger-live/pull/24974) [`6934be2`](https://github.com/LedgerHQ/ledger-live/commit/6934be2edd36794a5b6b892cedd8be235b568585) Thanks [@gre-ledger](https://github.com/gre-ledger)! - Replace react-motion with a CSS transition in the device swivel icons
+
+- [#25012](https://github.com/LedgerHQ/ledger-live/pull/25012) [`c80f5de`](https://github.com/LedgerHQ/ledger-live/commit/c80f5de17b263d8e111ddd3b3247b04f7b9a687a) Thanks [@dilaouid](https://github.com/dilaouid)! - Add Bitcoin Signet currency (bitcoin_signet)
+
+- [#25085](https://github.com/LedgerHQ/ledger-live/pull/25085) [`291cc2d`](https://github.com/LedgerHQ/ledger-live/commit/291cc2d4bcc47fb69bcc8c7cd62fb6332a68ba4c) Thanks [@deepyjr](https://github.com/deepyjr)! - Move the History CSV export dialog into the shared @features/flow-history-export flow, with no visible change on desktop
+
+- [#25139](https://github.com/LedgerHQ/ledger-live/pull/25139) [`0201072`](https://github.com/LedgerHQ/ledger-live/commit/0201072c5e4d8b91d2da5f5e9430f84b31486b42) Thanks [@LL782](https://github.com/LL782)! - Keep the OFAC blocked screen when a refetch of the check fails after a 451
+
+- [#24901](https://github.com/LedgerHQ/ledger-live/pull/24901) [`ec37034`](https://github.com/LedgerHQ/ledger-live/commit/ec370344705f2be7985729e901879d96138d6e47) Thanks [@ysitbon](https://github.com/ysitbon)! - Remove unused exports from the device action and device intent executor files
+
+- [#24882](https://github.com/LedgerHQ/ledger-live/pull/24882) [`76bab76`](https://github.com/LedgerHQ/ledger-live/commit/76bab76cf7009c9d5f6f54b2608157b3f0419a4e) Thanks [@ysitbon](https://github.com/ysitbon)! - Keep the Ledger Sync result of an add or remove member run when the device disconnects after the user approved it, unless Ledger Sync was reset in between. Each app orders late results with its own result order, passed in every add and remove member input. Ledger Wallet Desktop tracks the activation when the result arrives, so a late activation is tracked too.
+
+- [#24613](https://github.com/LedgerHQ/ledger-live/pull/24613) [`3b117a7`](https://github.com/LedgerHQ/ledger-live/commit/3b117a73628de3dc530c2fa8cd20486c7a2718b3) Thanks [@YazhuEth](https://github.com/YazhuEth)! - Animate the Send and Predictions dialog heights with Lumen's `animated` Dialog prop instead of `@shared/ui-animated-height`, which is removed
+
+- [#24992](https://github.com/LedgerHQ/ledger-live/pull/24992) [`287cc7c`](https://github.com/LedgerHQ/ledger-live/commit/287cc7cacb509edd92326b7c6271dfdba42ddd22) Thanks [@ysitbon](https://github.com/ysitbon)! - Keep the side drawer close button after a device step: a reader of the device blocked state mounted while the last blocker unmounts no longer stays blocked
+
+- [#24799](https://github.com/LedgerHQ/ledger-live/pull/24799) [`90db489`](https://github.com/LedgerHQ/ledger-live/commit/90db48910c3525f69fcef5a3644b666febd6a434) Thanks [@live-github-bot](https://github.com/apps/live-github-bot)! - Update @ledgerhq/coin-evm, handle EVM operations with no nonce, and stop including in a native send's amount a fee another account paid, such as a zkSync paymaster
+
+- [#24846](https://github.com/LedgerHQ/ledger-live/pull/24846) [`5030038`](https://github.com/LedgerHQ/ledger-live/commit/50300388e60a2afd79f14935309bf44d07de0afa) Thanks [@ooke-ledger](https://github.com/ooke-ledger)! - Share the Perps deposit execution between desktop and mobile
+
+- [#24860](https://github.com/LedgerHQ/ledger-live/pull/24860) [`c8b2a04`](https://github.com/LedgerHQ/ledger-live/commit/c8b2a04b0cf138801a9ccea3934c6bdc3f8b0406) Thanks [@ooke-ledger](https://github.com/ooke-ledger)! - Share the Perps deposit review details and success params between desktop and mobile
+
+- [#25173](https://github.com/LedgerHQ/ledger-live/pull/25173) [`a8363ee`](https://github.com/LedgerHQ/ledger-live/commit/a8363eeb2cd97ce1942bfe0938ec317536e630c6) Thanks [@LucasWerey](https://github.com/LucasWerey)! - Name the asset received and its network on the new receive address screen
+
+- [#25092](https://github.com/LedgerHQ/ledger-live/pull/25092) [`3f3d812`](https://github.com/LedgerHQ/ledger-live/commit/3f3d812c1f1bdc4b5a9eab4706bb88e079e1b31e) Thanks [@YazhuEth](https://github.com/YazhuEth)! - Show the Learn more link under the binding error's explanation instead of in its title, and say how to enable blind signing
+
+- [#24945](https://github.com/LedgerHQ/ledger-live/pull/24945) [`f5045dc`](https://github.com/LedgerHQ/ledger-live/commit/f5045dc9e69cf20b791779042acbaaf52b73b516) Thanks [@LucasWerey](https://github.com/LucasWerey)! - Add the receive list and deeplink sections to the receive DevTools tool: the bindings list each account and token from the account model, and the apps open receive through their current receive openers
+
+- [#24861](https://github.com/LedgerHQ/ledger-live/pull/24861) [`16bc82a`](https://github.com/LedgerHQ/ledger-live/commit/16bc82a772d61b5c2ca659922ffa8e74eab283d7) Thanks [@henri-ly](https://github.com/henri-ly)! - Check a Solana transaction's blockhash before simulating it and report an expired one as `SolanaTxBlockhashExpired`, shown as is in the send flows with wording that asks the user to try again. Durable-nonce transactions skip the check, and a simulation that cannot find the blockhash runs once more after 500 ms
+
+- [#25136](https://github.com/LedgerHQ/ledger-live/pull/25136) [`915ff18`](https://github.com/LedgerHQ/ledger-live/commit/915ff18f05bdd1b267d98a3e3793330e2d99cab1) Thanks [@lysyi3m](https://github.com/lysyi3m)! - Read the Celo fee asset from coin-evm: fees in their token's units, a FEES operation for a fee paid in a token, and operation details in that token. `getCeloTransactionFeeCurrency` is deprecated
+
+- [#24885](https://github.com/LedgerHQ/ledger-live/pull/24885) [`f6b0bd4`](https://github.com/LedgerHQ/ledger-live/commit/f6b0bd4699b8e8dad4865b0ee6cfbcd60177ed7c) Thanks [@ysitbon](https://github.com/ysitbon)! - Remove unused exports from the Send, Canton, Aleo, EVM delegation and Web3 Hub code
+
+- [#25118](https://github.com/LedgerHQ/ledger-live/pull/25118) [`81a7507`](https://github.com/LedgerHQ/ledger-live/commit/81a75074d037b08333f228d6fa7d593e1dc87060) Thanks [@LL782](https://github.com/LL782)! - Flush the pending storage writes before the window closes or the app quits
+
+- [#24884](https://github.com/LedgerHQ/ledger-live/pull/24884) [`54dbb60`](https://github.com/LedgerHQ/ledger-live/commit/54dbb60cde959955f5965bf6710520a05c2cd1da) Thanks [@ysitbon](https://github.com/ysitbon)! - Move the React exports of live-dmk-shared to a `@ledgerhq/live-dmk-shared/react` entry point so the root entry imports no React
+
+- [#24843](https://github.com/LedgerHQ/ledger-live/pull/24843) [`7dcd783`](https://github.com/LedgerHQ/ledger-live/commit/7dcd783f05b13b8433250c6a9aa48dec6d63ef8e) Thanks [@mdomanski-ext-ledger](https://github.com/mdomanski-ext-ledger)! - XRP tokens: bump coin-xrp to 13.8.0, offer Max when sending a token, show the issuer fee and Receive/Buy for an unactivated account on the review step, add new error messages, list a token settings edit on the XRP account only
+
+- [#25203](https://github.com/LedgerHQ/ledger-live/pull/25203) [`3962b9a`](https://github.com/LedgerHQ/ledger-live/commit/3962b9a38998a5ff4e39cd045aa03bf8fe3dba3a) Thanks [@LL782](https://github.com/LL782)! - Resolve db.setKey once main holds the value, so the quit flush does not wait for each debounced disk write
+
+- [#25202](https://github.com/LedgerHQ/ledger-live/pull/25202) [`7d53e6d`](https://github.com/LedgerHQ/ledger-live/commit/7d53e6d00fee463c822628e73421c6d4daee59f8) Thanks [@semeano](https://github.com/semeano)! - Move the desktop Zcash UI out of the bitcoin family into its own family module
+
+- [#25007](https://github.com/LedgerHQ/ledger-live/pull/25007) [`4110ced`](https://github.com/LedgerHQ/ledger-live/commit/4110ced7d44e38a5e5acf71ae090425ca5972c1a) Thanks [@deepyjr](https://github.com/deepyjr)! - chore(lumen): bump ui-react to 0.1.73 (LIVE-41584)
+
+  `SegmentedControl` fixes its RTL scroll overflow and its scroll arrows no longer fade, size-32 `Spot` icons grow from 12 to 16 px, size-32 `DotSymbol` corners from 10 to 12, decorative `ProgressBar` fills use the `decorativeStrong*` tokens and `Dialog` gains an optional `animated` prop.
+
+- [#24632](https://github.com/LedgerHQ/ledger-live/pull/24632) [`0d2408b`](https://github.com/LedgerHQ/ledger-live/commit/0d2408b512c57c64a1060088181c1eb22205f1c9) Thanks [@vladyslavchupovskiy-ext-art](https://github.com/vladyslavchupovskiy-ext-art)! - Sign raw Sui transactions through Wallet API
+
+- [#25098](https://github.com/LedgerHQ/ledger-live/pull/25098) [`f9c75e0`](https://github.com/LedgerHQ/ledger-live/commit/f9c75e0aacaa5776225257a9c23b8fc674ba7ae5) Thanks [@mateuszpalosz-ext](https://github.com/mateuszpalosz-ext)! - Let a coin family register an account dialog, mounted once in GlobalDialogs and opened with `openFamilyDialog`
+
+- [#24254](https://github.com/LedgerHQ/ledger-live/pull/24254) [`90af53f`](https://github.com/LedgerHQ/ledger-live/commit/90af53fdcab2448e07ced5f4cc8d37efad261c6b) Thanks [@qperrot](https://github.com/qperrot)! - Disable speed up and cancel (RBF) on transactions broadcast by a sell flow
+
+- [#25054](https://github.com/LedgerHQ/ledger-live/pull/25054) [`9924d57`](https://github.com/LedgerHQ/ledger-live/commit/9924d57433212aaaf4491573b5777236e01c3559) Thanks [@cted-ledger](https://github.com/cted-ledger)! - Make `DEFAULT_METHOD_TIERS` a whitelist of the observed coin-module methods: a method it does not list is `off` unless the `coinObservability` flag gives it a tier, and live-common no longer checks at compile time that it names every method of the contract, so a coin-module-framework release that adds a method no longer breaks the build.
+
+- [#25175](https://github.com/LedgerHQ/ledger-live/pull/25175) [`832b6fd`](https://github.com/LedgerHQ/ledger-live/commit/832b6fd06c64a879c95b4baccc6dd8b111e3f4ac) Thanks [@vladyslavchupovskiy-ext-art](https://github.com/vladyslavchupovskiy-ext-art)! - Show not enough balance for a Sui token amount above its balance, and compute token send max from the token balance
+
+- [#24862](https://github.com/LedgerHQ/ledger-live/pull/24862) [`14ab34d`](https://github.com/LedgerHQ/ledger-live/commit/14ab34dbbf4c1768fcdc8928f6db43d9ec58f10b) Thanks [@mdomanski-ext-ledger](https://github.com/mdomanski-ext-ledger)! - XRP tokens: opt-out mode for removing a token, its pending row and device fields, a token missing from the balance drops its account, and the opt-out error messages
+
+- [#24976](https://github.com/LedgerHQ/ledger-live/pull/24976) [`e516034`](https://github.com/LedgerHQ/ledger-live/commit/e5160345b50c0dc9e7c490da72d641c631d2ef7f) Thanks [@gre-ledger](https://github.com/gre-ledger)! - Remove unused lodash, invariant, prop-types and @types dependencies, and stop relying on the global React namespace in types-live
+
+- [#25133](https://github.com/LedgerHQ/ledger-live/pull/25133) [`ac052f5`](https://github.com/LedgerHQ/ledger-live/commit/ac052f5c42e9151f445e3ff4b20e811fbcfa84b4) Thanks [@LucasWerey](https://github.com/LucasWerey)! - Lay out the zones of the new receive address screen
+
+- [#25225](https://github.com/LedgerHQ/ledger-live/pull/25225) [`fa94370`](https://github.com/LedgerHQ/ledger-live/commit/fa943701719e0fd0d6f9fb28f1c8bb90f6a7c5c9) Thanks [@LucasWerey](https://github.com/LucasWerey)! - Animate the receive QR code on desktop too: a shimmer while the address loads, and a ripple when it is copied from the code or the Copy button
+
+- [#24917](https://github.com/LedgerHQ/ledger-live/pull/24917) [`3321629`](https://github.com/LedgerHQ/ledger-live/commit/3321629d1a473d0e2eb49e92ae12a8a3c9a05131) Thanks [@dilaouid](https://github.com/dilaouid)! - feat(send): margin header and contact match in new send flow lwd
+
+- [#24647](https://github.com/LedgerHQ/ledger-live/pull/24647) [`af01e1d`](https://github.com/LedgerHQ/ledger-live/commit/af01e1d6d4b930c8ad6887e93201d38d4f434940) Thanks [@renovate-operator-ledger](https://github.com/apps/renovate-operator-ledger)! - chore(deps): update dependency oxlint to v1.93.0
+
+  - Updated `oxlint` to `1.93.0`
+
+- [#24916](https://github.com/LedgerHQ/ledger-live/pull/24916) [`8b667f3`](https://github.com/LedgerHQ/ledger-live/commit/8b667f33e565cabb793f128b78f3b6bfb83037b5) Thanks [@renovate-operator-ledger](https://github.com/apps/renovate-operator-ledger)! - chore(deps): update dependency electron to v45.3.2
+
+  - Updated `electron` to `45.3.2`
+
+- [#24936](https://github.com/LedgerHQ/ledger-live/pull/24936) [`92190a5`](https://github.com/LedgerHQ/ledger-live/commit/92190a5c957c3a9336cc58bb35a7cf55210a7853) Thanks [@renovate-operator-ledger](https://github.com/apps/renovate-operator-ledger)! - chore(deps): update nx monorepo to v24.0.6
+
+  - Updated `nx` to `24.0.6`
+
+- [#24938](https://github.com/LedgerHQ/ledger-live/pull/24938) [`a93c5f7`](https://github.com/LedgerHQ/ledger-live/commit/a93c5f71a19f2459309af5ed67538501bda6f39a) Thanks [@renovate-operator-ledger](https://github.com/apps/renovate-operator-ledger)! - chore(deps): update rstack
+
+  - Updated `@rsbuild/core` to `2.3.2`
+  - Updated `@rsdoctor/core` to `2.0.3`
+  - Updated `@rslib/core` to `1.0.7`
+  - Updated `@rspack/cli` to `2.3.2`
+  - Updated `@rspack/core` to `2.3.2`
+  - Updated `@rspack/plugin-react-refresh` to `2.0.3`
+
+- [#24987](https://github.com/LedgerHQ/ledger-live/pull/24987) [`2959603`](https://github.com/LedgerHQ/ledger-live/commit/29596039c7129ac7a5dd216e1f1c172936bed43b) Thanks [@KVNLS](https://github.com/KVNLS)! - Restore account balance history from its saved cache and compute only the periods since it was saved, also when the history is shown before the account syncs
+
+- [#25221](https://github.com/LedgerHQ/ledger-live/pull/25221) [`35fa0ca`](https://github.com/LedgerHQ/ledger-live/commit/35fa0ca78c4675376df8ac8882994e703ccefb57) Thanks [@LL782](https://github.com/LL782)! - Share the read of a storage file between concurrent calls, so a later read does not replace a value that a setKey just set
+
+- [#24981](https://github.com/LedgerHQ/ledger-live/pull/24981) [`317d45a`](https://github.com/LedgerHQ/ledger-live/commit/317d45adf36c1ae3361c9596c9f4bc4734e62be4) Thanks [@thesan](https://github.com/thesan)! - Check the signature of an app update before downloading it
+
+- [#25107](https://github.com/LedgerHQ/ledger-live/pull/25107) [`161ebff`](https://github.com/LedgerHQ/ledger-live/commit/161ebff460d0a96a53c707bd8d386e52596e1815) Thanks [@mdomanski-ext-ledger](https://github.com/mdomanski-ext-ledger)! - XRP: delete a token from Manage assets on mobile
+
+- [#25108](https://github.com/LedgerHQ/ledger-live/pull/25108) [`fa0438d`](https://github.com/LedgerHQ/ledger-live/commit/fa0438d5bbad6e77164b5ab10ce2b878205b8b27) Thanks [@semeano](https://github.com/semeano)! - Show a single network fee option in Send when every estimated fee preset costs the same
+
+- [#25047](https://github.com/LedgerHQ/ledger-live/pull/25047) [`b15271c`](https://github.com/LedgerHQ/ledger-live/commit/b15271ca307f00e929474a1560e64fd2af49b75e) Thanks [@LucasWerey](https://github.com/LucasWerey)! - Route every receive entry point through one rule that opens the new receive dialog behind the newReceiveFlow flag
+
+- [#24912](https://github.com/LedgerHQ/ledger-live/pull/24912) [`b7fb0c1`](https://github.com/LedgerHQ/ledger-live/commit/b7fb0c1ff2d2522d2062e781f2fc592599b1922a) Thanks [@dilaouid](https://github.com/dilaouid)! - feat(send): Give the Add contact and Send buttons of the new send flow recipient card the same width in every language in LWD
+
+- [#25192](https://github.com/LedgerHQ/ledger-live/pull/25192) [`85a7d14`](https://github.com/LedgerHQ/ledger-live/commit/85a7d14d54b4f7f411a3789e310e6f1b8d2d79bb) Thanks [@LucasWerey](https://github.com/LucasWerey)! - Read the address shown on the new receive address screen, with the Zcash choice between its public and private addresses
+
+- [#25196](https://github.com/LedgerHQ/ledger-live/pull/25196) [`c4792da`](https://github.com/LedgerHQ/ledger-live/commit/c4792da62785d15ebbb543c81f444aeb6a62bafc) Thanks [@LucasWerey](https://github.com/LucasWerey)! - Show the QR card and the address on the new receive address dialog, and the Zcash choice between public and private addresses
+
+- [#25160](https://github.com/LedgerHQ/ledger-live/pull/25160) [`f7f5295`](https://github.com/LedgerHQ/ledger-live/commit/f7f529560de8f7ee9d2ddf98f048610b9335d550) Thanks [@LucasWerey](https://github.com/LucasWerey)! - Read the new receive screen data from the account model, and tell Tron's inactive account from its account status
+
+- [#24952](https://github.com/LedgerHQ/ledger-live/pull/24952) [`6078fe6`](https://github.com/LedgerHQ/ledger-live/commit/6078fe6dd0352e0e5faedb3973db6c3812fb775f) Thanks [@vpenskyi-ledger](https://github.com/vpenskyi-ledger)! - Wait for the Perps withdraw to show in the HyperCore balance, and refresh it when the withdraw form opens
+
+- [#25222](https://github.com/LedgerHQ/ledger-live/pull/25222) [`c5ad33d`](https://github.com/LedgerHQ/ledger-live/commit/c5ad33db466f7a5eaf24a70f571afdbf2496979a) Thanks [@LucasWerey](https://github.com/LucasWerey)! - Show a skeleton on the new receive address screen while the address loads, and an error with Retry when it cannot be read
+
+- [#23784](https://github.com/LedgerHQ/ledger-live/pull/23784) [`f31669c`](https://github.com/LedgerHQ/ledger-live/commit/f31669c66b754675f8004372543f5c296cd12163) Thanks [@KVNLS](https://github.com/KVNLS)! - Report failed renderer store writes and wait for the store to clear before relaunching after a hard reset
+
+- [#24903](https://github.com/LedgerHQ/ledger-live/pull/24903) [`e03eb3f`](https://github.com/LedgerHQ/ledger-live/commit/e03eb3f25e8fd4eb3e5d17af6907fbf8a5174e76) Thanks [@ysitbon](https://github.com/ysitbon)! - Remove unused navigation exports and route names from the apps
+
+- [#24989](https://github.com/LedgerHQ/ledger-live/pull/24989) [`79d8899`](https://github.com/LedgerHQ/ledger-live/commit/79d8899115c08d2e62bde0f180ef2dd2edacdfb6) Thanks [@ysitbon](https://github.com/ysitbon)! - Remove unused exports in Wallet XP desktop code, including the unused `Page.MarketCoin`, `GraphTrackingScreenName.Asset` and `GraphTrackingScreenName.Market` analytics names
+
+- [#24913](https://github.com/LedgerHQ/ledger-live/pull/24913) [`79da9a3`](https://github.com/LedgerHQ/ledger-live/commit/79da9a3dd691d66e3d10e63307839964ed740805) Thanks [@deepyjr](https://github.com/deepyjr)! - Show delegation amounts with at most 4 decimals, the exact amount in a tooltip, and hide the Solana active column
+
+- [#24639](https://github.com/LedgerHQ/ledger-live/pull/24639) [`a36827d`](https://github.com/LedgerHQ/ledger-live/commit/a36827d7be2d435960eb1689e9ffda6a5736d6b0) Thanks [@ishaba](https://github.com/ishaba)! - Tronify: say the energy delivery may take up to 2 minutes, and link to the provider terms without a source flag
+
+- [#24962](https://github.com/LedgerHQ/ledger-live/pull/24962) [`d3b0f92`](https://github.com/LedgerHQ/ledger-live/commit/d3b0f92aadd5743ec190f72e2212d665a776ce43) Thanks [@mdomanski-ext-ledger](https://github.com/mdomanski-ext-ledger)! - Rename the XRP currency to XRPL, after its network like other currencies, so default XRP accounts are named "XRPL 1"
+
+- [#24967](https://github.com/LedgerHQ/ledger-live/pull/24967) [`b004476`](https://github.com/LedgerHQ/ledger-live/commit/b0044764e765d48ff2edabb567a6e71dbd820276) Thanks [@mdomanski-ext-ledger](https://github.com/mdomanski-ext-ledger)! - Fix XRPL token issues found in manual testing:
+
+  - XRPL history skips operations newer than the synced ledger, which narrows the gap with the balance
+  - Add token: missing XRP shows on the review with a Receive action, instead of as a trust limit error
+  - Add token: the review waits for the issuer fee, and says when it can't be fetched with a Try again action
+  - Add token: trust limit errors show their description, such as "Use Max to set the highest limit."
+  - Add, edit and remove token: the success screen says the request was sent and applies once the network confirms it
+  - Send: the issuer fee row shows a placeholder while the fee is computed
+  - Send: token refusals have short titles, such as "Token is frozen"
+  - Send: a frozen or unauthorized token blocks the recipient step instead of asking the recipient to add the token
+  - Receive and empty token accounts name the account's token types (IOU, MPT)
+  - Token add, edit and remove rows in history show the token issuer instead of the token code
+
+- [#24894](https://github.com/LedgerHQ/ledger-live/pull/24894) [`f008404`](https://github.com/LedgerHQ/ledger-live/commit/f0084046d8db55822fc30a27acb2dee3dccfcfa1) Thanks [@mdomanski-ext-ledger](https://github.com/mdomanski-ext-ledger)! - XRP: remove a token, behind `enabledTokenStandards`. Token account pages get one header action: Manage token for an IOU, which offers Advanced settings and Remove token, and Remove token for an MPT. Remove token is disabled while the token is frozen or its removal pending, and signs an `optOut`, asks to send a held balance first, and shows the XRP it unlocks. The trust limit edit moves from the balance footer into Manage token.
+
+- [#24855](https://github.com/LedgerHQ/ledger-live/pull/24855) [`a650f44`](https://github.com/LedgerHQ/ledger-live/commit/a650f4490c10c997ea31debe198ab6988a78d1e5) Thanks [@mdomanski-ext-ledger](https://github.com/mdomanski-ext-ledger)! - XRP tokens: rippling switch on a trust line and Max switch for the trust limit
+
+- [#24888](https://github.com/LedgerHQ/ledger-live/pull/24888) [`0a659c3`](https://github.com/LedgerHQ/ledger-live/commit/0a659c3a71c902aaf951d76cfd9362f939711487) Thanks [@mdomanski-ext-ledger](https://github.com/mdomanski-ext-ledger)! - XRP token send: issuer fee row on the send flow's amount step
+
+  Send flow: address warnings that have a support article show a Learn more link, such as the XRP warning when sending a token to its issuer
+
+  XRP recipient errors and warnings: a short title and a description, so the address banners no longer cut them
+
+### Patch Changes
+
+- Updated dependencies [[`79e96f7`](https://github.com/LedgerHQ/ledger-live/commit/79e96f7f41181a20bcee56c39fe528c2186eeede), [`081c422`](https://github.com/LedgerHQ/ledger-live/commit/081c422494180f04d0fbaf9de4d59370d7927863), [`ed22b28`](https://github.com/LedgerHQ/ledger-live/commit/ed22b28719c1beff10352eb33901035a02b8555c), [`d1f10fb`](https://github.com/LedgerHQ/ledger-live/commit/d1f10fbe2b9a1c9a90d28e0b79a7113932437bdc), [`e1db61a`](https://github.com/LedgerHQ/ledger-live/commit/e1db61afaa383e6c5f0f5608ac0c7cf83436fff6), [`a869e8b`](https://github.com/LedgerHQ/ledger-live/commit/a869e8b37d098ba06c01d36516ad7a6abb9aa0a5), [`aff97a0`](https://github.com/LedgerHQ/ledger-live/commit/aff97a0a8888e85a66b8d121f41adfa2ea884673), [`929daee`](https://github.com/LedgerHQ/ledger-live/commit/929daee1dfbc309739a3b27af971b588e052f76a), [`98fb89f`](https://github.com/LedgerHQ/ledger-live/commit/98fb89f13d32e56709360157f71c67ff1eccd458), [`15c9095`](https://github.com/LedgerHQ/ledger-live/commit/15c9095eb614c8bda7b5c47f18031667b3047a4a), [`4f46643`](https://github.com/LedgerHQ/ledger-live/commit/4f466432512683457cbdca0ce7b64ddbf678c64d), [`27f3e4e`](https://github.com/LedgerHQ/ledger-live/commit/27f3e4eb74ac31f0f53aa55803ad7f082f669fe3), [`57fb0bf`](https://github.com/LedgerHQ/ledger-live/commit/57fb0bfb2bbae6f63434c7a5c023244d4d372304), [`f8afe58`](https://github.com/LedgerHQ/ledger-live/commit/f8afe58413ae68f5331031c27d9655dca1a56143), [`ce2c91d`](https://github.com/LedgerHQ/ledger-live/commit/ce2c91dde08828cc6a213ab19ba1e13efccacc41), [`5af6447`](https://github.com/LedgerHQ/ledger-live/commit/5af6447acb234632ed35feec4735b415d1993ced), [`a68bf6d`](https://github.com/LedgerHQ/ledger-live/commit/a68bf6de157e806306ab3d991a1fade06a7bcfc0), [`842aec2`](https://github.com/LedgerHQ/ledger-live/commit/842aec20f45ccf672a3a04b93f8f1056d5917f08), [`99b84d2`](https://github.com/LedgerHQ/ledger-live/commit/99b84d26e7fe249a2d322d54472790afffaa4807), [`e09bb31`](https://github.com/LedgerHQ/ledger-live/commit/e09bb313b8a57ca7a0b410b6959be0ec78b81191), [`fe1f525`](https://github.com/LedgerHQ/ledger-live/commit/fe1f5257edcee5b92db6153e9f7d619104446294), [`e53d295`](https://github.com/LedgerHQ/ledger-live/commit/e53d295fcb840a2e8a8433daac282a6f22098707), [`6157b78`](https://github.com/LedgerHQ/ledger-live/commit/6157b78b2e7055b1389f7ed64a2fcccf26200c39), [`671a1c8`](https://github.com/LedgerHQ/ledger-live/commit/671a1c822ddbc4d86276cc58c6da54fc55ebb48e), [`e3d0630`](https://github.com/LedgerHQ/ledger-live/commit/e3d063017d281be326dbca1a4504ee559a9e9f22), [`f82d808`](https://github.com/LedgerHQ/ledger-live/commit/f82d8080480437ccb351d111cabb1e3ee110d63b), [`8fbb9be`](https://github.com/LedgerHQ/ledger-live/commit/8fbb9beb39ff3ed1d1051d7df0b3e31a809f21f7), [`347dbb6`](https://github.com/LedgerHQ/ledger-live/commit/347dbb6c160a61827cfe69b7568426399ee56ae0), [`7f9d635`](https://github.com/LedgerHQ/ledger-live/commit/7f9d635ec37270cad9b67e4082363716c1b1b464), [`f3de33e`](https://github.com/LedgerHQ/ledger-live/commit/f3de33e5a7f9ea0865863b40170a7165449e479c), [`28984f6`](https://github.com/LedgerHQ/ledger-live/commit/28984f653f0a7e549352e89feea59a634365c62a), [`5ebd183`](https://github.com/LedgerHQ/ledger-live/commit/5ebd183fc24a0fa50e61fd66273cbfb17a37868a), [`2e761cc`](https://github.com/LedgerHQ/ledger-live/commit/2e761ccb7416b0ba60b5f325c8237761e75a9b8d), [`4060186`](https://github.com/LedgerHQ/ledger-live/commit/40601866b3d1903e03be990373f9152ac3418223), [`0ca351c`](https://github.com/LedgerHQ/ledger-live/commit/0ca351cd87534645d48b7f6350ae77f0894263a6), [`1965b3b`](https://github.com/LedgerHQ/ledger-live/commit/1965b3bf273684efccf61f389d5affe64a168900), [`1c9fff0`](https://github.com/LedgerHQ/ledger-live/commit/1c9fff0cf0d461add56e9349790373d5b582625a), [`f04c3ec`](https://github.com/LedgerHQ/ledger-live/commit/f04c3ec7af3bfec56b14facc2a103d5d496492e2), [`4f58ecb`](https://github.com/LedgerHQ/ledger-live/commit/4f58ecb0b7ccff4059975de8be53c8d1d0ffa184), [`8d983e8`](https://github.com/LedgerHQ/ledger-live/commit/8d983e84c8762207b4af82ef8d877986061d8282), [`40352f0`](https://github.com/LedgerHQ/ledger-live/commit/40352f0168431eb69c44832e80e07e5660bd090f), [`b138196`](https://github.com/LedgerHQ/ledger-live/commit/b138196145d8581a78bfb721151d3eee1d37e071), [`c47814c`](https://github.com/LedgerHQ/ledger-live/commit/c47814c94967febb435d0dcb77cc2f8de7f2c3f7), [`301aafa`](https://github.com/LedgerHQ/ledger-live/commit/301aafac69656abedfccbf8acbd4634d9eb6f9bb), [`a2a5926`](https://github.com/LedgerHQ/ledger-live/commit/a2a5926407deefc147511c80e786ec5298bd0f1c), [`b770536`](https://github.com/LedgerHQ/ledger-live/commit/b77053689b942642434c55e0de68fc987cbb661c), [`94093ac`](https://github.com/LedgerHQ/ledger-live/commit/94093ace3ca8b077b832e9366f7edfdb36e5fd4f), [`ffe7941`](https://github.com/LedgerHQ/ledger-live/commit/ffe794109361069c813d36d198f547d40eb79b7f), [`2306c28`](https://github.com/LedgerHQ/ledger-live/commit/2306c2891e5ed4b13c36496bf22e184fa0dbf9d2), [`b3b30ca`](https://github.com/LedgerHQ/ledger-live/commit/b3b30ca316c00c6cb15ab071e7805f4a7fc0f05e), [`6942305`](https://github.com/LedgerHQ/ledger-live/commit/694230569140fdc32c9ea7a0f0e906c4d2ded0a7), [`e0888fd`](https://github.com/LedgerHQ/ledger-live/commit/e0888fd78c1a9152c4b1641533b7f8061fa11d80), [`91e2fd8`](https://github.com/LedgerHQ/ledger-live/commit/91e2fd88699d0c2fbed156aab8af4d8ed78b5a68), [`02e892d`](https://github.com/LedgerHQ/ledger-live/commit/02e892ddfc1db6c12889d78b374a003e47912de3), [`a1f1062`](https://github.com/LedgerHQ/ledger-live/commit/a1f1062c50e1093d09dc5c20bd7bd9b2678f8b37), [`dc0e3ad`](https://github.com/LedgerHQ/ledger-live/commit/dc0e3ad24843961f7f71772b288c2dba473e93b0), [`1f4db3d`](https://github.com/LedgerHQ/ledger-live/commit/1f4db3d7f2c77858c66b503321127c91586bac61), [`c80f5de`](https://github.com/LedgerHQ/ledger-live/commit/c80f5de17b263d8e111ddd3b3247b04f7b9a687a), [`36284d6`](https://github.com/LedgerHQ/ledger-live/commit/36284d633c1961face1500f58fa2fc271cfb8ab5), [`0b3bf6b`](https://github.com/LedgerHQ/ledger-live/commit/0b3bf6b17426b5b60e3cbbc9dbca4e2207673c74), [`291cc2d`](https://github.com/LedgerHQ/ledger-live/commit/291cc2d4bcc47fb69bcc8c7cd62fb6332a68ba4c), [`0201072`](https://github.com/LedgerHQ/ledger-live/commit/0201072c5e4d8b91d2da5f5e9430f84b31486b42), [`74c967e`](https://github.com/LedgerHQ/ledger-live/commit/74c967eb7dda848648df0db683910140b5d6e906), [`3d9e16e`](https://github.com/LedgerHQ/ledger-live/commit/3d9e16e2de416fabd1a06e74dfc1235e4cb5c48d), [`cbb1cc6`](https://github.com/LedgerHQ/ledger-live/commit/cbb1cc65fb0ac744eac9fd46eee90f3fd87595fd), [`114ab5f`](https://github.com/LedgerHQ/ledger-live/commit/114ab5f12a49550b01305bd131db441c472b230c), [`76bab76`](https://github.com/LedgerHQ/ledger-live/commit/76bab76cf7009c9d5f6f54b2608157b3f0419a4e), [`d5ff357`](https://github.com/LedgerHQ/ledger-live/commit/d5ff357b5df4d890cd22574d1cabd96168d0aa84), [`3b117a7`](https://github.com/LedgerHQ/ledger-live/commit/3b117a73628de3dc530c2fa8cd20486c7a2718b3), [`90db489`](https://github.com/LedgerHQ/ledger-live/commit/90db48910c3525f69fcef5a3644b666febd6a434), [`2267444`](https://github.com/LedgerHQ/ledger-live/commit/226744400780b00d6468f890d06a821440fb5608), [`4ef9ecd`](https://github.com/LedgerHQ/ledger-live/commit/4ef9ecde87b79d3667170d74e69443203f4b2280), [`c98e265`](https://github.com/LedgerHQ/ledger-live/commit/c98e2659c3236ec7c4664ea28393cfb1eab0e8b0), [`9300f96`](https://github.com/LedgerHQ/ledger-live/commit/9300f9670ca7e76be132ea6fffc24c04c0f0b3ea), [`d27f68a`](https://github.com/LedgerHQ/ledger-live/commit/d27f68ac780099cbd47e533709ebef83f9345d89), [`9f6f480`](https://github.com/LedgerHQ/ledger-live/commit/9f6f48031fad77047e3a6377838816229ba4da5b), [`5030038`](https://github.com/LedgerHQ/ledger-live/commit/50300388e60a2afd79f14935309bf44d07de0afa), [`c8b2a04`](https://github.com/LedgerHQ/ledger-live/commit/c8b2a04b0cf138801a9ccea3934c6bdc3f8b0406), [`a8363ee`](https://github.com/LedgerHQ/ledger-live/commit/a8363eeb2cd97ce1942bfe0938ec317536e630c6), [`b832756`](https://github.com/LedgerHQ/ledger-live/commit/b83275606480975ee139c431b076a4826b4def95), [`f5045dc`](https://github.com/LedgerHQ/ledger-live/commit/f5045dc9e69cf20b791779042acbaaf52b73b516), [`16bc82a`](https://github.com/LedgerHQ/ledger-live/commit/16bc82a772d61b5c2ca659922ffa8e74eab283d7), [`8e67516`](https://github.com/LedgerHQ/ledger-live/commit/8e675166ba8dc7eefef71933a27f3e844e5dabc5), [`d5357b4`](https://github.com/LedgerHQ/ledger-live/commit/d5357b4060ca40b0dbb86119bb614fa4e45fe2ed), [`bda46c4`](https://github.com/LedgerHQ/ledger-live/commit/bda46c496fdacc801de3264d2854e00eb38b8499), [`915ff18`](https://github.com/LedgerHQ/ledger-live/commit/915ff18f05bdd1b267d98a3e3793330e2d99cab1), [`cdf122f`](https://github.com/LedgerHQ/ledger-live/commit/cdf122fb665e1738355d95cf93d75f3c759a8816), [`7692d02`](https://github.com/LedgerHQ/ledger-live/commit/7692d02a905fd17f638b71fe868e63576462371b), [`54dbb60`](https://github.com/LedgerHQ/ledger-live/commit/54dbb60cde959955f5965bf6710520a05c2cd1da), [`7dcd783`](https://github.com/LedgerHQ/ledger-live/commit/7dcd783f05b13b8433250c6a9aa48dec6d63ef8e), [`4878776`](https://github.com/LedgerHQ/ledger-live/commit/4878776b5f223d14a0604862b892361a1af88ca5), [`916c78e`](https://github.com/LedgerHQ/ledger-live/commit/916c78e11cddbee3b5836e8d455c93e6b811e417), [`4ea6c56`](https://github.com/LedgerHQ/ledger-live/commit/4ea6c566069a55a0345df95add6dc62e37a30b01), [`7c824f3`](https://github.com/LedgerHQ/ledger-live/commit/7c824f377ec4a7bcc86f3edb71a198d7ea6ca9a5), [`90af53f`](https://github.com/LedgerHQ/ledger-live/commit/90af53fdcab2448e07ced5f4cc8d37efad261c6b), [`9924d57`](https://github.com/LedgerHQ/ledger-live/commit/9924d57433212aaaf4491573b5777236e01c3559), [`14ab34d`](https://github.com/LedgerHQ/ledger-live/commit/14ab34dbbf4c1768fcdc8928f6db43d9ec58f10b), [`3ac77a8`](https://github.com/LedgerHQ/ledger-live/commit/3ac77a877a5e0dedfc67b595d88b26535aefd5d1), [`e516034`](https://github.com/LedgerHQ/ledger-live/commit/e5160345b50c0dc9e7c490da72d641c631d2ef7f), [`ac052f5`](https://github.com/LedgerHQ/ledger-live/commit/ac052f5c42e9151f445e3ff4b20e811fbcfa84b4), [`fa94370`](https://github.com/LedgerHQ/ledger-live/commit/fa943701719e0fd0d6f9fb28f1c8bb90f6a7c5c9), [`de9c09c`](https://github.com/LedgerHQ/ledger-live/commit/de9c09c26ebca7c2dbceb9494de70a2c16c75a70), [`c20c157`](https://github.com/LedgerHQ/ledger-live/commit/c20c157c991dbfcd47f9300b997f74fac0f6d303), [`2959603`](https://github.com/LedgerHQ/ledger-live/commit/29596039c7129ac7a5dd216e1f1c172936bed43b), [`2cdf737`](https://github.com/LedgerHQ/ledger-live/commit/2cdf737ce9d268e248253d1f98bd614c0e30da3f), [`d77070a`](https://github.com/LedgerHQ/ledger-live/commit/d77070a51ec5e8c3cbb9457044991917b3b33a94), [`161ebff`](https://github.com/LedgerHQ/ledger-live/commit/161ebff460d0a96a53c707bd8d386e52596e1815), [`3ee9499`](https://github.com/LedgerHQ/ledger-live/commit/3ee9499c13c4c9f0fa02c396736d8b953c662703), [`fa0438d`](https://github.com/LedgerHQ/ledger-live/commit/fa0438d5bbad6e77164b5ab10ce2b878205b8b27), [`3c9c36d`](https://github.com/LedgerHQ/ledger-live/commit/3c9c36d4b6aba6232f04e124157bd8df08cf89da), [`b15271c`](https://github.com/LedgerHQ/ledger-live/commit/b15271ca307f00e929474a1560e64fd2af49b75e), [`85a7d14`](https://github.com/LedgerHQ/ledger-live/commit/85a7d14d54b4f7f411a3789e310e6f1b8d2d79bb), [`c6cc201`](https://github.com/LedgerHQ/ledger-live/commit/c6cc2011f7a2ccc1ac3afd9d3c62195a0fafcedc), [`c4792da`](https://github.com/LedgerHQ/ledger-live/commit/c4792da62785d15ebbb543c81f444aeb6a62bafc), [`4ff1d9a`](https://github.com/LedgerHQ/ledger-live/commit/4ff1d9a587abb474300d0e1c188eeb62b0de66ea), [`bb23f63`](https://github.com/LedgerHQ/ledger-live/commit/bb23f63969464f78d1e736b4d9d95881e7016e73), [`f7f5295`](https://github.com/LedgerHQ/ledger-live/commit/f7f529560de8f7ee9d2ddf98f048610b9335d550), [`aeab021`](https://github.com/LedgerHQ/ledger-live/commit/aeab021a770f44f773a482aef4e84d59f1f8ce74), [`6078fe6`](https://github.com/LedgerHQ/ledger-live/commit/6078fe6dd0352e0e5faedb3973db6c3812fb775f), [`c5ad33d`](https://github.com/LedgerHQ/ledger-live/commit/c5ad33db466f7a5eaf24a70f571afdbf2496979a), [`e49ec73`](https://github.com/LedgerHQ/ledger-live/commit/e49ec73d6b7585296733111b455a20766f9a7e8a), [`2e6c630`](https://github.com/LedgerHQ/ledger-live/commit/2e6c630470a92067b3f4e653787b755c21fb433b), [`7fffee2`](https://github.com/LedgerHQ/ledger-live/commit/7fffee2e21d1a9b056d026bd2ff50431a1b2793a), [`79da9a3`](https://github.com/LedgerHQ/ledger-live/commit/79da9a3dd691d66e3d10e63307839964ed740805), [`13a1746`](https://github.com/LedgerHQ/ledger-live/commit/13a1746e2f3a76a0b0f36d3818b7a18e524e46da), [`3cd826e`](https://github.com/LedgerHQ/ledger-live/commit/3cd826e45ed303ae0d6bb3990bfcf994ca9c4701), [`d3b0f92`](https://github.com/LedgerHQ/ledger-live/commit/d3b0f92aadd5743ec190f72e2212d665a776ce43), [`b004476`](https://github.com/LedgerHQ/ledger-live/commit/b0044764e765d48ff2edabb567a6e71dbd820276), [`a650f44`](https://github.com/LedgerHQ/ledger-live/commit/a650f4490c10c997ea31debe198ab6988a78d1e5), [`0a659c3`](https://github.com/LedgerHQ/ledger-live/commit/0a659c3a71c902aaf951d76cfd9362f939711487), [`118d19c`](https://github.com/LedgerHQ/ledger-live/commit/118d19c07df9b751e4a96fa2dc4ea0e235378d9e)]:
+  - @ledgerhq/live-common@38.9.0-next.0
+  - @ledgerhq/live-wallet@1.3.0-next.0
+  - @domain/entity-currency-crypto@0.20.0-next.0
+  - @ledgerhq/types-live@6.133.0-next.0
+  - @ledgerhq/ledger-wallet-framework@3.13.0-next.0
+  - @ledgerhq/coin-zcash@1.3.0-next.0
+  - @features/platform-device-onboarding@0.7.0-next.0
+  - @features/platform-intent-verify-address@0.5.0-next.0
+  - @features/flow-receive@0.3.0-next.0
+  - @domain/entity-account-alias@0.3.0-next.0
+  - @features/flow-account-detail-hero@0.5.0-next.0
+  - @domain/entity-account-status@0.1.0-next.0
+  - @shared/feature-flags@0.32.0-next.0
+  - @features/flow-agent-intent-entry-points@0.3.0-next.0
+  - @ledgerhq/coin-canton@3.0.0-next.0
+  - @features/flow-pay-card-auth@0.14.0-next.0
+  - @features/flow-pay-card-transactions@0.8.0-next.0
+  - @domain/api-card-management@0.10.0-next.0
+  - @ledgerhq/wallet-btc@1.3.0-next.0
+  - @ledgerhq/coin-bitcoin@1.4.0-next.0
+  - @ledgerhq/coin-cardano@3.1.0-next.0
+  - @ledgerhq/coin-casper@3.9.0-next.0
+  - @ledgerhq/coin-concordium@1.9.0-next.0
+  - @ledgerhq/coin-filecoin@3.0.0-next.0
+  - @ledgerhq/coin-stacks@0.38.0-next.0
+  - @domain/entity-currency-token@0.6.0-next.0
+  - @domain/api-currency-token@0.9.0-next.0
+  - @ledgerhq/react-ui@0.57.0-next.0
+  - @features/flow-pay-card-details@0.12.0-next.0
+  - @features/flow-app-availability@0.4.0-next.0
+  - @features/platform-coin-observability@0.3.0-next.0
+  - @features/platform-account-source-coin-module@0.4.0-next.0
+  - @features/platform-market-countervalues@0.6.0-next.0
+  - @domain/entity-market-countervalues@0.6.0-next.0
+  - @ledgerhq/live-dmk-shared@0.41.0-next.0
+  - @devtools/bindings@0.17.0-next.0
+  - @features/flow-history-export@0.2.0-next.0
+  - @devtools/shell@0.16.0-next.0
+  - @features/flow-contacts-add-address@0.11.0-next.0
+  - @features/flow-pay-contact@0.10.0-next.0
+  - @features/platform-device-intent@5.6.0-next.0
+  - @shared/analytics@0.5.0-next.0
+  - @features/platform-intent-wallet-sync@0.4.0-next.0
+  - @shared/live-config-overrides@0.3.0-next.0
+  - @features/flow-predictions@0.4.0-next.0
+  - @domain/entity-account-name@0.5.0-next.0
+  - @domain/entity-starred-account@0.2.0-next.0
+  - @features/flow-pay-card-widget@0.8.0-next.0
+  - @features/flow-pay-balance@0.11.0-next.0
+  - @ledgerhq/asset-aggregation@0.20.0-next.0
+  - @ledgerhq/transaction-observability@0.7.0-next.0
+  - @features/flow-pay-feature-tour@0.11.0-next.0
+  - @features/flow-pay-bank-transfer@0.6.0-next.0
+  - @features/flow-account-detail-delegations@0.4.0-next.0
+  - @ledgerhq/asset-detail@0.13.2-next.0
+  - @ledgerhq/live-dmk-desktop@0.27.2-next.0
+  - @ledgerhq/live-send@0.2.2-next.0
+  - @domain/api-aggregated-assets@0.7.2-next.0
+  - @domain/api-market-countervalues@0.4.1-next.0
+  - @domain/entity-currency@0.5.1-next.0
+  - @features/flow-account-analytics@0.3.1-next.0
+  - @features/flow-account-detail-notices@0.3.0
+  - @features/flow-account-detail-settings@0.3.3-next.0
+  - @features/flow-contacts-detail@0.5.1-next.0
+  - @features/platform-account-analytics@0.2.0
+  - @features/platform-assets-table@0.3.2-next.0
+  - @features/platform-contacts@0.13.1-next.0
+  - @features/platform-currencies@0.14.1-next.0
+  - @ledgerhq/wallet-analytics@0.5.7-next.0
+  - @ledgerhq/wallet-pnl@0.10.1-next.0
+  - @ledgerhq/live-signer-evm@0.24.7-next.0
+  - @features/flow-account-detail@0.5.1-next.0
+  - @features/flow-large-screen-upsell@2.5.1-next.0
+  - @features/flow-portfolio-services-entry-points@0.3.2-next.0
+  - @features/platform-feature-flags@0.13.1-next.0
+  - @features/platform-feature-flags-firebase@0.1.6-next.0
+  - @domain/api-account-data@0.6.1-next.0
+  - @domain/entity-account@0.4.1-next.0
+  - @domain/entity-account-balance@0.3.2-next.0
+  - @domain/entity-account-balance-history@0.3.1-next.0
+  - @domain/entity-account-data@0.6.1-next.0
+  - @domain/entity-account-operation@0.3.1-next.0
+  - @domain/entity-account-receive@0.1.1-next.0
+  - @features/flow-pay-card@0.9.2-next.0
+  - @features/flow-pay-card-assets@0.7.2-next.0
+  - @features/platform-card@0.10.1-next.0
+  - @ledgerhq/live-signer-tron@0.2.7-next.0
+  - @features/platform-predictions@0.4.2-next.0
+  - @features/flow-fear-and-greed@0.6.1-next.0
+  - @features/platform-pay-analytics@0.4.1-next.0
+  - @shared/analytics-react@0.5.1-next.0
+  - @features/flow-account-detail-analytics-notice@0.4.0
+  - @features/flow-account-detail-balance-summary@0.1.0
+  - @features/flow-analytics-consent@0.2.15-next.0
+  - @features/flow-contacts@0.18.2-next.0
+  - @features/flow-contacts-add-contact@0.10.3-next.0
+  - @features/flow-contacts-delete-address@0.4.3-next.0
+  - @features/flow-contacts-delete-contact@0.5.3-next.0
+  - @features/flow-contacts-edit-address@0.8.1-next.0
+  - @features/flow-contacts-edit-contact@0.9.3-next.0
+  - @features/flow-contacts-introduction@1.6.0
+  - @features/flow-contacts-list@0.12.3-next.0
+  - @features/flow-pay-deposit@0.7.1-next.0
+  - @features/flow-pay-request@0.11.1-next.0
+  - @features/platform-aggregated-assets@0.7.2-next.0
+  - @domain/entity-contact@0.13.1-next.0
+  - @features/platform-content-ab-tests@0.2.6-next.0
+
+## 4.29.0
+
+### Minor Changes
+
+- [#24839](https://github.com/LedgerHQ/ledger-live/pull/24839) [`2ffe35c`](https://github.com/LedgerHQ/ledger-live/commit/2ffe35c80ed010df56d644ee2178a8994ee98be3) Thanks [@deepyjr](https://github.com/deepyjr)! - Leave room around the chart max and min labels so the scrubber overlay covers them whole
+
+- [#24709](https://github.com/LedgerHQ/ledger-live/pull/24709) [`79fbc3e`](https://github.com/LedgerHQ/ledger-live/commit/79fbc3e91945f78c42bc69c79ca4daf8df331a99) Thanks [@claudiiafg](https://github.com/claudiiafg)! - Read desktop and mobile dust filtering flags through the platform feature-flags hook and selector
+
+- [#24542](https://github.com/LedgerHQ/ledger-live/pull/24542) [`332d615`](https://github.com/LedgerHQ/ledger-live/commit/332d6152b6c11aa923d5fc7f5e16606b5d61a252) Thanks [@may01](https://github.com/may01)! - Do not require the account's app on the device when a live app signs a PSBT with an allowed derived app
+
+- [#24727](https://github.com/LedgerHQ/ledger-live/pull/24727) [`7baf9a8`](https://github.com/LedgerHQ/ledger-live/commit/7baf9a82cbfc441aeb751d53bb91ad6d27a983a1) Thanks [@deepyjr](https://github.com/deepyjr)! - Add the Agent Intent entry points on desktop: an Agents sidebar item and a Manage your agents card in My Wallet
+
+- [#24604](https://github.com/LedgerHQ/ledger-live/pull/24604) [`6ae0717`](https://github.com/LedgerHQ/ledger-live/commit/6ae07170880c92bf6944ff42449eeb25991d1edf) Thanks [@LucasWerey](https://github.com/LucasWerey)! - Add a Receive DevTools tool to toggle the newReceiveFlow feature flag and its excluded families
+
+- [#24840](https://github.com/LedgerHQ/ledger-live/pull/24840) [`eabafba`](https://github.com/LedgerHQ/ledger-live/commit/eabafbae5a75c22547965eb80f507ab35cd95452) Thanks [@ovoronkov-ledger](https://github.com/ovoronkov-ledger)! - fix(hedera): wait for account switch before updating association tx (LIVE-41397)
+
+- [#24646](https://github.com/LedgerHQ/ledger-live/pull/24646) [`ee50575`](https://github.com/LedgerHQ/ledger-live/commit/ee505757f39b870767bb5ee776dd8bd0f19c768f) Thanks [@deepyjr](https://github.com/deepyjr)! - Show the Analytics balance and chart when the countervalue is a crypto
+
+- [#24674](https://github.com/LedgerHQ/ledger-live/pull/24674) [`8064394`](https://github.com/LedgerHQ/ledger-live/commit/806439433d2c57b13db5a513688db52195bfc163) Thanks [@gre-ledger](https://github.com/gre-ledger)! - Add the `receive` account data kind: on which address an account receives and how the device confirms it, read by the full-sync source. The branded `Address` moves from `@domain/entity-account-operation` to `@domain/entity-account-descriptor`, next to the new `DerivationPathSchema`
+
+- [#24685](https://github.com/LedgerHQ/ledger-live/pull/24685) [`ca6fee0`](https://github.com/LedgerHQ/ledger-live/commit/ca6fee093b8a18b5e4db4a21a4436cc20b96a9fc) Thanks [@gre-ledger](https://github.com/gre-ledger)! - Serve EVM balances from the Portfolio source while its devtool injects it
+
+- [#24697](https://github.com/LedgerHQ/ledger-live/pull/24697) [`b2224b4`](https://github.com/LedgerHQ/ledger-live/commit/b2224b4d0e202ceb21cf7693305baa1cfa5a107b) Thanks [@gre-ledger](https://github.com/gre-ledger)! - Value Portfolio source operations in the asked countervalue and filter them by token on the service
+
+- [#24657](https://github.com/LedgerHQ/ledger-live/pull/24657) [`effe64c`](https://github.com/LedgerHQ/ledger-live/commit/effe64cde76c319833d7c7596a28727191943812) Thanks [@gre-ledger](https://github.com/gre-ledger)! - Add the Portfolio source devtool, which lists and reconciles the install's Portfolio service registrations
+
+- [#24695](https://github.com/LedgerHQ/ledger-live/pull/24695) [`93e80dd`](https://github.com/LedgerHQ/ledger-live/commit/93e80dd0c3144ed090001985f6fd25d84172a2a8) Thanks [@gre-ledger](https://github.com/gre-ledger)! - Serve EVM balance histories from the Portfolio source while its devtool injects it
+
+- [#24694](https://github.com/LedgerHQ/ledger-live/pull/24694) [`ed79130`](https://github.com/LedgerHQ/ledger-live/commit/ed79130d80ba9b18a26a8380c14bedbdb5435c63) Thanks [@gre-ledger](https://github.com/gre-ledger)! - Serve EVM operations from the Portfolio source while its devtool injects it
+
+- [#24696](https://github.com/LedgerHQ/ledger-live/pull/24696) [`297954a`](https://github.com/LedgerHQ/ledger-live/commit/297954a3e3fec11b44e087f7e0bbc93a7b09baa6) Thanks [@gre-ledger](https://github.com/gre-ledger)! - Serve Bitcoin and Cardano (by xpub), Tron, Tezos, Sui, Stellar and Canton accounts from the Portfolio source
+
+- [#24614](https://github.com/LedgerHQ/ledger-live/pull/24614) [`de28165`](https://github.com/LedgerHQ/ledger-live/commit/de28165849281e54355fcb1894bf904c2125b2eb) Thanks [@semeano](https://github.com/semeano)! - Add the Alpen mainnet EVM config and move Alpen Testnet to the Ledger node and explorer, through @ledgerhq/coin-evm 16.4.2
+
+- [#24589](https://github.com/LedgerHQ/ledger-live/pull/24589) [`49de732`](https://github.com/LedgerHQ/ledger-live/commit/49de7327915d876c4a98826d561705171c41d2d2) Thanks [@gre-ledger](https://github.com/gre-ledger)! - Scale BigNumber amounts down by a power of ten with `shiftedBy` instead of `div`, so the result no longer depends on the global `DECIMAL_PLACES`
+
+- [#24798](https://github.com/LedgerHQ/ledger-live/pull/24798) [`e8305c7`](https://github.com/LedgerHQ/ledger-live/commit/e8305c7492cc970261e24069e52f040aec65f03c) Thanks [@LucasWerey](https://github.com/LucasWerey)! - Move the receive verify hint state from `@features/flow-pay-request/state` to `@features/flow-receive/state`
+
+- [#24859](https://github.com/LedgerHQ/ledger-live/pull/24859) [`e2afea1`](https://github.com/LedgerHQ/ledger-live/commit/e2afea14298ebf9fa64c61b9cc4d5eca740decc1) Thanks [@LucasWerey](https://github.com/LucasWerey)! - Add the receive family contract: notices, support and unsupported device models of the new receive address screen per coin family
+
+- [#24653](https://github.com/LedgerHQ/ledger-live/pull/24653) [`f48cb96`](https://github.com/LedgerHQ/ledger-live/commit/f48cb968a530d257a018807417ddcf4652871399) Thanks [@vpenskyi-ledger](https://github.com/vpenskyi-ledger)! - Add a Return to Perps button to the swap status dialog opened from Perps, which closes the dialog. Keep the default dialog background on the Perps "Transaction signed" dialog in dark mode.
+
+- [#24766](https://github.com/LedgerHQ/ledger-live/pull/24766) [`12939e3`](https://github.com/LedgerHQ/ledger-live/commit/12939e3bdd940eed4c5f0d1a684fefa689a2b9c9) Thanks [@LucasWerey](https://github.com/LucasWerey)! - Emit an `addressDisplayed` verify-address intent state once the address request is sent to the device
+
+- [#24691](https://github.com/LedgerHQ/ledger-live/pull/24691) [`81d566b`](https://github.com/LedgerHQ/ledger-live/commit/81d566bd4b2fc0b72f4317aee917975601cd97b2) Thanks [@gre-ledger](https://github.com/gre-ledger)! - Add the account-receive DevTools tool, reading the `receive` kind per account, and the `receive` kind to the mock source
+
+- [#24582](https://github.com/LedgerHQ/ledger-live/pull/24582) [`4df88de`](https://github.com/LedgerHQ/ledger-live/commit/4df88de76e0d58b391bb376783edc552b44dcf24) Thanks [@claudiiafg](https://github.com/claudiiafg)! - Count internal native receives in asset cost basis
+
+- [#24592](https://github.com/LedgerHQ/ledger-live/pull/24592) [`b04379b`](https://github.com/LedgerHQ/ledger-live/commit/b04379bbbb8fcbebcfd7fe49e2ad8226ffa6d806) Thanks [@ysitbon](https://github.com/ysitbon)! - Add the Ledger Sync intents DevTool, which runs the add member and remove member intents on the Device Intent Executor of each app and logs every job state, with the app renderers, executor wrappers and session SDK it needs
+
+- [#24665](https://github.com/LedgerHQ/ledger-live/pull/24665) [`99d2480`](https://github.com/LedgerHQ/ledger-live/commit/99d2480ce988754fb2595a0fa0d7612ddfe77193) Thanks [@ysitbon](https://github.com/ysitbon)! - Build every Ledger Sync session SDK with the setup of the app's cached SDK, the one the wallet sync loop uses, through a shared `sessionWithDevice` adapter, so a member added on the device is known to the sync loop even when the flag environment arrives after the app started; the intents DevTool lists members with the app SDK again
+
+- [#24688](https://github.com/LedgerHQ/ledger-live/pull/24688) [`f028bf9`](https://github.com/LedgerHQ/ledger-live/commit/f028bf9f30374dfa9587e50f4f92532e23d3206b) Thanks [@ysitbon](https://github.com/ysitbon)! - Run the Ledger Sync device steps on the Device Intent Executor behind the lwdLedgerSyncDie flag
+
+- [#24593](https://github.com/LedgerHQ/ledger-live/pull/24593) [`5dff2e5`](https://github.com/LedgerHQ/ledger-live/commit/5dff2e54adbff5b6bc5ad2e57bbd6c5e6f85271a) Thanks [@deepyjr](https://github.com/deepyjr)! - Gate the Account Detail Analytics banner with the `accountDetail` `analyticsBanner` param, send it to analytics and keep the banner until it is closed
+
+- [#24590](https://github.com/LedgerHQ/ledger-live/pull/24590) [`6eed15b`](https://github.com/LedgerHQ/ledger-live/commit/6eed15b61aeac69daefcd39bcc904b10eb6162fd) Thanks [@ooke-ledger](https://github.com/ooke-ledger)! - Show the add account drawer above the Perps deposit and withdraw dialogs. The dialog hides while the drawer is open and comes back with the amount and the newly added account.
+
+- [#24372](https://github.com/LedgerHQ/ledger-live/pull/24372) [`39b8762`](https://github.com/LedgerHQ/ledger-live/commit/39b87620fce0f123406907372d8250713b0e9416) Thanks [@liviuciulinaru](https://github.com/liviuciulinaru)! - Show the Perps deposit errors
+
+- [#24707](https://github.com/LedgerHQ/ledger-live/pull/24707) [`7133d63`](https://github.com/LedgerHQ/ledger-live/commit/7133d632892e8781260212f90e0a2cb4ed5bc885) Thanks [@ooke-ledger](https://github.com/ooke-ledger)! - Track the Perps withdraw signing failure, the submit, its failure and its settlement on desktop and mobile
+
+- [#24825](https://github.com/LedgerHQ/ledger-live/pull/24825) [`db7418a`](https://github.com/LedgerHQ/ledger-live/commit/db7418ab935c334687af009587df815434f2269a) Thanks [@dilaouid](https://github.com/dilaouid)! - fix(die): make the device deprecation screen text readable in the desktop Device Intent Executor dialog and say Ledger Wallet instead of Ledger Live
+
+- [#24689](https://github.com/LedgerHQ/ledger-live/pull/24689) [`393695d`](https://github.com/LedgerHQ/ledger-live/commit/393695db90c73639ddf7e8d38dc2cf88dad19064) Thanks [@francois-guerin-ledger](https://github.com/francois-guerin-ledger)! - Hide blocked and unregistered Polkadot validators from the nomination list and reject them before signing
+
+- [#24473](https://github.com/LedgerHQ/ledger-live/pull/24473) [`c5d0d84`](https://github.com/LedgerHQ/ledger-live/commit/c5d0d8489518b9c5635ed8aa415eb7187f4124d9) Thanks [@YazhuEth](https://github.com/YazhuEth)! - Add the Predictions DevTool on desktop and mobile to inspect and reset what the Predictions onboarding stored, and preview the trading wallet setup. `@domain/entity-predictions` gets `resetPredictionsIntroSeen`
+
+- [#24125](https://github.com/LedgerHQ/ledger-live/pull/24125) [`b33851b`](https://github.com/LedgerHQ/ledger-live/commit/b33851b2b5015eb37cced36d7ba6119534c64ff3) Thanks [@jiyuzhuang](https://github.com/jiyuzhuang)! - Record "Analytics opt-in prompt main" when the desktop consent prompt is shown
+
+- [#24769](https://github.com/LedgerHQ/ledger-live/pull/24769) [`94bb3b3`](https://github.com/LedgerHQ/ledger-live/commit/94bb3b36d114163b9907dc574344e8bb66945eb5) Thanks [@deepyjr](https://github.com/deepyjr)! - Add a search field to the analytics asset filter on mobile and desktop, and fix the spacing between the filters and the chart on mobile
+
+- [#24519](https://github.com/LedgerHQ/ledger-live/pull/24519) [`120891d`](https://github.com/LedgerHQ/ledger-live/commit/120891d4dbd9e9bba22dbf552f1bbe0ab34685cc) Thanks [@vpenskyi-ledger](https://github.com/vpenskyi-ledger)! - List perps withdrawals in the swap history, anchored to their payout transaction, and show their payout and Hyperliquid fees on the swap status screen. Keep unknown fields in the perps withdraw payload so the SwapKit submit gets it back unmodified
+
+- [#24772](https://github.com/LedgerHQ/ledger-live/pull/24772) [`9012872`](https://github.com/LedgerHQ/ledger-live/commit/9012872e214386a6b9af13fa3d67b2b153027697) Thanks [@LucasWerey](https://github.com/LucasWerey)! - Allow restricting the modular asset and account dialog to given networks with `networkIds`
+
+- [#24636](https://github.com/LedgerHQ/ledger-live/pull/24636) [`1f907a7`](https://github.com/LedgerHQ/ledger-live/commit/1f907a7d358d3778339fedf84e2ba679d214f9c9) Thanks [@deepyjr](https://github.com/deepyjr)! - Show the selected account icon on the analytics account filter
+
+- [#24747](https://github.com/LedgerHQ/ledger-live/pull/24747) [`8b743fb`](https://github.com/LedgerHQ/ledger-live/commit/8b743fb4d98b915eac60d3b7a991dbe6a03f2b03) Thanks [@gre-ledger](https://github.com/gre-ledger)! - Value each balance history point in the fiat a query asks for, at its date, with the `countervalue` query
+
+- [#24361](https://github.com/LedgerHQ/ledger-live/pull/24361) [`76ca8e7`](https://github.com/LedgerHQ/ledger-live/commit/76ca8e7dae5dd46abef453ffa61ff38d19b47344) Thanks [@LL782](https://github.com/LL782)! - Block wallet and accounts writes to app.json while the app is locked
+
+- [#24643](https://github.com/LedgerHQ/ledger-live/pull/24643) [`10216dd`](https://github.com/LedgerHQ/ledger-live/commit/10216dd420daf71018cbcdcf2e172f9355a62830) Thanks [@renovate-operator-ledger](https://github.com/apps/renovate-operator-ledger)! - chore(deps): update rstack
+
+  - Updated `@rsbuild/core` to `2.3.1`
+  - Updated `@rsdoctor/core` to `2.0.2`
+  - Updated `@rslib/core` to `1.0.6`
+  - Updated `@rspack/cli` to `2.3.1`
+  - Updated `@rspack/core` to `2.3.1`
+
+- [#24648](https://github.com/LedgerHQ/ledger-live/pull/24648) [`431165e`](https://github.com/LedgerHQ/ledger-live/commit/431165efb50051c4359808f8ee1ceb1ef7566bbd) Thanks [@renovate-operator-ledger](https://github.com/apps/renovate-operator-ledger)! - chore(deps): update typescript-eslint monorepo to v8.72.1
+
+  - Updated `@typescript-eslint/parser` to `8.72.1`
+
+- [#24675](https://github.com/LedgerHQ/ledger-live/pull/24675) [`b08cbc3`](https://github.com/LedgerHQ/ledger-live/commit/b08cbc304d2ddf218c1fa1ccd00dd1a73953b7b2) Thanks [@LucasWerey](https://github.com/LucasWerey)! - Open the partner live app for stake from account and asset detail instead of always opening Earn
+
+- [#24708](https://github.com/LedgerHQ/ledger-live/pull/24708) [`71556e9`](https://github.com/LedgerHQ/ledger-live/commit/71556e9f0babd4c63e8ad58cced7a77bf0351fef) Thanks [@claudiiafg](https://github.com/claudiiafg)! - Use Lumen for the crypto address name suggestions and portfolio banner icons
+
+- [#24651](https://github.com/LedgerHQ/ledger-live/pull/24651) [`a5a5309`](https://github.com/LedgerHQ/ledger-live/commit/a5a5309e913428497dfff7e1e13ad3d18e995cf3) Thanks [@deepyjr](https://github.com/deepyjr)! - Keep the contact address ENS notice visible while an edited ENS name is revalidated, so the modal no longer blinks on each keystroke.
+
+- [#24633](https://github.com/LedgerHQ/ledger-live/pull/24633) [`8492733`](https://github.com/LedgerHQ/ledger-live/commit/8492733e73d90f1eca5f9ca9ec1cfffaaf84a8f4) Thanks [@deepyjr](https://github.com/deepyjr)! - Fix dropdown scrollbar not responding to mouse clicks and drags
+
+- [#24597](https://github.com/LedgerHQ/ledger-live/pull/24597) [`205aa4b`](https://github.com/LedgerHQ/ledger-live/commit/205aa4b7d5ef984fb020e08a05ca47ad08dff95c) Thanks [@deepyjr](https://github.com/deepyjr)! - Show the Account Detail Analytics banner only to installations that had completed onboarding with a device before the rollout, through a one-time persisted eligibility snapshot
+
+- [#24560](https://github.com/LedgerHQ/ledger-live/pull/24560) [`36434e9`](https://github.com/LedgerHQ/ledger-live/commit/36434e9206d26b18895fd2b4f777d60aaf581b08) Thanks [@liviuciulinaru](https://github.com/liviuciulinaru)! - Reuse a recent BTC sync for quotes and show the fee estimation failure on the Perps deposit form
+
+- [#24652](https://github.com/LedgerHQ/ledger-live/pull/24652) [`e0e1e67`](https://github.com/LedgerHQ/ledger-live/commit/e0e1e6706c6cee74a920b296587dfb32c2569ccc) Thanks [@deepyjr](https://github.com/deepyjr)! - Truncate long contact address action labels on one line with an ellipsis and show the full label on hover, so translations such as Russian no longer overflow the buttons.
+
+- [#24756](https://github.com/LedgerHQ/ledger-live/pull/24756) [`3a6ddb3`](https://github.com/LedgerHQ/ledger-live/commit/3a6ddb3fbd9d18c8005b9aef84597c8dc92dcfab) Thanks [@dilaouid](https://github.com/dilaouid)! - feat(send): apply the die for the new send flow in lwd
+
+- [#24637](https://github.com/LedgerHQ/ledger-live/pull/24637) [`27a2b6b`](https://github.com/LedgerHQ/ledger-live/commit/27a2b6be0baff6924ab10011f3f42dbc84661987) Thanks [@deepyjr](https://github.com/deepyjr)! - Give the account name more room in the account list and show the cut address type in a tooltip
+
+- [#24678](https://github.com/LedgerHQ/ledger-live/pull/24678) [`a9ac0c9`](https://github.com/LedgerHQ/ledger-live/commit/a9ac0c99eef6b267bdee5f52708ef3d34cab7b8c) Thanks [@live-github-bot](https://github.com/apps/live-github-bot)! - Prefill the XRP trust limit Max with the protocol maximum from coin-xrp 13.7.0, no longer fetched, and read the optional `limit` of a held IOU
+
+- [#24837](https://github.com/LedgerHQ/ledger-live/pull/24837) [`e3f44dc`](https://github.com/LedgerHQ/ledger-live/commit/e3f44dc9b07da59bacf25f69fda0c0d3e7e37f37) Thanks [@gre-ledger](https://github.com/gre-ledger)! - Share the XRP token holding condition of the add-token modal in live-common
+
+- [#24735](https://github.com/LedgerHQ/ledger-live/pull/24735) [`0cf44d5`](https://github.com/LedgerHQ/ledger-live/commit/0cf44d56a449fb0f4448cd6f8e02c880fc47adb2) Thanks [@mdomanski-ext-ledger](https://github.com/mdomanski-ext-ledger)! - Add the `OPT_EDIT` operation type and `BridgeApi.tokenOptParentRow`. XRP tokens: opt-in and opt-out history rows keep their type, a pending edit is an `OPT_EDIT`, IOU device review fields, IOU amounts from fiat or the 25/50/75 % buttons rounded to 16 significant digits, error texts, send errors on the LWD amount step, and LWD Token settings messages for a limit of 0 and a limit below the balance
+
+### Patch Changes
+
+- Updated dependencies [[`4aa3244`](https://github.com/LedgerHQ/ledger-live/commit/4aa32442c63cd17bd2894d63ad0721d51e0ca41a), [`4d9a494`](https://github.com/LedgerHQ/ledger-live/commit/4d9a4949a9c03da89241f0163325940217762f7e), [`79fbc3e`](https://github.com/LedgerHQ/ledger-live/commit/79fbc3e91945f78c42bc69c79ca4daf8df331a99), [`332d615`](https://github.com/LedgerHQ/ledger-live/commit/332d6152b6c11aa923d5fc7f5e16606b5d61a252), [`1d97ca7`](https://github.com/LedgerHQ/ledger-live/commit/1d97ca78b8e326c5bdd1af98199dd9e9aa06b4c5), [`0e964a8`](https://github.com/LedgerHQ/ledger-live/commit/0e964a897b6d740d172a55060b8aba960800b2cc), [`dc295d0`](https://github.com/LedgerHQ/ledger-live/commit/dc295d0bf733a21897b23c810b9b9c1f44343f4d), [`6ae0717`](https://github.com/LedgerHQ/ledger-live/commit/6ae07170880c92bf6944ff42449eeb25991d1edf), [`eabafba`](https://github.com/LedgerHQ/ledger-live/commit/eabafbae5a75c22547965eb80f507ab35cd95452), [`180de5b`](https://github.com/LedgerHQ/ledger-live/commit/180de5baca4b9e6abf44dce3991ea511ea84836a), [`ea45007`](https://github.com/LedgerHQ/ledger-live/commit/ea45007b1a8f6f7afbb1f29df2bc93d77766d69a), [`5895784`](https://github.com/LedgerHQ/ledger-live/commit/5895784ef0da900092abf361b3647eba1eb1547f), [`ee50575`](https://github.com/LedgerHQ/ledger-live/commit/ee505757f39b870767bb5ee776dd8bd0f19c768f), [`9f10baf`](https://github.com/LedgerHQ/ledger-live/commit/9f10bafef466914b2536c7e509ff7c3c2c49b5c8), [`0fc43ab`](https://github.com/LedgerHQ/ledger-live/commit/0fc43ab03928e17d2da761f747ec0c449228d4aa), [`5020021`](https://github.com/LedgerHQ/ledger-live/commit/5020021654f743e0e868cb9c8d011adc97f4ed9a), [`45f0819`](https://github.com/LedgerHQ/ledger-live/commit/45f081972c38225dfed314c9d8313cd510629a85), [`8064394`](https://github.com/LedgerHQ/ledger-live/commit/806439433d2c57b13db5a513688db52195bfc163), [`6baeada`](https://github.com/LedgerHQ/ledger-live/commit/6baeadaca277a70109580c0d939278ebf729922b), [`de62f18`](https://github.com/LedgerHQ/ledger-live/commit/de62f18c8fdfa5d07228396410040d9d5f92459d), [`de28165`](https://github.com/LedgerHQ/ledger-live/commit/de28165849281e54355fcb1894bf904c2125b2eb), [`d1e1f5f`](https://github.com/LedgerHQ/ledger-live/commit/d1e1f5f156ff95ae5fd7ebdeaec3b5d628d671b7), [`49de732`](https://github.com/LedgerHQ/ledger-live/commit/49de7327915d876c4a98826d561705171c41d2d2), [`d5d2516`](https://github.com/LedgerHQ/ledger-live/commit/d5d2516e82d0ee1984fcff0357cc0406eca91c48), [`429170c`](https://github.com/LedgerHQ/ledger-live/commit/429170c6f969a90517696f2d750fc853be91e378), [`17a6fe5`](https://github.com/LedgerHQ/ledger-live/commit/17a6fe50223648ab962217e1388633d1d67c63a7), [`e8305c7`](https://github.com/LedgerHQ/ledger-live/commit/e8305c7492cc970261e24069e52f040aec65f03c), [`e2afea1`](https://github.com/LedgerHQ/ledger-live/commit/e2afea14298ebf9fa64c61b9cc4d5eca740decc1), [`12939e3`](https://github.com/LedgerHQ/ledger-live/commit/12939e3bdd940eed4c5f0d1a684fefa689a2b9c9), [`2734bf4`](https://github.com/LedgerHQ/ledger-live/commit/2734bf48a141d35b8df665e6112bb01c2fc203ec), [`4ce1aca`](https://github.com/LedgerHQ/ledger-live/commit/4ce1acad62b9bb4b186a6fba14fce381b699d2c2), [`2ccdc0f`](https://github.com/LedgerHQ/ledger-live/commit/2ccdc0f0b1020daca45dfbd1444a79e2aae0bd36), [`c3dcfd8`](https://github.com/LedgerHQ/ledger-live/commit/c3dcfd821153bf18896eb4a63bb2ed40c55e310b), [`e0cae47`](https://github.com/LedgerHQ/ledger-live/commit/e0cae4765262eb5e58de7b20d348907a4f5a5ccc), [`81d566b`](https://github.com/LedgerHQ/ledger-live/commit/81d566bd4b2fc0b72f4317aee917975601cd97b2), [`3374abb`](https://github.com/LedgerHQ/ledger-live/commit/3374abbb9491f94fb98417b696b4e30c1bced021), [`d593a3d`](https://github.com/LedgerHQ/ledger-live/commit/d593a3d4a21bcdc6e28a193521b949c1323a4a5b), [`13a6d68`](https://github.com/LedgerHQ/ledger-live/commit/13a6d687f486e1fcb3001a15f437a84b26ea5609), [`0413ec3`](https://github.com/LedgerHQ/ledger-live/commit/0413ec3d26b430e0e39a49c3f19cbead2317f855), [`4df88de`](https://github.com/LedgerHQ/ledger-live/commit/4df88de76e0d58b391bb376783edc552b44dcf24), [`bc460b0`](https://github.com/LedgerHQ/ledger-live/commit/bc460b08ac220010875e9d245577360918bf94ac), [`20484fe`](https://github.com/LedgerHQ/ledger-live/commit/20484fead9eccb0988ed9363466d2dbdd5b3efea), [`b04379b`](https://github.com/LedgerHQ/ledger-live/commit/b04379bbbb8fcbebcfd7fe49e2ad8226ffa6d806), [`99d2480`](https://github.com/LedgerHQ/ledger-live/commit/99d2480ce988754fb2595a0fa0d7612ddfe77193), [`5a9de42`](https://github.com/LedgerHQ/ledger-live/commit/5a9de42cd3a598f1f8954d58b9536280f5fd2927), [`f03b96e`](https://github.com/LedgerHQ/ledger-live/commit/f03b96ed3d72e7404eebe2b8b12e42833cf55a1b), [`44fc466`](https://github.com/LedgerHQ/ledger-live/commit/44fc466224cb5f03d68cda98d3cc23e652b38251), [`a40069c`](https://github.com/LedgerHQ/ledger-live/commit/a40069cca2db75a7cd2fcc11beed61977f53c655), [`e2bb865`](https://github.com/LedgerHQ/ledger-live/commit/e2bb865733ba1ac054b9c35d02cd94fe91ae212e), [`5dff2e5`](https://github.com/LedgerHQ/ledger-live/commit/5dff2e54adbff5b6bc5ad2e57bbd6c5e6f85271a), [`bd2a285`](https://github.com/LedgerHQ/ledger-live/commit/bd2a285f8548c8cda16cf8960c71fbb82513e18a), [`8d68514`](https://github.com/LedgerHQ/ledger-live/commit/8d6851405315262fdb54a003dcad1d07f2010c31), [`ec49c1a`](https://github.com/LedgerHQ/ledger-live/commit/ec49c1aedabd57b76987f1bd265800fd916772bc), [`83d314d`](https://github.com/LedgerHQ/ledger-live/commit/83d314dcad271f5c7bdc2cf04eea1a37d94f3b5a), [`1ec8aa8`](https://github.com/LedgerHQ/ledger-live/commit/1ec8aa83633767ab20807fea41b76025fd000222), [`39b8762`](https://github.com/LedgerHQ/ledger-live/commit/39b87620fce0f123406907372d8250713b0e9416), [`7133d63`](https://github.com/LedgerHQ/ledger-live/commit/7133d632892e8781260212f90e0a2cb4ed5bc885), [`393695d`](https://github.com/LedgerHQ/ledger-live/commit/393695db90c73639ddf7e8d38dc2cf88dad19064), [`c5d0d84`](https://github.com/LedgerHQ/ledger-live/commit/c5d0d8489518b9c5635ed8aa415eb7187f4124d9), [`94bb3b3`](https://github.com/LedgerHQ/ledger-live/commit/94bb3b36d114163b9907dc574344e8bb66945eb5), [`c24caff`](https://github.com/LedgerHQ/ledger-live/commit/c24cafffbc8b6fd0f05c6ec13e70d70fd4557697), [`4a749db`](https://github.com/LedgerHQ/ledger-live/commit/4a749db93ffbb57b2296315869df761a6a2ed6ec), [`120891d`](https://github.com/LedgerHQ/ledger-live/commit/120891d4dbd9e9bba22dbf552f1bbe0ab34685cc), [`5c70ad0`](https://github.com/LedgerHQ/ledger-live/commit/5c70ad082840b169ae8a22d196fcc765b779575b), [`91056c1`](https://github.com/LedgerHQ/ledger-live/commit/91056c17c325bf042f6449c3ed74412adcb84899), [`1f907a7`](https://github.com/LedgerHQ/ledger-live/commit/1f907a7d358d3778339fedf84e2ba679d214f9c9), [`b0866af`](https://github.com/LedgerHQ/ledger-live/commit/b0866afc6240ac2097ff1a266d76d783d98a498a), [`8b743fb`](https://github.com/LedgerHQ/ledger-live/commit/8b743fb4d98b915eac60d3b7a991dbe6a03f2b03), [`4ef7618`](https://github.com/LedgerHQ/ledger-live/commit/4ef7618524bd8e8dcdb940c2cd852ff9e666bc6b), [`a5a5309`](https://github.com/LedgerHQ/ledger-live/commit/a5a5309e913428497dfff7e1e13ad3d18e995cf3), [`205aa4b`](https://github.com/LedgerHQ/ledger-live/commit/205aa4b7d5ef984fb020e08a05ca47ad08dff95c), [`36434e9`](https://github.com/LedgerHQ/ledger-live/commit/36434e9206d26b18895fd2b4f777d60aaf581b08), [`88c94ff`](https://github.com/LedgerHQ/ledger-live/commit/88c94ffe78402e1789ee70aa8cf1d0cbfeef1aef), [`e0e1e67`](https://github.com/LedgerHQ/ledger-live/commit/e0e1e6706c6cee74a920b296587dfb32c2569ccc), [`3a6ddb3`](https://github.com/LedgerHQ/ledger-live/commit/3a6ddb3fbd9d18c8005b9aef84597c8dc92dcfab), [`c72e5c3`](https://github.com/LedgerHQ/ledger-live/commit/c72e5c334206fcb1e83fea43c68cc5b359ba70f6), [`427d4d3`](https://github.com/LedgerHQ/ledger-live/commit/427d4d3c3d80263f5026cd0b8fbe83ce881a1953), [`51ce5a0`](https://github.com/LedgerHQ/ledger-live/commit/51ce5a05e95dc02ce0eccc5f9d043d556ba43bbf), [`a9ac0c9`](https://github.com/LedgerHQ/ledger-live/commit/a9ac0c99eef6b267bdee5f52708ef3d34cab7b8c), [`e3f44dc`](https://github.com/LedgerHQ/ledger-live/commit/e3f44dc9b07da59bacf25f69fda0c0d3e7e37f37), [`0cf44d5`](https://github.com/LedgerHQ/ledger-live/commit/0cf44d56a449fb0f4448cd6f8e02c880fc47adb2)]:
+  - @shared/feature-flags@0.31.0
+  - @ledgerhq/types-live@6.132.0
+  - @shared/trend@0.2.0
+  - @features/platform-feature-flags@0.13.0
+  - @ledgerhq/coin-bitcoin@1.3.0
+  - @ledgerhq/live-common@38.8.0
+  - @features/flow-agent-intent-entry-points@0.2.0
+  - @features/platform-device-onboarding@0.6.0
+  - @features/flow-account-analytics@0.3.0
+  - @devtools/bindings@0.16.0
+  - @devtools/shell@0.15.0
+  - @domain/api-account-data@0.6.0
+  - @features/platform-account-source-coin-module@0.3.0
+  - @domain/entity-account@0.4.0
+  - @ledgerhq/coin-stacks@0.37.0
+  - @features/flow-account-detail@0.5.0
+  - @domain/entity-account-receive@0.1.0
+  - @domain/entity-account-data@0.6.0
+  - @domain/entity-account-operation@0.3.0
+  - @domain/entity-client-identity@0.6.0
+  - @features/platform-currencies@0.14.0
+  - @ledgerhq/ledger-wallet-framework@3.12.0
+  - @shared/ui-info-state@0.8.0
+  - @features/flow-account-detail-analytics-notice@0.4.0
+  - @features/flow-receive@0.2.0
+  - @features/flow-pay-request@0.11.0
+  - @features/platform-intent-verify-address@0.4.0
+  - @features/platform-card@0.10.0
+  - @shared/clipboard@0.2.0
+  - @features/platform-device-action-content@0.5.0
+  - @ledgerhq/live-dmk-shared@0.40.0
+  - @features/flow-fear-and-greed@0.6.0
+  - @ledgerhq/wallet-pnl@0.10.0
+  - @features/flow-large-screen-upsell@2.5.0
+  - @features/platform-intent-wallet-sync@0.3.0
+  - @shared/env@0.14.0
+  - @shared/lottie@0.2.0
+  - @shared/network-status@0.1.0
+  - @features/flow-pay-bank-transfer@0.5.0
+  - @features/flow-pay-card-auth@0.13.0
+  - @features/flow-pay-deposit@0.7.0
+  - @features/flow-pay-feature-tour@0.10.0
+  - @domain/entity-predictions@0.4.0
+  - @features/flow-predictions@0.3.0
+  - @ledgerhq/coin-canton@2.0.0
+  - @features/platform-device-intent@5.5.0
+  - @domain/entity-account-balance-history@0.3.0
+  - @domain/api-market-countervalues@0.4.0
+  - @features/platform-contacts@0.13.0
+  - @features/flow-contacts-add-address@0.10.0
+  - @features/flow-contacts-edit-address@0.8.0
+  - @ledgerhq/live-dmk-speculos@0.13.0
+  - @features/flow-contacts-detail@0.5.0
+  - @features/flow-portfolio-services-entry-points@0.3.1
+  - @features/platform-feature-flags-firebase@0.1.5
+  - @ledgerhq/asset-aggregation@0.19.1
+  - @ledgerhq/coin-cardano@3.0.1
+  - @ledgerhq/coin-casper@3.8.1
+  - @ledgerhq/coin-concordium@1.8.1
+  - @ledgerhq/coin-filecoin@2.7.1
+  - @ledgerhq/coin-zcash@1.2.1
+  - @ledgerhq/live-send@0.2.1
+  - @ledgerhq/live-signer-evm@0.24.6
+  - @ledgerhq/live-wallet@1.2.1
+  - @ledgerhq/transaction-observability@0.6.3
+  - @ledgerhq/wallet-analytics@0.5.6
+  - @features/platform-assets-table@0.3.1
+  - @features/flow-analytics-consent@0.2.14
+  - @ledgerhq/asset-detail@0.13.1
+  - @ledgerhq/live-dmk-desktop@0.27.1
+  - @domain/entity-account-balance@0.3.1
+  - @domain/entity-account-alias@0.2.1
+  - @domain/entity-account-name@0.4.1
+  - @domain/entity-starred-account@0.1.1
+  - @domain/api-push-devices@0.3.1
+  - @features/flow-account-detail-settings@0.3.2
+  - @features/flow-pay-card-transactions@0.7.3
+  - @ledgerhq/live-signer-tron@0.2.6
+  - @domain/api-aggregated-assets@0.7.1
+  - @features/platform-aggregated-assets@0.7.1
+  - @features/platform-env@0.4.6
+  - @features/flow-pay-card@0.9.1
+  - @features/flow-pay-card-assets@0.7.1
+  - @features/flow-pay-card-details@0.11.1
+  - @features/platform-predictions@0.4.1
+  - @features/platform-market-countervalues@0.5.1
+  - @features/flow-contacts@0.18.1
+  - @features/flow-contacts-add-contact@0.10.2
+  - @features/flow-contacts-delete-address@0.4.2
+  - @features/flow-contacts-delete-contact@0.5.2
+  - @features/flow-contacts-edit-contact@0.9.2
+  - @features/flow-contacts-list@0.12.2
+  - @features/flow-pay-contact@0.9.1
+  - @features/flow-account-detail-balance-summary@0.1.0
+  - @features/flow-account-detail-delegations@0.3.0
+  - @features/flow-account-detail-hero@0.4.0
+  - @features/flow-account-detail-notices@0.3.0
+  - @features/flow-app-availability@0.3.2
+  - @features/flow-contacts-introduction@1.6.0
+  - @features/flow-pay-balance@0.10.0
+  - @features/flow-pay-card-widget@0.7.0
+  - @ledgerhq/wallet-btc@1.2.0
+  - @features/platform-content-ab-tests@0.2.5
+
+## 4.29.0-next.0
+
+### Minor Changes
+
+- [#24839](https://github.com/LedgerHQ/ledger-live/pull/24839) [`2ffe35c`](https://github.com/LedgerHQ/ledger-live/commit/2ffe35c80ed010df56d644ee2178a8994ee98be3) Thanks [@deepyjr](https://github.com/deepyjr)! - Leave room around the chart max and min labels so the scrubber overlay covers them whole
+
+- [#24709](https://github.com/LedgerHQ/ledger-live/pull/24709) [`79fbc3e`](https://github.com/LedgerHQ/ledger-live/commit/79fbc3e91945f78c42bc69c79ca4daf8df331a99) Thanks [@claudiiafg](https://github.com/claudiiafg)! - Read desktop and mobile dust filtering flags through the platform feature-flags hook and selector
+
+- [#24542](https://github.com/LedgerHQ/ledger-live/pull/24542) [`332d615`](https://github.com/LedgerHQ/ledger-live/commit/332d6152b6c11aa923d5fc7f5e16606b5d61a252) Thanks [@may01](https://github.com/may01)! - Do not require the account's app on the device when a live app signs a PSBT with an allowed derived app
+
+- [#24727](https://github.com/LedgerHQ/ledger-live/pull/24727) [`7baf9a8`](https://github.com/LedgerHQ/ledger-live/commit/7baf9a82cbfc441aeb751d53bb91ad6d27a983a1) Thanks [@deepyjr](https://github.com/deepyjr)! - Add the Agent Intent entry points on desktop: an Agents sidebar item and a Manage your agents card in My Wallet
+
+- [#24604](https://github.com/LedgerHQ/ledger-live/pull/24604) [`6ae0717`](https://github.com/LedgerHQ/ledger-live/commit/6ae07170880c92bf6944ff42449eeb25991d1edf) Thanks [@LucasWerey](https://github.com/LucasWerey)! - Add a Receive DevTools tool to toggle the newReceiveFlow feature flag and its excluded families
+
+- [#24840](https://github.com/LedgerHQ/ledger-live/pull/24840) [`eabafba`](https://github.com/LedgerHQ/ledger-live/commit/eabafbae5a75c22547965eb80f507ab35cd95452) Thanks [@ovoronkov-ledger](https://github.com/ovoronkov-ledger)! - fix(hedera): wait for account switch before updating association tx (LIVE-41397)
+
+- [#24646](https://github.com/LedgerHQ/ledger-live/pull/24646) [`ee50575`](https://github.com/LedgerHQ/ledger-live/commit/ee505757f39b870767bb5ee776dd8bd0f19c768f) Thanks [@deepyjr](https://github.com/deepyjr)! - Show the Analytics balance and chart when the countervalue is a crypto
+
+- [#24674](https://github.com/LedgerHQ/ledger-live/pull/24674) [`8064394`](https://github.com/LedgerHQ/ledger-live/commit/806439433d2c57b13db5a513688db52195bfc163) Thanks [@gre-ledger](https://github.com/gre-ledger)! - Add the `receive` account data kind: on which address an account receives and how the device confirms it, read by the full-sync source. The branded `Address` moves from `@domain/entity-account-operation` to `@domain/entity-account-descriptor`, next to the new `DerivationPathSchema`
+
+- [#24685](https://github.com/LedgerHQ/ledger-live/pull/24685) [`ca6fee0`](https://github.com/LedgerHQ/ledger-live/commit/ca6fee093b8a18b5e4db4a21a4436cc20b96a9fc) Thanks [@gre-ledger](https://github.com/gre-ledger)! - Serve EVM balances from the Portfolio source while its devtool injects it
+
+- [#24697](https://github.com/LedgerHQ/ledger-live/pull/24697) [`b2224b4`](https://github.com/LedgerHQ/ledger-live/commit/b2224b4d0e202ceb21cf7693305baa1cfa5a107b) Thanks [@gre-ledger](https://github.com/gre-ledger)! - Value Portfolio source operations in the asked countervalue and filter them by token on the service
+
+- [#24657](https://github.com/LedgerHQ/ledger-live/pull/24657) [`effe64c`](https://github.com/LedgerHQ/ledger-live/commit/effe64cde76c319833d7c7596a28727191943812) Thanks [@gre-ledger](https://github.com/gre-ledger)! - Add the Portfolio source devtool, which lists and reconciles the install's Portfolio service registrations
+
+- [#24695](https://github.com/LedgerHQ/ledger-live/pull/24695) [`93e80dd`](https://github.com/LedgerHQ/ledger-live/commit/93e80dd0c3144ed090001985f6fd25d84172a2a8) Thanks [@gre-ledger](https://github.com/gre-ledger)! - Serve EVM balance histories from the Portfolio source while its devtool injects it
+
+- [#24694](https://github.com/LedgerHQ/ledger-live/pull/24694) [`ed79130`](https://github.com/LedgerHQ/ledger-live/commit/ed79130d80ba9b18a26a8380c14bedbdb5435c63) Thanks [@gre-ledger](https://github.com/gre-ledger)! - Serve EVM operations from the Portfolio source while its devtool injects it
+
+- [#24696](https://github.com/LedgerHQ/ledger-live/pull/24696) [`297954a`](https://github.com/LedgerHQ/ledger-live/commit/297954a3e3fec11b44e087f7e0bbc93a7b09baa6) Thanks [@gre-ledger](https://github.com/gre-ledger)! - Serve Bitcoin and Cardano (by xpub), Tron, Tezos, Sui, Stellar and Canton accounts from the Portfolio source
+
+- [#24614](https://github.com/LedgerHQ/ledger-live/pull/24614) [`de28165`](https://github.com/LedgerHQ/ledger-live/commit/de28165849281e54355fcb1894bf904c2125b2eb) Thanks [@semeano](https://github.com/semeano)! - Add the Alpen mainnet EVM config and move Alpen Testnet to the Ledger node and explorer, through @ledgerhq/coin-evm 16.4.2
+
+- [#24589](https://github.com/LedgerHQ/ledger-live/pull/24589) [`49de732`](https://github.com/LedgerHQ/ledger-live/commit/49de7327915d876c4a98826d561705171c41d2d2) Thanks [@gre-ledger](https://github.com/gre-ledger)! - Scale BigNumber amounts down by a power of ten with `shiftedBy` instead of `div`, so the result no longer depends on the global `DECIMAL_PLACES`
+
+- [#24798](https://github.com/LedgerHQ/ledger-live/pull/24798) [`e8305c7`](https://github.com/LedgerHQ/ledger-live/commit/e8305c7492cc970261e24069e52f040aec65f03c) Thanks [@LucasWerey](https://github.com/LucasWerey)! - Move the receive verify hint state from `@features/flow-pay-request/state` to `@features/flow-receive/state`
+
+- [#24859](https://github.com/LedgerHQ/ledger-live/pull/24859) [`e2afea1`](https://github.com/LedgerHQ/ledger-live/commit/e2afea14298ebf9fa64c61b9cc4d5eca740decc1) Thanks [@LucasWerey](https://github.com/LucasWerey)! - Add the receive family contract: notices, support and unsupported device models of the new receive address screen per coin family
+
+- [#24653](https://github.com/LedgerHQ/ledger-live/pull/24653) [`f48cb96`](https://github.com/LedgerHQ/ledger-live/commit/f48cb968a530d257a018807417ddcf4652871399) Thanks [@vpenskyi-ledger](https://github.com/vpenskyi-ledger)! - Add a Return to Perps button to the swap status dialog opened from Perps, which closes the dialog. Keep the default dialog background on the Perps "Transaction signed" dialog in dark mode.
+
+- [#24766](https://github.com/LedgerHQ/ledger-live/pull/24766) [`12939e3`](https://github.com/LedgerHQ/ledger-live/commit/12939e3bdd940eed4c5f0d1a684fefa689a2b9c9) Thanks [@LucasWerey](https://github.com/LucasWerey)! - Emit an `addressDisplayed` verify-address intent state once the address request is sent to the device
+
+- [#24691](https://github.com/LedgerHQ/ledger-live/pull/24691) [`81d566b`](https://github.com/LedgerHQ/ledger-live/commit/81d566bd4b2fc0b72f4317aee917975601cd97b2) Thanks [@gre-ledger](https://github.com/gre-ledger)! - Add the account-receive DevTools tool, reading the `receive` kind per account, and the `receive` kind to the mock source
+
+- [#24582](https://github.com/LedgerHQ/ledger-live/pull/24582) [`4df88de`](https://github.com/LedgerHQ/ledger-live/commit/4df88de76e0d58b391bb376783edc552b44dcf24) Thanks [@claudiiafg](https://github.com/claudiiafg)! - Count internal native receives in asset cost basis
+
+- [#24592](https://github.com/LedgerHQ/ledger-live/pull/24592) [`b04379b`](https://github.com/LedgerHQ/ledger-live/commit/b04379bbbb8fcbebcfd7fe49e2ad8226ffa6d806) Thanks [@ysitbon](https://github.com/ysitbon)! - Add the Ledger Sync intents DevTool, which runs the add member and remove member intents on the Device Intent Executor of each app and logs every job state, with the app renderers, executor wrappers and session SDK it needs
+
+- [#24665](https://github.com/LedgerHQ/ledger-live/pull/24665) [`99d2480`](https://github.com/LedgerHQ/ledger-live/commit/99d2480ce988754fb2595a0fa0d7612ddfe77193) Thanks [@ysitbon](https://github.com/ysitbon)! - Build every Ledger Sync session SDK with the setup of the app's cached SDK, the one the wallet sync loop uses, through a shared `sessionWithDevice` adapter, so a member added on the device is known to the sync loop even when the flag environment arrives after the app started; the intents DevTool lists members with the app SDK again
+
+- [#24688](https://github.com/LedgerHQ/ledger-live/pull/24688) [`f028bf9`](https://github.com/LedgerHQ/ledger-live/commit/f028bf9f30374dfa9587e50f4f92532e23d3206b) Thanks [@ysitbon](https://github.com/ysitbon)! - Run the Ledger Sync device steps on the Device Intent Executor behind the lwdLedgerSyncDie flag
+
+- [#24593](https://github.com/LedgerHQ/ledger-live/pull/24593) [`5dff2e5`](https://github.com/LedgerHQ/ledger-live/commit/5dff2e54adbff5b6bc5ad2e57bbd6c5e6f85271a) Thanks [@deepyjr](https://github.com/deepyjr)! - Gate the Account Detail Analytics banner with the `accountDetail` `analyticsBanner` param, send it to analytics and keep the banner until it is closed
+
+- [#24590](https://github.com/LedgerHQ/ledger-live/pull/24590) [`6eed15b`](https://github.com/LedgerHQ/ledger-live/commit/6eed15b61aeac69daefcd39bcc904b10eb6162fd) Thanks [@ooke-ledger](https://github.com/ooke-ledger)! - Show the add account drawer above the Perps deposit and withdraw dialogs. The dialog hides while the drawer is open and comes back with the amount and the newly added account.
+
+- [#24372](https://github.com/LedgerHQ/ledger-live/pull/24372) [`39b8762`](https://github.com/LedgerHQ/ledger-live/commit/39b87620fce0f123406907372d8250713b0e9416) Thanks [@liviuciulinaru](https://github.com/liviuciulinaru)! - Show the Perps deposit errors
+
+- [#24707](https://github.com/LedgerHQ/ledger-live/pull/24707) [`7133d63`](https://github.com/LedgerHQ/ledger-live/commit/7133d632892e8781260212f90e0a2cb4ed5bc885) Thanks [@ooke-ledger](https://github.com/ooke-ledger)! - Track the Perps withdraw signing failure, the submit, its failure and its settlement on desktop and mobile
+
+- [#24825](https://github.com/LedgerHQ/ledger-live/pull/24825) [`db7418a`](https://github.com/LedgerHQ/ledger-live/commit/db7418ab935c334687af009587df815434f2269a) Thanks [@dilaouid](https://github.com/dilaouid)! - fix(die): make the device deprecation screen text readable in the desktop Device Intent Executor dialog and say Ledger Wallet instead of Ledger Live
+
+- [#24689](https://github.com/LedgerHQ/ledger-live/pull/24689) [`393695d`](https://github.com/LedgerHQ/ledger-live/commit/393695db90c73639ddf7e8d38dc2cf88dad19064) Thanks [@francois-guerin-ledger](https://github.com/francois-guerin-ledger)! - Hide blocked and unregistered Polkadot validators from the nomination list and reject them before signing
+
+- [#24473](https://github.com/LedgerHQ/ledger-live/pull/24473) [`c5d0d84`](https://github.com/LedgerHQ/ledger-live/commit/c5d0d8489518b9c5635ed8aa415eb7187f4124d9) Thanks [@YazhuEth](https://github.com/YazhuEth)! - Add the Predictions DevTool on desktop and mobile to inspect and reset what the Predictions onboarding stored, and preview the trading wallet setup. `@domain/entity-predictions` gets `resetPredictionsIntroSeen`
+
+- [#24125](https://github.com/LedgerHQ/ledger-live/pull/24125) [`b33851b`](https://github.com/LedgerHQ/ledger-live/commit/b33851b2b5015eb37cced36d7ba6119534c64ff3) Thanks [@jiyuzhuang](https://github.com/jiyuzhuang)! - Record "Analytics opt-in prompt main" when the desktop consent prompt is shown
+
+- [#24769](https://github.com/LedgerHQ/ledger-live/pull/24769) [`94bb3b3`](https://github.com/LedgerHQ/ledger-live/commit/94bb3b36d114163b9907dc574344e8bb66945eb5) Thanks [@deepyjr](https://github.com/deepyjr)! - Add a search field to the analytics asset filter on mobile and desktop, and fix the spacing between the filters and the chart on mobile
+
+- [#24519](https://github.com/LedgerHQ/ledger-live/pull/24519) [`120891d`](https://github.com/LedgerHQ/ledger-live/commit/120891d4dbd9e9bba22dbf552f1bbe0ab34685cc) Thanks [@vpenskyi-ledger](https://github.com/vpenskyi-ledger)! - List perps withdrawals in the swap history, anchored to their payout transaction, and show their payout and Hyperliquid fees on the swap status screen. Keep unknown fields in the perps withdraw payload so the SwapKit submit gets it back unmodified
+
+- [#24772](https://github.com/LedgerHQ/ledger-live/pull/24772) [`9012872`](https://github.com/LedgerHQ/ledger-live/commit/9012872e214386a6b9af13fa3d67b2b153027697) Thanks [@LucasWerey](https://github.com/LucasWerey)! - Allow restricting the modular asset and account dialog to given networks with `networkIds`
+
+- [#24636](https://github.com/LedgerHQ/ledger-live/pull/24636) [`1f907a7`](https://github.com/LedgerHQ/ledger-live/commit/1f907a7d358d3778339fedf84e2ba679d214f9c9) Thanks [@deepyjr](https://github.com/deepyjr)! - Show the selected account icon on the analytics account filter
+
+- [#24747](https://github.com/LedgerHQ/ledger-live/pull/24747) [`8b743fb`](https://github.com/LedgerHQ/ledger-live/commit/8b743fb4d98b915eac60d3b7a991dbe6a03f2b03) Thanks [@gre-ledger](https://github.com/gre-ledger)! - Value each balance history point in the fiat a query asks for, at its date, with the `countervalue` query
+
+- [#24361](https://github.com/LedgerHQ/ledger-live/pull/24361) [`76ca8e7`](https://github.com/LedgerHQ/ledger-live/commit/76ca8e7dae5dd46abef453ffa61ff38d19b47344) Thanks [@LL782](https://github.com/LL782)! - Block wallet and accounts writes to app.json while the app is locked
+
+- [#24643](https://github.com/LedgerHQ/ledger-live/pull/24643) [`10216dd`](https://github.com/LedgerHQ/ledger-live/commit/10216dd420daf71018cbcdcf2e172f9355a62830) Thanks [@renovate-operator-ledger](https://github.com/apps/renovate-operator-ledger)! - chore(deps): update rstack
+
+  - Updated `@rsbuild/core` to `2.3.1`
+  - Updated `@rsdoctor/core` to `2.0.2`
+  - Updated `@rslib/core` to `1.0.6`
+  - Updated `@rspack/cli` to `2.3.1`
+  - Updated `@rspack/core` to `2.3.1`
+
+- [#24648](https://github.com/LedgerHQ/ledger-live/pull/24648) [`431165e`](https://github.com/LedgerHQ/ledger-live/commit/431165efb50051c4359808f8ee1ceb1ef7566bbd) Thanks [@renovate-operator-ledger](https://github.com/apps/renovate-operator-ledger)! - chore(deps): update typescript-eslint monorepo to v8.72.1
+
+  - Updated `@typescript-eslint/parser` to `8.72.1`
+
+- [#24675](https://github.com/LedgerHQ/ledger-live/pull/24675) [`b08cbc3`](https://github.com/LedgerHQ/ledger-live/commit/b08cbc304d2ddf218c1fa1ccd00dd1a73953b7b2) Thanks [@LucasWerey](https://github.com/LucasWerey)! - Open the partner live app for stake from account and asset detail instead of always opening Earn
+
+- [#24708](https://github.com/LedgerHQ/ledger-live/pull/24708) [`71556e9`](https://github.com/LedgerHQ/ledger-live/commit/71556e9f0babd4c63e8ad58cced7a77bf0351fef) Thanks [@claudiiafg](https://github.com/claudiiafg)! - Use Lumen for the crypto address name suggestions and portfolio banner icons
+
+- [#24651](https://github.com/LedgerHQ/ledger-live/pull/24651) [`a5a5309`](https://github.com/LedgerHQ/ledger-live/commit/a5a5309e913428497dfff7e1e13ad3d18e995cf3) Thanks [@deepyjr](https://github.com/deepyjr)! - Keep the contact address ENS notice visible while an edited ENS name is revalidated, so the modal no longer blinks on each keystroke.
+
+- [#24633](https://github.com/LedgerHQ/ledger-live/pull/24633) [`8492733`](https://github.com/LedgerHQ/ledger-live/commit/8492733e73d90f1eca5f9ca9ec1cfffaaf84a8f4) Thanks [@deepyjr](https://github.com/deepyjr)! - Fix dropdown scrollbar not responding to mouse clicks and drags
+
+- [#24597](https://github.com/LedgerHQ/ledger-live/pull/24597) [`205aa4b`](https://github.com/LedgerHQ/ledger-live/commit/205aa4b7d5ef984fb020e08a05ca47ad08dff95c) Thanks [@deepyjr](https://github.com/deepyjr)! - Show the Account Detail Analytics banner only to installations that had completed onboarding with a device before the rollout, through a one-time persisted eligibility snapshot
+
+- [#24560](https://github.com/LedgerHQ/ledger-live/pull/24560) [`36434e9`](https://github.com/LedgerHQ/ledger-live/commit/36434e9206d26b18895fd2b4f777d60aaf581b08) Thanks [@liviuciulinaru](https://github.com/liviuciulinaru)! - Reuse a recent BTC sync for quotes and show the fee estimation failure on the Perps deposit form
+
+- [#24652](https://github.com/LedgerHQ/ledger-live/pull/24652) [`e0e1e67`](https://github.com/LedgerHQ/ledger-live/commit/e0e1e6706c6cee74a920b296587dfb32c2569ccc) Thanks [@deepyjr](https://github.com/deepyjr)! - Truncate long contact address action labels on one line with an ellipsis and show the full label on hover, so translations such as Russian no longer overflow the buttons.
+
+- [#24756](https://github.com/LedgerHQ/ledger-live/pull/24756) [`3a6ddb3`](https://github.com/LedgerHQ/ledger-live/commit/3a6ddb3fbd9d18c8005b9aef84597c8dc92dcfab) Thanks [@dilaouid](https://github.com/dilaouid)! - feat(send): apply the die for the new send flow in lwd
+
+- [#24637](https://github.com/LedgerHQ/ledger-live/pull/24637) [`27a2b6b`](https://github.com/LedgerHQ/ledger-live/commit/27a2b6be0baff6924ab10011f3f42dbc84661987) Thanks [@deepyjr](https://github.com/deepyjr)! - Give the account name more room in the account list and show the cut address type in a tooltip
+
+- [#24678](https://github.com/LedgerHQ/ledger-live/pull/24678) [`a9ac0c9`](https://github.com/LedgerHQ/ledger-live/commit/a9ac0c99eef6b267bdee5f52708ef3d34cab7b8c) Thanks [@live-github-bot](https://github.com/apps/live-github-bot)! - Prefill the XRP trust limit Max with the protocol maximum from coin-xrp 13.7.0, no longer fetched, and read the optional `limit` of a held IOU
+
+- [#24837](https://github.com/LedgerHQ/ledger-live/pull/24837) [`e3f44dc`](https://github.com/LedgerHQ/ledger-live/commit/e3f44dc9b07da59bacf25f69fda0c0d3e7e37f37) Thanks [@gre-ledger](https://github.com/gre-ledger)! - Share the XRP token holding condition of the add-token modal in live-common
+
+- [#24735](https://github.com/LedgerHQ/ledger-live/pull/24735) [`0cf44d5`](https://github.com/LedgerHQ/ledger-live/commit/0cf44d56a449fb0f4448cd6f8e02c880fc47adb2) Thanks [@mdomanski-ext-ledger](https://github.com/mdomanski-ext-ledger)! - Add the `OPT_EDIT` operation type and `BridgeApi.tokenOptParentRow`. XRP tokens: opt-in and opt-out history rows keep their type, a pending edit is an `OPT_EDIT`, IOU device review fields, IOU amounts from fiat or the 25/50/75 % buttons rounded to 16 significant digits, error texts, send errors on the LWD amount step, and LWD Token settings messages for a limit of 0 and a limit below the balance
+
+### Patch Changes
+
+- Updated dependencies [[`4aa3244`](https://github.com/LedgerHQ/ledger-live/commit/4aa32442c63cd17bd2894d63ad0721d51e0ca41a), [`4d9a494`](https://github.com/LedgerHQ/ledger-live/commit/4d9a4949a9c03da89241f0163325940217762f7e), [`79fbc3e`](https://github.com/LedgerHQ/ledger-live/commit/79fbc3e91945f78c42bc69c79ca4daf8df331a99), [`332d615`](https://github.com/LedgerHQ/ledger-live/commit/332d6152b6c11aa923d5fc7f5e16606b5d61a252), [`1d97ca7`](https://github.com/LedgerHQ/ledger-live/commit/1d97ca78b8e326c5bdd1af98199dd9e9aa06b4c5), [`0e964a8`](https://github.com/LedgerHQ/ledger-live/commit/0e964a897b6d740d172a55060b8aba960800b2cc), [`dc295d0`](https://github.com/LedgerHQ/ledger-live/commit/dc295d0bf733a21897b23c810b9b9c1f44343f4d), [`6ae0717`](https://github.com/LedgerHQ/ledger-live/commit/6ae07170880c92bf6944ff42449eeb25991d1edf), [`eabafba`](https://github.com/LedgerHQ/ledger-live/commit/eabafbae5a75c22547965eb80f507ab35cd95452), [`180de5b`](https://github.com/LedgerHQ/ledger-live/commit/180de5baca4b9e6abf44dce3991ea511ea84836a), [`ea45007`](https://github.com/LedgerHQ/ledger-live/commit/ea45007b1a8f6f7afbb1f29df2bc93d77766d69a), [`5895784`](https://github.com/LedgerHQ/ledger-live/commit/5895784ef0da900092abf361b3647eba1eb1547f), [`ee50575`](https://github.com/LedgerHQ/ledger-live/commit/ee505757f39b870767bb5ee776dd8bd0f19c768f), [`9f10baf`](https://github.com/LedgerHQ/ledger-live/commit/9f10bafef466914b2536c7e509ff7c3c2c49b5c8), [`0fc43ab`](https://github.com/LedgerHQ/ledger-live/commit/0fc43ab03928e17d2da761f747ec0c449228d4aa), [`5020021`](https://github.com/LedgerHQ/ledger-live/commit/5020021654f743e0e868cb9c8d011adc97f4ed9a), [`45f0819`](https://github.com/LedgerHQ/ledger-live/commit/45f081972c38225dfed314c9d8313cd510629a85), [`8064394`](https://github.com/LedgerHQ/ledger-live/commit/806439433d2c57b13db5a513688db52195bfc163), [`6baeada`](https://github.com/LedgerHQ/ledger-live/commit/6baeadaca277a70109580c0d939278ebf729922b), [`de62f18`](https://github.com/LedgerHQ/ledger-live/commit/de62f18c8fdfa5d07228396410040d9d5f92459d), [`de28165`](https://github.com/LedgerHQ/ledger-live/commit/de28165849281e54355fcb1894bf904c2125b2eb), [`d1e1f5f`](https://github.com/LedgerHQ/ledger-live/commit/d1e1f5f156ff95ae5fd7ebdeaec3b5d628d671b7), [`49de732`](https://github.com/LedgerHQ/ledger-live/commit/49de7327915d876c4a98826d561705171c41d2d2), [`d5d2516`](https://github.com/LedgerHQ/ledger-live/commit/d5d2516e82d0ee1984fcff0357cc0406eca91c48), [`429170c`](https://github.com/LedgerHQ/ledger-live/commit/429170c6f969a90517696f2d750fc853be91e378), [`17a6fe5`](https://github.com/LedgerHQ/ledger-live/commit/17a6fe50223648ab962217e1388633d1d67c63a7), [`e8305c7`](https://github.com/LedgerHQ/ledger-live/commit/e8305c7492cc970261e24069e52f040aec65f03c), [`e2afea1`](https://github.com/LedgerHQ/ledger-live/commit/e2afea14298ebf9fa64c61b9cc4d5eca740decc1), [`12939e3`](https://github.com/LedgerHQ/ledger-live/commit/12939e3bdd940eed4c5f0d1a684fefa689a2b9c9), [`2734bf4`](https://github.com/LedgerHQ/ledger-live/commit/2734bf48a141d35b8df665e6112bb01c2fc203ec), [`4ce1aca`](https://github.com/LedgerHQ/ledger-live/commit/4ce1acad62b9bb4b186a6fba14fce381b699d2c2), [`2ccdc0f`](https://github.com/LedgerHQ/ledger-live/commit/2ccdc0f0b1020daca45dfbd1444a79e2aae0bd36), [`c3dcfd8`](https://github.com/LedgerHQ/ledger-live/commit/c3dcfd821153bf18896eb4a63bb2ed40c55e310b), [`e0cae47`](https://github.com/LedgerHQ/ledger-live/commit/e0cae4765262eb5e58de7b20d348907a4f5a5ccc), [`81d566b`](https://github.com/LedgerHQ/ledger-live/commit/81d566bd4b2fc0b72f4317aee917975601cd97b2), [`3374abb`](https://github.com/LedgerHQ/ledger-live/commit/3374abbb9491f94fb98417b696b4e30c1bced021), [`d593a3d`](https://github.com/LedgerHQ/ledger-live/commit/d593a3d4a21bcdc6e28a193521b949c1323a4a5b), [`13a6d68`](https://github.com/LedgerHQ/ledger-live/commit/13a6d687f486e1fcb3001a15f437a84b26ea5609), [`0413ec3`](https://github.com/LedgerHQ/ledger-live/commit/0413ec3d26b430e0e39a49c3f19cbead2317f855), [`4df88de`](https://github.com/LedgerHQ/ledger-live/commit/4df88de76e0d58b391bb376783edc552b44dcf24), [`bc460b0`](https://github.com/LedgerHQ/ledger-live/commit/bc460b08ac220010875e9d245577360918bf94ac), [`20484fe`](https://github.com/LedgerHQ/ledger-live/commit/20484fead9eccb0988ed9363466d2dbdd5b3efea), [`b04379b`](https://github.com/LedgerHQ/ledger-live/commit/b04379bbbb8fcbebcfd7fe49e2ad8226ffa6d806), [`99d2480`](https://github.com/LedgerHQ/ledger-live/commit/99d2480ce988754fb2595a0fa0d7612ddfe77193), [`5a9de42`](https://github.com/LedgerHQ/ledger-live/commit/5a9de42cd3a598f1f8954d58b9536280f5fd2927), [`f03b96e`](https://github.com/LedgerHQ/ledger-live/commit/f03b96ed3d72e7404eebe2b8b12e42833cf55a1b), [`44fc466`](https://github.com/LedgerHQ/ledger-live/commit/44fc466224cb5f03d68cda98d3cc23e652b38251), [`a40069c`](https://github.com/LedgerHQ/ledger-live/commit/a40069cca2db75a7cd2fcc11beed61977f53c655), [`e2bb865`](https://github.com/LedgerHQ/ledger-live/commit/e2bb865733ba1ac054b9c35d02cd94fe91ae212e), [`5dff2e5`](https://github.com/LedgerHQ/ledger-live/commit/5dff2e54adbff5b6bc5ad2e57bbd6c5e6f85271a), [`bd2a285`](https://github.com/LedgerHQ/ledger-live/commit/bd2a285f8548c8cda16cf8960c71fbb82513e18a), [`8d68514`](https://github.com/LedgerHQ/ledger-live/commit/8d6851405315262fdb54a003dcad1d07f2010c31), [`ec49c1a`](https://github.com/LedgerHQ/ledger-live/commit/ec49c1aedabd57b76987f1bd265800fd916772bc), [`83d314d`](https://github.com/LedgerHQ/ledger-live/commit/83d314dcad271f5c7bdc2cf04eea1a37d94f3b5a), [`1ec8aa8`](https://github.com/LedgerHQ/ledger-live/commit/1ec8aa83633767ab20807fea41b76025fd000222), [`39b8762`](https://github.com/LedgerHQ/ledger-live/commit/39b87620fce0f123406907372d8250713b0e9416), [`7133d63`](https://github.com/LedgerHQ/ledger-live/commit/7133d632892e8781260212f90e0a2cb4ed5bc885), [`393695d`](https://github.com/LedgerHQ/ledger-live/commit/393695db90c73639ddf7e8d38dc2cf88dad19064), [`c5d0d84`](https://github.com/LedgerHQ/ledger-live/commit/c5d0d8489518b9c5635ed8aa415eb7187f4124d9), [`94bb3b3`](https://github.com/LedgerHQ/ledger-live/commit/94bb3b36d114163b9907dc574344e8bb66945eb5), [`c24caff`](https://github.com/LedgerHQ/ledger-live/commit/c24cafffbc8b6fd0f05c6ec13e70d70fd4557697), [`4a749db`](https://github.com/LedgerHQ/ledger-live/commit/4a749db93ffbb57b2296315869df761a6a2ed6ec), [`120891d`](https://github.com/LedgerHQ/ledger-live/commit/120891d4dbd9e9bba22dbf552f1bbe0ab34685cc), [`5c70ad0`](https://github.com/LedgerHQ/ledger-live/commit/5c70ad082840b169ae8a22d196fcc765b779575b), [`91056c1`](https://github.com/LedgerHQ/ledger-live/commit/91056c17c325bf042f6449c3ed74412adcb84899), [`1f907a7`](https://github.com/LedgerHQ/ledger-live/commit/1f907a7d358d3778339fedf84e2ba679d214f9c9), [`b0866af`](https://github.com/LedgerHQ/ledger-live/commit/b0866afc6240ac2097ff1a266d76d783d98a498a), [`8b743fb`](https://github.com/LedgerHQ/ledger-live/commit/8b743fb4d98b915eac60d3b7a991dbe6a03f2b03), [`4ef7618`](https://github.com/LedgerHQ/ledger-live/commit/4ef7618524bd8e8dcdb940c2cd852ff9e666bc6b), [`a5a5309`](https://github.com/LedgerHQ/ledger-live/commit/a5a5309e913428497dfff7e1e13ad3d18e995cf3), [`205aa4b`](https://github.com/LedgerHQ/ledger-live/commit/205aa4b7d5ef984fb020e08a05ca47ad08dff95c), [`36434e9`](https://github.com/LedgerHQ/ledger-live/commit/36434e9206d26b18895fd2b4f777d60aaf581b08), [`88c94ff`](https://github.com/LedgerHQ/ledger-live/commit/88c94ffe78402e1789ee70aa8cf1d0cbfeef1aef), [`e0e1e67`](https://github.com/LedgerHQ/ledger-live/commit/e0e1e6706c6cee74a920b296587dfb32c2569ccc), [`3a6ddb3`](https://github.com/LedgerHQ/ledger-live/commit/3a6ddb3fbd9d18c8005b9aef84597c8dc92dcfab), [`c72e5c3`](https://github.com/LedgerHQ/ledger-live/commit/c72e5c334206fcb1e83fea43c68cc5b359ba70f6), [`427d4d3`](https://github.com/LedgerHQ/ledger-live/commit/427d4d3c3d80263f5026cd0b8fbe83ce881a1953), [`51ce5a0`](https://github.com/LedgerHQ/ledger-live/commit/51ce5a05e95dc02ce0eccc5f9d043d556ba43bbf), [`a9ac0c9`](https://github.com/LedgerHQ/ledger-live/commit/a9ac0c99eef6b267bdee5f52708ef3d34cab7b8c), [`e3f44dc`](https://github.com/LedgerHQ/ledger-live/commit/e3f44dc9b07da59bacf25f69fda0c0d3e7e37f37), [`0cf44d5`](https://github.com/LedgerHQ/ledger-live/commit/0cf44d56a449fb0f4448cd6f8e02c880fc47adb2)]:
+  - @shared/feature-flags@0.31.0-next.0
+  - @ledgerhq/types-live@6.132.0-next.0
+  - @shared/trend@0.2.0-next.0
+  - @features/platform-feature-flags@0.13.0-next.0
+  - @ledgerhq/coin-bitcoin@1.3.0-next.0
+  - @ledgerhq/live-common@38.8.0-next.0
+  - @features/flow-agent-intent-entry-points@0.2.0-next.0
+  - @features/platform-device-onboarding@0.6.0-next.0
+  - @features/flow-account-analytics@0.3.0-next.0
+  - @devtools/bindings@0.16.0-next.0
+  - @devtools/shell@0.15.0-next.0
+  - @domain/api-account-data@0.6.0-next.0
+  - @features/platform-account-source-coin-module@0.3.0-next.0
+  - @domain/entity-account@0.4.0-next.0
+  - @ledgerhq/coin-stacks@0.37.0-next.0
+  - @features/flow-account-detail@0.5.0-next.0
+  - @domain/entity-account-receive@0.1.0-next.0
+  - @domain/entity-account-data@0.6.0-next.0
+  - @domain/entity-account-operation@0.3.0-next.0
+  - @domain/entity-client-identity@0.6.0-next.0
+  - @features/platform-currencies@0.14.0-next.0
+  - @ledgerhq/ledger-wallet-framework@3.12.0-next.0
+  - @shared/ui-info-state@0.8.0-next.0
+  - @features/flow-account-detail-analytics-notice@0.4.0-next.0
+  - @features/flow-receive@0.2.0-next.0
+  - @features/flow-pay-request@0.11.0-next.0
+  - @features/platform-intent-verify-address@0.4.0-next.0
+  - @features/platform-card@0.10.0-next.0
+  - @shared/clipboard@0.2.0-next.0
+  - @features/platform-device-action-content@0.5.0-next.0
+  - @ledgerhq/live-dmk-shared@0.40.0-next.0
+  - @features/flow-fear-and-greed@0.6.0-next.0
+  - @ledgerhq/wallet-pnl@0.10.0-next.0
+  - @features/flow-large-screen-upsell@2.5.0-next.0
+  - @features/platform-intent-wallet-sync@0.3.0-next.0
+  - @shared/env@0.14.0-next.0
+  - @shared/lottie@0.2.0-next.0
+  - @shared/network-status@0.1.0-next.0
+  - @features/flow-pay-bank-transfer@0.5.0-next.0
+  - @features/flow-pay-card-auth@0.13.0-next.0
+  - @features/flow-pay-deposit@0.7.0-next.0
+  - @features/flow-pay-feature-tour@0.10.0-next.0
+  - @domain/entity-predictions@0.4.0-next.0
+  - @features/flow-predictions@0.3.0-next.0
+  - @ledgerhq/coin-canton@2.0.0-next.0
+  - @features/platform-device-intent@5.5.0-next.0
+  - @domain/entity-account-balance-history@0.3.0-next.0
+  - @domain/api-market-countervalues@0.4.0-next.0
+  - @features/platform-contacts@0.13.0-next.0
+  - @features/flow-contacts-add-address@0.10.0-next.0
+  - @features/flow-contacts-edit-address@0.8.0-next.0
+  - @ledgerhq/live-dmk-speculos@0.13.0-next.0
+  - @features/flow-contacts-detail@0.5.0-next.0
+  - @features/flow-portfolio-services-entry-points@0.3.1-next.0
+  - @features/platform-feature-flags-firebase@0.1.5-next.0
+  - @ledgerhq/asset-aggregation@0.19.1-next.0
+  - @ledgerhq/coin-cardano@3.0.1-next.0
+  - @ledgerhq/coin-casper@3.8.1-next.0
+  - @ledgerhq/coin-concordium@1.8.1-next.0
+  - @ledgerhq/coin-filecoin@2.7.1-next.0
+  - @ledgerhq/coin-zcash@1.2.1-next.0
+  - @ledgerhq/live-send@0.2.1-next.0
+  - @ledgerhq/live-signer-evm@0.24.6-next.0
+  - @ledgerhq/live-wallet@1.2.1-next.0
+  - @ledgerhq/transaction-observability@0.6.3-next.0
+  - @ledgerhq/wallet-analytics@0.5.6-next.0
+  - @features/platform-assets-table@0.3.1-next.0
+  - @features/flow-analytics-consent@0.2.14-next.0
+  - @ledgerhq/asset-detail@0.13.1-next.0
+  - @ledgerhq/live-dmk-desktop@0.27.1-next.0
+  - @domain/entity-account-balance@0.3.1-next.0
+  - @domain/entity-account-alias@0.2.1-next.0
+  - @domain/entity-account-name@0.4.1-next.0
+  - @domain/entity-starred-account@0.1.1-next.0
+  - @domain/api-push-devices@0.3.1-next.0
+  - @features/flow-account-detail-settings@0.3.2-next.0
+  - @features/flow-pay-card-transactions@0.7.3-next.0
+  - @ledgerhq/live-signer-tron@0.2.6-next.0
+  - @domain/api-aggregated-assets@0.7.1-next.0
+  - @features/platform-aggregated-assets@0.7.1-next.0
+  - @features/platform-env@0.4.6-next.0
+  - @features/flow-pay-card@0.9.1-next.0
+  - @features/flow-pay-card-assets@0.7.1-next.0
+  - @features/flow-pay-card-details@0.11.1-next.0
+  - @features/platform-predictions@0.4.1-next.0
+  - @features/platform-market-countervalues@0.5.1-next.0
+  - @features/flow-contacts@0.18.1-next.0
+  - @features/flow-contacts-add-contact@0.10.2-next.0
+  - @features/flow-contacts-delete-address@0.4.2-next.0
+  - @features/flow-contacts-delete-contact@0.5.2-next.0
+  - @features/flow-contacts-edit-contact@0.9.2-next.0
+  - @features/flow-contacts-list@0.12.2-next.0
+  - @features/flow-pay-contact@0.9.1-next.0
+  - @features/flow-account-detail-balance-summary@0.1.0
+  - @features/flow-account-detail-delegations@0.3.0
+  - @features/flow-account-detail-hero@0.4.0
+  - @features/flow-account-detail-notices@0.3.0
+  - @features/flow-app-availability@0.3.2
+  - @features/flow-contacts-introduction@1.6.0
+  - @features/flow-pay-balance@0.10.0
+  - @features/flow-pay-card-widget@0.7.0
+  - @ledgerhq/wallet-btc@1.2.0
+  - @features/platform-content-ab-tests@0.2.5-next.0
+
+## 4.28.0
+
+### Minor Changes
+
+- [#24189](https://github.com/LedgerHQ/ledger-live/pull/24189) [`711b543`](https://github.com/LedgerHQ/ledger-live/commit/711b543456a56c18f5aa0828de974a2ee9b94c6b) Thanks [@liviuciulinaru](https://github.com/liviuciulinaru)! - Let users pick the network when they swap a multi-network asset from Market or Asset Detail, also when they have no account for it. Show only the networks of the asset itself, so USDC no longer opens an extra asset step. When the drawer keeps only one network, open the account step on that network.
+
+- [#24195](https://github.com/LedgerHQ/ledger-live/pull/24195) [`1fa3701`](https://github.com/LedgerHQ/ledger-live/commit/1fa3701af2b570706605c2f59964e366b289cbf3) Thanks [@LucasWerey](https://github.com/LucasWerey)! - Account Detail sends the events of its tracking plan, with the same names and properties on both apps
+
+- [#24262](https://github.com/LedgerHQ/ledger-live/pull/24262) [`4bd0f62`](https://github.com/LedgerHQ/ledger-live/commit/4bd0f62b9480e79e7628d0c918b7191f1087f0bd) Thanks [@ovoronkov-ledger](https://github.com/ovoronkov-ledger)! - chore(lumen): bump ui-rnative to 0.1.72 for rn 0.86 (LIVE-39312)
+
+  Bump lumen-ui-rnative to 0.1.72, lumen-ui-react to 0.1.69 and lumen-utils-shared to 0.1.19. The new lumen-ui-rnative peer ranges accept react-native 0.86, react-native-worklets 0.10 and expo-haptics 57. Lumen native inputs now expose their label as the TextInput accessibility label and hide the visual label from accessibility, so mobile tests query these inputs with `getByLabelText`.
+
+- [#24412](https://github.com/LedgerHQ/ledger-live/pull/24412) [`39cb975`](https://github.com/LedgerHQ/ledger-live/commit/39cb9752fe05ea8510059b5302f1e44575641b78) Thanks [@cted-ledger](https://github.com/cted-ledger)! - Sample `estimateFees` and `validateIntent` successes in `coin_module_call` with a new `preparationSampleRate` param of the `coinObservability` flag (default 0.1): the bridge calls them on every edit of a transaction, so sending each call made them most of the volume. Their failures are still always sent, and `craftTransaction`, `craftRawTransaction`, `craftTransactionData`, `combine` and `broadcast` stay unsampled. Each `coin_module_call` now carries its tier's `sampleRate` and an `inSample` flag, so dashboards can compute unbiased failure rates and estimate volumes from the sample.
+
+- [#23955](https://github.com/LedgerHQ/ledger-live/pull/23955) [`03cafaf`](https://github.com/LedgerHQ/ledger-live/commit/03cafaff14567ab3a8ee8495f3da964a7d56683a) Thanks [@gre-ledger](https://github.com/gre-ledger)! - Bump `@ledgerhq/zcash-utils` to 2.9.0, which ships each native binary in its own optional package. The desktop app now packages only the binaries it runs on (darwin arm64/x64, win32 x64, linux x64) instead of all six.
+
+- [#24339](https://github.com/LedgerHQ/ledger-live/pull/24339) [`eac050d`](https://github.com/LedgerHQ/ledger-live/commit/eac050d156808c13da83985ec3ebaed0567caa51) Thanks [@LucasWerey](https://github.com/LucasWerey)! - Account Detail shows the Cardano delegation and balances with the shared Lumen components
+
+- [#24215](https://github.com/LedgerHQ/ledger-live/pull/24215) [`7185de6`](https://github.com/LedgerHQ/ledger-live/commit/7185de6c3886010f3eac7cee2128eb883230e872) Thanks [@gre-ledger](https://github.com/gre-ledger)! - Value each operation in the fiat a query asks for, at its date, with the `countervalue` query
+
+- [#24235](https://github.com/LedgerHQ/ledger-live/pull/24235) [`0ebe8ea`](https://github.com/LedgerHQ/ledger-live/commit/0ebe8ea274936993a9dff1c36bf7b036d531e1f5) Thanks [@claudiiafg](https://github.com/claudiiafg)! - Hide the account detail empty state when a receive updates the balance before operations
+
+- [#24348](https://github.com/LedgerHQ/ledger-live/pull/24348) [`cc73a3f`](https://github.com/LedgerHQ/ledger-live/commit/cc73a3f12a1cb7e367bcddaea42680d0c74a62ed) Thanks [@claudiiafg](https://github.com/claudiiafg)! - Widen the account delegations validator column so the validator name is shown in full
+
+- [#24354](https://github.com/LedgerHQ/ledger-live/pull/24354) [`2c728a2`](https://github.com/LedgerHQ/ledger-live/commit/2c728a22e6acce91ec50f07bb676114850389d4a) Thanks [@claudiiafg](https://github.com/claudiiafg)! - Shrink the account asset picker dialog to its content when few assets are listed
+
+- [#24325](https://github.com/LedgerHQ/ledger-live/pull/24325) [`be81b1c`](https://github.com/LedgerHQ/ledger-live/commit/be81b1c79213926d7963e730fc8ccf4323e58db4) Thanks [@deepyjr](https://github.com/deepyjr)! - Add an account-detail DevTools tool to reset the Account Detail card that redirects to Analytics
+
+- [#24556](https://github.com/LedgerHQ/ledger-live/pull/24556) [`e6c438d`](https://github.com/LedgerHQ/ledger-live/commit/e6c438d64ad0beb6224bd4c0361241641fe2a37d) Thanks [@deepyjr](https://github.com/deepyjr)! - Add the native Account Analytics surface (filter chips opening a bottom sheet, status and Retry) and export AccountAnalytics from the package root for both apps.
+
+- [#24554](https://github.com/LedgerHQ/ledger-live/pull/24554) [`e7a4d5a`](https://github.com/LedgerHQ/ledger-live/commit/e7a4d5a01ce2aa5636609f70cccc6274d5189b08) Thanks [@deepyjr](https://github.com/deepyjr)! - Share the Analytics balance, renderer status and PnL scope rules between the apps through the Account Analytics package.
+
+- [#24553](https://github.com/LedgerHQ/ledger-live/pull/24553) [`ba1b7c4`](https://github.com/LedgerHQ/ledger-live/commit/ba1b7c45b4818bed008fcbed07d97b9a3e9aa0b3) Thanks [@deepyjr](https://github.com/deepyjr)! - Share the Analytics catalog rules (eligible positions, asset grouping, catalog state) between the apps through the Account Analytics package.
+
+- [#24572](https://github.com/LedgerHQ/ledger-live/pull/24572) [`a85db5d`](https://github.com/LedgerHQ/ledger-live/commit/a85db5d1808cb7470e224dcc70f0510920664223) Thanks [@claudiiafg](https://github.com/claudiiafg)! - Asset detail "See all" transactions no longer lists the operations of the tokens held by the same account
+
+- [#24127](https://github.com/LedgerHQ/ledger-live/pull/24127) [`1c99745`](https://github.com/LedgerHQ/ledger-live/commit/1c9974592fc45d93014b5111973c12ff4fd2b663) Thanks [@VicAlbr](https://github.com/VicAlbr)! - Add a test id to the network fees fiat value on the custom fees screen
+
+- [#24443](https://github.com/LedgerHQ/ledger-live/pull/24443) [`c842892`](https://github.com/LedgerHQ/ledger-live/commit/c8428923a5cf0ed556ff7a48a6e373c740cdb6a1) Thanks [@LucasWerey](https://github.com/LucasWerey)! - Send `network` instead of `currency` and drop `isTokenAccount` on the account detail page events
+
+- [#24468](https://github.com/LedgerHQ/ledger-live/pull/24468) [`f720cc5`](https://github.com/LedgerHQ/ledger-live/commit/f720cc5c89cca816c8e4954a911e0b894a38924b) Thanks [@deepyjr](https://github.com/deepyjr)! - Stop the Analytics chart from flickering when the asset, account or range changes: keep the previous curve on screen until the new one is ready instead of blanking it.
+
+- [#24463](https://github.com/LedgerHQ/ledger-live/pull/24463) [`6ef8d46`](https://github.com/LedgerHQ/ledger-live/commit/6ef8d46d779e672c2e4ee6ca7925b43ad28c10c2) Thanks [@deepyjr](https://github.com/deepyjr)! - Show the Analytics balance and chart when a held asset has no price, leaving that asset out of the total as the Portfolio does. Analytics still reports unavailable data when no held asset of the selection has a price.
+
+- [#24226](https://github.com/LedgerHQ/ledger-live/pull/24226) [`d701bc7`](https://github.com/LedgerHQ/ledger-live/commit/d701bc7564f9f479e0cc867ef76ec40b73f5c49c) Thanks [@qperrot](https://github.com/qperrot)! - fix(coin-bitcoin): do not spend the inputs of pending operations
+
+  `prepareTransaction` and `estimateMaxSpendable` exclude the UTXOs spent by the account's own
+  pending operations. When the explorer does not report mempool spends, a sync listed them as
+  spendable again and the next send was rejected with `txn-mempool-conflict`. An RBF edit keeps
+  the inputs of the operation it replaces.
+
+  `addPendingOperation` keeps every pending UTXO operation (those with `extra.inputs`) instead of
+  only the latest one, and removes one only when the new operation spends one of its inputs (an RBF
+  replacement). Operations of other coins are unchanged.
+
+  `isOldestBitcoinPendingOperation` takes the operation instead of its date: a pending operation
+  can be sped up unless it spends an output of another unconfirmed operation of the account. Pending
+  sends of unrelated UTXOs no longer block each other's speed-up.
+
+- [#24520](https://github.com/LedgerHQ/ledger-live/pull/24520) [`f781149`](https://github.com/LedgerHQ/ledger-live/commit/f7811490b8965dabe3be45c36b9ffb5e29bd1ead) Thanks [@ysitbon](https://github.com/ysitbon)! - Brand `AggregatedAssetId` and `MarketId`, and replace both copies of `dadaIdToMarketId` with the typed `toMarketId` and `parseMarketRef` bridge in `@domain/api-aggregated-assets`
+
+- [#24541](https://github.com/LedgerHQ/ledger-live/pull/24541) [`120e07b`](https://github.com/LedgerHQ/ledger-live/commit/120e07b05d40d2099fe5eeee2f3042e29b1be389) Thanks [@LucHebrard](https://github.com/LucHebrard)! - Send in-progress Ledger Recover users from the Backup Hub to the Recover upsell page
+
+- [#24318](https://github.com/LedgerHQ/ledger-live/pull/24318) [`fb3956b`](https://github.com/LedgerHQ/ledger-live/commit/fb3956b429b34b35b4b6e3e50b14f6d9bdf2d59b) Thanks [@vpenskyi-ledger](https://github.com/vpenskyi-ledger)! - Sign the Perps SwapKit withdrawal on the Ethereum app and submit it on desktop and mobile
+
+- [#24350](https://github.com/LedgerHQ/ledger-live/pull/24350) [`d36ed0a`](https://github.com/LedgerHQ/ledger-live/commit/d36ed0a5b624f1842e2ad3a857d502621dfb5fb9) Thanks [@OlivierFreyssinet](https://github.com/OlivierFreyssinet)! - Remove the supportDeviceApex feature flag: Apex is always listed in onboarding device selection and BLE pairing
+
+- [#24255](https://github.com/LedgerHQ/ledger-live/pull/24255) [`81f924e`](https://github.com/LedgerHQ/ledger-live/commit/81f924e4acd4d79e898fa0cc8b1acf03a6c01de6) Thanks [@deepyjr](https://github.com/deepyjr)! - Integrate scoped Analytics filters, current balance and all-time PnL into desktop.
+
+- [#24500](https://github.com/LedgerHQ/ledger-live/pull/24500) [`6da9b38`](https://github.com/LedgerHQ/ledger-live/commit/6da9b38e20ae18b9aa3e31d41a155420ace9987b) Thanks [@gre-ledger](https://github.com/gre-ledger)! - Bump ts-libs packages (`@ledgerhq/auth` 0.2.0, `@ledgerhq/devices` 8.19.0, `@ledgerhq/domain-service` 1.10.0, `@ledgerhq/evm-tools` 2.1.0, `@ledgerhq/hw-ledger-key-ring-protocol` 1.1.0, `@ledgerhq/hw-transport` 6.37.0, `@ledgerhq/hw-transport-mocker` 6.36.0, `@ledgerhq/ledger-key-ring-protocol` 1.2.0, `@ledgerhq/live-config` 3.10.0, `@ledgerhq/live-currency-format` 0.17.0, `@ledgerhq/live-env` 4.2.0, `@ledgerhq/live-network` 3.3.0, `@ledgerhq/live-promise` 0.5.0, `@ledgerhq/logs` 6.20.0, `@ledgerhq/psbtv2` 0.7.0).
+
+- [#24292](https://github.com/LedgerHQ/ledger-live/pull/24292) [`c6d8c4f`](https://github.com/LedgerHQ/ledger-live/commit/c6d8c4f1c50ada25f9c2bb4b5bbd50c117e3fce1) Thanks [@deepyjr](https://github.com/deepyjr)! - Add the desktop Analytics catalog and scoped balance readers.
+
+- [#24245](https://github.com/LedgerHQ/ledger-live/pull/24245) [`c533e40`](https://github.com/LedgerHQ/ledger-live/commit/c533e40882433c3e9cdc3dcb462ecda5c34beac4) Thanks [@vpenskyi-ledger](https://github.com/vpenskyi-ledger)! - Add the Perps withdraw summary screen with an auto-refreshing SwapKit quote on desktop and mobile
+
+- [#24472](https://github.com/LedgerHQ/ledger-live/pull/24472) [`55a43bc`](https://github.com/LedgerHQ/ledger-live/commit/55a43bcb1d736466d956eb8645d9e310e3daaaab) Thanks [@claudiiafg](https://github.com/claudiiafg)! - Show the 1D market variation for an unchanged account balance
+
+- [#24326](https://github.com/LedgerHQ/ledger-live/pull/24326) [`e6cf079`](https://github.com/LedgerHQ/ledger-live/commit/e6cf079531083672e9d0408c600fd8e4b4b613a5) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - Show the full all-time high and all-time low dates on the desktop asset page.
+
+- [#24437](https://github.com/LedgerHQ/ledger-live/pull/24437) [`716dba7`](https://github.com/LedgerHQ/ledger-live/commit/716dba70f24aea647d9b0fcfec75f315afbe9dbc) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - Drop the legacy currency distribution and always build the asset distribution
+
+- [#24293](https://github.com/LedgerHQ/ledger-live/pull/24293) [`94961d4`](https://github.com/LedgerHQ/ledger-live/commit/94961d48d733bce0b50061f02c00f7942774fa70) Thanks [@deepyjr](https://github.com/deepyjr)! - Add the shared Analytics web surface with asset/account filters and injected chart and PnL renderers.
+
+- [#24415](https://github.com/LedgerHQ/ledger-live/pull/24415) [`4db45b9`](https://github.com/LedgerHQ/ledger-live/commit/4db45b933feabde39ce1bc98796e118eae10f47d) Thanks [@LucasWerey](https://github.com/LucasWerey)! - Add the coin-config DevTool on desktop and mobile to override LiveConfig values. The overrides slice moves to the new @shared/live-config-overrides package, and mobile now keeps the overrides across restarts
+
+- [#24217](https://github.com/LedgerHQ/ledger-live/pull/24217) [`298bf8d`](https://github.com/LedgerHQ/ledger-live/commit/298bf8de83301f558607d4611643ec8e54277a7e) Thanks [@ysitbon](https://github.com/ysitbon)! - `ContactDetailActionsMenu` moves to the native platform entry `@features/flow-contacts-detail/native` and reads its bottom inset from the sheet context; `ContactDetailActions` becomes internal. The universal entry is one unconditioned `src/index.ts`, `ContactAddressDetailDialog` and `ContactsEditSignerMismatchDialog` each have one props contract, `ContactDetailView` takes `onOpenLedgerWalletAccounts` and `onOpenAddressDetail`, and the web address detail dialog shows a Share tile when `onShareAddress` is set.
+
+- [#24370](https://github.com/LedgerHQ/ledger-live/pull/24370) [`cea0076`](https://github.com/LedgerHQ/ledger-live/commit/cea0076fb3fd7c19d0e73b99ac76507278e390a4) Thanks [@ysitbon](https://github.com/ysitbon)! - Add `CryptoOrTokenCurrencyIdSchema` and `CryptoOrTokenCurrencyId` to `@domain/entity-currency`, replacing the duplicated `BalanceAssetIdSchema`, `ContactCurrencyIdSchema` and the send flow's local union. Runtime parsing is unchanged.
+
+- [#24591](https://github.com/LedgerHQ/ledger-live/pull/24591) [`9b95c30`](https://github.com/LedgerHQ/ledger-live/commit/9b95c30ca4420bc7cedb634ff131c98fe1a2c727) Thanks [@gre-ledger](https://github.com/gre-ledger)! - Run the desktop rspack tooling with Node's native TypeScript support instead of ts-node
+
+- [#24515](https://github.com/LedgerHQ/ledger-live/pull/24515) [`8baa24b`](https://github.com/LedgerHQ/ledger-live/commit/8baa24be642c4d670ecea9d739e5edffff09df92) Thanks [@gre-ledger](https://github.com/gre-ledger)! - Type SelectCurrency options for TypeScript 7.1
+
+- [#24575](https://github.com/LedgerHQ/ledger-live/pull/24575) [`235a1ae`](https://github.com/LedgerHQ/ledger-live/commit/235a1ae2d5de213ab2f59a2aa584ef59e2058372) Thanks [@OlivierFreyssinet](https://github.com/OlivierFreyssinet)! - Make `onExecutorStateChanged` and `cancelIntentRequestId` optional on the device intent executor
+
+- [#24303](https://github.com/LedgerHQ/ledger-live/pull/24303) [`e8ca231`](https://github.com/LedgerHQ/ledger-live/commit/e8ca231d007f43839987343437507ea02d0dad0d) Thanks [@ysitbon](https://github.com/ysitbon)! - Split device onboarding by job: `@features/platform-device-onboarding` runs the actor with `useDeviceOnboardingActor`, and `@devtools/bindings` builds the devtool's log, context and next states with `useDeviceOnboardingToolState` and `useDeviceOnboardingToolProps`. The mobile funnel no longer imports `@devtools/*`, and the desktop device onboarding code moves under DevTools
+
+- [#24271](https://github.com/LedgerHQ/ledger-live/pull/24271) [`ef95b2e`](https://github.com/LedgerHQ/ledger-live/commit/ef95b2e00e490f024b81bfbf35cb582b5fed8783) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - Drop the CoinGecko market client and keep the USD chart fallback
+
+- [#24683](https://github.com/LedgerHQ/ledger-live/pull/24683) [`d5eefc2`](https://github.com/LedgerHQ/ledger-live/commit/d5eefc2b56c9556146a5bdb5acbae5e0d170a308) Thanks [@ben778899](https://github.com/ben778899)! - Fake update to trigger the update test cases.
+
+- [#24297](https://github.com/LedgerHQ/ledger-live/pull/24297) [`6464950`](https://github.com/LedgerHQ/ledger-live/commit/6464950833e7e27eb44da0171772f3ba5be8c116) Thanks [@ysitbon](https://github.com/ysitbon)! - `@features/flow-contacts` exposes `ContactsView` and `ContactsButton` from a single `.` entry with shared `ContactsViewProps` and `ContactsButtonProps` contracts. List logic and platform contact hooks are imported from `@features/flow-contacts-list` and `@features/platform-contacts`. Desktop and mobile hosts mount feature and Ledger Sync introduction UI outside `ContactsView`.
+
+- [#24487](https://github.com/LedgerHQ/ledger-live/pull/24487) [`c0c5bff`](https://github.com/LedgerHQ/ledger-live/commit/c0c5bfffdb1aefa91de627f26ea15b75ca6b5107) Thanks [@amaslakov](https://github.com/amaslakov)! - Enable the Tron votes panel earn rewards and desktop vote now actions, routed like the account Earn action
+
+- [#23539](https://github.com/LedgerHQ/ledger-live/pull/23539) [`310127f`](https://github.com/LedgerHQ/ledger-live/commit/310127f2b7fbc19eba7b2e45bd1d6467e447e84e) Thanks [@ishaba](https://github.com/ishaba)! - Show the energy provider's terms on the Tronify rent signature step, which the user accepts by signing, and align the rent, polling and transfer step copy with the validated wording
+
+- [#23466](https://github.com/LedgerHQ/ledger-live/pull/23466) [`ad006b9`](https://github.com/LedgerHQ/ledger-live/commit/ad006b94782873e9fe8727dcea96e3adb54f8d28) Thanks [@ishaba](https://github.com/ishaba)! - Resolve TRON TRC10 tokens by their CAL token_identifier
+
+- [#24594](https://github.com/LedgerHQ/ledger-live/pull/24594) [`b67184a`](https://github.com/LedgerHQ/ledger-live/commit/b67184adc0aa9a2e0871a8a636fa8bdcee846877) Thanks [@claudiiafg](https://github.com/claudiiafg)! - Align desktop 1D asset and account variation with the market banner
+
+- [#24406](https://github.com/LedgerHQ/ledger-live/pull/24406) [`3a0d8aa`](https://github.com/LedgerHQ/ledger-live/commit/3a0d8aa1d4904fa0ccc53528ec092bc32a63dcd4) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - Always show aggregated assets and drop the lwmWallet40 aggregatedAssets param
+
+- [#24295](https://github.com/LedgerHQ/ledger-live/pull/24295) [`3571671`](https://github.com/LedgerHQ/ledger-live/commit/3571671667a23517ced1aa9fec421368cb751ef7) Thanks [@ysitbon](https://github.com/ysitbon)! - `@features/flow-pay-contact` exports `PaySuccess` and the address picker from `.`, with `./web` and `./native` platform entries for `Contacts`. `PaySuccess` shares one props contract; suffix imports are removed from the package.
+
+- [#24449](https://github.com/LedgerHQ/ledger-live/pull/24449) [`1ca6846`](https://github.com/LedgerHQ/ledger-live/commit/1ca6846e46be5ac899daf4b3931439a0ffa7886d) Thanks [@YazhuEth](https://github.com/YazhuEth)! - Add `custom.predictions.bindAccount` and `custom.predictions.reportSetup`: Ledger Wallet asks the user to confirm on their device that they own the account picked in Predictions, then shows the trading wallet setup the live app reports. `AnimatedHeight` now counts SVG children, like a loading spinner, so the dialog no longer clips its bottom
+
+- [#24149](https://github.com/LedgerHQ/ledger-live/pull/24149) [`1c210e4`](https://github.com/LedgerHQ/ledger-live/commit/1c210e4b18a75779af04c6a9448c5e3e2dd02b24) Thanks [@YazhuEth](https://github.com/YazhuEth)! - Add a Predictions card to the portfolio services entry points and a Predictions screen that opens the live app, behind the `ptxPredictionsLiveAppDesktop` and `ptxPredictionsLiveAppMobile` flags
+
+- [#24475](https://github.com/LedgerHQ/ledger-live/pull/24475) [`a2354b8`](https://github.com/LedgerHQ/ledger-live/commit/a2354b8ed84af0a52a09860038e4f8d51533a778) Thanks [@OlivierFreyssinet](https://github.com/OlivierFreyssinet)! - Show the Device Intent Executor dialog on the Lumen sheet background
+
+- [#24240](https://github.com/LedgerHQ/ledger-live/pull/24240) [`ae675f9`](https://github.com/LedgerHQ/ledger-live/commit/ae675f9479e10b46d1e5f749e35d7640ead4de96) Thanks [@claudiiafg](https://github.com/claudiiafg)! - Cover the remaining Account Detail integration scenarios on desktop and mobile
+
+- [#23551](https://github.com/LedgerHQ/ledger-live/pull/23551) [`4a22a1d`](https://github.com/LedgerHQ/ledger-live/commit/4a22a1d2114db23d2b2ebfc6d8b41679c5f6fe39) Thanks [@YazhuEth](https://github.com/YazhuEth)! - Add the Predictions onboarding sheet behind the custom.predictions.onboard and custom.predictions.close Wallet API methods
+
+- [#24110](https://github.com/LedgerHQ/ledger-live/pull/24110) [`7324065`](https://github.com/LedgerHQ/ledger-live/commit/732406590c11eca310f977f401429e4e1270c4b4) Thanks [@qperrot](https://github.com/qperrot)! - Remove Fantom, whose network migrated to Sonic
+
+- [#24205](https://github.com/LedgerHQ/ledger-live/pull/24205) [`7647d9b`](https://github.com/LedgerHQ/ledger-live/commit/7647d9b092814564ce8947368f852780582c212f) Thanks [@henri-ly](https://github.com/henri-ly)! - Block sends of known non-transferable ERC-20 tokens with a TokenNonTransferable amount error
+
+- [#24371](https://github.com/LedgerHQ/ledger-live/pull/24371) [`32be7d2`](https://github.com/LedgerHQ/ledger-live/commit/32be7d2b61e9c7c5024b2a155822fb88e76c8ca8) Thanks [@ysitbon](https://github.com/ysitbon)! - Lock the universal-components waiver list empty, remove waiver helpers from enforce-package-structure, and record the rollout as complete in the ADR.
+
+- [#24134](https://github.com/LedgerHQ/ledger-live/pull/24134) [`b582a36`](https://github.com/LedgerHQ/ledger-live/commit/b582a360738037ab8393a554f304d9e942892287) Thanks [@renovate-operator-ledger](https://github.com/apps/renovate-operator-ledger)! - chore(deps): update dependency @ledgerhq/crypto-icons to v2.0.7
+
+  - Updated `@ledgerhq/crypto-icons` to `2.0.7`
+
+- [#24290](https://github.com/LedgerHQ/ledger-live/pull/24290) [`94df3d0`](https://github.com/LedgerHQ/ledger-live/commit/94df3d0acc235f2aa429ffaea4f21bf327469fe3) Thanks [@renovate-operator-ledger](https://github.com/apps/renovate-operator-ledger)! - [LWDM] chore(deps): update dependency oxfmt to v0.75.0
+
+  - Updated `oxfmt` to `0.75.0`
+
+- [#24291](https://github.com/LedgerHQ/ledger-live/pull/24291) [`4fc4674`](https://github.com/LedgerHQ/ledger-live/commit/4fc4674c788390588d2d3733fc5928372d2c8382) Thanks [@renovate-operator-ledger](https://github.com/apps/renovate-operator-ledger)! - chore(deps): update dependency oxlint to v1.90.0
+
+  - Updated `oxlint` to `1.90.0`
+
+- [#24392](https://github.com/LedgerHQ/ledger-live/pull/24392) [`934970a`](https://github.com/LedgerHQ/ledger-live/commit/934970adec67ed88f1d546d03b1bb555cbfd128f) Thanks [@renovate-operator-ledger](https://github.com/apps/renovate-operator-ledger)! - chore(deps): update dependency @reduxjs/toolkit to v2.13.0
+
+  - Updated `@reduxjs/toolkit` to `2.13.0`
+
+- [#24400](https://github.com/LedgerHQ/ledger-live/pull/24400) [`836c45b`](https://github.com/LedgerHQ/ledger-live/commit/836c45b3181060458ce399c0a6572b6468c699d1) Thanks [@renovate-operator-ledger](https://github.com/apps/renovate-operator-ledger)! - fix(deps): update dependency dotenv to v16.4.7
+
+  - Updated `dotenv` to `16.4.7`
+
+- [#24429](https://github.com/LedgerHQ/ledger-live/pull/24429) [`0a430b8`](https://github.com/LedgerHQ/ledger-live/commit/0a430b829d97b4137e8de60a935efbbc9bb355ba) Thanks [@renovate-operator-ledger](https://github.com/apps/renovate-operator-ledger)! - chore(deps): update dependency cross-env to v10
+
+  - Updated `cross-env` to `10.1.0`
+
+- [#24545](https://github.com/LedgerHQ/ledger-live/pull/24545) [`dfbc33b`](https://github.com/LedgerHQ/ledger-live/commit/dfbc33bba8ec826c1b5d585fbfd9f0c9135e68c0) Thanks [@renovate-operator-ledger](https://github.com/apps/renovate-operator-ledger)! - chore(deps): update dependency @electron/notarize to v3.1.2
+
+  - Updated `@electron/notarize` to `3.1.2`
+
+- [#24157](https://github.com/LedgerHQ/ledger-live/pull/24157) [`d528ea0`](https://github.com/LedgerHQ/ledger-live/commit/d528ea06fe6571e7c990936f2f22831e754b0178) Thanks [@claudiiafg](https://github.com/claudiiafg)! - Share the account asset picker across desktop and mobile
+
+- [#24050](https://github.com/LedgerHQ/ledger-live/pull/24050) [`6a70efc`](https://github.com/LedgerHQ/ledger-live/commit/6a70efc3eb1e625206286d913d7f5d07b01ee8ad) Thanks [@OlivierFreyssinet](https://github.com/OlivierFreyssinet)! - Share the device mock server session client and URL helpers in @features/platform-device-mock-server and the legacy transport in live-dmk-shared, and use them in Ledger Wallet Desktop
+
+- [#24196](https://github.com/LedgerHQ/ledger-live/pull/24196) [`77e21f9`](https://github.com/LedgerHQ/ledger-live/commit/77e21f9395f93b4ede8e70b68f3f74139622a25a) Thanks [@deepyjr](https://github.com/deepyjr)! - Add the Account Detail Analytics introduction in a dedicated layout slot above the custom place, with dismissal persisted across desktop restarts and account entry context.
+
+- [#24568](https://github.com/LedgerHQ/ledger-live/pull/24568) [`e7b21f8`](https://github.com/LedgerHQ/ledger-live/commit/e7b21f816021dbbe7314ff51bf32cc4d87291b98) Thanks [@qperrot](https://github.com/qperrot)! - Remove Stargaze from Ledger Wallet
+
+- [#24431](https://github.com/LedgerHQ/ledger-live/pull/24431) [`41c9607`](https://github.com/LedgerHQ/ledger-live/commit/41c960724990ccc044f959d51b294e66c5fa3f65) Thanks [@lysyi3m](https://github.com/lysyi3m)! - Count staked SUI in the account balance; spend and stake checks use the spendable balance only. Stake operations move the balance by their gas only, and an unstake also by its reward, so the balance history stays consistent.
+
+- [#24522](https://github.com/LedgerHQ/ledger-live/pull/24522) [`e67063f`](https://github.com/LedgerHQ/ledger-live/commit/e67063fc1fdb96c419c42a452433870b588f201e) Thanks [@gre-ledger](https://github.com/gre-ledger)! - Import bignumber.js through its default export, the form bignumber.js 11 types support
+
+- [#24462](https://github.com/LedgerHQ/ledger-live/pull/24462) [`73bd4ee`](https://github.com/LedgerHQ/ledger-live/commit/73bd4ee5567f188c79b70a3f2bd2507e81d2ba85) Thanks [@deepyjr](https://github.com/deepyjr)! - Track the Analytics filters, the Analytics banner click and its visibility on the account page.
+
+- [#24561](https://github.com/LedgerHQ/ledger-live/pull/24561) [`6d015f0`](https://github.com/LedgerHQ/ledger-live/commit/6d015f0b776d5488eee4a4b94503e0f32aa22abe) Thanks [@mateuszpalosz-ext](https://github.com/mateuszpalosz-ext)! - Add the XRP add token flow, trust limit edit and rippling state display on desktop, behind `enabledTokenStandards`
+
+### Patch Changes
+
+- Updated dependencies [[`0d2aead`](https://github.com/LedgerHQ/ledger-live/commit/0d2aeadc33cfde80c7ef0ad83a6424a756b20b0d), [`711b543`](https://github.com/LedgerHQ/ledger-live/commit/711b543456a56c18f5aa0828de974a2ee9b94c6b), [`39cb975`](https://github.com/LedgerHQ/ledger-live/commit/39cb9752fe05ea8510059b5302f1e44575641b78), [`03cafaf`](https://github.com/LedgerHQ/ledger-live/commit/03cafaff14567ab3a8ee8495f3da964a7d56683a), [`7185de6`](https://github.com/LedgerHQ/ledger-live/commit/7185de6c3886010f3eac7cee2128eb883230e872), [`522d62b`](https://github.com/LedgerHQ/ledger-live/commit/522d62b80064e808746ad88be9c79d8477b1bf44), [`0ebe8ea`](https://github.com/LedgerHQ/ledger-live/commit/0ebe8ea274936993a9dff1c36bf7b036d531e1f5), [`cd66cae`](https://github.com/LedgerHQ/ledger-live/commit/cd66caee3d913da639911a3cc29024215bf9a2e6), [`cc73a3f`](https://github.com/LedgerHQ/ledger-live/commit/cc73a3f12a1cb7e367bcddaea42680d0c74a62ed), [`2c728a2`](https://github.com/LedgerHQ/ledger-live/commit/2c728a22e6acce91ec50f07bb676114850389d4a), [`be81b1c`](https://github.com/LedgerHQ/ledger-live/commit/be81b1c79213926d7963e730fc8ccf4323e58db4), [`e6c438d`](https://github.com/LedgerHQ/ledger-live/commit/e6c438d64ad0beb6224bd4c0361241641fe2a37d), [`e7a4d5a`](https://github.com/LedgerHQ/ledger-live/commit/e7a4d5a01ce2aa5636609f70cccc6274d5189b08), [`ba1b7c4`](https://github.com/LedgerHQ/ledger-live/commit/ba1b7c45b4818bed008fcbed07d97b9a3e9aa0b3), [`64c16b8`](https://github.com/LedgerHQ/ledger-live/commit/64c16b8200c14d691b104a99396c00252731be2a), [`cc4eced`](https://github.com/LedgerHQ/ledger-live/commit/cc4eced87a10926e185c430c6e38d9151482266f), [`59280f5`](https://github.com/LedgerHQ/ledger-live/commit/59280f54cb1b4cf679f926dfeac4848103b0ac42), [`c842892`](https://github.com/LedgerHQ/ledger-live/commit/c8428923a5cf0ed556ff7a48a6e373c740cdb6a1), [`b77803f`](https://github.com/LedgerHQ/ledger-live/commit/b77803ffbca90848d55bca56b9d8cd3547464620), [`a95a6bc`](https://github.com/LedgerHQ/ledger-live/commit/a95a6bcb630289fde6782430fb511b9c48c9ffcc), [`d701bc7`](https://github.com/LedgerHQ/ledger-live/commit/d701bc7564f9f479e0cc867ef76ec40b73f5c49c), [`93aef61`](https://github.com/LedgerHQ/ledger-live/commit/93aef61f00e4e65de92695a983bfbca21e156ccb), [`ac116ba`](https://github.com/LedgerHQ/ledger-live/commit/ac116baae8763f331fd21885be36474933b52dff), [`f781149`](https://github.com/LedgerHQ/ledger-live/commit/f7811490b8965dabe3be45c36b9ffb5e29bd1ead), [`fb3956b`](https://github.com/LedgerHQ/ledger-live/commit/fb3956b429b34b35b4b6e3e50b14f6d9bdf2d59b), [`842a9a5`](https://github.com/LedgerHQ/ledger-live/commit/842a9a547be2224eec86295c57c288f0c51f8fbd), [`d02425e`](https://github.com/LedgerHQ/ledger-live/commit/d02425e29efe55595b51556e598fde0f9c34574f), [`d36ed0a`](https://github.com/LedgerHQ/ledger-live/commit/d36ed0a5b624f1842e2ad3a857d502621dfb5fb9), [`81f924e`](https://github.com/LedgerHQ/ledger-live/commit/81f924e4acd4d79e898fa0cc8b1acf03a6c01de6), [`3835bab`](https://github.com/LedgerHQ/ledger-live/commit/3835babeb6da9775f5750a2219f480a5422269ab), [`6da9b38`](https://github.com/LedgerHQ/ledger-live/commit/6da9b38e20ae18b9aa3e31d41a155420ace9987b), [`c6d8c4f`](https://github.com/LedgerHQ/ledger-live/commit/c6d8c4f1c50ada25f9c2bb4b5bbd50c117e3fce1), [`b282f26`](https://github.com/LedgerHQ/ledger-live/commit/b282f26a470c5f3519d252eb301b5ddb98fe68e9), [`c533e40`](https://github.com/LedgerHQ/ledger-live/commit/c533e40882433c3e9cdc3dcb462ecda5c34beac4), [`72da4b1`](https://github.com/LedgerHQ/ledger-live/commit/72da4b19bd803dc85ef83d3b09a45445f95186fa), [`55a43bc`](https://github.com/LedgerHQ/ledger-live/commit/55a43bcb1d736466d956eb8645d9e310e3daaaab), [`420409b`](https://github.com/LedgerHQ/ledger-live/commit/420409ba20ed5eca81813b15b7dcb85a92de1b5b), [`716dba7`](https://github.com/LedgerHQ/ledger-live/commit/716dba70f24aea647d9b0fcfec75f315afbe9dbc), [`94961d4`](https://github.com/LedgerHQ/ledger-live/commit/94961d48d733bce0b50061f02c00f7942774fa70), [`498cbdd`](https://github.com/LedgerHQ/ledger-live/commit/498cbdd918b0117959e9e0ff9db6adb31191b138), [`4db45b9`](https://github.com/LedgerHQ/ledger-live/commit/4db45b933feabde39ce1bc98796e118eae10f47d), [`6ab5a87`](https://github.com/LedgerHQ/ledger-live/commit/6ab5a87d796726b2fc38b34862209abf82521f72), [`ed8d437`](https://github.com/LedgerHQ/ledger-live/commit/ed8d437ae166be537aa7bf309691691ee56b8ffc), [`360d6c9`](https://github.com/LedgerHQ/ledger-live/commit/360d6c9c4e4c37284397ee3118224767bc49076b), [`298bf8d`](https://github.com/LedgerHQ/ledger-live/commit/298bf8de83301f558607d4611643ec8e54277a7e), [`085d781`](https://github.com/LedgerHQ/ledger-live/commit/085d781d100c76bcb9b6dc573af1c7f28fc115e1), [`cea0076`](https://github.com/LedgerHQ/ledger-live/commit/cea0076fb3fd7c19d0e73b99ac76507278e390a4), [`31f7eba`](https://github.com/LedgerHQ/ledger-live/commit/31f7ebace98301cb3e46185a91621aa3ef59bb3b), [`235a1ae`](https://github.com/LedgerHQ/ledger-live/commit/235a1ae2d5de213ab2f59a2aa584ef59e2058372), [`e8ca231`](https://github.com/LedgerHQ/ledger-live/commit/e8ca231d007f43839987343437507ea02d0dad0d), [`ef95b2e`](https://github.com/LedgerHQ/ledger-live/commit/ef95b2e00e490f024b81bfbf35cb582b5fed8783), [`e051c84`](https://github.com/LedgerHQ/ledger-live/commit/e051c84a8486b78327ea49500c38b6e2138bbc21), [`6464950`](https://github.com/LedgerHQ/ledger-live/commit/6464950833e7e27eb44da0171772f3ba5be8c116), [`5bc9bb1`](https://github.com/LedgerHQ/ledger-live/commit/5bc9bb199bd54af8046a7889b2b846603d083207), [`0b3f0f2`](https://github.com/LedgerHQ/ledger-live/commit/0b3f0f28584733a0c17634117b7d53ff07fe025b), [`310127f`](https://github.com/LedgerHQ/ledger-live/commit/310127f2b7fbc19eba7b2e45bd1d6467e447e84e), [`ad006b9`](https://github.com/LedgerHQ/ledger-live/commit/ad006b94782873e9fe8727dcea96e3adb54f8d28), [`9621949`](https://github.com/LedgerHQ/ledger-live/commit/9621949145e7e771a3663969f2e6610ac91459bd), [`06c81d3`](https://github.com/LedgerHQ/ledger-live/commit/06c81d33d1c2da765bbd34f4e8e1593f43ce745d), [`62bdc34`](https://github.com/LedgerHQ/ledger-live/commit/62bdc344261d600a3d7d2b78a8cdb9e7b3c97c25), [`b67184a`](https://github.com/LedgerHQ/ledger-live/commit/b67184adc0aa9a2e0871a8a636fa8bdcee846877), [`3a0d8aa`](https://github.com/LedgerHQ/ledger-live/commit/3a0d8aa1d4904fa0ccc53528ec092bc32a63dcd4), [`96fac1e`](https://github.com/LedgerHQ/ledger-live/commit/96fac1eb64856beb33cc68594e98c25e8b308898), [`0d83181`](https://github.com/LedgerHQ/ledger-live/commit/0d83181e9a96f55811f2ce5532527739bdb7e62a), [`e186896`](https://github.com/LedgerHQ/ledger-live/commit/e186896213df32feb1e6a80e38f45cf189655866), [`a6c95e2`](https://github.com/LedgerHQ/ledger-live/commit/a6c95e2ae469bfe6eb3432fc691efea35d70a741), [`6196234`](https://github.com/LedgerHQ/ledger-live/commit/61962349d0487b0e1f318d2ab36753befc434624), [`2cee99e`](https://github.com/LedgerHQ/ledger-live/commit/2cee99e4b728ef315e5df94271c2bd6b695a7ade), [`8777c73`](https://github.com/LedgerHQ/ledger-live/commit/8777c73879acf3e38b8cef00fb88213c55011f96), [`49ae0f6`](https://github.com/LedgerHQ/ledger-live/commit/49ae0f60632ad4ad518b8a7420ab02239f3fa144), [`52622fa`](https://github.com/LedgerHQ/ledger-live/commit/52622fa571b8c7b549d185525f4511dc3ebdfa82), [`7282cc0`](https://github.com/LedgerHQ/ledger-live/commit/7282cc0d6d7431ecb4d49534d267f5f562652965), [`8dae360`](https://github.com/LedgerHQ/ledger-live/commit/8dae360c044392da40c67e29416d11bbe34afd8b), [`cc6d736`](https://github.com/LedgerHQ/ledger-live/commit/cc6d736fba670fcf5795123eb89f664f01807cff), [`3571671`](https://github.com/LedgerHQ/ledger-live/commit/3571671667a23517ced1aa9fec421368cb751ef7), [`1ca6846`](https://github.com/LedgerHQ/ledger-live/commit/1ca6846e46be5ac899daf4b3931439a0ffa7886d), [`1c210e4`](https://github.com/LedgerHQ/ledger-live/commit/1c210e4b18a75779af04c6a9448c5e3e2dd02b24), [`4a22a1d`](https://github.com/LedgerHQ/ledger-live/commit/4a22a1d2114db23d2b2ebfc6d8b41679c5f6fe39), [`7e4dccf`](https://github.com/LedgerHQ/ledger-live/commit/7e4dccffcad306c45ed380758cd6e7624c9c7921), [`e0ac369`](https://github.com/LedgerHQ/ledger-live/commit/e0ac36999d2ff30c0788c40a4a7ed80293d72fe0), [`7324065`](https://github.com/LedgerHQ/ledger-live/commit/732406590c11eca310f977f401429e4e1270c4b4), [`7647d9b`](https://github.com/LedgerHQ/ledger-live/commit/7647d9b092814564ce8947368f852780582c212f), [`80b6233`](https://github.com/LedgerHQ/ledger-live/commit/80b62337e7e2b754004ca5f93b9f7d569015e1eb), [`b582a36`](https://github.com/LedgerHQ/ledger-live/commit/b582a360738037ab8393a554f304d9e942892287), [`934970a`](https://github.com/LedgerHQ/ledger-live/commit/934970adec67ed88f1d546d03b1bb555cbfd128f), [`d528ea0`](https://github.com/LedgerHQ/ledger-live/commit/d528ea06fe6571e7c990936f2f22831e754b0178), [`6a70efc`](https://github.com/LedgerHQ/ledger-live/commit/6a70efc3eb1e625206286d913d7f5d07b01ee8ad), [`77e21f9`](https://github.com/LedgerHQ/ledger-live/commit/77e21f9395f93b4ede8e70b68f3f74139622a25a), [`d4bccad`](https://github.com/LedgerHQ/ledger-live/commit/d4bccadbcafe6365dd589ada054bd05d307722d2), [`e7b21f8`](https://github.com/LedgerHQ/ledger-live/commit/e7b21f816021dbbe7314ff51bf32cc4d87291b98), [`0d2268d`](https://github.com/LedgerHQ/ledger-live/commit/0d2268d099e6ad7adac33bcb1e4456a28712a2ec), [`aec9525`](https://github.com/LedgerHQ/ledger-live/commit/aec9525f565f851007d992a6c807efdf0958eb27), [`e67063f`](https://github.com/LedgerHQ/ledger-live/commit/e67063fc1fdb96c419c42a452433870b588f201e), [`73bd4ee`](https://github.com/LedgerHQ/ledger-live/commit/73bd4ee5567f188c79b70a3f2bd2507e81d2ba85), [`5eec368`](https://github.com/LedgerHQ/ledger-live/commit/5eec368a80f6b8ad05ff97b1cbd78851b8391b2b), [`f53d517`](https://github.com/LedgerHQ/ledger-live/commit/f53d517815a694c54cb535ba39ebc1b249a88775), [`9a3e7bf`](https://github.com/LedgerHQ/ledger-live/commit/9a3e7bf4f8d5192f748fc3aa0a2dc9ac889f1513), [`d3f59ae`](https://github.com/LedgerHQ/ledger-live/commit/d3f59ae3fc6b9d9240bd81df9f93c1223cb64ddb)]:
+  - @ledgerhq/live-common@38.7.0
+  - @features/platform-aggregated-assets@0.7.0
+  - @shared/feature-flags@0.30.0
+  - @ledgerhq/coin-zcash@1.2.0
+  - @domain/entity-account-operation@0.2.0
+  - @domain/api-market-countervalues@0.3.0
+  - @devtools/bindings@0.15.0
+  - @features/platform-account-source-coin-module@0.2.0
+  - @features/flow-account-detail-hero@0.4.0
+  - @features/flow-account-detail-delegations@0.3.0
+  - @features/flow-account-detail-analytics-notice@0.3.0
+  - @features/flow-account-analytics@0.2.0
+  - @features/flow-account-detail@0.4.0
+  - @ledgerhq/types-live@6.131.0
+  - @domain/entity-currency-crypto@0.19.0
+  - @ledgerhq/coin-bitcoin@1.2.0
+  - @ledgerhq/ledger-wallet-framework@3.11.0
+  - @domain/entity-currency-fiat@0.6.0
+  - @domain/entity-aggregated-asset@0.4.0
+  - @domain/api-aggregated-assets@0.7.0
+  - @ledgerhq/asset-detail@0.13.0
+  - @domain/api-account-data@0.5.0
+  - @devtools/shell@0.14.0
+  - @ledgerhq/wallet-btc@1.2.0
+  - @ledgerhq/live-wallet@1.2.0
+  - @ledgerhq/live-dmk-shared@0.39.0
+  - @features/platform-device-onboarding@0.5.0
+  - @ledgerhq/coin-cardano@3.0.0
+  - @shared/env@0.13.0
+  - @features/platform-feature-flags@0.12.0
+  - @shared/live-config-overrides@0.2.0
+  - @ledgerhq/coin-canton@1.7.0
+  - @ledgerhq/coin-casper@3.8.0
+  - @ledgerhq/coin-concordium@1.8.0
+  - @ledgerhq/coin-filecoin@2.7.0
+  - @ledgerhq/coin-stacks@0.36.0
+  - @domain/entity-contact@0.13.0
+  - @features/flow-contacts-detail@0.4.0
+  - @domain/entity-currency@0.5.0
+  - @domain/entity-account-balance@0.3.0
+  - @domain/entity-account-balance-history@0.2.0
+  - @features/platform-device-intent@5.4.0
+  - @features/flow-contacts@0.18.0
+  - @domain/api-currency-token@0.8.0
+  - @features/platform-assets-table@0.3.0
+  - @features/flow-portfolio-services-entry-points@0.3.0
+  - @features/platform-device-mock-server@0.1.0
+  - @shared/ui-info-state@0.7.0
+  - @features/flow-pay-card-assets@0.7.0
+  - @features/flow-pay-card-details@0.11.0
+  - @features/flow-pay-card@0.9.0
+  - @features/flow-pay-contact@0.9.0
+  - @features/flow-predictions@0.2.0
+  - @features/platform-predictions@0.4.0
+  - @shared/ui-animated-height@0.3.0
+  - @domain/entity-predictions@0.3.0
+  - @features/flow-pay-balance@0.10.0
+  - @features/flow-pay-request@0.10.0
+  - @domain/api-card-management@0.9.0
+  - @domain/api-currency-fiat@0.6.0
+  - @domain/api-market-index-altcoin-season@0.5.0
+  - @domain/api-market-index-fear-and-greed@0.5.0
+  - @domain/api-push-devices@0.3.0
+  - @domain/entity-account@0.3.0
+  - @domain/entity-account-alias@0.2.0
+  - @domain/entity-account-data@0.5.0
+  - @domain/entity-account-name@0.4.0
+  - @domain/entity-client-identity@0.5.0
+  - @domain/entity-market-countervalues@0.5.0
+  - @domain/entity-recent-addresses@0.3.0
+  - @domain/entity-starred-account@0.1.0
+  - @domain/entity-wallet-sync@0.2.0
+  - @features/flow-large-screen-upsell@2.4.0
+  - @features/flow-pay-card-auth@0.12.0
+  - @features/flow-pay-card-widget@0.7.0
+  - @features/flow-pay-feature-tour@0.9.0
+  - @features/platform-card@0.9.0
+  - @features/platform-currencies@0.13.0
+  - @features/platform-market-countervalues@0.5.0
+  - @shared/api-services@0.13.0
+  - @shared/app-config@0.3.0
+  - @shared/auth@0.9.0
+  - @ledgerhq/live-dmk-desktop@0.27.0
+  - @ledgerhq/live-send@0.2.0
+  - @ledgerhq/wallet-pnl@0.9.0
+  - @ledgerhq/asset-aggregation@0.19.0
+  - @features/flow-contacts-add-address@0.9.1
+  - @features/platform-contacts@0.12.2
+  - @features/platform-feature-flags-firebase@0.1.4
+  - @ledgerhq/live-signer-evm@0.24.5
+  - @ledgerhq/transaction-observability@0.6.2
+  - @ledgerhq/wallet-analytics@0.5.5
+  - @domain/entity-currency-token@0.5.9
+  - @features/flow-account-detail-notices@0.3.0
+  - @features/flow-account-detail-settings@0.3.1
+  - @features/platform-account-analytics@0.2.0
+  - @ledgerhq/live-signer-tron@0.2.5
+  - @features/platform-env@0.4.5
+  - @features/flow-analytics-consent@0.2.13
+  - @features/flow-contacts-add-contact@0.10.1
+  - @features/flow-contacts-delete-address@0.4.1
+  - @features/flow-contacts-delete-contact@0.5.1
+  - @features/flow-contacts-edit-address@0.7.1
+  - @features/flow-contacts-edit-contact@0.9.1
+  - @features/flow-contacts-list@0.12.1
+  - @features/platform-intent-verify-address@0.3.2
+  - @features/flow-pay-card-transactions@0.7.2
+  - @features/flow-fear-and-greed@0.5.2
+  - @features/flow-app-availability@0.3.2
+  - @features/platform-content-ab-tests@0.2.4
+
+## 4.28.0-next.1
+
+### Minor Changes
+
+- [#24683](https://github.com/LedgerHQ/ledger-live/pull/24683) [`d5eefc2`](https://github.com/LedgerHQ/ledger-live/commit/d5eefc2b56c9556146a5bdb5acbae5e0d170a308) Thanks [@ben778899](https://github.com/ben778899)! - Fake update to trigger the update test cases.
+
+## 4.28.0-next.0
+
+### Minor Changes
+
+- [#24189](https://github.com/LedgerHQ/ledger-live/pull/24189) [`711b543`](https://github.com/LedgerHQ/ledger-live/commit/711b543456a56c18f5aa0828de974a2ee9b94c6b) Thanks [@liviuciulinaru](https://github.com/liviuciulinaru)! - Let users pick the network when they swap a multi-network asset from Market or Asset Detail, also when they have no account for it. Show only the networks of the asset itself, so USDC no longer opens an extra asset step. When the drawer keeps only one network, open the account step on that network.
+
+- [#24195](https://github.com/LedgerHQ/ledger-live/pull/24195) [`1fa3701`](https://github.com/LedgerHQ/ledger-live/commit/1fa3701af2b570706605c2f59964e366b289cbf3) Thanks [@LucasWerey](https://github.com/LucasWerey)! - Account Detail sends the events of its tracking plan, with the same names and properties on both apps
+
+- [#24262](https://github.com/LedgerHQ/ledger-live/pull/24262) [`4bd0f62`](https://github.com/LedgerHQ/ledger-live/commit/4bd0f62b9480e79e7628d0c918b7191f1087f0bd) Thanks [@ovoronkov-ledger](https://github.com/ovoronkov-ledger)! - chore(lumen): bump ui-rnative to 0.1.72 for rn 0.86 (LIVE-39312)
+
+  Bump lumen-ui-rnative to 0.1.72, lumen-ui-react to 0.1.69 and lumen-utils-shared to 0.1.19. The new lumen-ui-rnative peer ranges accept react-native 0.86, react-native-worklets 0.10 and expo-haptics 57. Lumen native inputs now expose their label as the TextInput accessibility label and hide the visual label from accessibility, so mobile tests query these inputs with `getByLabelText`.
+
+- [#24412](https://github.com/LedgerHQ/ledger-live/pull/24412) [`39cb975`](https://github.com/LedgerHQ/ledger-live/commit/39cb9752fe05ea8510059b5302f1e44575641b78) Thanks [@cted-ledger](https://github.com/cted-ledger)! - Sample `estimateFees` and `validateIntent` successes in `coin_module_call` with a new `preparationSampleRate` param of the `coinObservability` flag (default 0.1): the bridge calls them on every edit of a transaction, so sending each call made them most of the volume. Their failures are still always sent, and `craftTransaction`, `craftRawTransaction`, `craftTransactionData`, `combine` and `broadcast` stay unsampled. Each `coin_module_call` now carries its tier's `sampleRate` and an `inSample` flag, so dashboards can compute unbiased failure rates and estimate volumes from the sample.
+
+- [#23955](https://github.com/LedgerHQ/ledger-live/pull/23955) [`03cafaf`](https://github.com/LedgerHQ/ledger-live/commit/03cafaff14567ab3a8ee8495f3da964a7d56683a) Thanks [@gre-ledger](https://github.com/gre-ledger)! - Bump `@ledgerhq/zcash-utils` to 2.9.0, which ships each native binary in its own optional package. The desktop app now packages only the binaries it runs on (darwin arm64/x64, win32 x64, linux x64) instead of all six.
+
+- [#24339](https://github.com/LedgerHQ/ledger-live/pull/24339) [`eac050d`](https://github.com/LedgerHQ/ledger-live/commit/eac050d156808c13da83985ec3ebaed0567caa51) Thanks [@LucasWerey](https://github.com/LucasWerey)! - Account Detail shows the Cardano delegation and balances with the shared Lumen components
+
+- [#24215](https://github.com/LedgerHQ/ledger-live/pull/24215) [`7185de6`](https://github.com/LedgerHQ/ledger-live/commit/7185de6c3886010f3eac7cee2128eb883230e872) Thanks [@gre-ledger](https://github.com/gre-ledger)! - Value each operation in the fiat a query asks for, at its date, with the `countervalue` query
+
+- [#24235](https://github.com/LedgerHQ/ledger-live/pull/24235) [`0ebe8ea`](https://github.com/LedgerHQ/ledger-live/commit/0ebe8ea274936993a9dff1c36bf7b036d531e1f5) Thanks [@claudiiafg](https://github.com/claudiiafg)! - Hide the account detail empty state when a receive updates the balance before operations
+
+- [#24348](https://github.com/LedgerHQ/ledger-live/pull/24348) [`cc73a3f`](https://github.com/LedgerHQ/ledger-live/commit/cc73a3f12a1cb7e367bcddaea42680d0c74a62ed) Thanks [@claudiiafg](https://github.com/claudiiafg)! - Widen the account delegations validator column so the validator name is shown in full
+
+- [#24354](https://github.com/LedgerHQ/ledger-live/pull/24354) [`2c728a2`](https://github.com/LedgerHQ/ledger-live/commit/2c728a22e6acce91ec50f07bb676114850389d4a) Thanks [@claudiiafg](https://github.com/claudiiafg)! - Shrink the account asset picker dialog to its content when few assets are listed
+
+- [#24325](https://github.com/LedgerHQ/ledger-live/pull/24325) [`be81b1c`](https://github.com/LedgerHQ/ledger-live/commit/be81b1c79213926d7963e730fc8ccf4323e58db4) Thanks [@deepyjr](https://github.com/deepyjr)! - Add an account-detail DevTools tool to reset the Account Detail card that redirects to Analytics
+
+- [#24556](https://github.com/LedgerHQ/ledger-live/pull/24556) [`e6c438d`](https://github.com/LedgerHQ/ledger-live/commit/e6c438d64ad0beb6224bd4c0361241641fe2a37d) Thanks [@deepyjr](https://github.com/deepyjr)! - Add the native Account Analytics surface (filter chips opening a bottom sheet, status and Retry) and export AccountAnalytics from the package root for both apps.
+
+- [#24554](https://github.com/LedgerHQ/ledger-live/pull/24554) [`e7a4d5a`](https://github.com/LedgerHQ/ledger-live/commit/e7a4d5a01ce2aa5636609f70cccc6274d5189b08) Thanks [@deepyjr](https://github.com/deepyjr)! - Share the Analytics balance, renderer status and PnL scope rules between the apps through the Account Analytics package.
+
+- [#24553](https://github.com/LedgerHQ/ledger-live/pull/24553) [`ba1b7c4`](https://github.com/LedgerHQ/ledger-live/commit/ba1b7c45b4818bed008fcbed07d97b9a3e9aa0b3) Thanks [@deepyjr](https://github.com/deepyjr)! - Share the Analytics catalog rules (eligible positions, asset grouping, catalog state) between the apps through the Account Analytics package.
+
+- [#24572](https://github.com/LedgerHQ/ledger-live/pull/24572) [`a85db5d`](https://github.com/LedgerHQ/ledger-live/commit/a85db5d1808cb7470e224dcc70f0510920664223) Thanks [@claudiiafg](https://github.com/claudiiafg)! - Asset detail "See all" transactions no longer lists the operations of the tokens held by the same account
+
+- [#24127](https://github.com/LedgerHQ/ledger-live/pull/24127) [`1c99745`](https://github.com/LedgerHQ/ledger-live/commit/1c9974592fc45d93014b5111973c12ff4fd2b663) Thanks [@VicAlbr](https://github.com/VicAlbr)! - Add a test id to the network fees fiat value on the custom fees screen
+
+- [#24443](https://github.com/LedgerHQ/ledger-live/pull/24443) [`c842892`](https://github.com/LedgerHQ/ledger-live/commit/c8428923a5cf0ed556ff7a48a6e373c740cdb6a1) Thanks [@LucasWerey](https://github.com/LucasWerey)! - Send `network` instead of `currency` and drop `isTokenAccount` on the account detail page events
+
+- [#24468](https://github.com/LedgerHQ/ledger-live/pull/24468) [`f720cc5`](https://github.com/LedgerHQ/ledger-live/commit/f720cc5c89cca816c8e4954a911e0b894a38924b) Thanks [@deepyjr](https://github.com/deepyjr)! - Stop the Analytics chart from flickering when the asset, account or range changes: keep the previous curve on screen until the new one is ready instead of blanking it.
+
+- [#24463](https://github.com/LedgerHQ/ledger-live/pull/24463) [`6ef8d46`](https://github.com/LedgerHQ/ledger-live/commit/6ef8d46d779e672c2e4ee6ca7925b43ad28c10c2) Thanks [@deepyjr](https://github.com/deepyjr)! - Show the Analytics balance and chart when a held asset has no price, leaving that asset out of the total as the Portfolio does. Analytics still reports unavailable data when no held asset of the selection has a price.
+
+- [#24226](https://github.com/LedgerHQ/ledger-live/pull/24226) [`d701bc7`](https://github.com/LedgerHQ/ledger-live/commit/d701bc7564f9f479e0cc867ef76ec40b73f5c49c) Thanks [@qperrot](https://github.com/qperrot)! - fix(coin-bitcoin): do not spend the inputs of pending operations
+
+  `prepareTransaction` and `estimateMaxSpendable` exclude the UTXOs spent by the account's own
+  pending operations. When the explorer does not report mempool spends, a sync listed them as
+  spendable again and the next send was rejected with `txn-mempool-conflict`. An RBF edit keeps
+  the inputs of the operation it replaces.
+
+  `addPendingOperation` keeps every pending UTXO operation (those with `extra.inputs`) instead of
+  only the latest one, and removes one only when the new operation spends one of its inputs (an RBF
+  replacement). Operations of other coins are unchanged.
+
+  `isOldestBitcoinPendingOperation` takes the operation instead of its date: a pending operation
+  can be sped up unless it spends an output of another unconfirmed operation of the account. Pending
+  sends of unrelated UTXOs no longer block each other's speed-up.
+
+- [#24520](https://github.com/LedgerHQ/ledger-live/pull/24520) [`f781149`](https://github.com/LedgerHQ/ledger-live/commit/f7811490b8965dabe3be45c36b9ffb5e29bd1ead) Thanks [@ysitbon](https://github.com/ysitbon)! - Brand `AggregatedAssetId` and `MarketId`, and replace both copies of `dadaIdToMarketId` with the typed `toMarketId` and `parseMarketRef` bridge in `@domain/api-aggregated-assets`
+
+- [#24541](https://github.com/LedgerHQ/ledger-live/pull/24541) [`120e07b`](https://github.com/LedgerHQ/ledger-live/commit/120e07b05d40d2099fe5eeee2f3042e29b1be389) Thanks [@LucHebrard](https://github.com/LucHebrard)! - Send in-progress Ledger Recover users from the Backup Hub to the Recover upsell page
+
+- [#24318](https://github.com/LedgerHQ/ledger-live/pull/24318) [`fb3956b`](https://github.com/LedgerHQ/ledger-live/commit/fb3956b429b34b35b4b6e3e50b14f6d9bdf2d59b) Thanks [@vpenskyi-ledger](https://github.com/vpenskyi-ledger)! - Sign the Perps SwapKit withdrawal on the Ethereum app and submit it on desktop and mobile
+
+- [#24350](https://github.com/LedgerHQ/ledger-live/pull/24350) [`d36ed0a`](https://github.com/LedgerHQ/ledger-live/commit/d36ed0a5b624f1842e2ad3a857d502621dfb5fb9) Thanks [@OlivierFreyssinet](https://github.com/OlivierFreyssinet)! - Remove the supportDeviceApex feature flag: Apex is always listed in onboarding device selection and BLE pairing
+
+- [#24255](https://github.com/LedgerHQ/ledger-live/pull/24255) [`81f924e`](https://github.com/LedgerHQ/ledger-live/commit/81f924e4acd4d79e898fa0cc8b1acf03a6c01de6) Thanks [@deepyjr](https://github.com/deepyjr)! - Integrate scoped Analytics filters, current balance and all-time PnL into desktop.
+
+- [#24500](https://github.com/LedgerHQ/ledger-live/pull/24500) [`6da9b38`](https://github.com/LedgerHQ/ledger-live/commit/6da9b38e20ae18b9aa3e31d41a155420ace9987b) Thanks [@gre-ledger](https://github.com/gre-ledger)! - Bump ts-libs packages (`@ledgerhq/auth` 0.2.0, `@ledgerhq/devices` 8.19.0, `@ledgerhq/domain-service` 1.10.0, `@ledgerhq/evm-tools` 2.1.0, `@ledgerhq/hw-ledger-key-ring-protocol` 1.1.0, `@ledgerhq/hw-transport` 6.37.0, `@ledgerhq/hw-transport-mocker` 6.36.0, `@ledgerhq/ledger-key-ring-protocol` 1.2.0, `@ledgerhq/live-config` 3.10.0, `@ledgerhq/live-currency-format` 0.17.0, `@ledgerhq/live-env` 4.2.0, `@ledgerhq/live-network` 3.3.0, `@ledgerhq/live-promise` 0.5.0, `@ledgerhq/logs` 6.20.0, `@ledgerhq/psbtv2` 0.7.0).
+
+- [#24292](https://github.com/LedgerHQ/ledger-live/pull/24292) [`c6d8c4f`](https://github.com/LedgerHQ/ledger-live/commit/c6d8c4f1c50ada25f9c2bb4b5bbd50c117e3fce1) Thanks [@deepyjr](https://github.com/deepyjr)! - Add the desktop Analytics catalog and scoped balance readers.
+
+- [#24245](https://github.com/LedgerHQ/ledger-live/pull/24245) [`c533e40`](https://github.com/LedgerHQ/ledger-live/commit/c533e40882433c3e9cdc3dcb462ecda5c34beac4) Thanks [@vpenskyi-ledger](https://github.com/vpenskyi-ledger)! - Add the Perps withdraw summary screen with an auto-refreshing SwapKit quote on desktop and mobile
+
+- [#24472](https://github.com/LedgerHQ/ledger-live/pull/24472) [`55a43bc`](https://github.com/LedgerHQ/ledger-live/commit/55a43bcb1d736466d956eb8645d9e310e3daaaab) Thanks [@claudiiafg](https://github.com/claudiiafg)! - Show the 1D market variation for an unchanged account balance
+
+- [#24326](https://github.com/LedgerHQ/ledger-live/pull/24326) [`e6cf079`](https://github.com/LedgerHQ/ledger-live/commit/e6cf079531083672e9d0408c600fd8e4b4b613a5) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - Show the full all-time high and all-time low dates on the desktop asset page.
+
+- [#24437](https://github.com/LedgerHQ/ledger-live/pull/24437) [`716dba7`](https://github.com/LedgerHQ/ledger-live/commit/716dba70f24aea647d9b0fcfec75f315afbe9dbc) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - Drop the legacy currency distribution and always build the asset distribution
+
+- [#24293](https://github.com/LedgerHQ/ledger-live/pull/24293) [`94961d4`](https://github.com/LedgerHQ/ledger-live/commit/94961d48d733bce0b50061f02c00f7942774fa70) Thanks [@deepyjr](https://github.com/deepyjr)! - Add the shared Analytics web surface with asset/account filters and injected chart and PnL renderers.
+
+- [#24415](https://github.com/LedgerHQ/ledger-live/pull/24415) [`4db45b9`](https://github.com/LedgerHQ/ledger-live/commit/4db45b933feabde39ce1bc98796e118eae10f47d) Thanks [@LucasWerey](https://github.com/LucasWerey)! - Add the coin-config DevTool on desktop and mobile to override LiveConfig values. The overrides slice moves to the new @shared/live-config-overrides package, and mobile now keeps the overrides across restarts
+
+- [#24217](https://github.com/LedgerHQ/ledger-live/pull/24217) [`298bf8d`](https://github.com/LedgerHQ/ledger-live/commit/298bf8de83301f558607d4611643ec8e54277a7e) Thanks [@ysitbon](https://github.com/ysitbon)! - `ContactDetailActionsMenu` moves to the native platform entry `@features/flow-contacts-detail/native` and reads its bottom inset from the sheet context; `ContactDetailActions` becomes internal. The universal entry is one unconditioned `src/index.ts`, `ContactAddressDetailDialog` and `ContactsEditSignerMismatchDialog` each have one props contract, `ContactDetailView` takes `onOpenLedgerWalletAccounts` and `onOpenAddressDetail`, and the web address detail dialog shows a Share tile when `onShareAddress` is set.
+
+- [#24370](https://github.com/LedgerHQ/ledger-live/pull/24370) [`cea0076`](https://github.com/LedgerHQ/ledger-live/commit/cea0076fb3fd7c19d0e73b99ac76507278e390a4) Thanks [@ysitbon](https://github.com/ysitbon)! - Add `CryptoOrTokenCurrencyIdSchema` and `CryptoOrTokenCurrencyId` to `@domain/entity-currency`, replacing the duplicated `BalanceAssetIdSchema`, `ContactCurrencyIdSchema` and the send flow's local union. Runtime parsing is unchanged.
+
+- [#24591](https://github.com/LedgerHQ/ledger-live/pull/24591) [`9b95c30`](https://github.com/LedgerHQ/ledger-live/commit/9b95c30ca4420bc7cedb634ff131c98fe1a2c727) Thanks [@gre-ledger](https://github.com/gre-ledger)! - Run the desktop rspack tooling with Node's native TypeScript support instead of ts-node
+
+- [#24515](https://github.com/LedgerHQ/ledger-live/pull/24515) [`8baa24b`](https://github.com/LedgerHQ/ledger-live/commit/8baa24be642c4d670ecea9d739e5edffff09df92) Thanks [@gre-ledger](https://github.com/gre-ledger)! - Type SelectCurrency options for TypeScript 7.1
+
+- [#24575](https://github.com/LedgerHQ/ledger-live/pull/24575) [`235a1ae`](https://github.com/LedgerHQ/ledger-live/commit/235a1ae2d5de213ab2f59a2aa584ef59e2058372) Thanks [@OlivierFreyssinet](https://github.com/OlivierFreyssinet)! - Make `onExecutorStateChanged` and `cancelIntentRequestId` optional on the device intent executor
+
+- [#24303](https://github.com/LedgerHQ/ledger-live/pull/24303) [`e8ca231`](https://github.com/LedgerHQ/ledger-live/commit/e8ca231d007f43839987343437507ea02d0dad0d) Thanks [@ysitbon](https://github.com/ysitbon)! - Split device onboarding by job: `@features/platform-device-onboarding` runs the actor with `useDeviceOnboardingActor`, and `@devtools/bindings` builds the devtool's log, context and next states with `useDeviceOnboardingToolState` and `useDeviceOnboardingToolProps`. The mobile funnel no longer imports `@devtools/*`, and the desktop device onboarding code moves under DevTools
+
+- [#24271](https://github.com/LedgerHQ/ledger-live/pull/24271) [`ef95b2e`](https://github.com/LedgerHQ/ledger-live/commit/ef95b2e00e490f024b81bfbf35cb582b5fed8783) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - Drop the CoinGecko market client and keep the USD chart fallback
+
+- [#24297](https://github.com/LedgerHQ/ledger-live/pull/24297) [`6464950`](https://github.com/LedgerHQ/ledger-live/commit/6464950833e7e27eb44da0171772f3ba5be8c116) Thanks [@ysitbon](https://github.com/ysitbon)! - `@features/flow-contacts` exposes `ContactsView` and `ContactsButton` from a single `.` entry with shared `ContactsViewProps` and `ContactsButtonProps` contracts. List logic and platform contact hooks are imported from `@features/flow-contacts-list` and `@features/platform-contacts`. Desktop and mobile hosts mount feature and Ledger Sync introduction UI outside `ContactsView`.
+
+- [#24487](https://github.com/LedgerHQ/ledger-live/pull/24487) [`c0c5bff`](https://github.com/LedgerHQ/ledger-live/commit/c0c5bfffdb1aefa91de627f26ea15b75ca6b5107) Thanks [@amaslakov](https://github.com/amaslakov)! - Enable the Tron votes panel earn rewards and desktop vote now actions, routed like the account Earn action
+
+- [#23539](https://github.com/LedgerHQ/ledger-live/pull/23539) [`310127f`](https://github.com/LedgerHQ/ledger-live/commit/310127f2b7fbc19eba7b2e45bd1d6467e447e84e) Thanks [@ishaba](https://github.com/ishaba)! - Show the energy provider's terms on the Tronify rent signature step, which the user accepts by signing, and align the rent, polling and transfer step copy with the validated wording
+
+- [#23466](https://github.com/LedgerHQ/ledger-live/pull/23466) [`ad006b9`](https://github.com/LedgerHQ/ledger-live/commit/ad006b94782873e9fe8727dcea96e3adb54f8d28) Thanks [@ishaba](https://github.com/ishaba)! - Resolve TRON TRC10 tokens by their CAL token_identifier
+
+- [#24594](https://github.com/LedgerHQ/ledger-live/pull/24594) [`b67184a`](https://github.com/LedgerHQ/ledger-live/commit/b67184adc0aa9a2e0871a8a636fa8bdcee846877) Thanks [@claudiiafg](https://github.com/claudiiafg)! - Align desktop 1D asset and account variation with the market banner
+
+- [#24406](https://github.com/LedgerHQ/ledger-live/pull/24406) [`3a0d8aa`](https://github.com/LedgerHQ/ledger-live/commit/3a0d8aa1d4904fa0ccc53528ec092bc32a63dcd4) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - Always show aggregated assets and drop the lwmWallet40 aggregatedAssets param
+
+- [#24295](https://github.com/LedgerHQ/ledger-live/pull/24295) [`3571671`](https://github.com/LedgerHQ/ledger-live/commit/3571671667a23517ced1aa9fec421368cb751ef7) Thanks [@ysitbon](https://github.com/ysitbon)! - `@features/flow-pay-contact` exports `PaySuccess` and the address picker from `.`, with `./web` and `./native` platform entries for `Contacts`. `PaySuccess` shares one props contract; suffix imports are removed from the package.
+
+- [#24449](https://github.com/LedgerHQ/ledger-live/pull/24449) [`1ca6846`](https://github.com/LedgerHQ/ledger-live/commit/1ca6846e46be5ac899daf4b3931439a0ffa7886d) Thanks [@YazhuEth](https://github.com/YazhuEth)! - Add `custom.predictions.bindAccount` and `custom.predictions.reportSetup`: Ledger Wallet asks the user to confirm on their device that they own the account picked in Predictions, then shows the trading wallet setup the live app reports. `AnimatedHeight` now counts SVG children, like a loading spinner, so the dialog no longer clips its bottom
+
+- [#24149](https://github.com/LedgerHQ/ledger-live/pull/24149) [`1c210e4`](https://github.com/LedgerHQ/ledger-live/commit/1c210e4b18a75779af04c6a9448c5e3e2dd02b24) Thanks [@YazhuEth](https://github.com/YazhuEth)! - Add a Predictions card to the portfolio services entry points and a Predictions screen that opens the live app, behind the `ptxPredictionsLiveAppDesktop` and `ptxPredictionsLiveAppMobile` flags
+
+- [#24475](https://github.com/LedgerHQ/ledger-live/pull/24475) [`a2354b8`](https://github.com/LedgerHQ/ledger-live/commit/a2354b8ed84af0a52a09860038e4f8d51533a778) Thanks [@OlivierFreyssinet](https://github.com/OlivierFreyssinet)! - Show the Device Intent Executor dialog on the Lumen sheet background
+
+- [#24240](https://github.com/LedgerHQ/ledger-live/pull/24240) [`ae675f9`](https://github.com/LedgerHQ/ledger-live/commit/ae675f9479e10b46d1e5f749e35d7640ead4de96) Thanks [@claudiiafg](https://github.com/claudiiafg)! - Cover the remaining Account Detail integration scenarios on desktop and mobile
+
+- [#23551](https://github.com/LedgerHQ/ledger-live/pull/23551) [`4a22a1d`](https://github.com/LedgerHQ/ledger-live/commit/4a22a1d2114db23d2b2ebfc6d8b41679c5f6fe39) Thanks [@YazhuEth](https://github.com/YazhuEth)! - Add the Predictions onboarding sheet behind the custom.predictions.onboard and custom.predictions.close Wallet API methods
+
+- [#24110](https://github.com/LedgerHQ/ledger-live/pull/24110) [`7324065`](https://github.com/LedgerHQ/ledger-live/commit/732406590c11eca310f977f401429e4e1270c4b4) Thanks [@qperrot](https://github.com/qperrot)! - Remove Fantom, whose network migrated to Sonic
+
+- [#24205](https://github.com/LedgerHQ/ledger-live/pull/24205) [`7647d9b`](https://github.com/LedgerHQ/ledger-live/commit/7647d9b092814564ce8947368f852780582c212f) Thanks [@henri-ly](https://github.com/henri-ly)! - Block sends of known non-transferable ERC-20 tokens with a TokenNonTransferable amount error
+
+- [#24371](https://github.com/LedgerHQ/ledger-live/pull/24371) [`32be7d2`](https://github.com/LedgerHQ/ledger-live/commit/32be7d2b61e9c7c5024b2a155822fb88e76c8ca8) Thanks [@ysitbon](https://github.com/ysitbon)! - Lock the universal-components waiver list empty, remove waiver helpers from enforce-package-structure, and record the rollout as complete in the ADR.
+
+- [#24134](https://github.com/LedgerHQ/ledger-live/pull/24134) [`b582a36`](https://github.com/LedgerHQ/ledger-live/commit/b582a360738037ab8393a554f304d9e942892287) Thanks [@renovate-operator-ledger](https://github.com/apps/renovate-operator-ledger)! - chore(deps): update dependency @ledgerhq/crypto-icons to v2.0.7
+
+  - Updated `@ledgerhq/crypto-icons` to `2.0.7`
+
+- [#24290](https://github.com/LedgerHQ/ledger-live/pull/24290) [`94df3d0`](https://github.com/LedgerHQ/ledger-live/commit/94df3d0acc235f2aa429ffaea4f21bf327469fe3) Thanks [@renovate-operator-ledger](https://github.com/apps/renovate-operator-ledger)! - [LWDM] chore(deps): update dependency oxfmt to v0.75.0
+
+  - Updated `oxfmt` to `0.75.0`
+
+- [#24291](https://github.com/LedgerHQ/ledger-live/pull/24291) [`4fc4674`](https://github.com/LedgerHQ/ledger-live/commit/4fc4674c788390588d2d3733fc5928372d2c8382) Thanks [@renovate-operator-ledger](https://github.com/apps/renovate-operator-ledger)! - chore(deps): update dependency oxlint to v1.90.0
+
+  - Updated `oxlint` to `1.90.0`
+
+- [#24392](https://github.com/LedgerHQ/ledger-live/pull/24392) [`934970a`](https://github.com/LedgerHQ/ledger-live/commit/934970adec67ed88f1d546d03b1bb555cbfd128f) Thanks [@renovate-operator-ledger](https://github.com/apps/renovate-operator-ledger)! - chore(deps): update dependency @reduxjs/toolkit to v2.13.0
+
+  - Updated `@reduxjs/toolkit` to `2.13.0`
+
+- [#24400](https://github.com/LedgerHQ/ledger-live/pull/24400) [`836c45b`](https://github.com/LedgerHQ/ledger-live/commit/836c45b3181060458ce399c0a6572b6468c699d1) Thanks [@renovate-operator-ledger](https://github.com/apps/renovate-operator-ledger)! - fix(deps): update dependency dotenv to v16.4.7
+
+  - Updated `dotenv` to `16.4.7`
+
+- [#24429](https://github.com/LedgerHQ/ledger-live/pull/24429) [`0a430b8`](https://github.com/LedgerHQ/ledger-live/commit/0a430b829d97b4137e8de60a935efbbc9bb355ba) Thanks [@renovate-operator-ledger](https://github.com/apps/renovate-operator-ledger)! - chore(deps): update dependency cross-env to v10
+
+  - Updated `cross-env` to `10.1.0`
+
+- [#24545](https://github.com/LedgerHQ/ledger-live/pull/24545) [`dfbc33b`](https://github.com/LedgerHQ/ledger-live/commit/dfbc33bba8ec826c1b5d585fbfd9f0c9135e68c0) Thanks [@renovate-operator-ledger](https://github.com/apps/renovate-operator-ledger)! - chore(deps): update dependency @electron/notarize to v3.1.2
+
+  - Updated `@electron/notarize` to `3.1.2`
+
+- [#24157](https://github.com/LedgerHQ/ledger-live/pull/24157) [`d528ea0`](https://github.com/LedgerHQ/ledger-live/commit/d528ea06fe6571e7c990936f2f22831e754b0178) Thanks [@claudiiafg](https://github.com/claudiiafg)! - Share the account asset picker across desktop and mobile
+
+- [#24050](https://github.com/LedgerHQ/ledger-live/pull/24050) [`6a70efc`](https://github.com/LedgerHQ/ledger-live/commit/6a70efc3eb1e625206286d913d7f5d07b01ee8ad) Thanks [@OlivierFreyssinet](https://github.com/OlivierFreyssinet)! - Share the device mock server session client and URL helpers in @features/platform-device-mock-server and the legacy transport in live-dmk-shared, and use them in Ledger Wallet Desktop
+
+- [#24196](https://github.com/LedgerHQ/ledger-live/pull/24196) [`77e21f9`](https://github.com/LedgerHQ/ledger-live/commit/77e21f9395f93b4ede8e70b68f3f74139622a25a) Thanks [@deepyjr](https://github.com/deepyjr)! - Add the Account Detail Analytics introduction in a dedicated layout slot above the custom place, with dismissal persisted across desktop restarts and account entry context.
+
+- [#24568](https://github.com/LedgerHQ/ledger-live/pull/24568) [`e7b21f8`](https://github.com/LedgerHQ/ledger-live/commit/e7b21f816021dbbe7314ff51bf32cc4d87291b98) Thanks [@qperrot](https://github.com/qperrot)! - Remove Stargaze from Ledger Wallet
+
+- [#24431](https://github.com/LedgerHQ/ledger-live/pull/24431) [`41c9607`](https://github.com/LedgerHQ/ledger-live/commit/41c960724990ccc044f959d51b294e66c5fa3f65) Thanks [@lysyi3m](https://github.com/lysyi3m)! - Count staked SUI in the account balance; spend and stake checks use the spendable balance only. Stake operations move the balance by their gas only, and an unstake also by its reward, so the balance history stays consistent.
+
+- [#24522](https://github.com/LedgerHQ/ledger-live/pull/24522) [`e67063f`](https://github.com/LedgerHQ/ledger-live/commit/e67063fc1fdb96c419c42a452433870b588f201e) Thanks [@gre-ledger](https://github.com/gre-ledger)! - Import bignumber.js through its default export, the form bignumber.js 11 types support
+
+- [#24462](https://github.com/LedgerHQ/ledger-live/pull/24462) [`73bd4ee`](https://github.com/LedgerHQ/ledger-live/commit/73bd4ee5567f188c79b70a3f2bd2507e81d2ba85) Thanks [@deepyjr](https://github.com/deepyjr)! - Track the Analytics filters, the Analytics banner click and its visibility on the account page.
+
+- [#24561](https://github.com/LedgerHQ/ledger-live/pull/24561) [`6d015f0`](https://github.com/LedgerHQ/ledger-live/commit/6d015f0b776d5488eee4a4b94503e0f32aa22abe) Thanks [@mateuszpalosz-ext](https://github.com/mateuszpalosz-ext)! - Add the XRP add token flow, trust limit edit and rippling state display on desktop, behind `enabledTokenStandards`
+
+### Patch Changes
+
+- Updated dependencies [[`0d2aead`](https://github.com/LedgerHQ/ledger-live/commit/0d2aeadc33cfde80c7ef0ad83a6424a756b20b0d), [`711b543`](https://github.com/LedgerHQ/ledger-live/commit/711b543456a56c18f5aa0828de974a2ee9b94c6b), [`39cb975`](https://github.com/LedgerHQ/ledger-live/commit/39cb9752fe05ea8510059b5302f1e44575641b78), [`03cafaf`](https://github.com/LedgerHQ/ledger-live/commit/03cafaff14567ab3a8ee8495f3da964a7d56683a), [`7185de6`](https://github.com/LedgerHQ/ledger-live/commit/7185de6c3886010f3eac7cee2128eb883230e872), [`522d62b`](https://github.com/LedgerHQ/ledger-live/commit/522d62b80064e808746ad88be9c79d8477b1bf44), [`0ebe8ea`](https://github.com/LedgerHQ/ledger-live/commit/0ebe8ea274936993a9dff1c36bf7b036d531e1f5), [`cd66cae`](https://github.com/LedgerHQ/ledger-live/commit/cd66caee3d913da639911a3cc29024215bf9a2e6), [`cc73a3f`](https://github.com/LedgerHQ/ledger-live/commit/cc73a3f12a1cb7e367bcddaea42680d0c74a62ed), [`2c728a2`](https://github.com/LedgerHQ/ledger-live/commit/2c728a22e6acce91ec50f07bb676114850389d4a), [`be81b1c`](https://github.com/LedgerHQ/ledger-live/commit/be81b1c79213926d7963e730fc8ccf4323e58db4), [`e6c438d`](https://github.com/LedgerHQ/ledger-live/commit/e6c438d64ad0beb6224bd4c0361241641fe2a37d), [`e7a4d5a`](https://github.com/LedgerHQ/ledger-live/commit/e7a4d5a01ce2aa5636609f70cccc6274d5189b08), [`ba1b7c4`](https://github.com/LedgerHQ/ledger-live/commit/ba1b7c45b4818bed008fcbed07d97b9a3e9aa0b3), [`64c16b8`](https://github.com/LedgerHQ/ledger-live/commit/64c16b8200c14d691b104a99396c00252731be2a), [`cc4eced`](https://github.com/LedgerHQ/ledger-live/commit/cc4eced87a10926e185c430c6e38d9151482266f), [`59280f5`](https://github.com/LedgerHQ/ledger-live/commit/59280f54cb1b4cf679f926dfeac4848103b0ac42), [`c842892`](https://github.com/LedgerHQ/ledger-live/commit/c8428923a5cf0ed556ff7a48a6e373c740cdb6a1), [`b77803f`](https://github.com/LedgerHQ/ledger-live/commit/b77803ffbca90848d55bca56b9d8cd3547464620), [`a95a6bc`](https://github.com/LedgerHQ/ledger-live/commit/a95a6bcb630289fde6782430fb511b9c48c9ffcc), [`d701bc7`](https://github.com/LedgerHQ/ledger-live/commit/d701bc7564f9f479e0cc867ef76ec40b73f5c49c), [`93aef61`](https://github.com/LedgerHQ/ledger-live/commit/93aef61f00e4e65de92695a983bfbca21e156ccb), [`ac116ba`](https://github.com/LedgerHQ/ledger-live/commit/ac116baae8763f331fd21885be36474933b52dff), [`f781149`](https://github.com/LedgerHQ/ledger-live/commit/f7811490b8965dabe3be45c36b9ffb5e29bd1ead), [`fb3956b`](https://github.com/LedgerHQ/ledger-live/commit/fb3956b429b34b35b4b6e3e50b14f6d9bdf2d59b), [`842a9a5`](https://github.com/LedgerHQ/ledger-live/commit/842a9a547be2224eec86295c57c288f0c51f8fbd), [`d02425e`](https://github.com/LedgerHQ/ledger-live/commit/d02425e29efe55595b51556e598fde0f9c34574f), [`d36ed0a`](https://github.com/LedgerHQ/ledger-live/commit/d36ed0a5b624f1842e2ad3a857d502621dfb5fb9), [`81f924e`](https://github.com/LedgerHQ/ledger-live/commit/81f924e4acd4d79e898fa0cc8b1acf03a6c01de6), [`3835bab`](https://github.com/LedgerHQ/ledger-live/commit/3835babeb6da9775f5750a2219f480a5422269ab), [`6da9b38`](https://github.com/LedgerHQ/ledger-live/commit/6da9b38e20ae18b9aa3e31d41a155420ace9987b), [`c6d8c4f`](https://github.com/LedgerHQ/ledger-live/commit/c6d8c4f1c50ada25f9c2bb4b5bbd50c117e3fce1), [`b282f26`](https://github.com/LedgerHQ/ledger-live/commit/b282f26a470c5f3519d252eb301b5ddb98fe68e9), [`c533e40`](https://github.com/LedgerHQ/ledger-live/commit/c533e40882433c3e9cdc3dcb462ecda5c34beac4), [`72da4b1`](https://github.com/LedgerHQ/ledger-live/commit/72da4b19bd803dc85ef83d3b09a45445f95186fa), [`55a43bc`](https://github.com/LedgerHQ/ledger-live/commit/55a43bcb1d736466d956eb8645d9e310e3daaaab), [`420409b`](https://github.com/LedgerHQ/ledger-live/commit/420409ba20ed5eca81813b15b7dcb85a92de1b5b), [`716dba7`](https://github.com/LedgerHQ/ledger-live/commit/716dba70f24aea647d9b0fcfec75f315afbe9dbc), [`94961d4`](https://github.com/LedgerHQ/ledger-live/commit/94961d48d733bce0b50061f02c00f7942774fa70), [`498cbdd`](https://github.com/LedgerHQ/ledger-live/commit/498cbdd918b0117959e9e0ff9db6adb31191b138), [`4db45b9`](https://github.com/LedgerHQ/ledger-live/commit/4db45b933feabde39ce1bc98796e118eae10f47d), [`6ab5a87`](https://github.com/LedgerHQ/ledger-live/commit/6ab5a87d796726b2fc38b34862209abf82521f72), [`ed8d437`](https://github.com/LedgerHQ/ledger-live/commit/ed8d437ae166be537aa7bf309691691ee56b8ffc), [`360d6c9`](https://github.com/LedgerHQ/ledger-live/commit/360d6c9c4e4c37284397ee3118224767bc49076b), [`298bf8d`](https://github.com/LedgerHQ/ledger-live/commit/298bf8de83301f558607d4611643ec8e54277a7e), [`085d781`](https://github.com/LedgerHQ/ledger-live/commit/085d781d100c76bcb9b6dc573af1c7f28fc115e1), [`cea0076`](https://github.com/LedgerHQ/ledger-live/commit/cea0076fb3fd7c19d0e73b99ac76507278e390a4), [`31f7eba`](https://github.com/LedgerHQ/ledger-live/commit/31f7ebace98301cb3e46185a91621aa3ef59bb3b), [`235a1ae`](https://github.com/LedgerHQ/ledger-live/commit/235a1ae2d5de213ab2f59a2aa584ef59e2058372), [`e8ca231`](https://github.com/LedgerHQ/ledger-live/commit/e8ca231d007f43839987343437507ea02d0dad0d), [`ef95b2e`](https://github.com/LedgerHQ/ledger-live/commit/ef95b2e00e490f024b81bfbf35cb582b5fed8783), [`e051c84`](https://github.com/LedgerHQ/ledger-live/commit/e051c84a8486b78327ea49500c38b6e2138bbc21), [`6464950`](https://github.com/LedgerHQ/ledger-live/commit/6464950833e7e27eb44da0171772f3ba5be8c116), [`5bc9bb1`](https://github.com/LedgerHQ/ledger-live/commit/5bc9bb199bd54af8046a7889b2b846603d083207), [`0b3f0f2`](https://github.com/LedgerHQ/ledger-live/commit/0b3f0f28584733a0c17634117b7d53ff07fe025b), [`310127f`](https://github.com/LedgerHQ/ledger-live/commit/310127f2b7fbc19eba7b2e45bd1d6467e447e84e), [`ad006b9`](https://github.com/LedgerHQ/ledger-live/commit/ad006b94782873e9fe8727dcea96e3adb54f8d28), [`9621949`](https://github.com/LedgerHQ/ledger-live/commit/9621949145e7e771a3663969f2e6610ac91459bd), [`06c81d3`](https://github.com/LedgerHQ/ledger-live/commit/06c81d33d1c2da765bbd34f4e8e1593f43ce745d), [`62bdc34`](https://github.com/LedgerHQ/ledger-live/commit/62bdc344261d600a3d7d2b78a8cdb9e7b3c97c25), [`b67184a`](https://github.com/LedgerHQ/ledger-live/commit/b67184adc0aa9a2e0871a8a636fa8bdcee846877), [`3a0d8aa`](https://github.com/LedgerHQ/ledger-live/commit/3a0d8aa1d4904fa0ccc53528ec092bc32a63dcd4), [`96fac1e`](https://github.com/LedgerHQ/ledger-live/commit/96fac1eb64856beb33cc68594e98c25e8b308898), [`0d83181`](https://github.com/LedgerHQ/ledger-live/commit/0d83181e9a96f55811f2ce5532527739bdb7e62a), [`e186896`](https://github.com/LedgerHQ/ledger-live/commit/e186896213df32feb1e6a80e38f45cf189655866), [`a6c95e2`](https://github.com/LedgerHQ/ledger-live/commit/a6c95e2ae469bfe6eb3432fc691efea35d70a741), [`6196234`](https://github.com/LedgerHQ/ledger-live/commit/61962349d0487b0e1f318d2ab36753befc434624), [`2cee99e`](https://github.com/LedgerHQ/ledger-live/commit/2cee99e4b728ef315e5df94271c2bd6b695a7ade), [`8777c73`](https://github.com/LedgerHQ/ledger-live/commit/8777c73879acf3e38b8cef00fb88213c55011f96), [`49ae0f6`](https://github.com/LedgerHQ/ledger-live/commit/49ae0f60632ad4ad518b8a7420ab02239f3fa144), [`52622fa`](https://github.com/LedgerHQ/ledger-live/commit/52622fa571b8c7b549d185525f4511dc3ebdfa82), [`7282cc0`](https://github.com/LedgerHQ/ledger-live/commit/7282cc0d6d7431ecb4d49534d267f5f562652965), [`8dae360`](https://github.com/LedgerHQ/ledger-live/commit/8dae360c044392da40c67e29416d11bbe34afd8b), [`cc6d736`](https://github.com/LedgerHQ/ledger-live/commit/cc6d736fba670fcf5795123eb89f664f01807cff), [`3571671`](https://github.com/LedgerHQ/ledger-live/commit/3571671667a23517ced1aa9fec421368cb751ef7), [`1ca6846`](https://github.com/LedgerHQ/ledger-live/commit/1ca6846e46be5ac899daf4b3931439a0ffa7886d), [`1c210e4`](https://github.com/LedgerHQ/ledger-live/commit/1c210e4b18a75779af04c6a9448c5e3e2dd02b24), [`4a22a1d`](https://github.com/LedgerHQ/ledger-live/commit/4a22a1d2114db23d2b2ebfc6d8b41679c5f6fe39), [`7e4dccf`](https://github.com/LedgerHQ/ledger-live/commit/7e4dccffcad306c45ed380758cd6e7624c9c7921), [`e0ac369`](https://github.com/LedgerHQ/ledger-live/commit/e0ac36999d2ff30c0788c40a4a7ed80293d72fe0), [`7324065`](https://github.com/LedgerHQ/ledger-live/commit/732406590c11eca310f977f401429e4e1270c4b4), [`7647d9b`](https://github.com/LedgerHQ/ledger-live/commit/7647d9b092814564ce8947368f852780582c212f), [`80b6233`](https://github.com/LedgerHQ/ledger-live/commit/80b62337e7e2b754004ca5f93b9f7d569015e1eb), [`b582a36`](https://github.com/LedgerHQ/ledger-live/commit/b582a360738037ab8393a554f304d9e942892287), [`934970a`](https://github.com/LedgerHQ/ledger-live/commit/934970adec67ed88f1d546d03b1bb555cbfd128f), [`d528ea0`](https://github.com/LedgerHQ/ledger-live/commit/d528ea06fe6571e7c990936f2f22831e754b0178), [`6a70efc`](https://github.com/LedgerHQ/ledger-live/commit/6a70efc3eb1e625206286d913d7f5d07b01ee8ad), [`77e21f9`](https://github.com/LedgerHQ/ledger-live/commit/77e21f9395f93b4ede8e70b68f3f74139622a25a), [`d4bccad`](https://github.com/LedgerHQ/ledger-live/commit/d4bccadbcafe6365dd589ada054bd05d307722d2), [`e7b21f8`](https://github.com/LedgerHQ/ledger-live/commit/e7b21f816021dbbe7314ff51bf32cc4d87291b98), [`0d2268d`](https://github.com/LedgerHQ/ledger-live/commit/0d2268d099e6ad7adac33bcb1e4456a28712a2ec), [`aec9525`](https://github.com/LedgerHQ/ledger-live/commit/aec9525f565f851007d992a6c807efdf0958eb27), [`e67063f`](https://github.com/LedgerHQ/ledger-live/commit/e67063fc1fdb96c419c42a452433870b588f201e), [`73bd4ee`](https://github.com/LedgerHQ/ledger-live/commit/73bd4ee5567f188c79b70a3f2bd2507e81d2ba85), [`5eec368`](https://github.com/LedgerHQ/ledger-live/commit/5eec368a80f6b8ad05ff97b1cbd78851b8391b2b), [`f53d517`](https://github.com/LedgerHQ/ledger-live/commit/f53d517815a694c54cb535ba39ebc1b249a88775), [`9a3e7bf`](https://github.com/LedgerHQ/ledger-live/commit/9a3e7bf4f8d5192f748fc3aa0a2dc9ac889f1513), [`d3f59ae`](https://github.com/LedgerHQ/ledger-live/commit/d3f59ae3fc6b9d9240bd81df9f93c1223cb64ddb)]:
+  - @ledgerhq/live-common@38.7.0-next.0
+  - @features/platform-aggregated-assets@0.7.0-next.0
+  - @shared/feature-flags@0.30.0-next.0
+  - @ledgerhq/coin-zcash@1.2.0-next.0
+  - @domain/entity-account-operation@0.2.0-next.0
+  - @domain/api-market-countervalues@0.3.0-next.0
+  - @devtools/bindings@0.15.0-next.0
+  - @features/platform-account-source-coin-module@0.2.0-next.0
+  - @features/flow-account-detail-hero@0.4.0-next.0
+  - @features/flow-account-detail-delegations@0.3.0-next.0
+  - @features/flow-account-detail-analytics-notice@0.3.0-next.0
+  - @features/flow-account-analytics@0.2.0-next.0
+  - @features/flow-account-detail@0.4.0-next.0
+  - @ledgerhq/types-live@6.131.0-next.0
+  - @domain/entity-currency-crypto@0.19.0-next.0
+  - @ledgerhq/coin-bitcoin@1.2.0-next.0
+  - @ledgerhq/ledger-wallet-framework@3.11.0-next.0
+  - @domain/entity-currency-fiat@0.6.0-next.0
+  - @domain/entity-aggregated-asset@0.4.0-next.0
+  - @domain/api-aggregated-assets@0.7.0-next.0
+  - @ledgerhq/asset-detail@0.13.0-next.0
+  - @domain/api-account-data@0.5.0-next.0
+  - @devtools/shell@0.14.0-next.0
+  - @ledgerhq/wallet-btc@1.2.0-next.0
+  - @ledgerhq/live-wallet@1.2.0-next.0
+  - @ledgerhq/live-dmk-shared@0.39.0-next.0
+  - @features/platform-device-onboarding@0.5.0-next.0
+  - @ledgerhq/coin-cardano@3.0.0-next.0
+  - @shared/env@0.13.0-next.0
+  - @features/platform-feature-flags@0.12.0-next.0
+  - @shared/live-config-overrides@0.2.0-next.0
+  - @ledgerhq/coin-canton@1.7.0-next.0
+  - @ledgerhq/coin-casper@3.8.0-next.0
+  - @ledgerhq/coin-concordium@1.8.0-next.0
+  - @ledgerhq/coin-filecoin@2.7.0-next.0
+  - @ledgerhq/coin-stacks@0.36.0-next.0
+  - @domain/entity-contact@0.13.0-next.0
+  - @features/flow-contacts-detail@0.4.0-next.0
+  - @domain/entity-currency@0.5.0-next.0
+  - @domain/entity-account-balance@0.3.0-next.0
+  - @domain/entity-account-balance-history@0.2.0-next.0
+  - @features/platform-device-intent@5.4.0-next.0
+  - @features/flow-contacts@0.18.0-next.0
+  - @domain/api-currency-token@0.8.0-next.0
+  - @features/platform-assets-table@0.3.0-next.0
+  - @features/flow-portfolio-services-entry-points@0.3.0-next.0
+  - @features/platform-device-mock-server@0.1.0-next.0
+  - @shared/ui-info-state@0.7.0-next.0
+  - @features/flow-pay-card-assets@0.7.0-next.0
+  - @features/flow-pay-card-details@0.11.0-next.0
+  - @features/flow-pay-card@0.9.0-next.0
+  - @features/flow-pay-contact@0.9.0-next.0
+  - @features/flow-predictions@0.2.0-next.0
+  - @features/platform-predictions@0.4.0-next.0
+  - @shared/ui-animated-height@0.3.0-next.0
+  - @domain/entity-predictions@0.3.0-next.0
+  - @features/flow-pay-balance@0.10.0-next.0
+  - @features/flow-pay-request@0.10.0-next.0
+  - @domain/api-card-management@0.9.0-next.0
+  - @domain/api-currency-fiat@0.6.0-next.0
+  - @domain/api-market-index-altcoin-season@0.5.0-next.0
+  - @domain/api-market-index-fear-and-greed@0.5.0-next.0
+  - @domain/api-push-devices@0.3.0-next.0
+  - @domain/entity-account@0.3.0-next.0
+  - @domain/entity-account-alias@0.2.0-next.0
+  - @domain/entity-account-data@0.5.0-next.0
+  - @domain/entity-account-name@0.4.0-next.0
+  - @domain/entity-client-identity@0.5.0-next.0
+  - @domain/entity-market-countervalues@0.5.0-next.0
+  - @domain/entity-recent-addresses@0.3.0-next.0
+  - @domain/entity-starred-account@0.1.0-next.0
+  - @domain/entity-wallet-sync@0.2.0-next.0
+  - @features/flow-large-screen-upsell@2.4.0-next.0
+  - @features/flow-pay-card-auth@0.12.0-next.0
+  - @features/flow-pay-card-widget@0.7.0-next.0
+  - @features/flow-pay-feature-tour@0.9.0-next.0
+  - @features/platform-card@0.9.0-next.0
+  - @features/platform-currencies@0.13.0-next.0
+  - @features/platform-market-countervalues@0.5.0-next.0
+  - @shared/api-services@0.13.0-next.0
+  - @shared/app-config@0.3.0-next.0
+  - @shared/auth@0.9.0-next.0
+  - @ledgerhq/live-dmk-desktop@0.27.0-next.0
+  - @ledgerhq/live-send@0.2.0-next.0
+  - @ledgerhq/wallet-pnl@0.9.0-next.0
+  - @ledgerhq/asset-aggregation@0.19.0-next.0
+  - @features/flow-contacts-add-address@0.9.1-next.0
+  - @features/platform-contacts@0.12.2-next.0
+  - @features/platform-feature-flags-firebase@0.1.4-next.0
+  - @ledgerhq/live-signer-evm@0.24.5-next.0
+  - @ledgerhq/transaction-observability@0.6.2-next.0
+  - @ledgerhq/wallet-analytics@0.5.5-next.0
+  - @domain/entity-currency-token@0.5.9-next.0
+  - @features/flow-account-detail-notices@0.3.0
+  - @features/flow-account-detail-settings@0.3.1-next.0
+  - @features/platform-account-analytics@0.2.0
+  - @ledgerhq/live-signer-tron@0.2.5-next.0
+  - @features/platform-env@0.4.5-next.0
+  - @features/flow-analytics-consent@0.2.13-next.0
+  - @features/flow-contacts-add-contact@0.10.1-next.0
+  - @features/flow-contacts-delete-address@0.4.1-next.0
+  - @features/flow-contacts-delete-contact@0.5.1-next.0
+  - @features/flow-contacts-edit-address@0.7.1-next.0
+  - @features/flow-contacts-edit-contact@0.9.1-next.0
+  - @features/flow-contacts-list@0.12.1-next.0
+  - @features/platform-intent-verify-address@0.3.2-next.0
+  - @features/flow-pay-card-transactions@0.7.2-next.0
+  - @features/flow-fear-and-greed@0.5.2-next.0
+  - @features/flow-app-availability@0.3.2-next.0
+  - @features/platform-content-ab-tests@0.2.4-next.0
+
 ## 4.27.0
 
 ### Minor Changes
@@ -2999,125 +4709,5 @@
   - @devtools/shell@0.10.1
   - @features/flow-analytics-consent@0.2.8
   - @ledgerhq/wallet-btc@0.6.0
-
-## 4.23.0-next.9
-
-### Patch Changes
-
-- Updated dependencies [[`5ff6348`](https://github.com/LedgerHQ/ledger-live/commit/5ff6348d1505e805bdbbff64685b0b97bc2a8981)]:
-  - @features/flow-pay-card-auth@0.9.0-next.3
-  - @devtools/bindings@0.10.0-next.4
-  - @features/flow-pay-card@0.6.0-next.4
-  - @features/flow-pay-card-assets@0.3.0-next.4
-  - @features/flow-pay-card-details@0.6.0-next.4
-  - @features/flow-pay-card-transactions@0.4.0-next.4
-
-## 4.23.0-next.8
-
-### Minor Changes
-
-- [#22899](https://github.com/LedgerHQ/ledger-live/pull/22899) [`40b22c1`](https://github.com/LedgerHQ/ledger-live/commit/40b22c1c98b985d025e370475bcd13964b578b6e) Thanks [@tonykhaov](https://github.com/tonykhaov)! - Show a "Go to CL Card" disclaimer below the Pay contacts when the `card_disclaimer` param of `lwdPayTab` is on. It opens the same CL Card webview as "I have a card" on the Card screen.
-
-- [#22899](https://github.com/LedgerHQ/ledger-live/pull/22899) [`56640ba`](https://github.com/LedgerHQ/ledger-live/commit/56640ba2c03cec8555f7452da785c8dd949ec010) Thanks [@tonykhaov](https://github.com/tonykhaov)! - Show the Card login on the desktop Pay tab when the `card_live_app` param of `lwdPayTab` is on. "Create an account" opens the card program live app and "Log in" opens the CL Card live app.
-
-- [#22899](https://github.com/LedgerHQ/ledger-live/pull/22899) [`87f8ce0`](https://github.com/LedgerHQ/ledger-live/commit/87f8ce0cccbfeffd8865d7d33130298e8e3c2e81) Thanks [@tonykhaov](https://github.com/tonykhaov)! - Read the desktop Pay card face (native, live app, disclaimer) from one `usePayCardFace` hook.
-
-- [#22908](https://github.com/LedgerHQ/ledger-live/pull/22908) [`23ee31c`](https://github.com/LedgerHQ/ledger-live/commit/23ee31c0ebf892ea7924e18dc43ad947e7810782) Thanks [@tonykhaov](https://github.com/tonykhaov)! - Pay card login: name Monavate instead of Baanx in "Log in to" and "Card provided by".
-
-- [#22899](https://github.com/LedgerHQ/ledger-live/pull/22899) [`8369030`](https://github.com/LedgerHQ/ledger-live/commit/836903036462a9524c834f5b6c3e8d7873bcf2e6) Thanks [@tonykhaov](https://github.com/tonykhaov)! - Send the live app webview Back button to Pay when the webview was opened from Pay with `fromPayTab` state.
-
-- [#22889](https://github.com/LedgerHQ/ledger-live/pull/22889) [`fe55ea3`](https://github.com/LedgerHQ/ledger-live/commit/fe55ea349a8227d398bd570e68a8756392a4dd21) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - Add feature-flag scenarios for the native Pay card, Card live app login, and CL Card disclaimer
-
-### Patch Changes
-
-- Updated dependencies [[`56640ba`](https://github.com/LedgerHQ/ledger-live/commit/56640ba2c03cec8555f7452da785c8dd949ec010), [`56640ba`](https://github.com/LedgerHQ/ledger-live/commit/56640ba2c03cec8555f7452da785c8dd949ec010), [`3b5a959`](https://github.com/LedgerHQ/ledger-live/commit/3b5a959ffd24bc06a91bb608924c0575d62eb753), [`fe55ea3`](https://github.com/LedgerHQ/ledger-live/commit/fe55ea349a8227d398bd570e68a8756392a4dd21)]:
-  - @features/flow-pay-balance@0.6.0-next.1
-  - @features/flow-pay-card-auth@0.9.0-next.2
-  - @devtools/bindings@0.10.0-next.3
-  - @features/flow-pay-card@0.6.0-next.3
-  - @features/flow-pay-feature-tour@0.7.0-next.2
-  - @shared/feature-flags@0.25.0-next.1
-  - @features/flow-pay-card-assets@0.3.0-next.3
-  - @features/flow-pay-card-details@0.6.0-next.3
-  - @features/flow-pay-card-transactions@0.4.0-next.3
-  - @features/flow-contacts-add-address@0.6.1-next.2
-  - @features/flow-large-screen-upsell@2.2.1-next.1
-  - @features/platform-contacts@0.9.0-next.2
-  - @features/platform-currencies@0.9.1-next.1
-  - @features/platform-feature-flags@0.8.1-next.1
-  - @ledgerhq/live-common@38.2.0-next.1
-  - @devtools/shell@0.10.1-next.1
-  - @features/flow-contacts@0.13.0-next.3
-  - @features/flow-contacts-add-contact@0.7.1-next.2
-  - @features/flow-contacts-delete-contact@0.2.4-next.2
-  - @features/flow-contacts-edit-address@0.4.1-next.2
-  - @features/flow-contacts-edit-contact@0.6.1-next.2
-  - @features/flow-contacts-list@0.9.0-next.2
-  - @features/flow-pay-contact@0.5.0-next.4
-  - @features/flow-analytics-consent@0.2.8-next.1
-  - @ledgerhq/asset-detail@0.11.7-next.1
-  - @ledgerhq/live-dmk-desktop@0.23.0-next.1
-  - @ledgerhq/live-send@0.1.2-next.1
-
-## 4.23.0-next.7
-
-### Patch Changes
-
-- Updated dependencies [[`739334b`](https://github.com/LedgerHQ/ledger-live/commit/739334b0d854a3b11d9a2b6ba47ce022dc0797d9)]:
-  - @features/flow-pay-feature-tour@0.7.0-next.1
-  - @devtools/bindings@0.10.0-next.2
-
-## 4.23.0-next.6
-
-### Minor Changes
-
-- [#22840](https://github.com/LedgerHQ/ledger-live/pull/22840) [`e4c24f3`](https://github.com/LedgerHQ/ledger-live/commit/e4c24f3ebd7fe5838a6639e70b10b12863088e10) Thanks [@LucasWerey](https://github.com/LucasWerey)! - Name the default Me contact "Me" in the Pay tab contacts list instead of "My addresses (Me)"
-
-### Patch Changes
-
-- Updated dependencies [[`e4c24f3`](https://github.com/LedgerHQ/ledger-live/commit/e4c24f3ebd7fe5838a6639e70b10b12863088e10)]:
-  - @features/flow-pay-contact@0.5.0-next.3
-
-## 4.23.0-next.5
-
-### Patch Changes
-
-- Updated dependencies [[`4fc2063`](https://github.com/LedgerHQ/ledger-live/commit/4fc2063b0e49a445ebb660f750214e69d5c4355a)]:
-  - @features/flow-contacts-introduction@1.3.0-next.0
-  - @features/flow-contacts@0.13.0-next.2
-  - @features/flow-pay-contact@0.5.0-next.2
-
-## 4.23.0-next.4
-
-### Patch Changes
-
-- Updated dependencies [[`cee85b4`](https://github.com/LedgerHQ/ledger-live/commit/cee85b47d7d1f414e23935e77c9ad22d98ddf994)]:
-  - @features/platform-card@0.7.0-next.1
-  - @features/flow-pay-card-auth@0.9.0-next.1
-  - @devtools/bindings@0.10.0-next.1
-  - @features/flow-pay-card@0.6.0-next.2
-  - @features/flow-pay-card-assets@0.3.0-next.2
-  - @features/flow-pay-card-details@0.6.0-next.2
-  - @features/flow-pay-card-transactions@0.4.0-next.2
-
-## 4.23.0-next.3
-
-### Minor Changes
-
-- [#22788](https://github.com/LedgerHQ/ledger-live/pull/22788) [`3699ef4`](https://github.com/LedgerHQ/ledger-live/commit/3699ef4a5d48c99dcf9892324ef1ed6bc7cccdbc) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - Hide the Pay tab card and its history when the pay-tab flag's card param is false
-
-## 4.23.0-next.2
-
-### Minor Changes
-
-- [#22767](https://github.com/LedgerHQ/ledger-live/pull/22767) [`8947c0b`](https://github.com/LedgerHQ/ledger-live/commit/8947c0b97fa0d5abd017d880bfc3089a74d9cc77) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - Show a setup state on the History card tab when the signed-in holder has not claimed a card yet.
-
-### Patch Changes
-
-- Updated dependencies [[`8947c0b`](https://github.com/LedgerHQ/ledger-live/commit/8947c0b97fa0d5abd017d880bfc3089a74d9cc77)]:
-  - @features/flow-pay-card-transactions@0.4.0-next.1
-  - @features/flow-pay-card-details@0.6.0-next.1
-  - @features/flow-pay-card@0.6.0-next.1
-  - @features/flow-pay-card-assets@0.3.0-next.1
 
 <!-- changelog-pruned: older entries were removed to keep this file small. Full history is in `git log -p CHANGELOG.md` and in the GitHub release for each version. -->

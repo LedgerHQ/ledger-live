@@ -1,71 +1,16 @@
-import React from "react";
-import { DialogBody } from "@ledgerhq/lumen-ui-react";
-import type { SignedOperation } from "@ledgerhq/types-live";
-import type { Device } from "@ledgerhq/live-common/hw/actions/types";
-import DeviceAction from "~/renderer/components/DeviceAction";
-import { SimplifiedTransactionConfirm } from "./components/SimplifiedTransactionConfirm";
-import { useSignatureViewModel } from "./hooks/useSignatureViewModel";
-import { LockedDevicePrompt } from "./components/LockedDevicePrompt";
-import { PendingState } from "./components/PendingState";
-
-const Result = (
-  props:
-    | {
-        signedOperation: SignedOperation | undefined | null;
-        device: Device;
-      }
-    | {
-        transactionSignError: Error;
-      },
-) => {
-  if (!("signedOperation" in props)) {
-    return null;
-  }
-  // Show pending state after signature during broadcast
-  return <PendingState messageKey="send.steps.confirmation.pending.title" />;
-};
+import React, { useState } from "react";
+import { useFeature } from "@features/platform-feature-flags";
+import { SignatureDeviceActionScreen } from "./SignatureDeviceActionScreen";
+import { SignatureExecutorScreen } from "./SignatureExecutorScreen";
 
 export const SignatureScreen = () => {
-  const {
-    account,
-    transaction,
-    action,
-    request,
-    onDeviceActionResult,
-    finishWithError,
-    onLockedDeviceShown,
-    onDeviceConfirmationShown,
-  } = useSignatureViewModel();
+  const isDeviceIntentEnabled = useFeature("lwdNewSendFlowDeviceIntent")?.enabled === true;
+  // A flag update mid-signature would remount the other screen and sign a second time.
+  const [isDeviceIntentEnabledOnMount] = useState(isDeviceIntentEnabled);
 
-  if (!account || !transaction || !request) {
-    return null;
-  }
-
-  return (
-    <DialogBody className="py-16">
-      <div className="-mt-12 mb-24" data-testid="send-signature-step">
-        <DeviceAction
-          action={action}
-          request={request}
-          Result={Result}
-          onResult={onDeviceActionResult}
-          onError={finishWithError}
-          analyticsPropertyFlow="send"
-          renderLockedDevice={({ device, onRetry }) => {
-            if (!device) return null;
-            return (
-              <LockedDevicePrompt
-                deviceModelId={device.modelId}
-                onRetry={onRetry}
-                onShown={onLockedDeviceShown}
-              />
-            );
-          }}
-          renderDeviceSignatureRequested={({ device }) => (
-            <SimplifiedTransactionConfirm device={device} onShown={onDeviceConfirmationShown} />
-          )}
-        />
-      </div>
-    </DialogBody>
+  return isDeviceIntentEnabledOnMount ? (
+    <SignatureExecutorScreen />
+  ) : (
+    <SignatureDeviceActionScreen />
   );
 };

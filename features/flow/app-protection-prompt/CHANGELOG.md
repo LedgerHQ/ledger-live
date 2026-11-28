@@ -1,5 +1,61 @@
 # @features/flow-app-protection-prompt
 
+## 0.2.0
+
+### Minor Changes
+
+- [#24819](https://github.com/LedgerHQ/ledger-live/pull/24819) [`24d4a2b`](https://github.com/LedgerHQ/ledger-live/commit/24d4a2b525d71348b0b33fc031674bbec7787e9c) Thanks [@deepyjr](https://github.com/deepyjr)! - Make the biometrics type wording keys verifiable by the i18n key check, and resolve the biometrics type label with one `useBiometricsTypeLabel` hook from `@features/platform-app-lock/native`. `@features/platform-app-lock` no longer exports `biometricsTypeKey`.
+
+### Patch Changes
+
+- Updated dependencies [[`74c967e`](https://github.com/LedgerHQ/ledger-live/commit/74c967eb7dda848648df0db683910140b5d6e906), [`24d4a2b`](https://github.com/LedgerHQ/ledger-live/commit/24d4a2b525d71348b0b33fc031674bbec7787e9c)]:
+  - @shared/analytics@0.5.0
+  - @features/platform-app-lock@0.9.0
+  - @shared/analytics-react@0.5.1
+
+## 0.2.0-next.0
+
+### Minor Changes
+
+- [#24819](https://github.com/LedgerHQ/ledger-live/pull/24819) [`24d4a2b`](https://github.com/LedgerHQ/ledger-live/commit/24d4a2b525d71348b0b33fc031674bbec7787e9c) Thanks [@deepyjr](https://github.com/deepyjr)! - Make the biometrics type wording keys verifiable by the i18n key check, and resolve the biometrics type label with one `useBiometricsTypeLabel` hook from `@features/platform-app-lock/native`. `@features/platform-app-lock` no longer exports `biometricsTypeKey`.
+
+### Patch Changes
+
+- Updated dependencies [[`74c967e`](https://github.com/LedgerHQ/ledger-live/commit/74c967eb7dda848648df0db683910140b5d6e906), [`24d4a2b`](https://github.com/LedgerHQ/ledger-live/commit/24d4a2b525d71348b0b33fc031674bbec7787e9c)]:
+  - @shared/analytics@0.5.0-next.0
+  - @features/platform-app-lock@0.9.0-next.0
+  - @shared/analytics-react@0.5.1-next.0
+
+## 0.1.4
+
+### Patch Changes
+
+- Updated dependencies [[`429170c`](https://github.com/LedgerHQ/ledger-live/commit/429170c6f969a90517696f2d750fc853be91e378)]:
+  - @shared/ui-info-state@0.8.0
+
+## 0.1.4-next.0
+
+### Patch Changes
+
+- Updated dependencies [[`429170c`](https://github.com/LedgerHQ/ledger-live/commit/429170c6f969a90517696f2d750fc853be91e378)]:
+  - @shared/ui-info-state@0.8.0-next.0
+
+## 0.1.3
+
+### Patch Changes
+
+- Updated dependencies [[`6196234`](https://github.com/LedgerHQ/ledger-live/commit/61962349d0487b0e1f318d2ab36753befc434624), [`49ae0f6`](https://github.com/LedgerHQ/ledger-live/commit/49ae0f60632ad4ad518b8a7420ab02239f3fa144), [`52622fa`](https://github.com/LedgerHQ/ledger-live/commit/52622fa571b8c7b549d185525f4511dc3ebdfa82), [`934970a`](https://github.com/LedgerHQ/ledger-live/commit/934970adec67ed88f1d546d03b1bb555cbfd128f)]:
+  - @shared/ui-info-state@0.7.0
+  - @features/platform-app-lock@0.8.0
+
+## 0.1.3-next.0
+
+### Patch Changes
+
+- Updated dependencies [[`6196234`](https://github.com/LedgerHQ/ledger-live/commit/61962349d0487b0e1f318d2ab36753befc434624), [`49ae0f6`](https://github.com/LedgerHQ/ledger-live/commit/49ae0f60632ad4ad518b8a7420ab02239f3fa144), [`52622fa`](https://github.com/LedgerHQ/ledger-live/commit/52622fa571b8c7b549d185525f4511dc3ebdfa82), [`934970a`](https://github.com/LedgerHQ/ledger-live/commit/934970adec67ed88f1d546d03b1bb555cbfd128f)]:
+  - @shared/ui-info-state@0.7.0-next.0
+  - @features/platform-app-lock@0.8.0-next.0
+
 ## 0.1.2
 
 ### Patch Changes

@@ -4,6 +4,7 @@ export { AccountDescriptorV0Schema } from "./v0";
 export type { AccountDescriptorV1, UtxoAccountDescriptorV1, AccountBasedDescriptorV1 } from "./v1";
 export {
   AccountDescriptorV1Schema,
+  DerivationPathSchema,
   UtxoAccountDescriptorV1Schema,
   AccountBasedDescriptorV1Schema,
   serializeV1,
@@ -25,4 +26,5 @@ export {
   UnsupportedNetworkError,
 } from "./network";
 
-export { toV0, toV1, UnsupportedFamilyError } from "./adapters";
+export { toV0, toV1, InvalidDerivationPathError, UnsupportedFamilyError } from "./adapters";
+export { addressOfV1 } from "./address";

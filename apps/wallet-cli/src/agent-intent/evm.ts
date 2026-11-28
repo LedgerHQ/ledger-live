@@ -1,9 +1,14 @@
 import { keccak_256 } from "@noble/hashes/sha3";
 import { bytesToHex, utf8ToBytes } from "@noble/hashes/utils";
+import { AddressSchema, type Address } from "@domain/entity-network";
 
 const ADDRESS_RE = /^0x[0-9a-fA-F]{40}$/;
 const DECIMAL_RE = /^(\d+)(?:\.(\d+))?$/;
 const UINT256_MAX = (1n << 256n) - 1n;
+
+export function isEvmAddress(value: string): boolean {
+  return ADDRESS_RE.test(value);
+}
 
 /** EIP-55 mixed-case checksum encoding of a 40-hex-char address (with or without `0x`). */
 export function toChecksumAddress(address: string): string {
@@ -21,7 +26,7 @@ export function toChecksumAddress(address: string): string {
  * all-uppercase) carries no checksum to verify and is accepted; mixed-case input must match EIP-55,
  * so a single mistyped character in a copied address is caught instead of proposed.
  */
-export function parseEvmAddress(value: string, flag: string): string {
+export function parseEvmAddress(value: string, flag: string): Address {
   if (!ADDRESS_RE.test(value)) {
     throw new Error(
       `--${flag} "${value}" is not an EVM address (expected 0x followed by 40 hex characters).`,
@@ -36,7 +41,7 @@ export function parseEvmAddress(value: string, flag: string): string {
         "address, or pass it in all-lowercase to skip checksum verification.",
     );
   }
-  return checksummed;
+  return AddressSchema.parse(checksummed);
 }
 
 /**

@@ -4,8 +4,13 @@ import {
   OPERATION_TYPE_STAKE_FAMILY,
 } from "@ledgerhq/ledger-wallet-framework/operation";
 import { getCryptoAssetsStore } from "@ledgerhq/ledger-wallet-framework/cryptoAssetsStore";
+import {
+  type AccountBalancesResult,
+  clampLocked,
+} from "@ledgerhq/ledger-wallet-framework/account/balances";
 import type {
   Account,
+  AccountBalance,
   Operation,
   OperationExtra,
   OperationExtraRaw,
@@ -103,14 +108,15 @@ export function addAccountToBuyLinks(
 ): Record<string, Error> {
   for (const error of Object.values(errors)) {
     const holder = error as { links?: unknown };
-    if (!Array.isArray(holder.links)) continue;
+    const originalLinks = holder.links;
+    if (!Array.isArray(originalLinks)) continue;
 
-    const links = holder.links.map(link =>
+    const links = originalLinks.map(link =>
       typeof link === "string" ? withBuyAccount(link, accountId) : link,
     );
     // Assigned only when something changed, and as a new array either way: a coin module is free to
     // hand back a module-level constant, which must not be rewritten under it.
-    if (links.some((link, index) => link !== holder.links![index])) holder.links = links;
+    if (links.some((link, index) => link !== originalLinks[index])) holder.links = links;
   }
 
   return errors;
@@ -203,7 +209,7 @@ export function toTransferFeeFromUnknown(value: unknown): TransferFee | undefine
 }
 
 export function findCryptoCurrencyByNetwork(network: string): CryptoCurrency | undefined {
-  const networksRemap = {
+  const networksRemap: Record<string, string> = {
     xrp: "ripple",
   };
   return findCryptoCurrencyById(networksRemap[network] ?? network);
@@ -392,36 +398,114 @@ function numericDetailEntry(
   return { [key]: fitsInADouble ? value.toNumber() : value.toFixed() };
 }
 
-export function extractBalances(
+/** Whether the rows are a pool breakdown, not the default single row. */
+export function hasPoolRows(rows: AccountBalance[] | undefined): rows is AccountBalance[] {
+  return !!rows?.some(row => row.pool !== undefined || row.private !== undefined);
+}
+
+export function toAccountBalance(balance: Balance): AccountBalance {
+  return {
+    value: new BigNumber(balance.value.toString()),
+    ...(balance.locked !== undefined && { locked: new BigNumber(balance.locked.toString()) }),
+    ...(balance.pool !== undefined && { pool: balance.pool }),
+    ...(balance.private !== undefined && { private: balance.private }),
+  };
+}
+
+/**
+ * The account rows for a module's pool rows. When the family partitions its native balance, the
+ * stake rows count in `balance` too: their total goes to the first public row, as both value and
+ * locked, so the rows still sum to `balance`. Without a public row, it becomes one.
+ */
+export function toAccountPoolRows(poolRows: Balance[], stakeRows: Balance[]): AccountBalance[] {
+  const rows = poolRows.map(toAccountBalance);
+  const staked = stakeRows.reduce((sum, row) => sum.plus(row.value.toString()), new BigNumber(0));
+  if (staked.isZero()) return rows;
+  const target = rows.findIndex(row => !row.private);
+  if (target === -1) return [...rows, { value: staked, locked: staked }];
+  const row = rows[target];
+  rows[target] = {
+    ...row,
+    value: row.value.plus(staked),
+    locked: (row.locked ?? new BigNumber(0)).plus(staked),
+  };
+  return rows;
+}
+
+/**
+ * The rows the shape put on the account, as they are: they hold the chain locks only. The funds
+ * committed to pending operations are applied at extraction, so they never go stale. Without pool
+ * rows, the default single row applies.
+ */
+export function genericAccountBalances(account: Account): AccountBalancesResult {
+  const rows = account.balances;
+  return hasPoolRows(rows) ? { account: rows } : {};
+}
+
+function nativeBalanceEntry(
   account: Account,
-  getAssetFromToken?: (token: TokenCurrency, owner: string) => AssetInfo | undefined,
+  stakes: Balance[],
   partitionsNativeBalance?: boolean,
-  getHeldNativeAmount?: (position: StakingDelegation | StakingUnbonding) => BigNumber,
-): Balance[] {
+): Balance {
   const nativeReserve = BigInt(
     BigNumber.max(account.balance.minus(account.spendableBalance), 0).toFixed(),
   );
   const nativePending = BigInt(getPendingNativeSpent(account.pendingOperations ?? []).toFixed());
-  const stakes = stakingBalances(account, getHeldNativeAmount);
   const staked = partitionsNativeBalance
     ? stakes.reduce((sum, stake) => sum + stake.value, 0n)
     : 0n;
   const total = BigInt(account.balance.toFixed());
   const nativeValue = total > staked ? total - staked : 0n;
   const nativeLocked = (nativeReserve > staked ? nativeReserve - staked : 0n) + nativePending;
-  const balances: Balance[] = [
-    {
-      // `value` is the total balance, `locked` is the non-spendable part of it.
-      // Consumers must compute available funds as `value - locked`.
-      // We lock the chain reserve plus any funds already committed to pending
-      // (optimistic, not-yet-synced) transactions, capped at the total balance.
-      // When the family partitions its native balance, the staking positions are carved out
-      // of it, as `getBalance` reports them.
-      value: nativeValue,
-      asset: { type: "native" },
-      locked: nativeLocked > nativeValue ? nativeValue : nativeLocked,
-    },
-  ];
+  return {
+    // `value` is the total balance, `locked` is the non-spendable part of it.
+    // Consumers must compute available funds as `value - locked`.
+    // We lock the chain reserve plus any funds already committed to pending
+    // (optimistic, not-yet-synced) transactions, capped at the total balance.
+    // When the family partitions its native balance, the staking positions are carved out
+    // of it, as `getBalance` reports them.
+    value: nativeValue,
+    asset: { type: "native" },
+    locked: nativeLocked > nativeValue ? nativeValue : nativeLocked,
+  };
+}
+
+function toPoolBalance(row: AccountBalance): Balance {
+  return {
+    value: BigInt(row.value.toFixed()),
+    asset: { type: "native" },
+    ...(row.locked && !row.locked.isZero() && { locked: BigInt(row.locked.toFixed()) }),
+    ...(row.pool !== undefined && { pool: row.pool }),
+    ...(row.private !== undefined && { private: row.private }),
+  };
+}
+
+export function extractBalances(
+  account: Account,
+  getAssetFromToken?: (token: TokenCurrency, owner: string) => AssetInfo | undefined,
+  partitionsNativeBalance?: boolean,
+  getHeldNativeAmount?: (position: StakingDelegation | StakingUnbonding) => BigNumber,
+): Balance[] {
+  const stakes = stakingBalances(account, getHeldNativeAmount);
+  const poolRows = hasPoolRows(account.balances) ? account.balances : undefined;
+  const pendingSpent = getPendingNativeSpent(account.pendingOperations ?? []);
+  // The pending spend is added once, to the first public row. That row also holds the stake when
+  // the family partitions its balance (see `toAccountPoolRows`); the stake entries are appended
+  // below, so it is taken out of the row first.
+  const pendingTarget = poolRows ? poolRows.findIndex(row => !row.private) : -1;
+  const foldedStake = partitionsNativeBalance
+    ? stakes.reduce((sum, stake) => sum.plus(stake.value.toString()), new BigNumber(0))
+    : new BigNumber(0);
+  const balances: Balance[] = poolRows
+    ? poolRows.flatMap((row, i): Balance[] => {
+        if (i !== pendingTarget) return [toPoolBalance(row)];
+        const value = BigNumber.max(row.value.minus(foldedStake), 0);
+        if (value.isZero() && row.pool === undefined && !foldedStake.isZero()) return [];
+        const chainLocked = BigNumber.max((row.locked ?? new BigNumber(0)).minus(foldedStake), 0);
+        const locked = clampLocked(value, chainLocked.plus(pendingSpent));
+        return [toPoolBalance({ ...row, value, locked: locked.isZero() ? undefined : locked })];
+      })
+    : [nativeBalanceEntry(account, stakes, partitionsNativeBalance)];
 
   balances.push(
     ...(partitionsNativeBalance
@@ -525,6 +609,7 @@ const OPERATION_TYPES: ReadonlySet<string> = new Set<OperationType>([
   "APPROVE",
   "OPT_IN",
   "OPT_OUT",
+  "OPT_EDIT",
   "LOCK",
   "UNLOCK",
   "WITHDRAW",
@@ -658,6 +743,8 @@ type FrameworkOperationExtra = {
   memo?: string | undefined;
   internal?: boolean;
   feePayer?: string;
+  feeAsset?: AssetInfo;
+  feeAmount?: string;
   stake?: { address: string; amount: BigNumber };
   transferId?: string;
 };
@@ -688,6 +775,8 @@ const FRAMEWORK_RESERVED_EXTRA_KEYS: ReadonlySet<string> = new Set(
     memo: true,
     internal: true,
     feePayer: true,
+    feeAsset: true,
+    feeAmount: true,
     stake: true,
     transferId: true,
   } satisfies Record<keyof FrameworkOperationExtra, true>),
@@ -804,6 +893,12 @@ function buildOperationExtra(op: CoreOperation): FrameworkOperationExtra {
     extra.feePayer = op.tx.feesPayer;
   }
 
+  const feeAsset = readNonNativeFeeAsset(op.tx.feesAsset);
+  if (feeAsset) {
+    extra.feeAsset = feeAsset;
+    extra.feeAmount = op.tx.fees.toString();
+  }
+
   const stake = buildStakeExtra(op.details?.stake);
   if (stake) {
     extra.stake = stake;
@@ -816,13 +911,46 @@ function buildOperationExtra(op: CoreOperation): FrameworkOperationExtra {
   return extra;
 }
 
+/**
+ * The asset that paid a fee, when it is not the native coin, as a JSON-safe copy for `extra`. An
+ * absent fee asset means the native coin (ADR-068).
+ */
+export function readNonNativeFeeAsset(feeAsset: AssetInfo | undefined): AssetInfo | undefined {
+  if (feeAsset === undefined || feeAsset.type === "native") return undefined;
+  const assetReference = "assetReference" in feeAsset ? feeAsset.assetReference : undefined;
+  const assetOwner = "assetOwner" in feeAsset ? feeAsset.assetOwner : undefined;
+  return {
+    type: feeAsset.type,
+    ...(assetReference !== undefined ? { assetReference } : {}),
+    ...(assetOwner !== undefined ? { assetOwner } : {}),
+  };
+}
+
+/** Compare two addresses for equality, ignoring case. */
+export function isSameAddress(a: string, b: string): boolean {
+  return a.toLowerCase() === b.toLowerCase();
+}
+
+/** Set for a family that opts in to `excludesFeesPaidByOthers`, for the account being synced. */
+export type FeesPayerRule = { accountAddress: string };
+
+export function isFeePaidByAccount(
+  feesPayer: string | undefined,
+  rule: FeesPayerRule | undefined,
+): boolean {
+  if (rule === undefined) return true;
+  return feesPayer !== undefined && isSameAddress(feesPayer, rule.accountAddress);
+}
+
 function computeOperationValue(
   op: CoreOperation,
   opType: OperationType,
   bnFees: BigNumber,
   hasFailed: boolean,
+  feesPayerRule: FeesPayerRule | undefined,
 ): BigNumber {
-  if (hasFailed) return bnFees;
+  const paidFees = isFeePaidByAccount(op.tx.feesPayer, feesPayerRule) ? bnFees : new BigNumber(0);
+  if (hasFailed) return paidFees;
   if (
     op.asset.type === "native" &&
     [
@@ -835,7 +963,7 @@ function computeOperationValue(
       "UPDATE_ACCOUNT",
     ].includes(opType)
   ) {
-    return new BigNumber(op.value.toString()).plus(bnFees);
+    return new BigNumber(op.value.toString()).plus(paidFees);
   }
   return new BigNumber(op.value.toString());
 }
@@ -844,13 +972,24 @@ export function adaptCoreOperationToLiveOperation(
   accountId: string,
   op: CoreOperation,
   reviveFamilyExtra?: (extraRaw: OperationExtraRaw) => OperationExtra,
+  feesPayerRule?: FeesPayerRule,
 ): Operation {
   const opType = op.type as OperationType;
   const extra = buildOperationExtra(op);
 
-  const bnFees = new BigNumber(op.tx.fees.toString());
+  // A fee paid in another asset is no native amount: it stays out of the value and `fee`, and the
+  // sync charges it once, as a FEES operation of the fee token (`tokenFeeOperations`).
+  const bnFees = new BigNumber(extra.feeAsset ? 0 : op.tx.fees.toString());
   const hasFailed = op.tx.failed;
-  const value = computeOperationValue(op, opType, bnFees, hasFailed);
+  // A failed token operation shows the amount it attempted: `value` below is its native fee, which
+  // `buildSubAccounts` would otherwise put on the token sub-account. Balance history moves no token
+  // for it (`balanceHistoryCache`).
+  if (hasFailed && op.asset?.type !== "native" && extra.assetAmount === undefined) {
+    extra.assetAmount = op.value.toString();
+  }
+  // A fee paid in the token is charged by its own FEES operation, and the failed one keeps its 0 value.
+  if (extra.feeAsset && hasFailed) delete extra.assetAmount;
+  const value = computeOperationValue(op, opType, bnFees, hasFailed, feesPayerRule);
 
   // Landed flat beside the framework's own keys and revived through the family's
   // `fromOperationExtraRaw` — the same pair `accountRawAssign.ts` composes — so a family reads one
@@ -892,7 +1031,7 @@ export function adaptCoreOperationToLiveOperation(
 function defaultComputeIntentType(transaction: GenericTransaction): string {
   if (!transaction.mode) return "Payment"; // NOTE: assuming payment by default here, can be changed based on transaction.mode
 
-  const modeRemap = {
+  const modeRemap: Record<string, string> = {
     delegate: "stake",
     undelegate: "unstake",
   };
@@ -901,6 +1040,7 @@ function defaultComputeIntentType(transaction: GenericTransaction): string {
   if (
     [
       "changeTrust",
+      "optOut",
       "send",
       "send-legacy",
       "send-eip1559",
@@ -966,6 +1106,7 @@ export function transactionToIntent(
         ? BigInt(transaction.nonce.toString())
         : undefined,
     ...getDelegationIntentFields(delegationMode, transaction),
+    ...(transaction.pool !== undefined && { pool: transaction.pool }),
   };
   if (transaction.assetReference && transaction.assetOwner) {
     const { subAccountId } = transaction;
@@ -1145,6 +1286,8 @@ function defaultOperationType(mode: GenericTransaction["mode"]): OperationType {
   switch (mode) {
     case "changeTrust":
       return "OPT_IN";
+    case "optOut":
+      return "OPT_OUT";
     case "tokenAssociate":
       return "ASSOCIATE_TOKEN";
     case "delegate":

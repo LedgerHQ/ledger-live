@@ -41,3 +41,43 @@ export class OpReturnDataSizeLimit extends Error {
     if (fields) Object.assign(this, fields);
   }
 }
+
+export class InvalidUtxoId extends Error {
+  override name = "InvalidUtxoId";
+  constructor(message?: string, fields?: Record<string, unknown>) {
+    super(message || "InvalidUtxoId");
+    if (fields) Object.assign(this, fields);
+  }
+}
+
+export class UnknownUtxo extends Error {
+  override name = "UnknownUtxo";
+  constructor(message?: string, fields?: Record<string, unknown>) {
+    super(message || "UnknownUtxo");
+    if (fields) Object.assign(this, fields);
+  }
+}
+
+export class InvalidUtxoStrategy extends Error {
+  override name = "InvalidUtxoStrategy";
+  constructor(message?: string, fields?: Record<string, unknown>) {
+    super(message || "InvalidUtxoStrategy");
+    if (fields) Object.assign(this, fields);
+  }
+}
+
+export class ReplacementNotSupported extends Error {
+  override name = "ReplacementNotSupported";
+  constructor(message?: string, fields?: Record<string, unknown>) {
+    super(message || "ReplacementNotSupported");
+    if (fields) Object.assign(this, fields);
+  }
+}
+
+export class InvalidReplacementInput extends Error {
+  override name = "InvalidReplacementInput";
+  constructor(message?: string, fields?: Record<string, unknown>) {
+    super(message || "InvalidReplacementInput");
+    if (fields) Object.assign(this, fields);
+  }
+}

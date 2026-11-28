@@ -1,15 +1,21 @@
 import { SignerContext } from "@ledgerhq/ledger-wallet-framework/signer";
 import { CryptoCurrency } from "@ledgerhq/ledger-wallet-framework/types";
 import { firstValueFrom, toArray } from "rxjs";
-import * as signTransactionModule from "../common-logic/transaction/sign";
+import * as signTransactionModule from "./sign";
 import * as gateway from "../network/gateway";
-import { createMockCantonAccount } from "../test/fixtures";
-import type { CantonSigner, CantonSignature } from "../types";
+import {
+  configOfCall,
+  createMockCantonAccount,
+  createMockCoinConfigValue,
+  createMockContext,
+} from "../test/fixtures";
+import type { CantonAccount, CantonSigner, CantonSignature } from "../types";
+import { CantonInvalidConfigError } from "../types/errors";
 import { OnboardStatus, CantonOnboardProgress, CantonOnboardResult } from "../types/onboard";
-import { buildOnboardAccount, isCantonCoinPreapproved } from "./onboard";
+import { buildOnboardAccount, isAccountOnboarded, isCantonCoinPreapproved } from "./onboard";
 
 jest.mock("../network/gateway");
-jest.mock("../common-logic/transaction/sign");
+jest.mock("./sign");
 const mockedGateway = gateway as jest.Mocked<typeof gateway>;
 const mockedSignTransaction = signTransactionModule as jest.Mocked<typeof signTransactionModule>;
 
@@ -18,6 +24,33 @@ describe("onboard", () => {
   const mockCurrency = {
     id: "canton_network",
   } as unknown as CryptoCurrency;
+  const mockConfig = createMockCoinConfigValue();
+  const mockContext = createMockContext(mockConfig);
+
+  describe("isAccountOnboarded", () => {
+    it("reports the party the gateway knows for the key", async () => {
+      mockedGateway.getPartyByPubKey.mockResolvedValue({ party_id: "p", public_key: "k" });
+
+      await expect(isAccountOnboarded(mockContext, "k")).resolves.toEqual({
+        isOnboarded: true,
+        partyId: "p",
+      });
+    });
+
+    it("reports not onboarded when the lookup fails with a network error", async () => {
+      mockedGateway.getPartyByPubKey.mockRejectedValue(new Error("Network error"));
+
+      await expect(isAccountOnboarded(mockContext, "k")).resolves.toEqual({ isOnboarded: false });
+    });
+
+    it("rejects when the lookup finds an invalid config", async () => {
+      mockedGateway.getPartyByPubKey.mockRejectedValue(
+        new CantonInvalidConfigError("canton: coin config gatewayUrl"),
+      );
+
+      await expect(isAccountOnboarded(mockContext, "k")).rejects.toThrow(CantonInvalidConfigError);
+    });
+  });
 
   describe("isCantonCoinPreapproved", () => {
     it("should return true when contract exists and is not expired", async () => {
@@ -35,11 +68,11 @@ describe("onboard", () => {
       });
 
       // WHEN
-      const result = await isCantonCoinPreapproved(mockCurrency, mockPartyId);
+      const result = await isCantonCoinPreapproved(mockContext, mockPartyId);
 
       // THEN
       expect(result).toBe(true);
-      expect(mockedGateway.getTransferPreApproval).toHaveBeenCalledWith(mockCurrency, mockPartyId);
+      expect(mockedGateway.getTransferPreApproval).toHaveBeenCalledWith(mockContext, mockPartyId);
     });
 
     it("should return false when contract exists but is expired", async () => {
@@ -57,11 +90,11 @@ describe("onboard", () => {
       });
 
       // WHEN
-      const result = await isCantonCoinPreapproved(mockCurrency, mockPartyId);
+      const result = await isCantonCoinPreapproved(mockContext, mockPartyId);
 
       // THEN
       expect(result).toBe(false);
-      expect(mockedGateway.getTransferPreApproval).toHaveBeenCalledWith(mockCurrency, mockPartyId);
+      expect(mockedGateway.getTransferPreApproval).toHaveBeenCalledWith(mockContext, mockPartyId);
     });
   });
 
@@ -100,7 +133,7 @@ describe("onboard", () => {
         public_key: mockPublicKey,
       });
 
-      const onboardObservable = buildOnboardAccount(mockSignerContext);
+      const onboardObservable = buildOnboardAccount(mockSignerContext, mockContext);
       const values = await firstValueFrom(
         onboardObservable(mockCurrency, mockDeviceId, account).pipe(toArray()),
       );
@@ -121,10 +154,35 @@ describe("onboard", () => {
       expect(mockedSignTransaction.signTransaction).not.toHaveBeenCalled();
     });
 
+    it("onboards an account that has no cantonResources yet", async () => {
+      const { cantonResources: _none, ...account } = createMockCantonAccount();
+      mockedGateway.getPartyByPubKey.mockResolvedValue({
+        party_id: mockPartyId,
+        public_key: mockPublicKey,
+      });
+
+      const onboardObservable = buildOnboardAccount(mockSignerContext, mockContext);
+      const values = await firstValueFrom(
+        onboardObservable(mockCurrency, mockDeviceId, account).pipe(toArray()),
+      );
+
+      const result = values.find((v): v is CantonOnboardResult => "partyId" in v);
+      expect((result?.account as CantonAccount | undefined)?.cantonResources).toEqual({
+        isOnboarded: true,
+      });
+    });
+
     it("should proceed with submission when account has xpub (re-onboarding scenario)", async () => {
       // GIVEN - account already has xpub (re-onboarding)
       const existingPartyId = "existing-party-id";
-      const account = createMockCantonAccount({ xpub: existingPartyId });
+      const account = createMockCantonAccount(
+        { xpub: existingPartyId },
+        {
+          nativeInstrumentAdmin: "DSO::before-reset",
+          scanCheckpoint: { hash: "before-reset", height: 12 },
+          replayTransactions: [{ hash: "other-party", height: 13 }],
+        },
+      );
       const newPartyId = "new-party-id";
 
       mockedGateway.getPartyByPubKey.mockResolvedValue({
@@ -147,7 +205,7 @@ describe("onboard", () => {
       });
       mockedSignTransaction.signTransaction.mockResolvedValue(mockSignature);
 
-      const onboardObservable = buildOnboardAccount(mockSignerContext);
+      const onboardObservable = buildOnboardAccount(mockSignerContext, mockContext);
       const values = await firstValueFrom(
         onboardObservable(mockCurrency, mockDeviceId, account).pipe(toArray()),
       );
@@ -161,13 +219,19 @@ describe("onboard", () => {
       expect(statuses).toContain(OnboardStatus.SUBMIT);
 
       // Should call prepareOnboarding and submitOnboarding
-      expect(mockedGateway.prepareOnboarding).toHaveBeenCalledWith(mockCurrency, mockPublicKey);
+      expect(mockedGateway.prepareOnboarding).toHaveBeenCalledWith(
+        expect.objectContaining({ logger: mockContext.logger }),
+        mockPublicKey,
+      );
+      await expect(configOfCall(mockedGateway.prepareOnboarding.mock.calls[0])).resolves.toBe(
+        mockConfig,
+      );
       expect(mockedGateway.submitOnboarding).toHaveBeenCalled();
       expect(mockedSignTransaction.signTransaction).toHaveBeenCalled();
 
       // Should clear topology change cache
       expect(mockedGateway.clearIsTopologyChangeRequiredCache).toHaveBeenCalledWith(
-        mockCurrency,
+        expect.objectContaining({ logger: mockContext.logger }),
         mockPublicKey,
       );
 
@@ -179,6 +243,19 @@ describe("onboard", () => {
           cantonResources: expect.objectContaining({ isOnboarded: true }),
         }),
       });
+      // A reset replaces the DSO party, so sync must not use the one saved or cached before it.
+      expect(mockedGateway.clearDsoPartyIdCache).toHaveBeenCalledWith(
+        expect.objectContaining({ logger: mockContext.logger }),
+      );
+      expect((result?.account as CantonAccount | undefined)?.cantonResources).not.toHaveProperty(
+        "nativeInstrumentAdmin",
+      );
+      expect((result?.account as CantonAccount | undefined)?.cantonResources).not.toHaveProperty(
+        "scanCheckpoint",
+      );
+      expect((result?.account as CantonAccount | undefined)?.cantonResources).not.toHaveProperty(
+        "replayTransactions",
+      );
     });
 
     it("links the existing party (no submit) when prepareOnboarding reports it already exists", async () => {
@@ -198,7 +275,7 @@ describe("onboard", () => {
       );
       mockedGateway.isPartyAlreadyExists.mockReturnValue(true);
 
-      const onboardObservable = buildOnboardAccount(mockSignerContext);
+      const onboardObservable = buildOnboardAccount(mockSignerContext, mockContext);
       const values = await firstValueFrom(
         onboardObservable(mockCurrency, mockDeviceId, account).pipe(toArray()),
       );
@@ -216,5 +293,34 @@ describe("onboard", () => {
         }),
       });
     });
+
+    it.each([
+      ["the account", { xpub: "same-party" }, {}],
+      ["the Canton resources only", {}, { xpub: "same-party" }],
+    ])(
+      "keeps the transactions to read again of the same party, known from %s",
+      async (_, overrides, resources) => {
+        const replayTransactions = [{ hash: "offer", height: 13 }];
+        const account = createMockCantonAccount(overrides, { ...resources, replayTransactions });
+        mockedGateway.getPartyByPubKey.mockRejectedValue(new Error("not found"));
+        mockedGateway.prepareOnboarding.mockRejectedValue(
+          new Error('Party with id "same-party" already exists and its topology is up to date'),
+        );
+        mockedGateway.isPartyAlreadyExists.mockReturnValue(true);
+
+        const values = await firstValueFrom(
+          buildOnboardAccount(mockSignerContext, mockContext)(
+            mockCurrency,
+            mockDeviceId,
+            account,
+          ).pipe(toArray()),
+        );
+
+        const result = values.find((v): v is CantonOnboardResult => "partyId" in v);
+        expect((result?.account as CantonAccount | undefined)?.cantonResources).toMatchObject({
+          replayTransactions,
+        });
+      },
+    );
   });
 });

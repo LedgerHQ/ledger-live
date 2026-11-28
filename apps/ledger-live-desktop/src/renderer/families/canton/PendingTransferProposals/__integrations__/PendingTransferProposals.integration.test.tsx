@@ -1,6 +1,7 @@
 /* eslint-disable @typescript-eslint/consistent-type-assertions */
 import { CantonAccount } from "@ledgerhq/live-common/families/canton/types";
 import React from "react";
+import { http, HttpResponse, server } from "tests/server";
 import { render, screen, waitFor } from "tests/testSetup";
 import type { State } from "~/renderer/reducers";
 import { INITIAL_STATE as SETTINGS_INITIAL_STATE } from "~/renderer/reducers/settings";
@@ -79,6 +80,8 @@ describe("Canton pending offers integration (desktop)", () => {
   beforeEach(() => {
     jest.clearAllMocks();
     mockPerformTransferInstruction.mockResolvedValue(undefined);
+    // The offers' CAL lookup would otherwise reach the real service.
+    server.use(http.get("*/v1/tokens", () => HttpResponse.json([])));
     if (!document.getElementById("modals")) {
       const modalsContainer = document.createElement("div");
       modalsContainer.id = "modals";
@@ -186,5 +189,41 @@ describe("Canton pending offers integration (desktop)", () => {
     expect(
       await screen.findByText("The transfer offer has been successfully withdrawn."),
     ).toBeVisible();
+  });
+
+  it("keeps the cancel's result once the list empties and replays nothing on the next offer", async () => {
+    const withOffer = (contractId: string) =>
+      createAccountWithProposal(contractId, "test-xpub", "receiver-party-xpub");
+    const first = withOffer("contract-withdraw-1");
+    const emptied = createMockAccount({
+      xpub: "test-xpub",
+      cantonResources: {
+        isOnboarded: true,
+        instrumentUtxoCounts: {},
+        pendingTransferProposals: [],
+      },
+    } as Partial<CantonAccount>);
+    const next = withOffer("contract-withdraw-2");
+
+    const { user, rerender } = render(
+      <PendingTransferProposals account={first} parentAccount={first} />,
+      { initialState: buildInitialState() },
+    );
+    await user.click(screen.getByRole("button", { name: /^cancel$/i }));
+    await user.click(await screen.findByTestId("canton-offers-mock-device-confirm"));
+    expect(await screen.findByText("Offer Withdrawn")).toBeVisible();
+
+    rerender(<PendingTransferProposals account={emptied} parentAccount={emptied} />);
+    expect(screen.getByText("Offer Withdrawn")).toBeVisible();
+
+    rerender(<PendingTransferProposals account={next} parentAccount={next} />);
+    expect(screen.getByText("Offer Withdrawn")).toBeVisible();
+    expect(screen.queryByTestId("canton-offers-mock-device-confirm")).not.toBeInTheDocument();
+
+    await user.click(screen.getByTestId("modal-close-button"));
+    await waitFor(() => expect(screen.queryByText("Offer Withdrawn")).not.toBeInTheDocument());
+    expect(screen.queryByTestId("canton-offers-mock-device-confirm")).not.toBeInTheDocument();
+    expect(screen.getByRole("button", { name: /^cancel$/i })).toBeVisible();
+    expect(mockPerformTransferInstruction).toHaveBeenCalledTimes(1);
   });
 });

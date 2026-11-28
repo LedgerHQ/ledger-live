@@ -19,6 +19,7 @@ See the [ADR: Device Intent Executor component](https://ledgerhq.atlassian.net/w
 ### What's covered
 
 - **Concepts** — what a Device Intent is, what the Device Intent Executor (DIE) is, and how they fit together.
+- **Design rules** — the principles that keep the Device Intent Executor simple and the device UX consistent, and the rules for changing it.
 - **Usage guide** — implementation checklist, mounting the executor, building the `deviceInitializationInput`, defining and structuring intents, orchestrating multi-step (and context-switching) flows.
 - **Runtime contracts and observability** — completion, intent/context co-changes, cancellation, callbacks, interactive jobs, idle state.
 - **Pitfalls and common mistakes** when integrating.
@@ -36,6 +37,9 @@ See the [ADR: Device Intent Executor component](https://ledgerhq.atlassian.net/w
   - [Anatomy of an Intent](#anatomy-of-an-intent)
 - [What is the Device Intent Executor?](#what-is-the-device-intent-executor)
   - [High-level flow](#high-level-flow)
+- [Design rules](#design-rules)
+  - [Principles](#principles)
+  - [Rules for changes](#rules-for-changes)
 - [Exports](#exports)
   - [Core types](#core-types-srccorets)
   - [Executor types](#executor-types-srcexecutorts)
@@ -117,6 +121,20 @@ The platform contract uses DMK `DeviceModelId` values exclusively:
 - `DeviceConnectionParams.acceptedDeviceModelIds` accepts DMK IDs.
 - `DeviceConnectionResult.connectedDevice.modelId` is the connected model ID.
 - `compatDeviceModelId` does not exist.
+
+A flow that cannot run on some models (a coin app missing on Nano S, for
+example) excludes them with `acceptedDeviceModelIdsExcluding`. The executor
+then refuses those models at device selection instead of failing later on the
+device:
+
+```ts
+const deviceConnectionParams: DeviceConnectionParams = {
+  acceptedDeviceModelIds: acceptedDeviceModelIdsExcluding([DeviceModelId.NANO_S]),
+};
+```
+
+With no exclusion it returns `[]` (every model accepted). Excluding every model
+throws `NoAcceptedDeviceModelError`.
 
 Callers must adapt only at legacy boundaries. For example, Desktop and Mobile
 convert accepted DMK IDs before calling the current legacy connection APIs:
@@ -255,6 +273,53 @@ sequenceDiagram
     end
 ```
 
+## Design rules
+
+The Device Intent Executor is the main way to run a device flow in Ledger
+Wallet, such as signing flows. Device management flows, such as My Ledger and
+onboarding, have their own. These rules keep the Device Intent Executor simple
+and keep the device UX the same in every flow that uses it. They apply to the
+callers, to the app wrappers and to the package itself.
+
+### Principles
+
+1. **Change the Device Intent Executor only for a product need that flows
+   share.** Each option added to it is one more way to use it. A change needs a
+   need that several flows share, agreed with the device team
+   (`@ledgerhq/live-devices`). A single flow or a devtool adapts to the
+   Device Intent Executor, not the other way round.
+2. **Let the Device Intent Executor handle device states and errors.** It shows
+   each device state and error (device locked, unsupported firmware, no storage
+   left, disconnection…) with the right screen and actions, and the user closes
+   it (`onUserCancel`). Do not close or unmount the executor because of a device
+   state, and do not rebuild error handling on top of it: each copy drifts from
+   the others and from the device UX. If the Device Intent Executor handles a
+   case badly, improve it (principle 1).
+3. **Follow the existing architecture.** Add to the Device Intent Executor the
+   way its existing parts were added. The rules below apply this to the common
+   cases.
+
+### Rules for changes
+
+- **Configuration carries dependencies, not events.** `initializerConfig`
+  injects the initializer's dependencies, for example in tests. Lifecycle
+  events are callbacks: on `DeviceIntentExecutorProps` (like
+  `onIntentJobError`) and on the platform component props (like
+  `onContextInitialized`). Add a missing callback next to them, and list it in
+  [Observability: callbacks](#observability-callbacks).
+- **The contract lives in the package, and both wrappers stay in sync.** Change
+  the contract in `@features/platform-device-intent`. A change to the LWM or
+  LWD wrapper (`apps/*/src/mvvm/components/DeviceIntentExecutor/`) comes with
+  the same change in the other wrapper, in the same PR.
+- **A new callback identity never restarts device work.** Keep callbacks in
+  refs (see [Callback refs for freshness](#callback-refs-for-freshness)), not
+  in the dependencies of an effect that runs device work. Otherwise a
+  re-render can open the app on the device again.
+- **Device states are classified in one place.** The rules that classify
+  `EnsureAppReady` states (retryable, blocking, failure) live in
+  `@ledgerhq/live-dmk-shared`, as exhaustive `switch` statements. The apps use
+  them and do not write their own.
+
 ## Exports
 
 ### Core types (`src/core.ts`)
@@ -270,6 +335,13 @@ sequenceDiagram
 | `IntentListeners<JobState, Result>`                             | Optional lifecycle and result callbacks attachable to an intent instance     |
 | `Intent<JobState, Input, ExtraProps, Result>`                   | Runtime instance passed to the executor                                      |
 | `createIntent(definition, input, listeners?)`                   | Helper to instantiate an `Intent` from a platform definition                 |
+
+### Device model helpers (`src/acceptedDeviceModelIds.ts`, `src/errors.ts`)
+
+| Export                                              | Description                                                               |
+| --------------------------------------------------- | ------------------------------------------------------------------------- |
+| `acceptedDeviceModelIdsExcluding(unsupportedIds?)`  | Builds `acceptedDeviceModelIds` accepting every model but the given ones  |
+| `NoAcceptedDeviceModelError`                        | Thrown by `acceptedDeviceModelIdsExcluding` when every model is excluded  |
 
 ### Executor types (`src/executor.ts`)
 
@@ -435,6 +507,9 @@ function MyFlowScreen({ enabled, onDone }: Props) {
 
 `onExecutorStateChanged` and `cancelIntentRequestId` are optional.
 
+The LWM and LWD wrappers call `onUserCancel` with the `DeviceFlowFailure` of the
+error screen the user closed, or `null`. A job error goes to `onIntentJobError`.
+
 ### Custom headers from intent components
 
 The LWM and LWD `DeviceIntentExecutor` wrappers own their platform
@@ -451,7 +526,7 @@ active header:
 
 ```tsx
 import { BottomSheetHeader } from "@ledgerhq/lumen-ui-rnative";
-import { OverrideDeviceIntentExecutorHeader } from "@ledgerhq/live-dmk-shared";
+import { OverrideDeviceIntentExecutorHeader } from "@ledgerhq/live-dmk-shared/react";
 
 function MyIntentComponent({ jobState }: Props) {
   return (

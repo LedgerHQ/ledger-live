@@ -1,6 +1,10 @@
 import { Step } from "jest-allure2-reporter/api";
 import { Account } from "@ledgerhq/live-e2e-shared/enum/Account";
-import { byId, byIdWithDescendantText } from "@e2e/helpers/elements/native";
+import { Currency } from "@ledgerhq/live-e2e-shared/enum/Currency";
+import { byId, byIdWithDescendantText, byTextInRowWithText } from "@e2e/helpers/elements/native";
+
+type AssetItemByNameOptions = { ticker: string; assetName: string };
+type MaskedAmountOptions = { currency: Currency; mask: RegExp };
 
 export default class ModularDrawer {
   private readonly accountItem = byId("account-item");
@@ -15,9 +19,18 @@ export default class ModularDrawer {
   private readonly drawerCloseButton = byId("bottom-sheet-header-close-button");
   private readonly drawerBackButton = byId("bottom-sheet-header-back-button");
   private readonly accountItemName = (name: string) => byId(`account-item-name-${name}`);
-  private readonly assetItem = (ticker: string) => byId(new RegExp(`asset-item-${ticker}`, "i"));
-  private readonly assetItemWithText = (assetItemId: string, text: RegExp) =>
-    byIdWithDescendantText({ id: assetItemId, text });
+  private readonly assetItemId = (ticker: string) => new RegExp(`^asset-item-${ticker}$`, "i");
+  private readonly assetItem = (ticker: string) => byId(this.assetItemId(ticker));
+  private readonly assetItemByName = ({ ticker, assetName }: AssetItemByNameOptions) =>
+    byIdWithDescendantText({ id: this.assetItemId(ticker), text: assetName });
+  private readonly maskedAmount = ({ currency, mask }: MaskedAmountOptions) =>
+    currency.aggregatedName
+      ? byTextInRowWithText({
+          id: this.assetItemId(currency.ticker),
+          rowText: currency.aggregatedName,
+          text: mask,
+        })
+      : byIdWithDescendantText({ id: this.assetItemId(currency.ticker), text: mask });
   private readonly networkItem = (networkId: string) =>
     byId(new RegExp(`network-item-${networkId}`, "i"));
 
@@ -74,25 +87,41 @@ export default class ModularDrawer {
     await assetItem.tap();
   }
 
-  @Step("Check asset {{{0}}} amount is masked in discreet mode")
-  private async checkAssetAmountIsDiscreet(ticker: string): Promise<void> {
-    await this.performSearchByTicker(ticker);
-    await this.assetItem(ticker).waitVisible();
-    await this.assetItem(ticker).expectVisible();
-
-    // The pattern can match several rows: check both masks on the first one.
-    const assetItemId = await this.assetItem(ticker).getIdentifier();
-    await this.assetItemWithText(assetItemId, /\$\*\*\*/).expectVisible();
-    await this.assetItemWithText(
-      assetItemId,
-      new RegExp(String.raw`\*\*\*\s+${ticker}`, "i"),
-    ).expectVisible();
+  @Step("Select currency in modular drawer {{{0.ticker}}} {{{0.aggregatedName}}}")
+  async selectCurrency(currency: Currency): Promise<void> {
+    if (!currency.aggregatedName) {
+      await this.selectCurrencyByTicker(currency.ticker);
+      return;
+    }
+    const assetItem = this.assetItemByName({
+      ticker: currency.ticker,
+      assetName: currency.aggregatedName,
+    });
+    await this.performSearchByTicker(currency.ticker);
+    await assetItem.scrollTo(this.selectCryptoScrollView);
+    await assetItem.tap();
   }
 
-  @Step("Check listed asset amounts are masked in discreet mode {{{0}}}")
-  async checkAssetAmountsAreDiscreet(tickers: string[]): Promise<void> {
-    for (const ticker of tickers) {
-      await this.checkAssetAmountIsDiscreet(ticker);
+  @Step("Check asset {{{0.ticker}}} {{{0.aggregatedName}}} amount is masked in discreet mode")
+  private async checkAssetAmountIsDiscreet(currency: Currency): Promise<void> {
+    const { ticker, aggregatedName } = currency;
+    const assetItem = aggregatedName
+      ? this.assetItemByName({ ticker, assetName: aggregatedName })
+      : this.assetItem(ticker);
+    await this.performSearchByTicker(ticker);
+    await assetItem.waitVisible();
+    await assetItem.expectVisible();
+
+    const masks = [/\$\*\*\*/, new RegExp(String.raw`\*\*\*\s+${ticker}`, "i")];
+    for (const mask of masks) {
+      await this.maskedAmount({ currency, mask }).expectVisible();
+    }
+  }
+
+  @Step("Check listed asset amounts are masked in discreet mode")
+  async checkAssetAmountsAreDiscreet(currencies: Currency[]): Promise<void> {
+    for (const currency of currencies) {
+      await this.checkAssetAmountIsDiscreet(currency);
     }
   }
 
@@ -114,7 +143,7 @@ export default class ModularDrawer {
   }
 
   private async selectAssetCurrencyAndNetwork(account: Account): Promise<void> {
-    await this.selectCurrencyByTicker(account.currency.ticker);
+    await this.selectCurrency(account.currency);
     const networkName = this.getNetworkNameForAccount(account);
     await this.selectNetworkIfAsked(networkName);
   }

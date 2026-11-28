@@ -87,8 +87,10 @@ describe("export-agent-plugin", () => {
     expect(existsSync(path.join(skillDir, "references", "agent-intent.md"))).toBe(true);
   });
 
-  it("stamps the wallet-cli version into the skill", () => {
-    expect(exportedSkillMd(target)).toContain(`This copy documents wallet-cli ${version}.`);
+  it("stamps the wallet-cli version into the skill and pins its install", () => {
+    const skillMd = exportedSkillMd(target);
+    expect(skillMd).toContain(`This copy documents wallet-cli ${version}.`);
+    expect(skillMd).toContain(`\`npm i -g @ledgerhq/wallet-cli@${version}\``);
   });
 
   it("lists only wallet-cli-usage as the OpenClaw skill root", () => {
@@ -168,6 +170,7 @@ describe("export-agent-plugin with a version", () => {
       "9.8.7-nightly.1",
     );
     expect(exportedSkillMd(dir)).toContain("This copy documents wallet-cli 9.8.7-nightly.1.");
+    expect(exportedSkillMd(dir)).toContain("`npm i -g @ledgerhq/wallet-cli@9.8.7-nightly.1`");
   });
 
   it("refuses a value that is not a version before writing anything", async () => {

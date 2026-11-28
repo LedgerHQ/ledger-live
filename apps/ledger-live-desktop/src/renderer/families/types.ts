@@ -26,6 +26,7 @@ import { StepProps as SendStepProps } from "../modals/Send/types";
 import { StepProps as ReceiveStepProps } from "../modals/Receive/Body";
 import { ModularDrawerAddAccountFlowManagerProps } from "LLD/features/AddAccountDrawer/ModularDrawerAddAccountFlowManager";
 import type { Features } from "@shared/feature-flags";
+import type { GetReceiveFamilyConfig } from "@features/flow-receive";
 import type { SplitAddressProps } from "../components/OperationsList/AddressCellShared";
 import type { Step } from "~/renderer/components/Stepper";
 import type { CoinModalKey } from "./modals-loaders";
@@ -146,9 +147,13 @@ export type LLDCoinFamily<
      * Override the currency used to display operation fees in the details drawer
      * (e.g. Celo CIP-64 fees paid in a non-native token). Called during render
      * and may invoke React hooks; return undefined to fall back to
-     * `getFeesCurrency(mainAccount)`.
+     * `getFeesCurrency(mainAccount)`, or null when the fee is in a currency not resolved yet, so
+     * the drawer shows no fee rather than one in the wrong unit.
      */
-    useFeesCurrency?: (operation: O, account: A) => CryptoCurrency | TokenCurrency | undefined;
+    useFeesCurrency?: (
+      operation: O,
+      account: A,
+    ) => CryptoCurrency | TokenCurrency | null | undefined;
 
     /**
      * Override the raw fee value when the on-chain magnitude differs from the
@@ -295,6 +300,16 @@ export type LLDCoinFamily<
     parentAccount: A | null | undefined;
   }>;
 
+  /**
+   * Dialog mounted once in GlobalDialogs, opened with `openFamilyDialog`, unmounted on close.
+   */
+  AccountDialog?: React.ComponentType<{
+    account: A | TokenAccount;
+    parentAccount: A | null | undefined;
+    params: unknown;
+    onClose: () => void;
+  }>;
+
   AccountFooter?: React.ComponentType<{
     account: A | TokenAccount;
     parentAccount?: A | undefined | null;
@@ -367,6 +382,7 @@ export type LLDCoinFamily<
   SendRecipientNotice?: React.ComponentType<{
     account: A;
     transaction: T;
+    status?: TS;
     onBlockedChange?: (blocked: boolean) => void;
   }>;
 
@@ -429,6 +445,11 @@ export type LLDCoinFamily<
   sendRecipientCanNext?: (status: TS) => boolean;
 
   /**
+   * Read the memo value of a transaction for display and memo-presence checks
+   */
+  getMemoValue?: (transaction: T) => string | undefined;
+
+  /**
    * Rendered for its side effects only, once a transaction has been broadcast.
    * Lets a family react to a completed send (e.g. Zcash triggers a shielded
    * resync after a private transfer so the account page converges without a
@@ -461,7 +482,12 @@ export type LLDCoinFamily<
   }>;
 
   /** Extra row rendered in the Amount step footer, right under the network fees. */
-  SendAmountFooterRow?: React.ComponentType<{ account: A; transaction: T }>;
+  SendAmountFooterRow?: React.ComponentType<{
+    account: A;
+    transaction: T;
+    status?: TS;
+    bridgePending?: boolean;
+  }>;
 
   /**
    *  One time modal that is trigger only one time on a account that never send
@@ -518,6 +544,22 @@ export type LLDCoinFamily<
    */
   addAssetAction?: (args: { account: A; dispatch: AppDispatch }) => void;
 
+  /**
+   * Opens what the new receive screen asks for when the account cannot receive yet, such as the
+   * token to add. Without it, the screen shows no button.
+   */
+  receiveGateAction?: (args: { account: A; token?: TokenCurrency; dispatch: AppDispatch }) => void;
+
+  /**
+   * Opens the family's token management. The account settings of the new Account Detail and
+   * Crypto addresses pages show "Manage assets" only for a family that defines it, when
+   * `canManage` is true.
+   */
+  manageAssetsAction?: {
+    canManage: (account: A) => boolean;
+    open: (args: { account: A; dispatch: AppDispatch }) => void;
+  };
+
   /** Overrides `currency.tokenTypes`. Read it through `useTokenTypes` */
   getTokenTypes?: (currency: CryptoCurrency) => string[];
 
@@ -571,9 +613,20 @@ export type LLDCoinFamily<
   >;
 
   /**
+   * Notices and support of the new receive address screen, where the family differs from the
+   * defaults of `@features/flow-receive`.
+   */
+  receiveAddressConfig?: GetReceiveFamilyConfig<A>;
+
+  /**
    * Replace Network fees row on Summary Step
    */
   StepSummaryNetworkFeesRow?: React.ComponentType<SummaryNetworkFeesRowProps<T>>;
+
+  /**
+   * Hide the amount and the total spent rows on Summary Step
+   */
+  hidesSummaryAmount?: (transaction: T) => boolean;
 
   /**
    * Allow to override the sender (From) address display on Summary Step
@@ -662,6 +715,11 @@ export type LLDCoinFamily<
    * Component allowing to fully customize the add account flow in the drawer
    */
   ModularDrawerAddAccountFlowManager?: React.ComponentType<ModularDrawerAddAccountFlowManagerProps>;
+
+  /**
+   * Modal opened by the `delegate` deeplink. A family without it ignores that deeplink.
+   */
+  delegateDeeplinkModal?: "MODAL_DELEGATE";
 
   /** Modal chunks to warm when this family loads, so the first open is instant. */
   modalsToPreload?: CoinModalKey[];

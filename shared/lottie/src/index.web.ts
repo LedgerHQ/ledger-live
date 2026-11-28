@@ -1,1 +1,1 @@
-export * from "./Lottie.web";
+export * from "./Lottie";

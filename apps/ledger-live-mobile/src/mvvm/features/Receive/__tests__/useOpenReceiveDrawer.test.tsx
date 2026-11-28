@@ -24,6 +24,13 @@ jest.mock("../../ModularDrawer", () => ({
   }),
 }));
 
+jest.mock("../hooks/useReceiveRoute", () => ({
+  useReceiveRoute: () => (params: object) => [
+    "ReceiveFunds",
+    { screen: "ReceiveConfirmation", params },
+  ],
+}));
+
 jest.mock("../useReceiveOptionsDrawerController", () => ({
   useReceiveOptionsDrawerController: () => ({
     openDrawer: mockOpenReceiveOptionsDrawer,
@@ -375,7 +382,6 @@ describe("useOpenReceiveDrawer", () => {
         operationsCount: 0,
         operations: [],
         pendingOperations: [],
-        starred: false,
         balanceHistoryCache: {
           HOUR: { latestDate: null, balances: [] },
           DAY: { latestDate: null, balances: [] },

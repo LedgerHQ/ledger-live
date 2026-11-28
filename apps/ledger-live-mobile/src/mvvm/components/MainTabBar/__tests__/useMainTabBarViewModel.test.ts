@@ -17,10 +17,11 @@ const TAB_ROUTE_NAMES = [
   NavigatorName.Swap,
   NavigatorName.Earn,
   NavigatorName.CardTab,
+  NavigatorName.AgentIntentTab,
 ];
 
-function createState(activeIndex: number) {
-  const routes = TAB_ROUTE_NAMES.map((name, i) => ({ name, key: `tab-${i}` }));
+function createState(activeIndex: number, routeNames: readonly string[] = TAB_ROUTE_NAMES) {
+  const routes = routeNames.map((name, i) => ({ name, key: `tab-${i}` }));
   return { routes, index: activeIndex };
 }
 
@@ -29,6 +30,14 @@ function createNavigation() {
     emit: () => ({ defaultPrevented: false }),
     navigate: jest.fn(),
   };
+}
+
+function renderOnTab(activeIndex: number, routeNames?: readonly string[]) {
+  const state = createState(activeIndex, routeNames);
+  const navigation = createNavigation();
+  return renderHook(() =>
+    useMainTabBarViewModel({ state: state as never, navigation: navigation as never }),
+  );
 }
 
 describe("useMainTabBarViewModel", () => {
@@ -113,6 +122,57 @@ describe("useMainTabBarViewModel", () => {
       expect(onScrollToTop).not.toHaveBeenCalled();
       expect(track).toHaveBeenCalled();
       unsubscribe();
+    });
+  });
+
+  describe("agent intent tab", () => {
+    it("should show the Agents label and test id", () => {
+      const { result } = renderOnTab(0);
+
+      const agentsTab = result.current.tabItems.find(
+        item => item.value === NavigatorName.AgentIntentTab,
+      );
+      expect(agentsTab).toMatchObject({ label: "Agents", testID: "w40-tab-agents" });
+    });
+
+    it("should track the nav bar source when opening the Agents tab", () => {
+      const { result } = renderOnTab(0);
+
+      act(() => {
+        result.current.onTabPress(NavigatorName.AgentIntentTab);
+      });
+
+      expect(track).toHaveBeenCalledWith("menuentry_clicked", {
+        entry: "agent_intent",
+        page: "Wallet",
+        source: "nav_bar",
+      });
+    });
+
+    it("should not add a source when opening another tab", () => {
+      const { result } = renderOnTab(0);
+
+      act(() => {
+        result.current.onTabPress(NavigatorName.Swap);
+      });
+
+      expect(track).toHaveBeenCalledWith("menuentry_clicked", { entry: "Swap", page: "Wallet" });
+    });
+  });
+
+  describe("compact layout", () => {
+    it("should not be compact with four tabs", () => {
+      const fourTabs = TAB_ROUTE_NAMES.filter(name => name !== NavigatorName.AgentIntentTab);
+
+      const { result } = renderOnTab(0, fourTabs);
+
+      expect(result.current.isCompact).toBe(false);
+    });
+
+    it("should be compact with five tabs", () => {
+      const { result } = renderOnTab(0);
+
+      expect(result.current.isCompact).toBe(true);
     });
   });
 });

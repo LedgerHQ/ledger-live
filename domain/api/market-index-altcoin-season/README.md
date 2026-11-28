@@ -1,7 +1,7 @@
 # @domain/api-market-index-altcoin-season
 
-> [!CAUTION]
-> **Status: UNSTABLE** — Under active development.
+> [!NOTE]
+> **Status: STABLE** — Production-ready; API is considered stable.
 
 Domain API client for the **CoinMarketCap Altcoin Season Index**, which measures how much market
 capital has rotated out of Bitcoin and into altcoins. RTK Query endpoint typed on the canonical

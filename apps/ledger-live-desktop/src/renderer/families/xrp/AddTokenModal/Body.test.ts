@@ -1,5 +1,4 @@
-import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
-import { getSteps, makeChangeTrustTransaction } from "./Body";
+import { getSteps, getTokenAction } from "./Body";
 import type { AddTokenStep } from "./types";
 import { XRP_ACCOUNT, XRP_IOU_TOKEN_ACCOUNT } from "../__mocks__/account.mock";
 import { xrpIouToken, xrpMptToken } from "../__mocks__/currency.mock";
@@ -38,6 +37,13 @@ describe("getSteps", () => {
     expect(steps[0].onBack).toBeUndefined();
   });
 
+  it("starts a removal at the review, with no way back", () => {
+    const steps = getSteps("remove", iou);
+
+    expect(toIds(steps)).toEqual(["review", "connectDevice", "confirmation"]);
+    expect(steps[0].onBack).toBeUndefined();
+  });
+
   it("goes back from the review to the step before it", () => {
     const transitionTo = jest.fn();
     const reviewStep = getSteps("add", mpt).find(step => step.id === "review");
@@ -49,28 +55,10 @@ describe("getSteps", () => {
   });
 });
 
-describe("makeChangeTrustTransaction", () => {
-  it("edits a held token's limit on the parent account, without subAccountId", async () => {
-    const bridge = await getAccountBridge(account);
-
-    const transaction = makeChangeTrustTransaction(bridge, account, rlusdAccount);
-
-    expect(transaction).not.toHaveProperty("subAccountId");
-    expect(transaction).toMatchObject({
-      mode: "changeTrust",
-      assetReference: xrpIouToken.tokenIdentifier,
-      assetOwner: xrpIouToken.contractAddress,
-      amount: rlusdAccount.xrpResources?.limit,
-    });
-  });
-
-  it("starts an add with no token picked and no subAccountId", async () => {
-    const bridge = await getAccountBridge(account);
-
-    const transaction = makeChangeTrustTransaction(bridge, account, undefined);
-
-    expect(transaction).not.toHaveProperty("subAccountId");
-    expect(transaction).not.toHaveProperty("assetReference");
-    expect(transaction.mode).toBe("changeTrust");
+describe("getTokenAction", () => {
+  it("adds without a token account, edits or removes with one", () => {
+    expect(getTokenAction({ account })).toBe("add");
+    expect(getTokenAction({ account, tokenAccount: rlusdAccount })).toBe("edit");
+    expect(getTokenAction({ account, tokenAccount: rlusdAccount, remove: true })).toBe("remove");
   });
 });

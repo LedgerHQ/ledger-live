@@ -4,8 +4,9 @@ import type {
   Operation,
 } from "@ledgerhq/coin-module-framework/api/types";
 import { withDefaults } from "@ledgerhq/coin-module-framework/api/index";
-import type { SuiCoinConfig, SuiContext } from "../config";
+import { type SuiCoinConfig, type SuiContext, suiDefaults } from "../config";
 import { FIGMENT_SUI_VALIDATOR_ADDRESS } from "../constants";
+import { TRANSACTIONS_LIMIT_PER_QUERY } from "../network/sdk";
 import { STAKE_DELEGATOR } from "../test/fixtures";
 import { createApi } from ".";
 
@@ -15,14 +16,9 @@ describe("Sui Api", () => {
   const RECIPIENT = "0xba7080172a6d957b9ed2e3eb643529860be963cf4af896fb84f1cde00f46b561";
 
   const config: SuiCoinConfig = {
-    node: {
-      graphqlUrl: "https://sui.coin.ledger.com/graphql",
-      grpcUrl: "https://sui.coin.ledger.com",
-    },
-    features: { transport: "grpc" },
+    ...suiDefaults.sui,
     status: { type: "active" },
-    name: "Sui",
-    unit: { name: "Sui", code: "SUI", magnitude: 9 },
+    features: { transport: "grpc" },
   };
 
   const context: SuiContext = {
@@ -128,9 +124,7 @@ describe("Sui Api", () => {
         { minHeight: 0, order: "asc" },
       );
 
-      // assume it has not a lot of operations
-      // at time of writing, it has only 2 operations
-      expect(operations.length).toBeLessThan(10);
+      expect(operations.length).toBeLessThan(TRANSACTIONS_LIMIT_PER_QUERY);
       expect(operations.length).toBeGreaterThan(0);
 
       expect(cursor).toBeUndefined();
@@ -245,6 +239,29 @@ describe("Sui Api", () => {
         order: "asc",
       });
       expect(txs.length).toBeGreaterThanOrEqual(minHeightTxs.length);
+    });
+
+    it("maps a known incoming transfer of the address to its operation shape", async () => {
+      expect(txs).toContainEqual({
+        id: "3PPknnwqbx8F7EeBCUZMUqC4aKKZmj2fXH3CJFLXdbL6",
+        type: "IN",
+        value: 60_500_000_000n,
+        asset: { type: "native" },
+        senders: ["0x56c8b7ba565a7852265ee23695a0347102d7ad60f0db46091458f55f37424e6c"],
+        recipients: [SENDER],
+        tx: {
+          hash: "3PPknnwqbx8F7EeBCUZMUqC4aKKZmj2fXH3CJFLXdbL6",
+          date: new Date("2025-04-30T22:46:02.473Z"),
+          fees: -13_812_040n,
+          feesPayer: "0x56c8b7ba565a7852265ee23695a0347102d7ad60f0db46091458f55f37424e6c",
+          failed: false,
+          block: {
+            height: 139910600,
+            hash: "DePxjGdALq6yJ72jN3knNefMvrErmws8tQMdvAbZ58KB",
+            time: new Date("2025-04-30T22:46:02.473Z"),
+          },
+        },
+      });
     });
 
     it("returns block height as a number", async () => {

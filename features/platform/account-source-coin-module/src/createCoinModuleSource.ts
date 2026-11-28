@@ -1,20 +1,23 @@
 import {
+  abortReason,
   AccountDataNotServedError,
   type AccountDataReader,
   type AccountDataSource,
 } from "@domain/api-account-data";
 import { AccountDataSourceIdSchema, type AccountDataKind } from "@domain/entity-account-data";
-import { currencyIdFromNetwork, type AccountDescriptor } from "@domain/entity-account-descriptor";
+import type { AccountDescriptor } from "@domain/entity-account-descriptor";
+import type { AccountStatus } from "@domain/entity-account-status";
+import { currencyIdFromNetwork } from "@domain/entity-network";
 import type { CoinModuleHost } from "./host";
 import { toAccountBalances } from "./internals/toAccountBalances";
 import { readOperationsPage } from "./internals/readOperationsPage";
 
-/** An account-based coin module reads the address, a utxo one the xpub. */
-const subjectOf = (descriptor: AccountDescriptor) =>
-  descriptor.type === "utxo" ? descriptor.xpub : descriptor.address;
-
 /** Serves an account whose currency has a coin module, reading the coin module itself, with no bridge in between. */
 export function createCoinModuleSource(host: CoinModuleHost): AccountDataSource {
+  /** An account-based coin module reads the address, a utxo one the xpub. */
+  const subjectOf = async ({ type, network, key }: AccountDescriptor) =>
+    type === "utxo" || !host.addressOf ? key : host.addressOf(currencyIdFromNetwork(network), key);
+
   const supports = ({ type, network }: AccountDescriptor, kind: AccountDataKind) => {
     try {
       const currencyId = currencyIdFromNetwork(network);
@@ -36,7 +39,7 @@ export function createCoinModuleSource(host: CoinModuleHost): AccountDataSource 
     }
     return toAccountBalances(
       currencyId,
-      await api.getBalance(subjectOf(descriptor)),
+      await api.getBalance(await subjectOf(descriptor)),
       api,
       new Set(host.blacklistedTokenIds?.()),
     );
@@ -50,7 +53,7 @@ export function createCoinModuleSource(host: CoinModuleHost): AccountDataSource 
     }
     return readOperationsPage(api, {
       currencyId,
-      subject: subjectOf(descriptor),
+      subject: await subjectOf(descriptor),
       cursor,
       limit: query?.limit,
       filterAsset: query?.filterAsset,
@@ -58,9 +61,27 @@ export function createCoinModuleSource(host: CoinModuleHost): AccountDataSource 
     });
   };
 
+  const readAccountStatus: AccountDataReader<"accountStatus"> = async ({
+    descriptor,
+    signal,
+  }): Promise<AccountStatus> => {
+    const currencyId = currencyIdFromNetwork(descriptor.network);
+    const api = await host.getAccountStatusApi?.(currencyId);
+    if (signal?.aborted) throw abortReason(signal);
+    if (!api) {
+      throw new AccountDataNotServedError(`No account status in the ${currencyId} coin module`);
+    }
+    const { activated, used } = await api.getAccountStatus(descriptor.key, signal);
+    if (signal?.aborted) throw abortReason(signal);
+    if (used === undefined) {
+      throw new AccountDataNotServedError(`No used flag in the ${currencyId} account status`);
+    }
+    return { used, gate: activated === false ? { type: "onboarding" } : null };
+  };
+
   return {
     id: AccountDataSourceIdSchema.parse("coin-module"),
     supports,
-    read: { balance: readBalance, operations: readOperations },
+    read: { balance: readBalance, operations: readOperations, accountStatus: readAccountStatus },
   };
 }

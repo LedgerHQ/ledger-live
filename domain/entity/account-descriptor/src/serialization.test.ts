@@ -1,16 +1,17 @@
+import { DerivationPathSchema } from "@domain/entity-derivation";
+import { NetworkIdSchema } from "@domain/entity-network";
 import { InvalidAccountDescriptorError } from "./errors";
 import { ETH_ADDR, SOL_ADDR, XPUB } from "./test-fixtures";
 import { AccountDescriptorSchema, type AccountDescriptor } from "./schema";
 import { parseAccountDescriptor, serializeAccountDescriptor } from "./serialization";
-import { NetworkIdSchema } from "./network";
 
 const UTXO: AccountDescriptor = {
   purpose: "account",
   version: "2",
   type: "utxo",
   network: NetworkIdSchema.parse("bitcoin"),
-  xpub: XPUB,
-  path: "m/84h/0h/0h",
+  key: XPUB,
+  path: DerivationPathSchema.parse("m/84h/0h/0h"),
 };
 
 const ETH: AccountDescriptor = {
@@ -18,8 +19,8 @@ const ETH: AccountDescriptor = {
   version: "2",
   type: "address",
   network: NetworkIdSchema.parse("ethereum"),
-  address: ETH_ADDR,
-  path: "m/44h/60h/0h/0/0",
+  key: ETH_ADDR,
+  path: DerivationPathSchema.parse("m/44h/60h/0h/0/0"),
 };
 
 const SOL: AccountDescriptor = {
@@ -27,8 +28,8 @@ const SOL: AccountDescriptor = {
   version: "2",
   type: "address",
   network: NetworkIdSchema.parse("solana_devnet"),
-  address: SOL_ADDR,
-  path: "m/44h/501h/0h/0h",
+  key: SOL_ADDR,
+  path: DerivationPathSchema.parse("m/44h/501h/0h/0h"),
 };
 
 describe("serializeAccountDescriptor", () => {
@@ -62,9 +63,11 @@ describe("parseAccountDescriptor", () => {
     { descriptor: ETH, path: "m/44'/60'/0'/0/0" },
     { descriptor: ETH, path: "m/44H/60H/0H/0/0" },
   ])("reads the hardened marker of $descriptor.type $path as h", ({ descriptor, path }) => {
-    expect(parseAccountDescriptor(serializeAccountDescriptor({ ...descriptor, path }))).toEqual(
-      descriptor,
-    );
+    expect(
+      parseAccountDescriptor(
+        serializeAccountDescriptor(AccountDescriptorSchema.parse({ ...descriptor, path })),
+      ),
+    ).toEqual(descriptor);
   });
 
   it.each([

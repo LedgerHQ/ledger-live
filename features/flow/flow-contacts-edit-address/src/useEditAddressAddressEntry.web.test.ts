@@ -104,6 +104,42 @@ describe("useEditAddressAddressEntry", () => {
     });
   });
 
+  it("should keep the ENS disclaimer while an edited ENS name is revalidated", async () => {
+    const pendingValidation =
+      createDeferred<Awaited<ReturnType<ContactsAddressValidationPort["validateAddress"]>>>();
+    const validateAddress = jest
+      .fn<
+        ReturnType<ContactsAddressValidationPort["validateAddress"]>,
+        Parameters<ContactsAddressValidationPort["validateAddress"]>
+      >()
+      .mockResolvedValueOnce({ status: "domain_not_found" })
+      .mockReturnValueOnce(pendingValidation.promise);
+    const { result } = renderHook(() =>
+      useEditAddressAddressEntry({
+        addressValidation: createValidationPort(validateAddress),
+        currencyId,
+        currentAddress,
+        isActive: true,
+      }),
+    );
+
+    await act(async () => {
+      result.current.onAddressChange("ledgerliv.eth", "manual");
+    });
+
+    expect(result.current.addressEntry).toMatchObject({ status: "invalid", inputMethod: "ens" });
+
+    act(() => {
+      result.current.onAddressChange("ledgerlive.eth", "manual");
+    });
+
+    expect(result.current.addressEntry).toMatchObject({
+      status: "validating",
+      value: "ledgerlive.eth",
+      keepsEnsDisclaimer: true,
+    });
+  });
+
   it("should restore the initial valid state when the saved address is re-entered", async () => {
     const validateAddress = jest
       .fn<

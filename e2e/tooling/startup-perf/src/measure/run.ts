@@ -1,0 +1,277 @@
+#!/usr/bin/env node
+// Writes one JSON line per launch to <out-dir>/samples.jsonl. See README.md.
+import { appendFile, mkdir, writeFile } from "node:fs/promises";
+import path from "node:path";
+import { pathToFileURL } from "node:url";
+import { parseArgs } from "node:util";
+import { errorMessage, insideWorkingDir, log, sleep } from "./exec.ts";
+import {
+  createInjector,
+  loadUserdata,
+  snapshotStorage,
+  userdataStorage,
+  type StartingStorage,
+} from "./inject.ts";
+import { createPlatform } from "./platforms/create.ts";
+import { createStartupLogReader, type StartupRead } from "./startup-log.ts";
+import type { PlatformName, Sample, SampleMeta, Side } from "../types.ts";
+
+const { values: opts } = parseArgs({
+  options: {
+    platform: { type: "string" },
+    devices: { type: "string" },
+    "app-a": { type: "string" },
+    "app-b": { type: "string" },
+    "app-id": { type: "string", default: "com.ledger.live" },
+    scenarios: { type: "string", default: "no-accounts,accounts" },
+    "userdata-dir": { type: "string", default: "e2e/mobile/userdata" },
+    "no-accounts-userdata": { type: "string", default: "skip-onboarding" },
+    "accounts-userdata": {
+      type: "string",
+      default: "speculos-x-other-account,swap-history",
+    },
+    // The accounts scenario's storage from src/snapshot/run.ts, in place of its userdata.
+    "accounts-snapshot": { type: "string" },
+    pairs: { type: "string", default: "20" },
+    warmups: { type: "string", default: "1" },
+    "idle-ms": { type: "string", default: "2000" },
+    "settle-ms": { type: "string", default: "5000" },
+    "out-dir": { type: "string", default: "startup-perf-results" },
+  },
+});
+
+// validateOptions() checks it before any device is touched.
+const PLATFORM = opts.platform as PlatformName;
+const DEVICES = (opts.devices ?? "").split(",").filter(Boolean);
+const APPS: Record<Side, string> = { A: opts["app-a"] ?? "", B: opts["app-b"] ?? "" };
+const APP_ID = opts["app-id"];
+const SCENARIOS = opts.scenarios
+  .split(",")
+  .map(s => s.trim())
+  .filter(Boolean);
+const PAIRS = Number(opts.pairs);
+const WARMUPS = Number(opts.warmups);
+const IDLE_MS = Number(opts["idle-ms"]);
+const SETTLE_MS = Number(opts["settle-ms"]);
+const OUT_DIR = insideWorkingDir(opts["out-dir"]);
+const SAMPLES_FILE = path.join(OUT_DIR, "samples.jsonl");
+const DEBUG_DIR = path.join(OUT_DIR, "debug");
+const MAX_CONSECUTIVE_FAILURES = 4;
+// After the settle time: the line comes as soon as the startup is over.
+const LOG_READ_TIMEOUT_MS = 20_000;
+const DIALOG_RECOVERY_MS = 30_000;
+
+function validateOptions(): void {
+  if (!["android", "ios"].includes(PLATFORM)) throw new Error("--platform must be android or ios");
+  if (DEVICES.length !== 2) throw new Error("--devices needs exactly two ids, comma-separated");
+  if (!APPS.A || !APPS.B) {
+    throw new Error("--app-a and --app-b are required (pass the same path twice for A/A)");
+  }
+  if (!Number.isInteger(PAIRS) || PAIRS < 2 || PAIRS % 2) {
+    throw new Error("--pairs must be an even number ≥ 2");
+  }
+  if (!Number.isInteger(WARMUPS) || WARMUPS < 0) {
+    throw new Error("--warmups must be a whole number ≥ 0");
+  }
+  for (const s of SCENARIOS) {
+    if (!["no-accounts", "accounts"].includes(s)) throw new Error(`unknown scenario ${s}`);
+  }
+}
+
+const P = createPlatform(PLATFORM, { appId: APP_ID });
+const readStartupLog = createStartupLogReader(P);
+const inject = createInjector({ platform: P, devices: DEVICES });
+
+const consecutiveFailures = new Map<string, number>();
+
+async function sample(meta: SampleMeta): Promise<Sample> {
+  const record: Sample = {
+    platform: PLATFORM,
+    ...meta,
+    startedAt: new Date().toISOString(),
+    ok: false,
+  };
+  const name = `${meta.scenario}-p${meta.phase}-r${meta.round}-${meta.side}`;
+  const other = meta.device === DEVICES[0] ? DEVICES[1] : DEVICES[0];
+  let readStart: number | null = null;
+  let paused = false;
+  try {
+    for (const device of DEVICES) await P.stop(device);
+    const dialogs: string[] = [];
+    for (const device of DEVICES) dialogs.push(...(await P.clearDialogs(device)));
+    if (dialogs.length) {
+      record.clearedDialogs = dialogs;
+      await sleep(DIALOG_RECOVERY_MS);
+    }
+    record.screen = await P.ensureScreenOn(meta.device);
+    await sleep(IDLE_MS);
+    paused = await P.pause(other).catch((error: unknown) => {
+      log(`  could not pause ${other}, launching with it running: ${errorMessage(error)}`);
+      return false;
+    });
+    record.otherPaused = paused;
+    const launch = await P.launch(meta.device);
+    await sleep(SETTLE_MS);
+    // The startup lines are those of this process.
+    record.pid = await P.pid(meta.device);
+    if (record.pid === null)
+      throw new Error("the app was not running at the end of the settle time");
+    if (paused) {
+      // Cleared only once resumed, so `finally` retries a failed resume.
+      await P.resume(other);
+      paused = false;
+    }
+    readStart = Date.now();
+    const perf = await readStartup(meta.device, record.pid);
+    const pidAtRead = await P.pid(meta.device);
+    if (pidAtRead !== record.pid) {
+      throw new Error(`the app process changed before the read (pid ${record.pid} → ${pidAtRead})`);
+    }
+    Object.assign(record, launch, perf, { ok: true });
+    consecutiveFailures.set(meta.device, 0);
+  } catch (error) {
+    record.error = errorMessage(error).slice(0, 1500);
+    consecutiveFailures.set(meta.device, (consecutiveFailures.get(meta.device) ?? 0) + 1);
+    await P.diagnostics(meta.device, path.join(DEBUG_DIR, `${name}.log`)).catch(() => {});
+  } finally {
+    // A device left paused would hang every later adb command sent to it.
+    if (paused) await P.resume(other);
+  }
+  if (readStart !== null) record.readMs = Date.now() - readStart;
+  await appendFile(SAMPLES_FILE, JSON.stringify(record) + "\n");
+  const what = record.ok
+    ? `${record.appStartupTime} ms`
+    : `FAILED: ${record.error?.split("\n")[0]}`;
+  const kind = meta.warmup ? "warm-up " : "";
+  log(`${kind}${name} on ${meta.device}: ${what}`);
+  if ((consecutiveFailures.get(meta.device) ?? 0) >= MAX_CONSECUTIVE_FAILURES) {
+    throw new Error(
+      `${MAX_CONSECUTIVE_FAILURES} launches in a row failed on ${meta.device}; stopping (see ${DEBUG_DIR})`,
+    );
+  }
+  return record;
+}
+
+/**
+ * The startup the app wrote to the device log as soon as it was over: the launch fails when its
+ * lines never come or cannot be read.
+ */
+async function readStartup(device: string, pid: number): Promise<StartupRead> {
+  const read = await readStartupLog(device, pid, LOG_READ_TIMEOUT_MS);
+  if (!read) {
+    throw new Error(
+      `no startup lines in the device log ${LOG_READ_TIMEOUT_MS} ms after the settle time`,
+    );
+  }
+  if (read.appStartupTime <= 0) throw new Error(`App startup time ${read.appStartupTime} ms`);
+  return read;
+}
+
+function writeMeta(): Promise<void> {
+  return writeFile(
+    path.join(OUT_DIR, "meta.json"),
+    JSON.stringify(
+      {
+        platform: PLATFORM,
+        devices: DEVICES,
+        apps: { A: path.basename(APPS.A), B: path.basename(APPS.B) },
+        sameBinary: path.resolve(APPS.A) === path.resolve(APPS.B),
+        scenarios: SCENARIOS,
+        pairs: PAIRS,
+        warmups: WARMUPS,
+        idleMs: IDLE_MS,
+        settleMs: SETTLE_MS,
+        userdata: {
+          "no-accounts": opts["no-accounts-userdata"],
+          accounts: opts["accounts-snapshot"] ?? opts["accounts-userdata"],
+        },
+      },
+      null,
+      2,
+    ),
+  );
+}
+
+/** Phase 0 puts A on the first device, phase 1 on the second; phase 1 starts with B. */
+function layout(phase: number): { placement: Record<Side, string>; order: Side[] } {
+  return phase === 0
+    ? { placement: { A: DEVICES[0], B: DEVICES[1] }, order: ["A", "B"] }
+    : { placement: { A: DEVICES[1], B: DEVICES[0] }, order: ["B", "A"] };
+}
+
+/** Installs a build and writes the scenario's storage into it, retrying the injection once. */
+async function installAndInject({
+  scenario,
+  side,
+  device,
+  storage,
+}: {
+  scenario: string;
+  side: Side;
+  device: string;
+  storage: StartingStorage;
+}): Promise<void> {
+  log(`installing ${side} on ${device} and injecting ${scenario}`);
+  await P.install(device, APPS[side]);
+  await inject({ device, storage, side }).catch(async (error: unknown) => {
+    log(`  injection failed (${errorMessage(error)}); retrying once`);
+    await P.stop(device);
+    await inject({ device, storage, side });
+  });
+}
+
+/** Launches each build once on its device, in the phase's order: a warm-up round or a measured one. */
+async function launchEach({
+  scenario,
+  phase,
+  round,
+  warmup,
+}: Pick<SampleMeta, "scenario" | "phase" | "round" | "warmup">): Promise<void> {
+  const { placement, order } = layout(phase);
+  for (const side of order) {
+    await sample({ scenario, phase, round, side, device: placement[side], warmup });
+  }
+}
+
+async function startingStorage(scenario: string): Promise<StartingStorage> {
+  const snapshot = opts["accounts-snapshot"];
+  if (scenario === "accounts" && snapshot) return snapshotStorage(insideWorkingDir(snapshot));
+  const userdata = await loadUserdata({
+    dir: insideWorkingDir(opts["userdata-dir"]),
+    names: scenario === "accounts" ? opts["accounts-userdata"] : opts["no-accounts-userdata"],
+  });
+  return userdataStorage(userdata);
+}
+
+async function measureScenario(scenario: string): Promise<void> {
+  const storage = await startingStorage(scenario);
+  log(`=== ${scenario}: ${storage.accounts} accounts from ${storage.source}`);
+  for (const phase of [0, 1]) {
+    // A measured launch never follows one on the same device.
+    const { placement, order } = layout(phase);
+    for (const side of order) {
+      await installAndInject({ scenario, side, device: placement[side], storage });
+    }
+    // In turn, like the rounds: no build starts round 0 after idling through the other's warm-ups.
+    for (let w = 0; w < WARMUPS; w++) {
+      await launchEach({ scenario, phase, round: -1 - w, warmup: true });
+    }
+    for (let round = 0; round < PAIRS / 2; round++) {
+      await launchEach({ scenario, phase, round, warmup: false });
+    }
+  }
+}
+
+async function main(): Promise<void> {
+  validateOptions();
+  await mkdir(DEBUG_DIR, { recursive: true });
+  await writeFile(SAMPLES_FILE, "");
+  await writeMeta();
+  for (const scenario of SCENARIOS) await measureScenario(scenario);
+  for (const device of DEVICES) await P.stop(device);
+  log(`done: ${SAMPLES_FILE}`);
+}
+
+if (process.argv[1] && import.meta.url === pathToFileURL(process.argv[1]).href) {
+  await main();
+}

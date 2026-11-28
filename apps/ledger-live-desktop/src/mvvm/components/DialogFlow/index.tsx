@@ -28,7 +28,7 @@ export function DialogFlow<Step extends string>({
     if (isOpen) {
       closeRequestedRef.current = false;
     }
-  }, [isOpen]);
+  }, [isOpen, currentStep]);
   const handleClose = useCallback(() => {
     if (closeRequestedRef.current) {
       return;
@@ -71,9 +71,4 @@ export function DialogFlow<Step extends string>({
   );
 }
 
-export type {
-  DialogFlowOptions,
-  DialogFlowProps,
-  DialogFlowScreen,
-  DialogFlowScreenRegistry,
-} from "./types";
+export type { DialogFlowProps, DialogFlowScreenRegistry } from "./types";

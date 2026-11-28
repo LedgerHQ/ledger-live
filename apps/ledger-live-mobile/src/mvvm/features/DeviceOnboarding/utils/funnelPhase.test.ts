@@ -37,12 +37,42 @@ describe("phaseOf", () => {
     expect(phaseOf("deviceSetup.pin")).toBe("synchronizing");
   });
 
+  it("should show the firmware update held back until setup on the checks screen", () => {
+    expect(phaseOf("postSetupFirmware.firmwareUpdateOffered", false)).toBe("checks");
+  });
+
   it("should keep a seeded sync exit on the checks screen", () => {
     expect(phaseOf("syncOffer", true)).toBe("checks");
     expect(phaseOf("done", true)).toBe("checks");
     expect(phaseOf("syncOffer", false)).toBe("synchronizing");
     expect(phaseOf("done")).toBe("synchronizing");
     expect(phaseOf("done", false)).toBe("checks");
+  });
+
+  it.each(["awaitingSessionAfterFirmwareUpdate", "readingState", "routing"])(
+    "should resume the checks of a seeded device returning from an OS update in %s",
+    state => {
+      expect(phaseOf(state, true, true)).toBe("resumingChecks");
+    },
+  );
+
+  it("should not resume the checks of a device that is not seeded", () => {
+    expect(phaseOf("awaitingSessionAfterFirmwareUpdate", false, true)).toBe("connecting");
+    expect(phaseOf("readingState", false, true)).toBe("synchronizing");
+    expect(phaseOf("readingState", null, true)).toBe("synchronizing");
+  });
+
+  it.each(["awaitingSessionAfterFirmwareUpdate", "readingState", "routing"])(
+    "should resume the checks of a device set up in this run returning from its held-back update in %s",
+    state => {
+      expect(phaseOf(state, false, true, true)).toBe("resumingChecks");
+    },
+  );
+
+  it("should not resume the checks outside the waiting states", () => {
+    expect(phaseOf("deviceLocked", true, true)).toBe("synchronizing");
+    expect(phaseOf("legacyFallback", true, true)).toBe("synchronizing");
+    expect(phaseOf("checks.checksIdle", true, true)).toBe("checks");
   });
 
   it("should not claim to know a state the machine does not have", () => {
@@ -62,6 +92,10 @@ describe("checksScreenForPhase", () => {
     expect(checksScreenForPhase("checks", "checks.checksSucceeded", false, true)).toBe("succeeded");
     expect(checksScreenForPhase("checks", "syncOffer", false, true)).toBe("succeeded");
     expect(checksScreenForPhase("checks", "done", false, false)).toBe("succeeded");
+  });
+
+  it("should keep checking while the checks resume", () => {
+    expect(checksScreenForPhase("resumingChecks", "readingState", false, true)).toBe("checking");
   });
 
   it("should show no checks screen while connecting or failed", () => {

@@ -1,7 +1,7 @@
 import type { ChecksScreenState } from "LLM/features/DeviceOnboarding/types";
 import { toChecksScreenState } from "./checksPhase";
 
-export type FunnelPhase = "connecting" | "failed" | "checks" | "synchronizing";
+export type FunnelPhase = "connecting" | "failed" | "checks" | "resumingChecks" | "synchronizing";
 
 const topLevel = {
   readingState: "synchronizing",
@@ -23,13 +23,52 @@ const topLevel = {
 
 const seededSuccessExits = new Set(["syncOffer", "done"]);
 
+const statesBeforeChecksResume = new Set([
+  "awaitingSessionAfterFirmwareUpdate",
+  "readingState",
+  "routing",
+]);
+
+export function isResumingChecks({
+  machineState,
+  onboardedOnEntry,
+  returningFromFirmwareUpdate,
+  heldBackUpdatePending = false,
+}: Readonly<{
+  machineState: string | null;
+  onboardedOnEntry: boolean | null;
+  returningFromFirmwareUpdate: boolean;
+  /** A device set up in this run comes back from its held-back update like a seeded one. */
+  heldBackUpdatePending?: boolean;
+}>): boolean {
+  return (
+    returningFromFirmwareUpdate &&
+    (onboardedOnEntry === true || heldBackUpdatePending) &&
+    machineState !== null &&
+    statesBeforeChecksResume.has(machineState)
+  );
+}
+
 export function phaseOf(
   machineState: string | null,
   onboardedOnEntry: boolean | null = null,
+  returningFromFirmwareUpdate = false,
+  heldBackUpdatePending = false,
 ): FunnelPhase | null {
   if (machineState === null) return "connecting";
+  if (
+    isResumingChecks({
+      machineState,
+      onboardedOnEntry,
+      returningFromFirmwareUpdate,
+      heldBackUpdatePending,
+    })
+  ) {
+    return "resumingChecks";
+  }
   if (machineState.startsWith("checks.")) return "checks";
   if (machineState.startsWith("deviceSetup.")) return "synchronizing";
+  if (machineState.startsWith("postSetupFirmware.")) return "checks";
   if (onboardedOnEntry === true && seededSuccessExits.has(machineState)) return "checks";
   if (onboardedOnEntry === false && machineState === "done") return "checks";
   if (machineState in topLevel) return topLevel[machineState as keyof typeof topLevel];
@@ -43,6 +82,7 @@ export function checksScreenForPhase(
   onboardedOnEntry: boolean,
 ): ChecksScreenState | null {
   if (phase === "connecting" || phase === "failed") return null;
+  if (phase === "resumingChecks") return "checking";
   if (phase === "checks") {
     return toChecksScreenState(machineState, checksPaused, onboardedOnEntry) ?? "synchronizing";
   }

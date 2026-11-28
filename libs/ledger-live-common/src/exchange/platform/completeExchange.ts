@@ -1,6 +1,6 @@
 import { Observable } from "rxjs";
 
-import { ExchangeTypes } from "@ledgerhq/hw-app-exchange";
+import { EXCHANGE_TYPE } from "../intents/exchangeTypes";
 
 import type {
   CompleteExchangeInputFund,
@@ -21,15 +21,15 @@ const completeExchange = (
   input: CompleteExchangeInput,
 ): Observable<CompleteExchangeRequestEvent> => {
   switch (input.exchangeType) {
-    case ExchangeTypes.Swap:
+    case EXCHANGE_TYPE.swap:
       if (!input.exchange.toAccount) {
         throw new Error("'toAccount' requested for Swap exchange");
       }
 
       return completeExchangeSwap(input);
 
-    case ExchangeTypes.Sell:
-    case ExchangeTypes.Fund:
+    case EXCHANGE_TYPE.sell:
+    case EXCHANGE_TYPE.fund:
       return completeExchangeTransfer(input);
 
     default:

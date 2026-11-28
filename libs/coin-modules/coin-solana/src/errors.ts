@@ -206,6 +206,14 @@ export class SolanaTxConfirmationTimeout extends Error {
   }
 }
 
+export class SolanaTxBlockhashExpired extends Error {
+  override name = "SolanaTxBlockhashExpired";
+  constructor(message?: string, fields?: Record<string, unknown>) {
+    super(message || "SolanaTxBlockhashExpired");
+    if (fields) Object.assign(this, fields);
+  }
+}
+
 export class SolanaRecipientMemoIsRequired extends Error {
   override name = "SolanaRecipientMemoIsRequired";
   constructor(message?: string, fields?: Record<string, unknown>) {
@@ -230,10 +238,27 @@ export class NetworkError extends Error {
   }
 }
 
+/** @deprecated Use `SolanaNotEnoughSolForTokenTransfer` or `SolanaNotEnoughSolForRecipientTokenAccount`. */
 export class NotEnoughGas extends Error {
   override name = "NotEnoughGas";
   constructor(message?: string, fields?: Record<string, unknown>) {
     super(message || "NotEnoughGas");
+    if (fields) Object.assign(this, fields);
+  }
+}
+
+export class SolanaNotEnoughSolForTokenTransfer extends Error {
+  override name = "SolanaNotEnoughSolForTokenTransfer";
+  constructor(message?: string, fields?: Record<string, unknown>) {
+    super(message || "SolanaNotEnoughSolForTokenTransfer");
+    if (fields) Object.assign(this, fields);
+  }
+}
+
+export class SolanaNotEnoughSolForRecipientTokenAccount extends Error {
+  override name = "SolanaNotEnoughSolForRecipientTokenAccount";
+  constructor(message?: string, fields?: Record<string, unknown>) {
+    super(message || "SolanaNotEnoughSolForRecipientTokenAccount");
     if (fields) Object.assign(this, fields);
   }
 }

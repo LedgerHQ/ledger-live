@@ -9,4 +9,12 @@ describe("errors", () => {
     expect(error).toBeInstanceOf(Error);
     expect(error.name).toBe(name);
   });
+
+  it.each([
+    [new LedgerAPI4xx(404), 404],
+    [new LedgerAPI5xx(503), 503],
+    [new LedgerAPI4xx(), undefined],
+  ])("%p carries the HTTP status %p", (error, status) => {
+    expect(error.status).toBe(status);
+  });
 });

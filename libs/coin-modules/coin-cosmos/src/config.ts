@@ -3,6 +3,38 @@ import buildCoinConfig, {
   type Context,
   type CurrencyConfig,
 } from "@ledgerhq/coin-module-framework/config";
+import { isValidConcurrency } from "./network/assertValidConcurrency";
+import { isValidPaginationLimit } from "./network/assertValidPaginationLimit";
+
+export const DEFAULT_GET_BLOCK_PAGINATION_LIMIT = 100;
+export const DEFAULT_GET_BLOCK_CONCURRENCY = 5;
+
+export type GetBlockConfiguration = { pagination: { limit: number }; concurrency: number };
+
+function readProperty(value: unknown, key: string): unknown {
+  return typeof value === "object" && value !== null && key in value
+    ? Reflect.get(value, key)
+    : undefined;
+}
+
+/** The remote config can set a wrong value; callers then fall back to a default instead of crashing the app. */
+export function isGetBlockConfigurationValid(
+  getBlockConfiguration: unknown,
+): getBlockConfiguration is GetBlockConfiguration {
+  const limit = readProperty(readProperty(getBlockConfiguration, "pagination"), "limit");
+  const concurrency = readProperty(getBlockConfiguration, "concurrency");
+  return isValidPaginationLimit(limit) && isValidConcurrency(concurrency);
+}
+
+export function resolveGetBlockPaginationLimit(getBlockConfiguration: unknown): number {
+  const limit = readProperty(readProperty(getBlockConfiguration, "pagination"), "limit");
+  return isValidPaginationLimit(limit) ? limit : DEFAULT_GET_BLOCK_PAGINATION_LIMIT;
+}
+
+export function resolveGetBlockConcurrency(getBlockConfiguration: unknown): number {
+  const concurrency = readProperty(getBlockConfiguration, "concurrency");
+  return isValidConcurrency(concurrency) ? concurrency : DEFAULT_GET_BLOCK_CONCURRENCY;
+}
 
 export const cosmosDefaults = {
   axelar: {
@@ -19,6 +51,10 @@ export const cosmosDefaults = {
     name: "Axelar",
     unit: { name: "Axelar", code: "AXL", magnitude: 6 },
     denom: "uaxl",
+    getBlock: {
+      pagination: { limit: DEFAULT_GET_BLOCK_PAGINATION_LIMIT },
+      concurrency: DEFAULT_GET_BLOCK_CONCURRENCY,
+    },
   },
   cosmos: {
     lcd: "https://cosmoshub4.coin.ledger.com",
@@ -34,6 +70,10 @@ export const cosmosDefaults = {
     name: "Cosmos",
     unit: { name: "Atom", code: "ATOM", magnitude: 6 },
     denom: "uatom",
+    getBlock: {
+      pagination: { limit: DEFAULT_GET_BLOCK_PAGINATION_LIMIT },
+      concurrency: DEFAULT_GET_BLOCK_CONCURRENCY,
+    },
   },
   desmos: {
     lcd: "https://api.mainnet.desmos.network",
@@ -44,6 +84,10 @@ export const cosmosDefaults = {
     name: "Desmos",
     unit: { name: "Desmos", code: "DSM", magnitude: 6 },
     denom: "udsm",
+    getBlock: {
+      pagination: { limit: DEFAULT_GET_BLOCK_PAGINATION_LIMIT },
+      concurrency: DEFAULT_GET_BLOCK_CONCURRENCY,
+    },
   },
   dydx: {
     lcd: "https://dydx.coin.ledger.com",
@@ -55,6 +99,10 @@ export const cosmosDefaults = {
     name: "dYdX",
     unit: { name: "dYdX", code: "dydx", magnitude: 18 },
     denom: "adydx",
+    getBlock: {
+      pagination: { limit: DEFAULT_GET_BLOCK_PAGINATION_LIMIT },
+      concurrency: DEFAULT_GET_BLOCK_CONCURRENCY,
+    },
   },
   nyx: {
     lcd: "https://api.nyx.nodes.guru",
@@ -65,6 +113,10 @@ export const cosmosDefaults = {
     name: "Nyx",
     unit: { name: "Nyx", code: "NYX", magnitude: 6 },
     denom: "unyx",
+    getBlock: {
+      pagination: { limit: DEFAULT_GET_BLOCK_PAGINATION_LIMIT },
+      concurrency: DEFAULT_GET_BLOCK_CONCURRENCY,
+    },
   },
   osmo: {
     lcd: "https://osmo.coin.ledger.com",
@@ -75,6 +127,10 @@ export const cosmosDefaults = {
     name: "Osmosis",
     unit: { name: "Osmosis", code: "OSMO", magnitude: 6 },
     denom: "uosmo",
+    getBlock: {
+      pagination: { limit: DEFAULT_GET_BLOCK_PAGINATION_LIMIT },
+      concurrency: DEFAULT_GET_BLOCK_CONCURRENCY,
+    },
   },
   persistence: {
     lcd: "https://rest.core.persistence.one",
@@ -85,6 +141,10 @@ export const cosmosDefaults = {
     name: "Persistence",
     unit: { name: "Persistence", code: "XPRT", magnitude: 6 },
     denom: "uxprt",
+    getBlock: {
+      pagination: { limit: DEFAULT_GET_BLOCK_PAGINATION_LIMIT },
+      concurrency: DEFAULT_GET_BLOCK_CONCURRENCY,
+    },
   },
   secret_network: {
     lcd: "https://lcd.mainnet.secretsaturn.net",
@@ -95,6 +155,10 @@ export const cosmosDefaults = {
     name: "SecretNetwork",
     unit: { name: "Secret", code: "SCRT", magnitude: 6 },
     denom: "uscrt",
+    getBlock: {
+      pagination: { limit: DEFAULT_GET_BLOCK_PAGINATION_LIMIT },
+      concurrency: DEFAULT_GET_BLOCK_CONCURRENCY,
+    },
   },
   coreum: {
     lcd: "https://rest-coreum.ecostake.com",
@@ -105,6 +169,10 @@ export const cosmosDefaults = {
     name: "TX",
     unit: { name: "TX", code: "TX", magnitude: 6 },
     denom: "ucore",
+    getBlock: {
+      pagination: { limit: DEFAULT_GET_BLOCK_PAGINATION_LIMIT },
+      concurrency: DEFAULT_GET_BLOCK_CONCURRENCY,
+    },
   },
   injective: {
     lcd: "https://injective.coin.ledger.com",
@@ -116,6 +184,10 @@ export const cosmosDefaults = {
     name: "Injective",
     unit: { name: "Injective", code: "INJ", magnitude: 18 },
     denom: "inj",
+    getBlock: {
+      pagination: { limit: DEFAULT_GET_BLOCK_PAGINATION_LIMIT },
+      concurrency: DEFAULT_GET_BLOCK_CONCURRENCY,
+    },
   },
   mantra: {
     lcd: "https://api.mantrachain.io",
@@ -127,6 +199,10 @@ export const cosmosDefaults = {
     name: "Mantra",
     unit: { name: "Mantra", code: "MANTRA", magnitude: 18 },
     denom: "amantra",
+    getBlock: {
+      pagination: { limit: DEFAULT_GET_BLOCK_PAGINATION_LIMIT },
+      concurrency: DEFAULT_GET_BLOCK_CONCURRENCY,
+    },
   },
   crypto_org: {
     lcd: "https://rest.cosmos.directory/cryptoorgchain",
@@ -137,6 +213,10 @@ export const cosmosDefaults = {
     name: "Cronos POS Chain",
     unit: { name: "CRO", code: "CRO", magnitude: 8 },
     denom: "basecro",
+    getBlock: {
+      pagination: { limit: DEFAULT_GET_BLOCK_PAGINATION_LIMIT },
+      concurrency: DEFAULT_GET_BLOCK_CONCURRENCY,
+    },
   },
   xion: {
     lcd: "https://verona-api.polkachu.com",
@@ -148,6 +228,10 @@ export const cosmosDefaults = {
     name: "Verona",
     unit: { name: "Verona", code: "VERONA", magnitude: 6 },
     denom: "uxion",
+    getBlock: {
+      pagination: { limit: DEFAULT_GET_BLOCK_PAGINATION_LIMIT },
+      concurrency: DEFAULT_GET_BLOCK_CONCURRENCY,
+    },
   },
   babylon: {
     lcd: "https://babylon.coin.ledger.com",
@@ -158,6 +242,10 @@ export const cosmosDefaults = {
     name: "Babylon",
     unit: { name: "Babylon", code: "BABY", magnitude: 6 },
     denom: "ubbn",
+    getBlock: {
+      pagination: { limit: DEFAULT_GET_BLOCK_PAGINATION_LIMIT },
+      concurrency: DEFAULT_GET_BLOCK_CONCURRENCY,
+    },
   },
   gonka: {
     // The chain's "cosmos" fee group charges bank transfers 1 ngonka per gas (v0.2.16 upgrade).
@@ -173,12 +261,17 @@ export const cosmosDefaults = {
     name: "Gonka",
     unit: { name: "GNK", code: "GNK", magnitude: 9 },
     denom: "ngonka",
+    getBlock: {
+      pagination: { limit: DEFAULT_GET_BLOCK_PAGINATION_LIMIT },
+      concurrency: DEFAULT_GET_BLOCK_CONCURRENCY,
+    },
   },
 } satisfies Record<string, CosmosCoinConfig>;
 
 type CosmosConfig = {
   /** On-chain base denom (e.g. `uatom`), used to match balances, delegations and rewards. */
   denom: string;
+  getBlock: GetBlockConfiguration;
   [key: string]: unknown;
 };
 

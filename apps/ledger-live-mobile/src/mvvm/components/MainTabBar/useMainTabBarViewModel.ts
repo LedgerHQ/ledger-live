@@ -12,18 +12,25 @@ import {
   CreditCardFill,
   Dollar,
   DollarFill,
+  Robot,
 } from "@ledgerhq/lumen-ui-rnative/symbols";
 import { NavigatorName } from "~/const";
 import type { TabItemConfig, MainTabBarViewProps } from "./types";
 import { useTranslation } from "~/context/Locale";
-import { getLabelKey, TRACKING_LABEL_MAP, TRACKING_MENUENTRY_EVENT } from "./constants";
+import {
+  COMPACT_TAB_COUNT,
+  getLabelKey,
+  TRACKING_EXTRA_PROPS_MAP,
+  TRACKING_LABEL_MAP,
+  TRACKING_MENUENTRY_EVENT,
+} from "./constants";
 import { scrollToTopEvent } from "./scrollToTopEvent";
 
 type UseMainTabBarViewModelParams = Pick<BottomTabBarProps, "state" | "navigation">;
 
 type UseMainTabBarViewModelReturn = Pick<
   MainTabBarViewProps,
-  "activeRouteName" | "tabItems" | "onTabPress"
+  "activeRouteName" | "tabItems" | "isCompact" | "onTabPress"
 >;
 
 type TabIconConfig = { icon: TabItemConfig["icon"]; activeIcon?: TabItemConfig["activeIcon"] };
@@ -34,6 +41,7 @@ const TAB_ICONS: Partial<Record<string, TabIconConfig>> = {
   [NavigatorName.Earn]: { icon: Chart5, activeIcon: Chart5Fill },
   [NavigatorName.CardTab]: { icon: CreditCard, activeIcon: CreditCardFill },
   [NavigatorName.PayTab]: { icon: Dollar, activeIcon: DollarFill },
+  [NavigatorName.AgentIntentTab]: { icon: Robot },
 };
 
 const TAB_TEST_IDS: Partial<Record<string, string>> = {
@@ -42,12 +50,13 @@ const TAB_TEST_IDS: Partial<Record<string, string>> = {
   [NavigatorName.Earn]: "w40-tab-earn",
   [NavigatorName.CardTab]: "w40-tab-card",
   [NavigatorName.PayTab]: "w40-tab-paytab",
+  [NavigatorName.AgentIntentTab]: "w40-tab-agents",
 };
 
 function trackTabNavigation(targetName: string, sourceName: string, value: string) {
   const entry = TRACKING_LABEL_MAP[targetName] ?? value;
   const page = TRACKING_LABEL_MAP[sourceName];
-  track(TRACKING_MENUENTRY_EVENT, { entry, page });
+  track(TRACKING_MENUENTRY_EVENT, { entry, page, ...TRACKING_EXTRA_PROPS_MAP[targetName] });
 }
 
 function handleScrollToTop(value: string, activeRouteName: string) {
@@ -105,5 +114,7 @@ export const useMainTabBarViewModel = ({
     [state.routes, activeRouteName, navigateToTab],
   );
 
-  return { activeRouteName, tabItems, onTabPress };
+  const isCompact = tabItems.length >= COMPACT_TAB_COUNT;
+
+  return { activeRouteName, tabItems, isCompact, onTabPress };
 };

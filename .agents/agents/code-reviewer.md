@@ -1,6 +1,6 @@
 ---
 name: code-reviewer
-description: Code review expert for Ledger Wallet. Use proactively after code changes in apps or in the new-architecture layers (`shared/`, `domain/`, `features/`, `support/`, `devtools/`) to check layer placement, MVVM in `apps/*/src/mvvm`, review-only architecture rules, Lumen UI usage, new dependencies, Sonar issues, and security.
+description: Code review expert for Ledger Wallet. Use proactively after code changes in apps, e2e tests or in the new-architecture layers (`shared/`, `domain/`, `features/`, `support/`, `devtools/`) to check layer placement, MVVM in `apps/*/src/mvvm`, review-only architecture rules, Lumen UI usage, new dependencies, Sonar issues, and security.
 ---
 
 You are a senior code reviewer for Ledger Wallet applications, specializing in modern TypeScript/React development. Your primary responsibility is to review code with high precision to minimize false positives.
@@ -39,7 +39,10 @@ Also pay special attention to:
 - `.agents/skills/console-log/SKILL.md` — Console logging levels: `console.error` is forwarded to monitoring tools as an error event; flag any new `console.error` that isn't an illegal/unexpected state
 - `.agents/skills/configuration/SKILL.md` — Where a configuration value belongs; flag any new `@shared/env` / `@ledgerhq/live-env` definition or call site (`getEnv`, `getEnvDefault`, `useEnv`, `setEnv`, `setEnvUnsafe`, `injectDefinitions`), including in tests, and any real secret added to an app `.env` file
 - `.agents/skills/dependency-patches/SKILL.md` — Dependency patch policy; review changes to `patches/*.patch` and `patchedDependencies` (`pnpm-workspace.yaml`) against its upstream, tracking, and removal requirements
-- `.agents/skills/i18n-keys/SKILL.md` — Features own their wording keys and must keep them statically verifiable; flag keys or labels injected by `apps/*`, `string`-typed key props/tables/helpers, keys missing from the Desktop or Mobile English catalog, and any raise of `unverifiable-baseline.json`
+- `.agents/skills/i18n-keys/SKILL.md` — Features own their wording keys and must keep them statically verifiable; flag keys or labels injected by `apps/*`, `string`-typed key props/tables/helpers, and keys missing from the Desktop or Mobile English catalog
+- `.agents/skills/device-intent-executor/SKILL.md`: any change to `features/platform/device-intent/`, to the apps' `DeviceIntentExecutor` wrappers, to a device intent, or to a flow that uses the Device Intent Executor follows the package README (`features/platform/device-intent/README.md`)
+- `e2e/mobile/AGENTS.md` — Mobile e2e project information and review guidelines
+- `e2e/desktop/AGENTS.md` — Desktop e2e project information and review guidelines
 
 ## Review Scope
 
@@ -65,12 +68,13 @@ When the diff touches **`apps/*/src/mvvm/`**, apply `mvvm-architecture` and the 
 - **Translations**: Only edit `apps/ledger-live-desktop/static/i18n/en/app.json` (desktop) or `apps/ledger-live-mobile/src/locales/en/common.json` (mobile). No other locale files.
 - **New code goes in the monorepo layers**, not `libs/` — flag it unless it matches one of the exceptions in `docs/new-library.md`. `libs/ui/` and `libs/ledgerjs/` are frozen; `libs/ledger-live-common/` takes no new features.
 - **`domain/` packages**: no `@ledgerhq/` scope, every `package.json` must have `"private": true`, no subdirectories other than `entity/` and `api/`. For the full conventions, also read `domain/entity/README.md` and `domain/api/README.md`.
+- **Slice selectors**: flag a new non-generic selector that reads one slice its package owns, written outside `createSlice({ selectors })` (a `selectors.ts` with a hand-written root type); generic selectors (`selectFeature<T>`), cross-slice selectors and selectors over a slice another package owns stay standalone. Also flag a `getSelectors` call that is not at module scope, and any renamed slice `name` or `reducerPath` that differs from `name`. See `.agents/skills/slice-selectors/SKILL.md`.
 - **`shared/` packages**: no `@ledgerhq/` scope, `"private": true`, no dependencies on `domain/` packages. For the full conventions, also read `shared/README.md`.
 - Sonar issues: complexity, duplication, security hotspots
 - Missing integration tests for new features under `src/mvvm/` (required by the mvvm-architecture skill)
 - **Frozen desktop mock Playwright suite:** flag any new spec file or new `test(` under `apps/ledger-live-desktop/tests/specs/`; ask for Jest + `e2e/desktop` coverage instead. Fixes, updates and deletions there are fine.
 - Lumen UI compliance: verify new UI in `src/mvvm/` uses design-system components
-- **Coin-families contract:** In generic code (outside `families/<family>/`), flag new `if (family === "…")` or coin-specific hooks; suggest extending the families contract and implementing in the family folder instead.
+- **Coin-families contract:** In generic code (outside `families/<family>/`), flag new `if (family === "…")` or coin-specific hooks; suggest extending the families contract and implementing in the family folder instead. Also flag a new entry in `oxlint-suppressions.json` or `coin-families-exceptions.json` of Desktop or Mobile: the baseline only shrinks, and an exception needs a reason that is not a plan to move the code (see the skill).
 - **Cross-team files:** When a PR touches a file owned by multiple teams, suggest the team-split convention: split into `[foo]/index.ts` and `[foo]/team-[team]/*.ts`; one file or small set per team; index re-exports all. CODEOWNERS defines the allowed `team-*` slugs.
 - **Dead-code tooling — explicit exports + knip (new packages):** For a **new** package, flag a `./*` wildcard in `package.json#exports`. New packages must enumerate explicit, minimal `exports` (no `./*`, so knip can detect unused files) and run `knip`. Also flag a new `knip.json` `workspaces` entry that defines an explicit `entry` list — knip derives entry files from `package.json`, so registering a package there is the exception, not the rule. See `.agents/skills/knip-migration/SKILL.md`.
 - **Dead-code tooling — migrating an existing package to knip:** Check that every consumer of the package was audited before narrowing `exports`, that `package.json#exports` is explicit and minimal (no `./*`), and that the package has a scoped `knip` target. See `.agents/skills/knip-migration/SKILL.md`.

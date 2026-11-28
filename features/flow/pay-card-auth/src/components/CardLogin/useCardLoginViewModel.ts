@@ -9,9 +9,8 @@ import { SIGNUP_PATH } from "../../state/hostedPaths";
 import { createCardLoginPorts, type CardLoginDispatch } from "../../state/createCardLoginPorts";
 import type { PayCardLoginErrorKind } from "../../state/errors";
 import { cardLoginMachine } from "../../state/machine";
-import { selectPayCardHasSeenLoginIntro } from "../../state/loginIntroSelectors";
-import { selectIsSignedIn } from "../../state/selectors";
-import { setPendingLoginType, setSessionResolving } from "../../state/slice";
+import { selectPayCardHasSeenLoginIntro } from "../../state/loginIntroSlice";
+import { selectIsSignedIn, setPendingLoginType, setSessionResolving } from "../../state/slice";
 import { CARD_LOGIN_INTRO_FLOW, CARD_LOGIN_INTRO_PAGE } from "./analytics";
 import type {
   CardAuthErrorCopy,
@@ -29,11 +28,11 @@ const LOGIN_KEY_PREFIX = "payTab.cardLogin";
 
 const INTRO_KEY_PREFIX = "payTab.cardLoginIntro";
 
-const INTRO_ROWS: readonly { icon: CardLoginIntroRowIcon; key: string }[] = [
+const INTRO_ROWS = [
   { icon: "CoinsAddPlus", key: "cashback" },
   { icon: "CreditCard", key: "virtualCard" },
   { icon: "LedgerLogo", key: "topUp" },
-];
+] as const satisfies readonly { icon: CardLoginIntroRowIcon; key: string }[];
 
 const PRESSABLE_LOGIN_STATES: ReadonlySet<CardLoginStateValue> = new Set([
   "idle",
@@ -291,9 +290,7 @@ export function useCardLoginViewModel({
       headline: t(`${LOGIN_KEY_PREFIX}.${stage}.title`),
       description: t(`${LOGIN_KEY_PREFIX}.${stage}.description`),
       loginLabel: t(`${LOGIN_KEY_PREFIX}.${stage}.action`),
-      alreadyHaveCardLabel: hasSeenLoginIntro
-        ? null
-        : t(`${LOGIN_KEY_PREFIX}.beforeIntro.alreadyHaveCard`),
+      showAlreadyHaveCard: !hasSeenLoginIntro,
     };
   }, [t, hasSeenLoginIntro]);
 

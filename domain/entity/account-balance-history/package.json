@@ -1,6 +1,6 @@
 {
   "name": "@domain/entity-account-balance-history",
-  "version": "0.1.0",
+  "version": "0.3.1",
   "private": true,
   "description": "Account balance history entity: the balance of each asset of an account over a range",
   "main": "src/index.ts",
@@ -22,10 +22,12 @@
     "coverage": "jest --coverage"
   },
   "dependencies": {
+    "@domain/entity-account": "workspace:*",
     "@domain/entity-account-balance": "workspace:*",
     "@domain/entity-account-data": "workspace:*",
     "@domain/entity-account-descriptor": "workspace:*",
     "@domain/entity-currency": "workspace:*",
+    "@domain/entity-currency-fiat": "workspace:*",
     "@reduxjs/toolkit": "catalog:",
     "@shared/schema-primitives": "workspace:*",
     "zod": "catalog:"

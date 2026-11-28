@@ -25,7 +25,11 @@ const owner = ownedBy(coinTeamOwner(Account.XTZ_1.currency.id), { folder: TestFo
 // DELEGATED + STAKED for the stake flow; XTZ_3 (index 2) same, dedicated to unstake to avoid a settlement
 // race. (idx0/XTZ_1 stays with the legacy Tezos delegation spec, which relies on it being undelegated.)
 test.describe("Staking - Tezos", owner, () => {
-  const account = new Delegate(Account.XTZ_4, "N/A", "Ledger by Kiln");
+  const account = new Delegate({
+    account: Account.XTZ_4,
+    amount: "N/A",
+    provider: "Ledger by Kiln",
+  });
 
   // Force no broadcast: signing here would otherwise delegate XTZ_4 (idx3) on-chain.
   test.use({ ...tezosStakeUse(account), env: { DISABLE_TRANSACTION_BROADCAST: "1" } });
@@ -41,13 +45,13 @@ test.describe("Staking - Tezos", owner, () => {
       await app.accounts.navigateToAccountByName(account.account.accountName);
 
       // Delegate branch: chooser -> delegate modal -> close (nothing signed; account stays undelegated).
-      await app.account.startStakingFlowFromMainStakeButton();
+      await app.account.startStakingFlowFromMainStakeButton({ asset: account.account.currency });
       await app.tezosEarningChoice.chooseDelegate();
       await app.delegate.verifyDelegationStarter();
       await app.delegate.close();
 
       // Stake branch: chooser -> 5-step stake modal -> sign the delegation step.
-      await app.account.startStakingFlowFromMainStakeButton();
+      await app.account.startStakingFlowFromMainStakeButton({ asset: account.account.currency });
       await app.tezosEarningChoice.chooseStake();
       await app.tezosStake.verifyValidatorStep();
       await app.tezosStake.continueFromValidator();
@@ -62,7 +66,11 @@ test.describe("Staking - Tezos", owner, () => {
 const stakeLock = exclusiveLockFor({ broadcastAccounts: [Account.XTZ_2] });
 
 test.describe("Staking - Tezos", { lock: stakeLock.names, ...owner }, () => {
-  const account = new Delegate(Account.XTZ_2, "0.005", "Ledger by Kiln");
+  const account = new Delegate({
+    account: Account.XTZ_2,
+    amount: "0.005",
+    provider: "Ledger by Kiln",
+  });
 
   test.use({ ...tezosStakeUse(account), ...stakeLock.fixtures });
 
@@ -76,7 +84,7 @@ test.describe("Staking - Tezos", { lock: stakeLock.names, ...owner }, () => {
       await app.mainNavigation.openTargetFromMainNavigation("accounts");
       await app.accounts.navigateToAccountByName(account.account.accountName);
       // Already delegated => opens MODAL_TEZOS_STAKE directly at the amount step.
-      await app.account.startStakingFlowFromMainStakeButton();
+      await app.account.startStakingFlowFromMainStakeButton({ asset: account.account.currency });
       await app.tezosStake.fillAmount(account.amount);
       await app.tezosStake.continueFromAmount();
       // Tezos signs the stake op via the same on-device review-and-sign flow as delegation.
@@ -92,7 +100,11 @@ test.describe("Staking - Tezos", { lock: stakeLock.names, ...owner }, () => {
 const unstakeLock = exclusiveLockFor({ broadcastAccounts: [Account.XTZ_3] });
 
 test.describe("Staking - Tezos", { lock: unstakeLock.names, ...owner }, () => {
-  const account = new Delegate(Account.XTZ_3, "0.005", "Ledger by Kiln");
+  const account = new Delegate({
+    account: Account.XTZ_3,
+    amount: "0.005",
+    provider: "Ledger by Kiln",
+  });
 
   test.use({ ...tezosStakeUse(account), ...unstakeLock.fixtures });
 
@@ -117,16 +129,20 @@ test.describe("Staking - Tezos", { lock: unstakeLock.names, ...owner }, () => {
 });
 
 test.describe("Staking - Tezos", owner, () => {
-  const account = new Delegate(Account.XTZ_2, "N/A", "Ledger by Kiln");
+  const account = new Delegate({
+    account: Account.XTZ_2,
+    amount: "N/A",
+    provider: "Ledger by Kiln",
+  });
 
   // Assertion-only (never signs).
   test.use(tezosStakeUse(account));
 
   test(
-    `[${account.account.currency.testLabel}] - Change validator is blocked while staked`,
+    `[${account.account.currency.testLabel}] - Change validator and stop delegation are blocked while staked`,
     {
       tag: tags,
-      annotation: { type: "TMS", description: "B2CQA-5919" },
+      annotation: { type: "TMS", description: "B2CQA-5919, B2CQA-5921" },
     },
     async ({ app }) => {
       await app.mainNavigation.openTargetFromMainNavigation("accounts");
@@ -134,25 +150,7 @@ test.describe("Staking - Tezos", owner, () => {
       await app.tezosUnstakeRequired.openChangeValidator();
       await app.tezosUnstakeRequired.verifyVisible();
       await app.tezosUnstakeRequired.clickCloseButton();
-    },
-  );
-});
 
-test.describe("Staking - Tezos", owner, () => {
-  const account = new Delegate(Account.XTZ_2, "N/A", "Ledger by Kiln");
-
-  // Assertion-only (never signs).
-  test.use(tezosStakeUse(account));
-
-  test(
-    `[${account.account.currency.testLabel}] - Stop delegation is blocked while staked`,
-    {
-      tag: tags,
-      annotation: { type: "TMS", description: "B2CQA-5921" },
-    },
-    async ({ app }) => {
-      await app.mainNavigation.openTargetFromMainNavigation("accounts");
-      await app.accounts.navigateToAccountByName(account.account.accountName);
       await app.tezosUnstakeRequired.openStopDelegation();
       await app.tezosUnstakeRequired.verifyVisible();
       await app.tezosUnstakeRequired.clickCloseButton();

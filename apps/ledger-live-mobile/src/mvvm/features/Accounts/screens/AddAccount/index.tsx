@@ -31,33 +31,39 @@ function View({
   qrProcess,
   onQrCodeScanned,
   onCreateKey,
+  onConnectWithLedger,
+  deviceIntentStepElement,
 }: ViewProps) {
   const { currentStep } = useCurrentStep();
   const CustomDrawerHeader = () => <DrawerHeader onClose={onCloseAddAccountDrawer} />;
 
   return (
-    <QueuedDrawer
-      isRequestingToBeOpened={isAddAccountDrawerVisible}
-      onClose={onCloseAddAccountDrawer}
-      CustomHeader={currentStep === Steps.QrCodeMethod ? CustomDrawerHeader : undefined}
-      hasBackButton={currentStep === Steps.ChooseSyncMethod}
-      onBack={onGoBack}
-    >
-      <Flex maxHeight={"90%"}>
-        <StepFlow
-          doesNotHaveAccount={doesNotHaveAccount}
-          currency={currency}
-          setCurrentOption={setCurrentOption}
-          currentOption={currentOption}
-          navigateToChooseSyncMethod={navigateToChooseSyncMethod}
-          navigateToQrCodeMethod={navigateToQrCodeMethod}
-          qrProcess={qrProcess}
-          onQrCodeScanned={onQrCodeScanned}
-          onCreateKey={onCreateKey}
-          onCloseAddAccountDrawer={onCloseAddAccountDrawer}
-        />
-      </Flex>
-    </QueuedDrawer>
+    <>
+      <QueuedDrawer
+        isRequestingToBeOpened={isAddAccountDrawerVisible}
+        onClose={onCloseAddAccountDrawer}
+        CustomHeader={currentStep === Steps.QrCodeMethod ? CustomDrawerHeader : undefined}
+        hasBackButton={currentStep === Steps.ChooseSyncMethod}
+        onBack={onGoBack}
+      >
+        <Flex maxHeight={"90%"}>
+          <StepFlow
+            doesNotHaveAccount={doesNotHaveAccount}
+            currency={currency}
+            setCurrentOption={setCurrentOption}
+            currentOption={currentOption}
+            navigateToChooseSyncMethod={navigateToChooseSyncMethod}
+            navigateToQrCodeMethod={navigateToQrCodeMethod}
+            qrProcess={qrProcess}
+            onQrCodeScanned={onQrCodeScanned}
+            onCreateKey={onCreateKey}
+            onConnectWithLedger={onConnectWithLedger}
+            onCloseAddAccountDrawer={onCloseAddAccountDrawer}
+          />
+        </Flex>
+      </QueuedDrawer>
+      {deviceIntentStepElement}
+    </>
   );
 }
 

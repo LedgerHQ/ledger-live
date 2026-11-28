@@ -21,7 +21,9 @@
 # pair of services.
 services:
   zebra:
-    image: zfnd/zebra:latest@sha256:52a67e543906c98a0ed1599e2ce3ee238fc05b40592ae26ee5914ddb6ede51e3
+    # Zebra 7.0.0, the version Ledger runs in production. Earlier releases do
+    # not know the NU7 key of `activation_heights` (see zebra.toml.template).
+    image: zfnd/zebra:7.0.0@sha256:a70d2be8ffef3a4b6e37355724e36a0e6c1838e46baa28bfb216739f00cf2d34
     platform: linux/amd64
     volumes:
       - "./zebra.toml:/etc/zebrad.toml:ro"
@@ -40,6 +42,11 @@ services:
       timeout: 5s
 
   zaino:
+    # Tagged with the pinned commit: `docker compose up` reuses any existing
+    # image of the same name without rebuilding it, so an untagged image built
+    # from an older pin would silently keep running after the pin below moves.
+    # A new tag forces exactly one rebuild per pin change.
+    image: coin-tester-zcash-zaino:aaf8122a703704e05147d984f08ff82c789860ad
     build:
       # Git build context (no published image tag exists yet): Docker clones
       # this pinned commit itself at build time for the `COPY . .` step, so
@@ -51,8 +58,13 @@ services:
       # 'protobuf-compiler' was not found`, reproduced on both amd64 and
       # arm64 -- not an arch issue). Dropping just those two pins (letting
       # apt take whatever bookworm currently ships) builds successfully;
-      # every other line is copied verbatim from upstream's Dockerfile.
-      context: https://github.com/zingolabs/zaino.git#afd609eeb5027486ab15fbbbbf638f054e4b65b9
+      # every other line is copied from upstream's Dockerfile, except the Rust
+      # version, taken from the RUST_VERSION build arg below.
+      #
+      # The pinned commit is the one Ledger's production indexer is built from.
+      # It knows NU7 on Regtest and keeps serving blocks past the activation
+      # height, which the NU7 activation test exercises.
+      context: https://github.com/zingolabs/zaino.git#aaf8122a703704e05147d984f08ff82c789860ad
       # Every `$` below is doubled (`$$`) so Compose's own variable
       # interpolation passes it through literally to buildkit -- otherwise
       # Compose substitutes `${FOO}` from ITS OWN environment (blank, since
@@ -71,8 +83,11 @@ services:
         SHELL ["/bin/bash", "-euo", "pipefail", "-c"]
         WORKDIR /app
 
-        ARG NO_TLS=false
+        # Comma-separated; empty = default feature set
         ARG CARGO_FEATURES=""
+
+        # `release` or `profiling` (adds line tables + frame pointers)
+        ARG CARGO_PROFILE=release
 
         RUN apt-get update && apt-get install -y --no-install-recommends \
               pkg-config=1.8.1-1 \
@@ -83,18 +98,18 @@ services:
               protobuf-compiler \
           && rm -rf /var/lib/apt/lists/*
 
+        RUN rustup component add clippy rustfmt
+
         COPY . .
 
         RUN --mount=type=cache,target=/usr/local/cargo/registry \
             --mount=type=cache,target=/usr/local/cargo/git \
             --mount=type=cache,target=/app/target \
-            if [ -n "$${CARGO_FEATURES}" ]; then \
-              cargo install --locked --path packages/zainod --bin zainod --root /out --features "$${CARGO_FEATURES}"; \
-            elif [ "$${NO_TLS}" = "true" ]; then \
-              cargo install --locked --path packages/zainod --bin zainod --root /out --features no_tls_use_unencrypted_traffic; \
-            else \
-              cargo install --locked --path packages/zainod --bin zainod --root /out; \
-            fi
+            if [ "$${CARGO_PROFILE}" = "profiling" ]; then \
+              export RUSTFLAGS="-C force-frame-pointers=yes"; \
+            fi; \
+            cargo install --locked --path packages/zainod --bin zainod --root /out \
+              --profile "$${CARGO_PROFILE}" --features "$${CARGO_FEATURES}"
 
         FROM docker.io/library/debian:bookworm-slim AS runtime
         SHELL ["/bin/bash", "-euo", "pipefail", "-c"]

@@ -26,4 +26,4 @@ Cross-cutting concern packages that don't belong to a specific business domain. 
 
 ## Internal Structure
 
-Shared packages have **free internal structure** — organize `src/` however makes sense for the concern. The only convention: when a shared package interfaces with Redux (schema + slice + selectors), place that code in a `data/` subfolder following the same structure as `domain/entity/*/src/` (i.e. `schema.ts`, `slice.ts`, `selectors.ts`, `*.test.ts`, `*.mock.ts`, `index.ts`).
+Shared packages have **free internal structure**: organize `src/` however makes sense for the concern. The only convention: when a shared package interfaces with Redux (schema + slice + selectors), place that code in a `data/` subfolder following the same structure as `domain/entity/*/src/` (i.e. `schema.ts`, `slice.ts`, `*.test.ts`, `*.mock.ts`, `index.ts`). Selectors that read the slice go in `createSlice({ selectors })`, per the [`slice-selectors`](../.agents/skills/slice-selectors/SKILL.md) skill.

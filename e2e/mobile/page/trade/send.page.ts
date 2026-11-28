@@ -1,6 +1,16 @@
 import { Step } from "jest-allure2-reporter/api";
 import { currencyParam, openDeeplink } from "@e2e/helpers/commonHelpers";
+import type { Account } from "@ledgerhq/live-e2e-shared/enum/Account";
 import { byId, byText } from "@e2e/helpers/elements/native";
+
+type SetRecipientOptions = {
+  address: string;
+  memoTag?: string;
+};
+
+type SetRecipientAndContinueOptions = Omit<SetRecipientOptions, "address"> & {
+  address: string | undefined;
+};
 
 export default class SendPage {
   private readonly baseLink = "send";
@@ -22,7 +32,6 @@ export default class SendPage {
   private readonly summaryRecipient = byId("send-summary-recipient");
   private readonly summaryRecipientEns = byId("send-summary-recipient-ens");
   private readonly summaryMemoTag = byId("summary-memo-tag");
-  private readonly summaryWarning = byId("send-summary-warning");
   private readonly summaryError = byId("insufficient-fee-error");
   private readonly summaryContinueEnabledButton = byId("enabled-summary-continue-button");
   private readonly summaryContinueDisabledButton = byId("disabled-summary-continue-button");
@@ -31,11 +40,11 @@ export default class SendPage {
   // The fee strategy rows have no testID.
   private readonly feeStrategy = (fee: string) => byText(fee);
 
-  @Step("Navigate to send screen {{{0}}}")
-  async navigateToSendScreen(accountName: string) {
+  @Step("Navigate to send screen")
+  async navigateToSendScreen(accountToDebit: Account, accountName?: string) {
     await app.account.openViaDeeplink();
-    await app.account.goToAccountByName(accountName);
-    await app.account.tapSend();
+    await app.account.goToAccountByName(accountName || accountToDebit.accountName);
+    await app.account.tapSendOf(accountToDebit);
   }
 
   @Step("Open send via deeplink")
@@ -54,8 +63,9 @@ export default class SendPage {
     await this.step1HeaderTitle.expectVisible();
   }
 
-  @Step("Set recipient {{{0}}} and memo tag {{{1}}}")
-  async setRecipient(address: string, memoTag?: string) {
+  @Step("Set recipient {{{0.address}}} and memo tag {{{0.memoTag}}}")
+  async setRecipient(options: SetRecipientOptions) {
+    const { address, memoTag } = options;
     await this.recipientInput.replaceText(address); // Issue with RN75 : QAA-370
     if (memoTag && memoTag !== "noTag") {
       await this.memoTagInput.replaceText(memoTag);
@@ -78,16 +88,12 @@ export default class SendPage {
   }
 
   @Step("Expect recipient warning message {{{0}}}")
-  async expectSendRecipientWarning(expectedWarningMessage: string | null) {
+  async expectSendRecipientWarning(expectedWarningMessage: string) {
     await this.expectRecipientMessage(expectedWarningMessage, true);
   }
 
-  private async expectRecipientMessage(message: string | null, continueButtonVisible = false) {
-    if (message) {
-      await this.recipientError.expectText(message);
-    } else {
-      await this.recipientError.expectNotVisible();
-    }
+  private async expectRecipientMessage(message: string, continueButtonVisible = false) {
+    await this.recipientError.expectText(message);
 
     if (continueButtonVisible) {
       await this.recipientContinueEnabledButton.expectVisible();
@@ -97,22 +103,19 @@ export default class SendPage {
     }
   }
 
-  @Step("Expect recipient step success {{{0}}}")
-  async expectSendRecipientSuccess(expectedWarningMessage?: string) {
-    if (expectedWarningMessage) {
-      await this.recipientError.expectText(expectedWarningMessage);
-    } else {
-      await this.recipientError.expectNotVisible();
-    }
+  @Step("Expect recipient step success")
+  async expectSendRecipientSuccess() {
+    await this.recipientError.expectNotVisible();
     await this.recipientContinueEnabledButton.expectVisible();
   }
 
-  @Step("Set recipient {{{0}}} and continue")
-  async setRecipientAndContinue(address: string | undefined, memoTag?: string) {
+  @Step("Set recipient {{{0.address}}} and continue")
+  async setRecipientAndContinue(options: SetRecipientAndContinueOptions) {
+    const { address, memoTag } = options;
     if (!address) {
       throw new Error("Recipient address is not set");
     }
-    await this.setRecipient(address, memoTag);
+    await this.setRecipient({ address, memoTag });
     await this.recipientContinue(memoTag);
   }
 
@@ -179,11 +182,6 @@ export default class SendPage {
     await this.summaryError.expectTextMatching(errorMessage);
     await this.summaryContinueEnabledButton.expectNotVisible();
     await this.summaryContinueDisabledButton.expectVisible();
-  }
-
-  @Step("Expect warning in summary {{{0}}}")
-  async expectSummaryWarning(warningMessage: string) {
-    await this.summaryWarning.expectText(warningMessage);
   }
 
   @Step("Expect recipient ENS in summary {{{0}}}")

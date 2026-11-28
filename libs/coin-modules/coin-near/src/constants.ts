@@ -45,6 +45,29 @@ export const FIGMENT_NEAR_VALIDATOR_ADDRESS = "ledgerbyfigment.poolv1.near";
 export const FRACTIONAL_DIGITS = 5;
 /** How many staking pools to surface; the indexer orders them by stake, so this is the top N. */
 export const VALIDATORS_COUNT = 200;
+/** Commission and stake order move at epoch pace (about 12 h), so a 6 h cache stays accurate. */
+export const VALIDATORS_CACHE_TTL_MS = 6 * 60 * 60 * 1000;
+/** A failed validators read is not asked again for this long, so an indexer outage is not hammered. */
+export const VALIDATORS_FAILURE_TTL_MS = 5 * 60 * 1000;
 export const YOCTO_THRESHOLD_VARIATION = "10";
 export const NEAR_DUMMY_ADDRESS =
   "4e7de0a21d8a20f970c86b6edf407906d7ba9e205979c3268270eef80a286e2d";
+/** Methods a staking pool receives when an account moves funds in or out of it. */
+export const STAKING_POOL_METHODS = [
+  "deposit_and_stake",
+  "deposit",
+  "stake",
+  "stake_all",
+  "unstake",
+  "unstake_all",
+  "withdraw",
+  "withdraw_all",
+] as const;
+/** The indexer's default page size, which is what the legacy history sync reads for each page. */
+export const LEGACY_HISTORY_PAGE_SIZE = 25;
+/** The most pages one legacy history read goes through to reach a transaction it already knows. */
+export const LEGACY_HISTORY_MAX_PAGES = 10;
+/** The action a transaction carries when another account relays it on behalf of the signer. */
+export const DELEGATE_ACTION = "DELEGATE_ACTION";
+/** How long the history is read again after a state change it does not explain yet. */
+export const HISTORY_RECHECK_WINDOW_MS = 60 * 60 * 1000;

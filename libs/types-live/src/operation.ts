@@ -40,6 +40,8 @@ export type OperationType =
   // ALGORAND
   | "OPT_IN"
   | "OPT_OUT"
+  // XRP
+  | "OPT_EDIT"
   // CELO
   | "LOCK"
   | "UNLOCK"

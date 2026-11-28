@@ -96,7 +96,7 @@ jest.mock("@features/platform-feature-flags", () => ({
   useFeature: () => null,
 }));
 
-jest.mock("LLD/features/ModularDialog/Web3AppWebview/AssetAndAccountDrawer", () => ({
+jest.mock("LLD/features/ModularDialog/hooks/useOpenAssetAndAccount", () => ({
   useOpenAssetAndAccount: () => ({ openAssetAndAccount: jest.fn() }),
 }));
 

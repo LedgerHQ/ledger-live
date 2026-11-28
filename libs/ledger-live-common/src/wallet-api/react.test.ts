@@ -7,14 +7,22 @@ import type { WalletHandlers } from "@ledgerhq/wallet-api-server";
 import type { AccountNamesState } from "@domain/entity-account-name";
 import { createFixtureAccount } from "../mock/fixtures/cryptoCurrencies";
 import type { TrackingAPI } from "./tracking";
-import { type UiHook, type useWalletAPIServerOptions, useDappSessionUiHook } from "./react";
+import {
+  type UiHook,
+  type useWalletAPIServerOptions,
+  useCacheBustedLiveApps,
+  useDappSessionUiHook,
+} from "./react";
+import { INITIAL_PLATFORM_STATE } from "./constants";
+import type { DiscoverDB } from "./types";
 import { CRYPTO_CURRENCIES_REGISTRY } from "@domain/entity-currency-crypto";
 import { AccountPublicKeyUnavailable, BridgeSessionClosed, SignPsbtAppNotAllowed } from "../errors";
+import { UnsupportedMaxSpendableFilter } from "@ledgerhq/ledger-wallet-framework/errors";
 import { accountGetPublicKeyLogic, signRawTransactionLogic } from "./logic";
 import { getAccountBridge } from "../bridge";
 import { BridgeSession } from "./bridgeSession";
 import { liveBlindSigningReporter } from "@ledgerhq/live-dmk-shared";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { WalletAPIServer } from "@ledgerhq/wallet-api-server";
 import {
   getAccountIdFromWalletAccountId,
@@ -23,6 +31,8 @@ import {
 } from "./converters";
 import { getCryptoAssetsStore } from "@ledgerhq/ledger-wallet-framework/cryptoAssetsStore";
 import openTransportAsSubject from "../hw/openTransportAsSubject";
+import { useDispatch } from "react-redux";
+import { mockTokenCurrency } from "@domain/entity-currency-token/schema.mock";
 import { prepareMessageToSign } from "../hw/signMessage/index";
 
 const walletState: AccountNamesState = new Map();
@@ -456,6 +466,28 @@ describe("account.list handler", () => {
     expect(resolveWalletApiSpendableBalance).toHaveBeenCalledWith(account, account);
     expect(resolveWalletApiMaxSpendable).not.toHaveBeenCalled();
   });
+
+  it("carries the per-pool balances next to the unchanged spendableBalance", async () => {
+    const balances = [{ value: new BigNumber(5), pool: "transparent" }];
+    const account = { ...createFixtureAccount("01"), balances };
+    const spendableBalance = new BigNumber(3);
+    jest.mocked(resolveWalletApiSpendableBalance).mockResolvedValue(spendableBalance);
+
+    renderHook(() => useWalletAPIServer(createDefaultOptions({ accounts: [account] })));
+    const result = await getHandler()({});
+
+    expect(result).toEqual([expect.objectContaining({ balances, spendableBalance })]);
+  });
+
+  it("leaves balances out for an account that has none", async () => {
+    const account = createFixtureAccount("01");
+    jest.mocked(resolveWalletApiSpendableBalance).mockResolvedValue(new BigNumber(3));
+
+    renderHook(() => useWalletAPIServer(createDefaultOptions({ accounts: [account] })));
+    const result = await getHandler()({});
+
+    expect(result[0]).not.toHaveProperty("balances");
+  });
 });
 
 describe("currency.list handler — token lookup concurrency", () => {
@@ -513,6 +545,49 @@ describe("currency.list handler — token lookup concurrency", () => {
   });
 });
 
+describe("currency.list handler — token categories", () => {
+  const stockToken = mockTokenCurrency({ categories: ["stocks"] });
+
+  beforeEach(() => {
+    jest.clearAllMocks();
+  });
+
+  afterEach(() => {
+    cleanup();
+  });
+
+  it("returns the categories of a token looked up by id", async () => {
+    jest.mocked(getCryptoAssetsStore).mockReturnValue({
+      findTokenById: jest.fn().mockResolvedValue(stockToken),
+    } as never);
+
+    renderHook(() => useWalletAPIServer(createDefaultOptions()));
+    const currencies = await getRegisteredHandler("currency.list")({
+      currencyIds: [stockToken.id],
+    });
+
+    expect(currencies).toEqual([expect.objectContaining({ categories: ["stocks"] })]);
+  });
+
+  it("returns the categories of a token listed by family", async () => {
+    const tokensPage = { pages: [{ tokens: [stockToken], pagination: {} }], pageParams: [] };
+    jest.mocked(useDispatch()).mockReturnValueOnce(
+      Object.assign(Promise.resolve({ data: tokensPage, hasNextPage: false }), {
+        unsubscribe: jest.fn(),
+      }) as never,
+    );
+
+    renderHook(() => useWalletAPIServer(createDefaultOptions()));
+    const currencies = await getRegisteredHandler("currency.list")({
+      currencyIds: ["ethereum/**"],
+    });
+
+    expect(currencies).toContainEqual(
+      expect.objectContaining({ id: stockToken.id, categories: ["stocks"] }),
+    );
+  });
+});
+
 describe("account.request handler", () => {
   const getHandler = () => getRegisteredHandler("account.request");
 
@@ -545,6 +620,28 @@ describe("account.request handler", () => {
     expect(resolveWalletApiSpendableBalance).toHaveBeenCalledTimes(1);
     expect(resolveWalletApiSpendableBalance).toHaveBeenCalledWith(account, undefined);
     expect(resolveWalletApiMaxSpendable).not.toHaveBeenCalled();
+  });
+
+  it("carries the per-pool balances next to the unchanged spendableBalance", async () => {
+    const balances = [{ value: new BigNumber(5), pool: "transparent" }];
+    const account = { ...createFixtureAccount("01"), balances };
+    const spendableBalance = new BigNumber(3);
+    jest.mocked(resolveWalletApiSpendableBalance).mockResolvedValue(spendableBalance);
+    const uiAccountRequest = jest.fn(({ onSuccess }) => {
+      onSuccess(account, undefined);
+    });
+
+    renderHook(() =>
+      useWalletAPIServer(
+        createDefaultOptions({
+          accounts: [account],
+          uiHook: { "account.request": uiAccountRequest },
+        }),
+      ),
+    );
+    const result = await getHandler()({});
+
+    expect(result).toEqual(expect.objectContaining({ balances, spendableBalance }));
   });
 });
 
@@ -694,8 +791,17 @@ describe("account.getMaxSpendable handler", () => {
     if (!call) {
       throw new Error("account.getMaxSpendable was not registered");
     }
-    return call[1] as (params: { accountId: string }) => Promise<string>;
+    return call[1] as (params: {
+      accountId: string;
+      pools?: string[];
+      private?: boolean;
+    }) => Promise<string>;
   };
+
+  const poolRows = [
+    { value: new BigNumber(100), pool: "transparent" },
+    { value: new BigNumber(500), pool: "ironwood", private: true },
+  ];
 
   beforeEach(() => {
     jest.clearAllMocks();
@@ -714,7 +820,77 @@ describe("account.getMaxSpendable handler", () => {
     renderHook(() => useWalletAPIServer(createDefaultOptions({ accounts: [account] })));
 
     await expect(getHandler()({ accountId: "wallet-account-id" })).resolves.toBe("800");
-    expect(resolveWalletApiMaxSpendable).toHaveBeenCalledWith(account, account);
+    expect(resolveWalletApiMaxSpendable).toHaveBeenCalledWith(account, account, undefined);
+  });
+
+  it("passes the pool filters to the estimate", async () => {
+    const account = { ...createFixtureAccount("01"), balances: poolRows };
+    jest.mocked(getAccountIdFromWalletAccountId).mockReturnValue(account.id);
+    jest.mocked(resolveWalletApiMaxSpendable).mockResolvedValue(new BigNumber(450));
+
+    renderHook(() => useWalletAPIServer(createDefaultOptions({ accounts: [account] })));
+
+    await expect(
+      getHandler()({ accountId: "wallet-account-id", pools: ["ironwood"], private: true }),
+    ).resolves.toBe("450");
+    expect(resolveWalletApiMaxSpendable).toHaveBeenCalledWith(account, account, {
+      pools: ["ironwood"],
+      private: true,
+    });
+  });
+
+  it("passes a private filter alone to the estimate", async () => {
+    const account = { ...createFixtureAccount("01"), balances: poolRows };
+    jest.mocked(getAccountIdFromWalletAccountId).mockReturnValue(account.id);
+    jest.mocked(resolveWalletApiMaxSpendable).mockResolvedValue(new BigNumber(90));
+
+    renderHook(() => useWalletAPIServer(createDefaultOptions({ accounts: [account] })));
+
+    await getHandler()({ accountId: "wallet-account-id", private: false });
+
+    expect(resolveWalletApiMaxSpendable).toHaveBeenCalledWith(account, account, {
+      private: false,
+    });
+  });
+
+  it("calls the estimate without filters when none is given", async () => {
+    const account = createFixtureAccount("01");
+    jest.mocked(getAccountIdFromWalletAccountId).mockReturnValue(account.id);
+    jest.mocked(resolveWalletApiMaxSpendable).mockResolvedValue(new BigNumber(1));
+
+    renderHook(() => useWalletAPIServer(createDefaultOptions({ accounts: [account] })));
+
+    await getHandler()({ accountId: "wallet-account-id" });
+
+    expect(resolveWalletApiMaxSpendable).toHaveBeenCalledWith(account, account, undefined);
+  });
+
+  it.each([
+    ["several pools", { pools: ["transparent", "ironwood"] }],
+    ["an unknown pool", { pools: ["sapling"] }],
+    ["a pool and a private flag that select no row", { pools: ["transparent"], private: true }],
+  ])("rejects with UnsupportedMaxSpendableFilter for %s", async (_label, params) => {
+    const account = { ...createFixtureAccount("01"), balances: poolRows };
+    jest.mocked(getAccountIdFromWalletAccountId).mockReturnValue(account.id);
+
+    renderHook(() => useWalletAPIServer(createDefaultOptions({ accounts: [account] })));
+
+    const rejection = getHandler()({ accountId: "wallet-account-id", ...params });
+
+    await expect(rejection).rejects.toBeInstanceOf(UnsupportedMaxSpendableFilter);
+    await expect(rejection).rejects.toMatchObject({ name: "UnsupportedMaxSpendableFilter" });
+    expect(resolveWalletApiMaxSpendable).not.toHaveBeenCalled();
+  });
+
+  it("rejects an account with no balance rows when a filter is given", async () => {
+    const account = createFixtureAccount("01");
+    jest.mocked(getAccountIdFromWalletAccountId).mockReturnValue(account.id);
+
+    renderHook(() => useWalletAPIServer(createDefaultOptions({ accounts: [account] })));
+
+    await expect(
+      getHandler()({ accountId: "wallet-account-id", private: false }),
+    ).rejects.toBeInstanceOf(UnsupportedMaxSpendableFilter);
   });
 
   it("serializes a large estimate as a decimal integer string", async () => {
@@ -1043,5 +1219,26 @@ describe("useDappSessionUiHook", () => {
     jest.mocked(uiHook["transaction.sign"]).mock.calls[0][0].onSuccess({} as never);
 
     expect(onSuccess).not.toHaveBeenCalled();
+  });
+});
+
+describe("useCacheBustedLiveApps", () => {
+  it("keeps both entries when edit is called twice before a new render", () => {
+    const { result } = renderHook(() => {
+      const [state, setState] = useState<DiscoverDB>({
+        ...INITIAL_PLATFORM_STATE,
+        cacheBustedLiveApps: { init: 1, "other-app": 5 },
+      });
+      return useCacheBustedLiveApps([state.cacheBustedLiveApps, setState, true]);
+    });
+
+    act(() => {
+      result.current.edit("app-a", 2);
+      result.current.edit("app-b", 3);
+    });
+
+    expect(result.current.getLatest("app-a")).toBe(2);
+    expect(result.current.getLatest("app-b")).toBe(3);
+    expect(result.current.getLatest("other-app")).toBe(5);
   });
 });

@@ -11,6 +11,7 @@ function createRawOperation(overrides?: Partial<RawOperation>): RawOperation {
     recipient: "3kBx2h5Y2veb4hZgAJWPrr8RyQESKm5TjzF3ti1QQ4VSYLwK1G",
     amount: "1000000",
     fee: "500",
+    transactionFee: "500",
     value: "1000500",
     memo: undefined,
     date: new Date("2024-06-01T00:00:00Z"),
@@ -82,12 +83,54 @@ describe("mapRawOperationToApiOperation", () => {
     expect(result.value).toBe(BigInt(2000000));
   });
 
+  it("reports the whole transaction cost on an IN row the account did not pay for", () => {
+    const raw = createRawOperation({
+      type: "IN",
+      fee: "0",
+      transactionFee: "1373330",
+      feesPayer: "3kBx2h5Y2veb4hZgAJWPrr8RyQESKm5TjzF3ti1QQ4VSYLwK1G",
+    });
+    const result = mapRawOperationToApiOperation(raw, ADDRESS);
+
+    expect(result.tx.fees).toBe(BigInt(1373330));
+    expect(result.tx.feesPayer).toBe("3kBx2h5Y2veb4hZgAJWPrr8RyQESKm5TjzF3ti1QQ4VSYLwK1G");
+  });
+
   it("reports a fee-only operation as worth nothing, leaving the cost on tx.fees", () => {
     const raw = createRawOperation({ amount: "0", value: "500", recipient: "", failed: true });
     const result = mapRawOperationToApiOperation(raw, ADDRESS);
 
     expect(result.value).toBe(BigInt(0));
     expect(result.tx.fees).toBe(BigInt(500));
+  });
+
+  it("maps a FEES operation to the account that paid, worth nothing beyond tx.fees", () => {
+    const raw = createRawOperation({
+      type: "FEES",
+      recipient: "",
+      amount: "0",
+      value: "500",
+      feesPayer: ADDRESS,
+    });
+
+    expect(mapRawOperationToApiOperation(raw, ADDRESS)).toMatchObject({
+      type: "FEES",
+      asset: { type: "native" },
+      value: BigInt(0),
+      senders: [ADDRESS],
+      recipients: [],
+      tx: { fees: BigInt(500), feesPayer: ADDRESS },
+    });
+  });
+
+  it("names no sender for an amount a contract paid out", () => {
+    const raw = createRawOperation({ type: "IN", sender: "", recipient: ADDRESS, fee: "0" });
+
+    expect(mapRawOperationToApiOperation(raw, ADDRESS)).toMatchObject({
+      type: "IN",
+      senders: [],
+      recipients: [ADDRESS],
+    });
   });
 
   it("should mark failed transactions", () => {

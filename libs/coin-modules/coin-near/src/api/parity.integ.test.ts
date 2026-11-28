@@ -1,6 +1,6 @@
 import type { TransactionIntent } from "@ledgerhq/coin-module-framework/api/index";
 import BigNumber from "bignumber.js";
-import { setCoinConfig } from "../config";
+import { nearDefaults, setCoinConfig } from "../config";
 import getEstimatedFees from "../getFeesForTransaction";
 import { getAccount } from "../network";
 import { getActionCosts } from "../network/protocolConfig";
@@ -17,21 +17,7 @@ import { createApi } from "./index";
  * data, the api from the protocol config. This suite pins the two together so a change to either
  * side cannot silently drift, which is the main risk of running both paths side by side.
  */
-const NODE = "https://near.coin.ledger.com/node";
-
-const infra = {
-  API_NEAR_PRIVATE_NODE: NODE,
-  API_NEAR_PUBLIC_NODE: "https://rpc.mainnet.near.org",
-  API_NEAR_INDEXER: "https://near.coin.ledger.com/indexer",
-  API_NEARBLOCKS_INDEXER: "https://near-indexer.coin.ledger.com",
-};
-
-const config = () => ({
-  status: { type: "active" as const },
-  name: "NEAR",
-  unit: { name: "NEAR", code: "NEAR", magnitude: 24 },
-  infra,
-});
+const config = () => nearDefaults.near;
 
 const ACCOUNT = "nearkat.near";
 const NAMED_RECIPIENT = "recipient.near";
@@ -78,17 +64,20 @@ describe("CoinModuleApi vs account bridge (integration)", () => {
     expect(native.value - (native.locked ?? 0n)).toBe(BigInt(spendableBalance.toFixed(0)));
   }, 120_000);
 
-  it("reports the same total as the native balance, staking buckets included", async () => {
-    const [native] = await api.getBalance(context, ACCOUNT);
+  it("reports the same total as the sum of the native entries, staking buckets included", async () => {
+    const balances = await api.getBalance(context, ACCOUNT);
     const { balance, nearResources } = await getAccount(config(), ACCOUNT);
+    const natives = balances.filter(b => b.asset.type === "native");
 
     const frozen = nearResources.stakedBalance
       .plus(nearResources.availableBalance)
       .plus(nearResources.pendingBalance)
       .plus(nearResources.storageUsageBalance);
 
-    expect(native.value).toBe(BigInt(balance.toFixed(0)));
-    expect(native.locked).toBe(BigInt(BigNumber.min(frozen, balance).toFixed(0)));
+    expect(natives.reduce((sum, b) => sum + b.value, 0n)).toBe(BigInt(balance.toFixed(0)));
+    expect(natives.reduce((sum, b) => sum + (b.locked ?? 0n), 0n)).toBe(
+      BigInt(BigNumber.min(frozen, balance).toFixed(0)),
+    );
   }, 120_000);
 
   it.each([
@@ -162,7 +151,6 @@ describe("CoinModuleApi vs account bridge (integration)", () => {
       receiptCreationExecution: new BigNumber(0),
       minGasPurchasePrice: new BigNumber(0),
       accountCreationCharge: new BigNumber(0),
-      validators: [],
     });
 
     const fromApi = await api.estimateFees(context, sendIntent(NAMED_RECIPIENT));

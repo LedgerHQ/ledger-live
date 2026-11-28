@@ -1,5 +1,5 @@
 import React from "react";
-import { render, screen } from "@testing-library/react";
+import { render, screen, within } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { Search } from "@ledgerhq/lumen-ui-react/symbols";
 import { DialogBackgroundContext } from "./background/DialogBackgroundContext";
@@ -78,6 +78,20 @@ describe("InfoState", () => {
     // THEN
     expect(onPrimaryPress).toHaveBeenCalledTimes(1);
     expect(onSecondaryPress).toHaveBeenCalledTimes(1);
+  });
+
+  it("should render the CTA's icon inside its button when the CTA has one", () => {
+    renderInfoStateWithIconOnPrimaryCtaOnly();
+
+    expect(within(screen.getByTestId("info-state-primary")).getByTestId("cta-icon")).toBeVisible();
+  });
+
+  it("should render only the label of a CTA that has no icon", () => {
+    renderInfoStateWithIconOnPrimaryCtaOnly();
+
+    const secondaryButton = screen.getByTestId("info-state-secondary");
+    expect(within(secondaryButton).getByText("Secondary action")).toBeVisible();
+    expect(within(secondaryButton).queryByTestId("cta-icon")).toBeNull();
   });
 
   it("GIVEN an InfoState with custom content WHEN it is rendered THEN the content is displayed", () => {
@@ -248,4 +262,27 @@ function renderInfoStateForPreset(preset: "illustration" | "spot" | "text") {
     default:
       return assertNever(preset);
   }
+}
+
+function CtaIcon() {
+  return <svg data-testid="cta-icon" />;
+}
+
+function renderInfoStateWithIconOnPrimaryCtaOnly() {
+  render(
+    <InfoState
+      preset="error"
+      primaryCta={{
+        label: "Learn more",
+        onPress: jest.fn(),
+        testID: "info-state-primary",
+        icon: CtaIcon,
+      }}
+      secondaryCta={{
+        label: "Secondary action",
+        onPress: jest.fn(),
+        testID: "info-state-secondary",
+      }}
+    />,
+  );
 }

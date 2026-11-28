@@ -1,12 +1,14 @@
-import { NetworkIdSchema, type AccountDescriptor } from "@domain/entity-account-descriptor";
+import type { AccountDescriptor } from "@domain/entity-account-descriptor";
+import { DerivationPathSchema } from "@domain/entity-derivation";
+import { NetworkIdSchema } from "@domain/entity-network";
 
 export const address = (network: string, addr: string, path: string): AccountDescriptor => ({
   purpose: "account",
   version: "2",
   type: "address",
   network: NetworkIdSchema.parse(network),
-  address: addr,
-  path,
+  key: addr,
+  path: DerivationPathSchema.parse(path),
 });
 
 export const utxo = (xpub: string, network = "bitcoin"): AccountDescriptor => ({
@@ -14,8 +16,8 @@ export const utxo = (xpub: string, network = "bitcoin"): AccountDescriptor => ({
   version: "2",
   type: "utxo",
   network: NetworkIdSchema.parse(network),
-  xpub,
-  path: "m/84h/0h/0h",
+  key: xpub,
+  path: DerivationPathSchema.parse("m/84h/0h/0h"),
 });
 
 export const XPUB = "x".repeat(111);

@@ -42,8 +42,6 @@ import { track } from "@shared/analytics";
 
 export enum GraphTrackingScreenName {
   Account = "Account",
-  Asset = "Asset",
-  Market = "Market",
   Portfolio = "Portfolio",
 }
 

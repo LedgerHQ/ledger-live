@@ -1,9 +1,9 @@
 import { act, renderHook } from "@testing-library/react";
+import { MIN_LOADING_DISPLAY_MS } from "./pendingResultStore.internals";
 import { usePredictionsSetupHooks } from "./predictionsSetupStore";
 import {
   dismissPredictionsSetup,
   markPredictionsSetupPresented,
-  MIN_SETUP_DISPLAY_MS,
   reportPredictionsSetup,
   startPredictionsSetup,
   usePredictionsSetup,
@@ -38,15 +38,15 @@ describe("predictionsSetupStore", () => {
     act(() => {
       setupId = startShownSetup();
     });
-    expect(result.current).toMatchObject({ isOpen: true, shownSetup: { outcome: null } });
+    expect(result.current).toMatchObject({ isOpen: true, shownSetup: { result: null } });
     act(() => {
       void reportPredictionsSetup(setupId, { outcome: "created" });
     });
-    act(() => jest.advanceTimersByTime(MIN_SETUP_DISPLAY_MS - 1));
-    expect(result.current.shownSetup?.outcome).toBeNull();
+    act(() => jest.advanceTimersByTime(MIN_LOADING_DISPLAY_MS - 1));
+    expect(result.current.shownSetup?.result).toBeNull();
     act(() => jest.advanceTimersByTime(1));
 
-    expect(result.current.shownSetup?.outcome).toEqual({ outcome: "created" });
+    expect(result.current.shownSetup?.result).toEqual({ outcome: "created" });
   });
 
   it("holds an outcome reported before the setup is on screen until it has been on screen long enough", () => {
@@ -57,16 +57,16 @@ describe("predictionsSetupStore", () => {
     });
     act(() => {
       void reportPredictionsSetup(setupId, { outcome: "created" });
-      jest.advanceTimersByTime(MIN_SETUP_DISPLAY_MS);
+      jest.advanceTimersByTime(MIN_LOADING_DISPLAY_MS);
     });
-    expect(result.current.shownSetup?.outcome).toBeNull();
+    expect(result.current.shownSetup?.result).toBeNull();
 
     act(() => markPredictionsSetupPresented());
-    act(() => jest.advanceTimersByTime(MIN_SETUP_DISPLAY_MS - 1));
-    expect(result.current.shownSetup?.outcome).toBeNull();
+    act(() => jest.advanceTimersByTime(MIN_LOADING_DISPLAY_MS - 1));
+    expect(result.current.shownSetup?.result).toBeNull();
     act(() => jest.advanceTimersByTime(1));
 
-    expect(result.current.shownSetup?.outcome).toEqual({ outcome: "created" });
+    expect(result.current.shownSetup?.result).toEqual({ outcome: "created" });
   });
 
   it("shows only the first outcome reported", () => {
@@ -79,10 +79,10 @@ describe("predictionsSetupStore", () => {
     act(() => {
       void reportPredictionsSetup(setupId, { outcome: "found" });
       void reportPredictionsSetup(setupId, { outcome: "failed", reason: "unknown" });
-      jest.advanceTimersByTime(MIN_SETUP_DISPLAY_MS);
+      jest.advanceTimersByTime(MIN_LOADING_DISPLAY_MS);
     });
 
-    expect(result.current.shownSetup?.outcome).toEqual({ outcome: "found" });
+    expect(result.current.shownSetup?.result).toEqual({ outcome: "found" });
   });
 
   it("answers every report once the user closes the dialog, keeping its last state on screen", async () => {
@@ -93,7 +93,7 @@ describe("predictionsSetupStore", () => {
     });
     const isFirstSettled = settled(reportPredictionsSetup(setupId, { outcome: "found" }));
     const isSecondSettled = settled(reportPredictionsSetup(setupId, { outcome: "found" }));
-    act(() => jest.advanceTimersByTime(MIN_SETUP_DISPLAY_MS));
+    act(() => jest.advanceTimersByTime(MIN_LOADING_DISPLAY_MS));
     await Promise.resolve();
     expect(isFirstSettled()).toBe(false);
 
@@ -104,7 +104,7 @@ describe("predictionsSetupStore", () => {
     expect(isSecondSettled()).toBe(true);
     expect(result.current).toMatchObject({
       isOpen: false,
-      shownSetup: { outcome: { outcome: "found" } },
+      shownSetup: { result: { outcome: "found" } },
     });
   });
 
@@ -121,12 +121,12 @@ describe("predictionsSetupStore", () => {
     });
     await Promise.resolve();
     const isLateReportSettled = settled(reportPredictionsSetup(replacedId, { outcome: "found" }));
-    act(() => jest.advanceTimersByTime(MIN_SETUP_DISPLAY_MS));
+    act(() => jest.advanceTimersByTime(MIN_LOADING_DISPLAY_MS));
     await Promise.resolve();
 
     expect(isReplacedSettled()).toBe(true);
     expect(isLateReportSettled()).toBe(true);
-    expect(result.current.shownSetup?.outcome).toBeNull();
+    expect(result.current.shownSetup?.result).toBeNull();
   });
 });
 
@@ -147,10 +147,10 @@ describe("usePredictionsSetupHooks", () => {
     });
     act(() => {
       void player.result.current["binding.reportSetup"]({ outcome: "found" });
-      jest.advanceTimersByTime(MIN_SETUP_DISPLAY_MS);
+      jest.advanceTimersByTime(MIN_LOADING_DISPLAY_MS);
     });
 
-    expect(setup.result.current.shownSetup?.outcome).toEqual({ outcome: "found" });
+    expect(setup.result.current.shownSetup?.result).toEqual({ outcome: "found" });
   });
 
   it("answers a report right away when the player started no setup", async () => {

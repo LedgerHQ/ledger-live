@@ -4,6 +4,7 @@ import { act, render, screen } from "@tests/test-renderer";
 import { useAppAvailability } from "@features/flow-app-availability";
 import { hide as hideSplashScreen } from "expo-splash-screen";
 import { State } from "~/reducers/types";
+import { startupEvents } from "../../utils/logStartupTime";
 import { WaitForAppReady } from "../WaitForAppReady";
 
 jest.mock("@features/flow-app-availability", () => ({
@@ -11,6 +12,7 @@ jest.mock("@features/flow-app-availability", () => ({
 }));
 
 const mockedUseAppAvailability = jest.mocked(useAppAvailability);
+const logged = () => startupEvents.map(e => e.event);
 
 function renderApp(currencyInitialized: boolean, overrideInitialState?: (state: State) => State) {
   return render(
@@ -85,5 +87,42 @@ describe("WaitForAppReady", () => {
     mockedUseAppAvailability.mockReturnValue({ status: "unavailable", reason: "geoBlocked" });
     renderApp(false);
     expect(hideSplashScreen).not.toHaveBeenCalled();
+  });
+
+  describe("readiness startup events", () => {
+    beforeEach(() => {
+      startupEvents.splice(0);
+    });
+
+    it("logs each condition once, when it is first met", () => {
+      const { rerender } = renderApp(true);
+      rerender(
+        <WaitForAppReady currencyInitialized>
+          <Text>App is Ready</Text>
+        </WaitForAppReady>,
+      );
+      for (const event of [
+        "WaitForAppReady currencies ready",
+        "WaitForAppReady remote flags ready",
+        "WaitForAppReady availability checked",
+      ]) {
+        expect(logged().filter(e => e === event)).toHaveLength(1);
+      }
+      expect(logged()).not.toContain("WaitForAppReady timed out");
+    });
+
+    it("logs the timeout when it ends the wait, and not the condition still pending", () => {
+      jest.useFakeTimers();
+      mockedUseAppAvailability.mockReturnValue({ status: "pending" });
+
+      renderApp(true);
+      act(() => {
+        jest.advanceTimersByTime(1_000);
+      });
+
+      expect(logged()).toContain("WaitForAppReady timed out");
+      expect(logged()).toContain("WaitForAppReady currencies ready");
+      expect(logged()).not.toContain("WaitForAppReady availability checked");
+    });
   });
 });

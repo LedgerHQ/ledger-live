@@ -59,9 +59,9 @@ export type ConcordiumEventAddress =
   | { type: "AddressContract"; address: { index: number; subindex: number } };
 
 /**
- * A single event inside a successful transaction result. Only transfer-related
- * tags are modelled explicitly; every other event is kept as an opaque tagged
- * object so the tag-based mapper can ignore it (PLT/staking tags added later).
+ * A single event inside a successful transaction result. Only the memo and the
+ * {@link BalanceEvent} tags are modelled explicitly; every other event is kept as an
+ * opaque tagged object so the tag-based mapper can ignore it (PLT/staking tags added later).
  */
 export interface TransactionEvent {
   tag: string;
@@ -77,6 +77,48 @@ export interface TransferredEvent extends TransactionEvent {
   from: ConcordiumEventAddress;
   to: ConcordiumEventAddress;
 }
+
+/** Both parties are accounts, named without the {@link ConcordiumEventAddress} wrapper. */
+interface TransferredWithScheduleEvent extends TransactionEvent {
+  tag: "TransferredWithSchedule";
+  from: string;
+  to: string;
+  amount: [releaseTime: number, amount: string][];
+}
+
+/** A contract call; `amount` left the instigator for the contract. */
+interface ContractUpdatedEvent extends TransactionEvent {
+  tag: "Updated";
+  amount: string;
+  instigator: ConcordiumEventAddress;
+}
+
+/** `amount` left the sender of the transaction, which the event does not name. */
+interface ContractInitializedEvent extends TransactionEvent {
+  tag: "ContractInitialized";
+  amount: string;
+}
+
+interface EncryptedSelfAmountAddedEvent extends TransactionEvent {
+  tag: "EncryptedSelfAmountAdded";
+  account: string;
+  amount: string;
+}
+
+interface AmountAddedByDecryptionEvent extends TransactionEvent {
+  tag: "AmountAddedByDecryption";
+  account: string;
+  amount: string;
+}
+
+/** Every event that changes the public CCD balance of an account, fees and rewards aside. */
+export type BalanceEvent =
+  | TransferredEvent
+  | TransferredWithScheduleEvent
+  | ContractUpdatedEvent
+  | ContractInitializedEvent
+  | EncryptedSelfAmountAddedEvent
+  | AmountAddedByDecryptionEvent;
 
 /**
  * A memo event. A `transferWithMemo` transaction emits both a `Transferred` and a
@@ -95,6 +137,12 @@ export type BlockTransactionResult =
   | { outcome: "success"; events: TransactionEvent[] }
   | { outcome: "reject"; rejectReason?: { tag: string; contents?: unknown } };
 
+/** The account that paid for a sponsored transaction, and the whole cost it paid. */
+export interface SponsorDetails {
+  sponsor: string;
+  cost: string | number; // microCCD
+}
+
 /**
  * A transaction summary as returned by /v0/blockTransactionEvents/{blockHash}.
  * This is the raw node `TransactionSummary` shape (structured, tagged events),
@@ -103,7 +151,8 @@ export type BlockTransactionResult =
 export interface BlockTransactionSummary {
   hash: string;
   sender: string | null;
-  cost: string; // microCCD as a string
+  cost: string; // microCCD paid by the sender; 0 for a sponsored transaction
+  sponsorDetails?: SponsorDetails | null;
   energyCost?: number;
   index?: number;
   type?: { type: string; contents?: string };
@@ -436,7 +485,7 @@ export interface WalletProxyRawRejectReason {
  * Wallet-proxy transaction origin
  */
 export interface WalletProxyTransactionOrigin {
-  type: "self" | "account" | "reward" | "contract";
+  type: "self" | "account" | "reward" | "contract" | "none";
   address?: string;
 }
 
@@ -495,11 +544,17 @@ export interface WalletProxyTransaction {
   blockHeight: number; // Absolute block height
   origin: WalletProxyTransactionOrigin;
   energy?: number;
-  cost?: number; // Transaction cost in microCCD
-  subtotal?: number;
-  transactionHash: string;
+  /** The microCCD the queried account paid: absent when another account paid. */
+  cost?: string | number;
+  /** The microCCD the transaction cost, whichever account paid. Proxy ≥ 0.51.0. */
+  transactionCost?: string | number;
+  sponsor?: SponsorDetails;
+  /** The microCCD moved, before the cost, possibly 0. Sent with `cost` if any event counts towards it. */
+  subtotal?: string | number;
+  transactionHash?: string; // Absent for validator events
   details: WalletProxyTransactionDetails;
-  total: number; // Net amount (positive for incoming, negative for outgoing)
+  /** Net of the cost. Wrong for a sponsor that is no party: some events count for whoever asks. */
+  total: string | number;
 }
 
 /**

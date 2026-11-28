@@ -11,6 +11,8 @@ const FAMILY_NOT_ENOUGH_BALANCE_NAMES = [
   "TonNotEnoughBalanceInParentAccount",
   "CardanoNotEnoughFunds",
   "NotEnoughEGLDForFees",
+  "SolanaNotEnoughSolForTokenTransfer",
+  "SolanaNotEnoughSolForRecipientTokenAccount",
 ];
 
 const NOT_ENOUGH_BALANCE_NAMES = new Set([

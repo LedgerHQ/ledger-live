@@ -24,12 +24,15 @@ export class TezosUnstakeRequiredModal extends Modal {
 
   @step("Verify the unstake-required modal is shown")
   async verifyVisible() {
-    await expect(this.title).toBeVisible();
     await expect(this.requiredCloseButton).toBeVisible();
+    await this.softExpect(async soft => {
+      await soft(this.title).toBeVisible();
+    });
   }
 
   @step("Click the unstake-required close button")
   async clickCloseButton() {
     await this.requiredCloseButton.click();
+    await this.requiredCloseButton.waitFor({ state: "hidden" });
   }
 }

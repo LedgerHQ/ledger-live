@@ -12,6 +12,8 @@ import type { BitcoinSigner, SignerContext } from "../types/signer";
 import { testContext } from "../test/coinConfig";
 import { createBridges } from "../bridge";
 import { buildLegacyTransaction, resolveWalletAccount } from "./buildTransaction";
+import wallet from "@ledgerhq/wallet-btc/index";
+import { UnsupportedMaxSpendableFilter } from "@ledgerhq/ledger-wallet-framework/errors";
 
 jest.mock("@ledgerhq/coin-zcash/network/ZCash", () => {
   throw new Error("the shielded engine was loaded");
@@ -23,7 +25,7 @@ jest.mock("@ledgerhq/wallet-btc/index", () => ({
   ...jest.requireActual("@ledgerhq/wallet-btc/index"),
   __esModule: true,
   default: {
-    estimateAccountMaxSpendable: async () => new BigNumber(100_000),
+    estimateAccountMaxSpendable: jest.fn(async () => new BigNumber(100_000)),
     broadcastTx: async () => "cc".repeat(32),
   },
 }));
@@ -111,4 +113,45 @@ describe("a transparent-only bridge", () => {
     });
     expect((operation as Operation).hash).toBe("cc".repeat(32));
   });
+});
+
+describe("max spendable filters on a transparent-only bridge", () => {
+  const { accountBridge } = createBridges(signerContext, testContext, {
+    isShieldedEnabled: () => false,
+  });
+  const estimateAccountMaxSpendable = jest.mocked(wallet.estimateAccountMaxSpendable);
+  const withPending = {
+    ...account,
+    pendingOperations: [
+      { extra: { inputRefs: [{ hash: "ab".repeat(32), outputIndex: 0, address: T1 }] } },
+    ],
+  } as unknown as ZcashAccount;
+
+  beforeEach(() => estimateAccountMaxSpendable.mockClear());
+
+  it("leaves out the outputs pending operations spend for the transparent pool", async () => {
+    await accountBridge.estimateMaxSpendable({
+      account: withPending,
+      filters: { pools: ["transparent"] },
+    });
+
+    expect(estimateAccountMaxSpendable.mock.calls[0][3]).toEqual([
+      { hash: "ab".repeat(32), outputIndex: 0 },
+    ]);
+  });
+
+  it("keeps every output without filters, as before", async () => {
+    await accountBridge.estimateMaxSpendable({ account: withPending });
+
+    expect(estimateAccountMaxSpendable.mock.calls[0][3]).toEqual([]);
+  });
+
+  it.each([{ pools: ["ironwood"] }, { private: true }])(
+    "refuses the shielded pool (%j) while the shielded engine is off",
+    async filters => {
+      await expect(
+        accountBridge.estimateMaxSpendable({ account: withPending, filters }),
+      ).rejects.toBeInstanceOf(UnsupportedMaxSpendableFilter);
+    },
+  );
 });

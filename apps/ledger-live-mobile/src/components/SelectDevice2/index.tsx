@@ -3,7 +3,6 @@ import { TrackScreen } from "@shared/analytics-react";
 import React, { useMemo, useCallback, useEffect, useState } from "react";
 import { Platform, View } from "react-native";
 import { useTranslation } from "~/context/Locale";
-import Config from "react-native-config";
 import { useSelector, useDispatch } from "~/context/hooks";
 import { discoverDevices } from "@ledgerhq/live-common/hw/index";
 import { CompositeScreenProps, useNavigation, useIsFocused } from "@react-navigation/native";
@@ -14,14 +13,11 @@ import { getEnv } from "@shared/env";
 import { NavigatorName, ScreenName } from "~/const";
 import { bleDevicesSelector } from "~/reducers/ble";
 import Touchable from "../Touchable";
-import { saveBleDeviceName, updateKnownBleDevice } from "~/actions/ble";
-import {
-  mapDiscoveredDeviceToKnownDevice,
-  saveKnownDeviceName,
-  updateKnownDevice,
-} from "~/reducers/knownDevices";
-import { setHasConnectedDevice, updateMainNavigatorVisibility } from "~/actions/appstate";
-import { setLastConnectedDevice, setReadOnlyMode } from "~/actions/settings";
+import { saveBleDeviceName } from "~/actions/ble";
+import { mapDiscoveredDeviceToKnownDevice, saveKnownDeviceName } from "~/reducers/knownDevices";
+import { updateMainNavigatorVisibility } from "~/actions/appstate";
+import { setReadOnlyMode } from "~/actions/settings";
+import { useSaveDevice } from "LLM/components/DeviceConnection";
 import { BaseComposite, StackNavigatorProps } from "../RootNavigator/types/helpers";
 import { MyLedgerNavigatorStackParamList } from "../RootNavigator/types/MyLedgerNavigator";
 import { MainNavigatorParamList } from "../RootNavigator/types/MainNavigator";
@@ -56,9 +52,8 @@ import {
 } from "~/reducers/settings";
 import { useAutoSelectDevice } from "./useAutoSelectDevice";
 import { DeviceLockedCheckDrawer } from "./DeviceLockedCheckDrawer";
-import { useMockBleDevicesScanning } from "~/transport/bleTransport/useMockBle";
-import { useMockHidDevicesDiscovery } from "~/transport/useMockHidDiscovery";
-import { makeMockDiscoveredDevice } from "~/transport/mockDiscoveredDevice";
+import { areRealBleAndUsbDisabled } from "~/transport/areRealBleAndUsbDisabled";
+import { toDiscoveredDevice } from "~/transport/toDiscoveredDevice";
 import {
   mapScannedDeviceToDisplayedAvailableDevice,
   mapHidDeviceToDisplayedAvailableDevice,
@@ -153,6 +148,7 @@ export default function SelectDevice({
   const [ProxyDevice, setProxyDevice] = useState<Device | undefined>();
 
   const dispatch = useDispatch();
+  const saveDevice = useSaveDevice();
   const isFocused = useIsFocused();
   const { bottom } = useSafeAreaInsets();
 
@@ -167,21 +163,12 @@ export default function SelectDevice({
 
   const [pairingFlowStep, setPairingFlowStep] = useState<PairingFlowStep | null>(null);
 
-  /**
-   * FIXME: Swapping between mock and real hooks is not ideal.
-   * This is a temporary workaround to keep e2e tests working until transport-level mocking is implemented
-   * directly with the DMK, which will allow real hooks to work transparently with mocked transports.
-   * Previously it was working because the discovery mocks were done directly inside the legacy HID and BLE transports.
-   * We have to progressively remove those legacy transports, hence this temporary workaround.
-   */
-  const isMockMode = Boolean(Config.MOCK || Config.DETOX);
+  const isRealBleAndUsbDisabled = areRealBleAndUsbDisabled();
   const mockServerConfig = useSelector(mockServerConfigSelector);
   const isMockServerEnabled = useSelector(isMockServerEnabledSelector);
   const mockServerDevices = useMockServerDevicesDiscovery(isFocused ? mockServerConfig : null);
 
-  const mockHidState = useMockHidDevicesDiscovery(isMockMode && !isMockServerEnabled);
-  const realHidState = useHidDevicesDiscovery(!isMockMode && !isMockServerEnabled);
-  const { hidDevices } = isMockMode ? mockHidState : realHidState;
+  const { hidDevices } = useHidDevicesDiscovery(!isRealBleAndUsbDisabled && !isMockServerEnabled);
 
   const scanningEnabled =
     isFocused &&
@@ -190,10 +177,7 @@ export default function SelectDevice({
     pairingFlowStep !== "pairing" &&
     !deviceToCheckLockedStatus;
 
-  const mockScanningState = useMockBleDevicesScanning(isMockMode && scanningEnabled);
-  const realScanningState = useBleDevicesScanning(!isMockMode && scanningEnabled);
-
-  const bleScanningState = isMockMode ? mockScanningState : realScanningState;
+  const bleScanningState = useBleDevicesScanning(!isRealBleAndUsbDisabled && scanningEnabled);
 
   const scannedDevices = bleScanningState.scannedDevices;
 
@@ -230,22 +214,14 @@ export default function SelectDevice({
   const notifyDeviceSelected = useCallback(
     (device: Device, discoveredDevice: DiscoveredDevice) => {
       dispatch(updateMainNavigatorVisibility(true));
-      dispatch(setLastConnectedDevice(device));
-      dispatch(setHasConnectedDevice(true));
+      saveDevice({
+        lastConnectedDevice: device,
+        knownDevice: mapDiscoveredDeviceToKnownDevice(discoveredDevice),
+      });
       onSelect(device, discoveredDevice);
       if (!keepReadOnlyMode) dispatch(setReadOnlyMode(false));
-      dispatch(updateKnownDevice(mapDiscoveredDeviceToKnownDevice(discoveredDevice)));
-      if (!device.wired && !isMockServerCompatDeviceId(device.deviceId)) {
-        dispatch(
-          updateKnownBleDevice({
-            id: device.deviceId,
-            name: device.deviceName ?? "",
-            modelId: device.modelId,
-          }),
-        );
-      }
     },
-    [dispatch, keepReadOnlyMode, onSelect],
+    [dispatch, keepReadOnlyMode, onSelect, saveDevice],
   );
 
   const checkDeviceStatus = useCallback(
@@ -314,7 +290,7 @@ export default function SelectDevice({
           checkDeviceStatus({
             device: displayedDevice.device,
             available: true,
-            discoveredDevice: makeMockDiscoveredDevice(displayedDevice.device),
+            discoveredDevice: toDiscoveredDevice(displayedDevice.device),
           });
         }
       }
@@ -436,7 +412,7 @@ export default function SelectDevice({
         {
           device: ProxyDevice,
           available: true,
-          discoveredDevice: makeMockDiscoveredDevice(ProxyDevice),
+          discoveredDevice: toDiscoveredDevice(ProxyDevice),
         },
         ...devices,
       ];
@@ -646,7 +622,11 @@ export default function SelectDevice({
                     {t("manager.selectDevice.title")}
                   </Text>
                   {deviceList.length > 0 && (
-                    <Touchable onPress={onAddDevicePress} {...addNewButtonEventProps}>
+                    <Touchable
+                      touchableTestID="select-device-add-new"
+                      onPress={onAddDevicePress}
+                      {...addNewButtonEventProps}
+                    >
                       <Flex flexDirection="row" alignItems="center">
                         <Text color="primary.c90" mr={3} fontWeight="semiBold">
                           {t(

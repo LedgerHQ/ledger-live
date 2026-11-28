@@ -2,10 +2,13 @@ import { TrackScreen } from "@shared/analytics-react";
 import React from "react";
 import QueuedDrawer from "LLM/components/QueuedDrawer";
 import { Flex } from "@ledgerhq/native-ui";
+import { useFeature } from "@features/platform-feature-flags";
 import ActivationFlow from "../../components/Activation/ActivationFlow";
 import { Steps } from "../../types/Activation";
 import DrawerHeader from "../../components/Synchronize/DrawerHeader";
+import { useTranslation } from "~/context/Locale";
 import useActivationDrawerModel from "./useActivationDrawerModel";
+import { LedgerSyncBottomSheet } from "./LedgerSyncBottomSheet";
 
 type ViewProps = ReturnType<typeof useActivationDrawerModel>;
 
@@ -19,6 +22,7 @@ type Props = {
 function View({
   isOpen,
   hasCustomHeader,
+  hasScrollableInstructions,
   canGoBack,
   navigateToChooseSyncMethod,
   navigateToQrCodeMethod,
@@ -31,8 +35,44 @@ function View({
   qrProcess,
   currentOption,
   setCurrentOption,
+  deviceIntentStepElement,
 }: ViewProps) {
+  const isLumenSheet = useFeature("lwmLedgerSyncDie")?.enabled === true;
+  const { t } = useTranslation();
   const CustomDrawerHeader = () => <DrawerHeader onClose={handleClose} />;
+
+  const flow = (
+    <ActivationFlow
+      navigateToChooseSyncMethod={navigateToChooseSyncMethod}
+      navigateToQrCodeMethod={navigateToQrCodeMethod}
+      navigateToWalletSyncActivationProcess={navigateToWalletSyncActivationProcess}
+      qrProcess={qrProcess}
+      currentOption={currentOption}
+      setOption={setCurrentOption}
+      onQrCodeScanned={onQrCodeScanned}
+      onCreateKey={onCreateKey}
+    />
+  );
+
+  if (isLumenSheet) {
+    return (
+      <>
+        <TrackScreen />
+        <LedgerSyncBottomSheet
+          isOpen={isOpen}
+          onClose={onCloseDrawer}
+          title={hasCustomHeader ? t("walletSync.synchronize.qrCode.title") : undefined}
+          hasBackButton={canGoBack}
+          onBack={goBackToPreviousStep}
+          enableContentPanningGesture={!hasScrollableInstructions}
+          testID="wallet-sync-activation-sheet"
+        >
+          {flow}
+        </LedgerSyncBottomSheet>
+        {deviceIntentStepElement}
+      </>
+    );
+  }
 
   return (
     <>
@@ -44,19 +84,9 @@ function View({
         hasBackButton={canGoBack}
         onBack={goBackToPreviousStep}
       >
-        <Flex maxHeight={"90%"}>
-          <ActivationFlow
-            navigateToChooseSyncMethod={navigateToChooseSyncMethod}
-            navigateToQrCodeMethod={navigateToQrCodeMethod}
-            navigateToWalletSyncActivationProcess={navigateToWalletSyncActivationProcess}
-            qrProcess={qrProcess}
-            currentOption={currentOption}
-            setOption={setCurrentOption}
-            onQrCodeScanned={onQrCodeScanned}
-            onCreateKey={onCreateKey}
-          />
-        </Flex>
+        <Flex maxHeight={"90%"}>{flow}</Flex>
       </QueuedDrawer>
+      {deviceIntentStepElement}
     </>
   );
 }

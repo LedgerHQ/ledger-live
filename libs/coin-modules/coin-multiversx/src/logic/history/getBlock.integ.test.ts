@@ -1,3 +1,4 @@
+import { API_ENDPOINT, DELEGATION_API_ENDPOINT } from "../../test/integEndpoints";
 /**
  * Integration tests — hit real MultiversX API.
  */
@@ -5,10 +6,6 @@ import { ESDT_SYSTEM_SC_BECH32 } from "../../constants";
 import { createNetworkApi } from "../../network/api";
 import { getBlock } from "./getBlock";
 import { getBlockInfo } from "./getBlockInfo";
-
-const API_ENDPOINT = process.env.MULTIVERSX_API_ENDPOINT ?? "https://api.multiversx.com";
-const DELEGATION_API_ENDPOINT =
-  process.env.MULTIVERSX_DELEGATION_API_ENDPOINT ?? "https://delegation-api.multiversx.com";
 
 const NATIVE = { type: "native" };
 const WEGLD_SWAP_CONTRACT = "erd1qqqqqqqqqqqqqpgqhe8t5jewej70zupmh44jurgn29psua5l2jps3ntjj3";

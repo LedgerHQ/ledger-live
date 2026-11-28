@@ -20,9 +20,9 @@ export class ModularAssetDialog extends Dialog {
     await this.dialogOverlay.waitFor({ state: "attached" });
   }
 
-  @step("Validate modular asset dialog is visible")
-  async isModularAssetDialogVisible(): Promise<boolean> {
-    return await this.modularAssetSelectorContainer.isVisible();
+  @step("Verify the asset selection is shown")
+  async checkAssetSelectionVisible() {
+    await expect(this.modularAssetSelectorContainer).toBeVisible();
   }
 
   @step("Validate asset dialog elements")

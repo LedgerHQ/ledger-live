@@ -84,7 +84,7 @@ features/flow/pay-balance/src/
 ├── logic/                           # aggregateBalance.ts, resolveSelection.ts, ...: pure functions
 ├── state/
 │   ├── slice.ts                     # payCardBalanceSlice: the selected filter
-│   ├── selectors.ts                 # root typed as { payCardBalance: PayCardBalanceState }
+│   ├── selectors.ts                 # predates slice-selectors: move into the slice when touched
 │   ├── constants.ts
 │   ├── types.ts
 │   └── index.ts                     # exported as @features/flow-pay-balance/state

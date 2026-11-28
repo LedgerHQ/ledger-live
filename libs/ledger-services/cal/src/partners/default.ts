@@ -161,6 +161,15 @@ export const SWAP_DATA_CDN: Record<string, AdditionalProviderConfig> = {
     termsOfUseUrl: "https://li.fi/legal/terms-and-conditions/",
     type: "CEX",
   },
+  lifi_intents: {
+    type: "CEX",
+    useInExchangeApp: true,
+    displayName: "LI.FI Intents",
+    termsOfUseUrl: "https://li.fi/legal/terms-and-conditions",
+    supportUrl: "https://help.li.fi",
+    mainUrl: "https://li.fi/",
+    needsKYC: false,
+  },
   uniswap: {
     type: "DEX",
     useInExchangeApp: false,

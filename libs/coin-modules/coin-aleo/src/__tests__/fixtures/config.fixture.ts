@@ -37,29 +37,3 @@ export const getMockedConfig = (networkType: "mainnet" | "testnet"): AleoCoinCon
     status: { type: "active" },
   };
 };
-
-/**
- * Real testnet config for *.integ.test.ts files, pointed at the live Aleo testnet node
- * and SDK endpoints. Pass `overrides` for scenario-specific flags (e.g. `enableTokens`).
- */
-export const getTestnetIntegConfig = (overrides?: Partial<AleoCoinConfig>): AleoCoinConfig => ({
-  status: { type: "active" },
-  name: "Aleo (Testnet)",
-  unit: { name: "Aleo", code: "ALEO", magnitude: 6 },
-  networkType: "testnet",
-  defaultValidator: "aleo1validator000000000000000000000000000000000000000000000000q",
-  apiUrls: {
-    node: "https://aleo.coin.ledger.com",
-    sdk: "https://aleo-backend.api.live.ledger.com/network/testnet",
-  },
-  feeByTransactionType: mockFeeByTransactionType,
-  feeSafetyMultiplier: 1,
-  isFeeSponsored: true,
-  enableTokens: false,
-  enableStaking: false,
-  useEncryptedProve: false,
-  recordPickingStrategy: "manual",
-  liveBlockHeightPollMs: 10_000,
-  maxUnbondingSyncAttempts: 3,
-  ...overrides,
-});

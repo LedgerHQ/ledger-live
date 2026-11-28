@@ -3,6 +3,7 @@ import {
   applyAddressEntryIfCurrent,
   createValidatingAddressEntryState,
   EMPTY_ADDRESS_ENTRY_STATE,
+  keepEnsDisclaimerWhileValidating,
   resolveAddressEntryState,
 } from "./state";
 
@@ -46,6 +47,7 @@ describe("addressEntryState", () => {
       value: "0xabc",
       resolvedAddress: null,
       inputMethod: "manual",
+      keepsEnsDisclaimer: false,
     });
     expect(EMPTY_ADDRESS_ENTRY_STATE).toMatchObject({
       status: "empty",
@@ -63,5 +65,45 @@ describe("addressEntryState", () => {
 
     expect(applyAddressEntryIfCurrent(current, next, "0xabc")).toEqual(next);
     expect(applyAddressEntryIfCurrent(current, next, "0xstale")).toEqual(current);
+  });
+
+  describe("keepEnsDisclaimerWhileValidating", () => {
+    const validating = createValidatingAddressEntryState("vitalik.et", "manual");
+    const resolvedEns = resolveAddressEntryState("vitalik.eth", "manual", {
+      status: "valid",
+      resolvedAddress,
+      isDomain: true,
+    });
+    const unknownEns = resolveAddressEntryState("ledgerliv.eth", "manual", {
+      status: "domain_not_found",
+    });
+    const manualAddress = resolveAddressEntryState("0xabc", "manual", {
+      status: "valid",
+      resolvedAddress,
+      isDomain: false,
+    });
+
+    it.each([
+      ["a resolved ENS name", resolvedEns],
+      ["an unknown ENS name", unknownEns],
+      ["an ENS name being validated", { ...validating, keepsEnsDisclaimer: true }],
+    ])("should keep the ENS disclaimer when the previous entry was %s", (_, previousEntry) => {
+      expect(keepEnsDisclaimerWhileValidating(previousEntry, validating)).toEqual({
+        ...validating,
+        keepsEnsDisclaimer: true,
+      });
+    });
+
+    it.each([
+      ["a regular address", manualAddress],
+      ["empty", EMPTY_ADDRESS_ENTRY_STATE],
+      ["a regular address being validated", validating],
+    ])("should not keep the ENS disclaimer when the previous entry was %s", (_, previousEntry) => {
+      expect(keepEnsDisclaimerWhileValidating(previousEntry, validating)).toEqual(validating);
+    });
+
+    it("should leave non-validating entries untouched", () => {
+      expect(keepEnsDisclaimerWhileValidating(resolvedEns, manualAddress)).toBe(manualAddress);
+    });
   });
 });

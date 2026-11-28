@@ -6,6 +6,7 @@ import BigNumber from "bignumber.js";
 import type { AccountLike } from "@ledgerhq/types-live";
 import { getAccountCurrency } from "@ledgerhq/ledger-wallet-framework/account/helpers";
 import { useSendAmount } from "@features/platform-market-countervalues";
+import { sendFeatures } from "@ledgerhq/live-common/bridge/descriptor/send/features";
 import { Trans, useTranslation } from "~/context/Locale";
 import { counterValueCurrencySelector } from "~/reducers/settings";
 import LText from "~/components/LText/index";
@@ -42,8 +43,9 @@ export default function AmountInput({
   const { t } = useTranslation();
   const fiatCurrency = useSelector(counterValueCurrencySelector);
   const cryptoUnit = useAccountUnit(account);
+  const cryptoCurrency = getAccountCurrency(account);
   const { fiatAmount, fiatUnit, calculateCryptoAmount } = useSendAmount({
-    cryptoCurrency: getAccountCurrency(account),
+    cryptoCurrency,
     fiatCurrency,
     cryptoAmount,
   });
@@ -51,9 +53,9 @@ export default function AmountInput({
   const onChangeFiatAmount = useCallback(
     (fiatAmount: BigNumber) => {
       const amount = calculateCryptoAmount(fiatAmount);
-      onChange(amount);
+      onChange(sendFeatures.roundAmount(cryptoCurrency, amount));
     },
-    [onChange, calculateCryptoAmount],
+    [onChange, calculateCryptoAmount, cryptoCurrency],
   );
   const onCryptoFieldFocus = useCallback(() => {
     setActive("crypto");

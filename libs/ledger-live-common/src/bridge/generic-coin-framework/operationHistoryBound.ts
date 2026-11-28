@@ -146,7 +146,9 @@ export const DEFAULT_MAX_OPERATIONS = 200_000;
 const DEFAULT_OPERATION_HISTORY_CONFIG: OperationHistoryBoundConfig = Object.freeze({
   maxOperations: DEFAULT_MAX_OPERATIONS,
   pageSize: undefined,
-  networks: {},
+  networks: {
+    solana: { maxOperations: 1000, pageSize: 200 },
+  },
 });
 
 export const operationHistoryConfig: ConfigSchema = {

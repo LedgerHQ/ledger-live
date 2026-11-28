@@ -16,6 +16,8 @@ export type DelegationCell = Readonly<{
   value: string;
   /** Hidden when `discreet` is on. */
   sensitive?: boolean;
+  /** Shown on hover, e.g. the exact amount behind a rounded value. */
+  tooltip?: string;
 }>;
 
 export type DelegationAction = Readonly<{

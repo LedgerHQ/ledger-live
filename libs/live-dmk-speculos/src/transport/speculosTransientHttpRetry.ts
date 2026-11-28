@@ -2,7 +2,7 @@ import { log } from "@ledgerhq/logs";
 
 const RETRYABLE_HTTP_STATUSES = new Set([408, 425, 429, 500, 502, 503, 504]);
 
-const RETRYABLE_AXIOS_NETWORK_CODES = new Set([
+const RETRYABLE_NETWORK_CODES = new Set([
   "ECONNABORTED",
   "ECONNRESET",
   "ETIMEDOUT",
@@ -10,6 +10,8 @@ const RETRYABLE_AXIOS_NETWORK_CODES = new Set([
   "ECONNREFUSED",
   "EPIPE",
   "ERR_BAD_RESPONSE",
+  "UND_ERR_SOCKET",
+  "UND_ERR_CONNECT_TIMEOUT",
 ]);
 
 export type TransientHttpRetryOptions = {
@@ -21,7 +23,10 @@ function sleep(ms: number): Promise<void> {
   return new Promise(resolve => setTimeout(resolve, ms));
 }
 
-/** Walks error.cause and common wrapper fields to detect Axios / transient HTTP failures from DMK. */
+/**
+ * Walks error.cause and common wrapper fields to detect transient HTTP failures from DMK,
+ * raised by Axios or by the fetch-based `DmkNetworkClientError`.
+ */
 export function isRetryableSpeculosHttpError(error: unknown): boolean {
   const visit = (e: unknown, depth: number): boolean => {
     if (depth > 10 || e == null) return false;
@@ -30,16 +35,20 @@ export function isRetryableSpeculosHttpError(error: unknown): boolean {
 
     const obj = e as Record<string, unknown>;
 
+    if (typeof obj.code === "string" && RETRYABLE_NETWORK_CODES.has(obj.code)) return true;
+
     if (obj.isAxiosError === true) {
       const status = (obj.response as { status?: number } | undefined)?.status;
       if (status != null && RETRYABLE_HTTP_STATUSES.has(status)) return true;
 
-      const code = obj.code;
-      if (typeof code === "string" && RETRYABLE_AXIOS_NETWORK_CODES.has(code)) return true;
-
       // Node often uses ECONNRESET; some stacks only surface this on the Axios message.
       const msg = String((obj as { message?: string }).message ?? "");
       if (msg.includes("socket hang up")) return true;
+    }
+
+    if (obj.name === "DmkNetworkClientError") {
+      if (obj.isTimeout === true) return true;
+      if (typeof obj.status === "number" && RETRYABLE_HTTP_STATUSES.has(obj.status)) return true;
     }
 
     const errLike = e as Error & { cause?: unknown };

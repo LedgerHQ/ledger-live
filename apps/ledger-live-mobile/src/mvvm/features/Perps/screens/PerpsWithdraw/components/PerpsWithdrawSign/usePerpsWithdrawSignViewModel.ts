@@ -1,5 +1,7 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import BigNumber from "bignumber.js";
 import { getAccountCurrency } from "@ledgerhq/live-common/account/index";
+import { useBridgeSync } from "@ledgerhq/live-common/bridge/react/index";
 import type { AppResult } from "@ledgerhq/live-common/hw/actions/app";
 import type { Device } from "@ledgerhq/live-common/hw/actions/types";
 import type { PerpsWithdrawResult } from "@ledgerhq/live-common/wallet-api/Perps/server";
@@ -9,10 +11,20 @@ import {
 } from "@ledgerhq/live-common/wallet-api/Perps/withdraw/execute";
 import { getWithdrawRequestId } from "@ledgerhq/live-common/wallet-api/Perps/withdraw/request";
 import { PERPS_WITHDRAW_SIGNING_APP_NAME } from "@ledgerhq/live-common/wallet-api/Perps/withdraw/sign";
+import { getPerpsWithdrawHistoryUpdate } from "@ledgerhq/live-common/wallet-api/Perps/withdraw/history";
+import {
+  getWithdrawTargetBalance,
+  waitForWithdrawBalanceReflected,
+  WITHDRAW_BALANCE_REFLECTION_SYNC_PRIORITY,
+} from "@ledgerhq/live-common/wallet-api/Perps/withdraw/balanceReflection";
+import { updateAccountWithUpdater } from "~/actions/accounts";
+import { useDispatch, useSelector } from "~/context/hooks";
+import { accountSelector } from "~/reducers/accounts";
 import { track } from "@shared/analytics";
 import type { SetHeaderOptionsRequest } from "~/components/SelectDevice2";
 import { useAppDeviceAction } from "~/hooks/deviceActions";
-import { isUserRefusal } from "LLM/features/Perps/utils/isUserRefusal";
+import { isUserRefusal } from "@ledgerhq/live-common/wallet-api/Perps/isUserRefusal";
+import { isBroadcastDisabled } from "LLM/features/Perps/utils/isBroadcastDisabled";
 import type { PerpsWithdrawSummaryParams } from "../PerpsWithdrawSummary";
 
 const ignoreHeaderOptions = (_request: SetHeaderOptionsRequest) => undefined;
@@ -63,6 +75,16 @@ export function usePerpsWithdrawSignViewModel({
 }: PerpsWithdrawSignProps): PerpsWithdrawSignViewModel {
   const [step, setStep] = useState<PerpsWithdrawSignStep>({ kind: "connect" });
   const [attempt, setAttempt] = useState(0);
+  const dispatch = useDispatch();
+  const sync = useBridgeSync();
+  const storedSourceAccount = useSelector(state =>
+    accountSelector(state, { accountId: sourceAccount.id }),
+  );
+  // Read while waiting for the withdraw to show up in the balance, so it must stay current.
+  const sourceBalanceRef = useRef((storedSourceAccount ?? sourceAccount).spendableBalance);
+  useEffect(() => {
+    if (storedSourceAccount) sourceBalanceRef.current = storedSourceAccount.spendableBalance;
+  }, [storedSourceAccount]);
   const action = useAppDeviceAction();
   const request = useMemo(() => ({ appName: PERPS_WITHDRAW_SIGNING_APP_NAME }), []);
 
@@ -86,6 +108,7 @@ export function usePerpsWithdrawSignViewModel({
   const handleDeviceResult = useCallback(
     async ({ device }: AppResult) => {
       setStep({ kind: "sign", device });
+      const balanceBeforeWithdraw = sourceBalanceRef.current;
       try {
         const result = await executePerpsWithdraw({
           requestId: requestIdRef.current,
@@ -99,10 +122,47 @@ export function usePerpsWithdrawSignViewModel({
           },
           targetCurrency: getAccountCurrency(destinationAccount).ticker,
           track,
+          broadcastDisabled: isBroadcastDisabled(),
           onSigned: () => {
             if (!isLeavingRef.current) setStep({ kind: "submitting" });
           },
         });
+        // Recorded even when the sheet was closed meanwhile: the withdraw went through.
+        if (result.swapId) {
+          dispatch(
+            updateAccountWithUpdater(
+              getPerpsWithdrawHistoryUpdate({
+                swapId: result.swapId,
+                sourceAccount,
+                destinationAccount,
+                amountFrom: new BigNumber(quoteParams.amount),
+                amountTo: quote.amountTo,
+                payoutNetworkFees: quote.payoutNetworkFees,
+              }),
+            ),
+          );
+        }
+        // Stays on the submitting step until the balance shows the withdraw, so the next
+        // withdraw never offers money that already left. Nothing to wait for when the
+        // withdraw was not submitted (broadcast disabled).
+        if (result.swapId) {
+          await waitForWithdrawBalanceReflected({
+            targetBalance: getWithdrawTargetBalance(
+              sourceAccount,
+              balanceBeforeWithdraw,
+              quoteParams.amount,
+            ),
+            getBalance: () => sourceBalanceRef.current,
+            syncAccount: () =>
+              sync({
+                type: "SYNC_ONE_ACCOUNT",
+                accountId: sourceAccount.id,
+                priority: WITHDRAW_BALANCE_REFLECTION_SYNC_PRIORITY,
+                reason: "perps-withdraw",
+              }),
+            isCancelled: () => isLeavingRef.current,
+          });
+        }
         leave(() => onDone(result));
       } catch (e) {
         if (isLeavingRef.current) return;
@@ -114,7 +174,17 @@ export function usePerpsWithdrawSignViewModel({
         setStep({ kind: "error", error, canRetry: isPerpsWithdrawRetryable(error) });
       }
     },
-    [destinationAccount, leave, onDone, onRefused, quote, quoteParams.amount, sourceAccount],
+    [
+      destinationAccount,
+      dispatch,
+      leave,
+      onDone,
+      onRefused,
+      quote,
+      quoteParams.amount,
+      sourceAccount,
+      sync,
+    ],
   );
 
   const handleDeviceError = useCallback(

@@ -44,7 +44,9 @@ const createTransaction = (): CardanoTransaction => {
   };
 };
 
-const estimateMaxSpendable = ({ account }) => {
+const estimateMaxSpendable: AccountBridge<CardanoTransaction>["estimateMaxSpendable"] = async ({
+  account,
+}) => {
   return account.balance;
 };
 

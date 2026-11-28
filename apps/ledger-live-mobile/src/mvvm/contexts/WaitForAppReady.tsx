@@ -5,9 +5,14 @@ import { useSelector } from "~/context/hooks";
 import LoadingApp from "~/components/LoadingApp";
 import { useHideSplashScreen } from "../features/LaunchScreen/useHideSplashScreen";
 import { useWait } from "../hooks/useWait";
-import { logStartupEvent } from "../utils/logStartupTime";
+import { logStartupEvent, startupEvents } from "../utils/logStartupTime";
 
 const MAX_WAIT = 1_000;
+
+// Once per launch: the startup events show which condition was met last, or that the wait timed out.
+function logWhenFirstMet(met: boolean, event: string) {
+  if (met && !startupEvents.some(e => e.event === event)) logStartupEvent(event);
+}
 
 export function WaitForAppReady({
   children,
@@ -20,8 +25,13 @@ export function WaitForAppReady({
   const remoteFlagsReady = useSelector(selectRemoteFlagsReady);
   const isLoaded = currencyInitialized && !pendingAvailabilityCheck && remoteFlagsReady;
 
+  logWhenFirstMet(currencyInitialized, "WaitForAppReady currencies ready");
+  logWhenFirstMet(remoteFlagsReady, "WaitForAppReady remote flags ready");
+  logWhenFirstMet(!pendingAvailabilityCheck, "WaitForAppReady availability checked");
+
   const timedOut = useWait<boolean>(resolve => setTimeout(() => resolve(true), MAX_WAIT)) ?? false;
   const showsChildren = timedOut || isLoaded;
+  logWhenFirstMet(timedOut && !isLoaded, "WaitForAppReady timed out");
 
   // The unavailable screen replaces the app, so the app never hides the splash itself.
   useHideSplashScreen(showsChildren && availability.status === "unavailable");

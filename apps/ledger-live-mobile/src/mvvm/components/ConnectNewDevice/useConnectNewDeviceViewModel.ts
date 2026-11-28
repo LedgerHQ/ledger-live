@@ -5,31 +5,27 @@ import {
   connectNewDevice,
   ConnectNewDeviceUIStateTypes,
   useDeviceManagementKit,
-  type ConnectNewDeviceUIState,
 } from "@ledgerhq/live-dmk-mobile";
-import type { AppPlatform } from "@ledgerhq/live-common/platform/types";
-import { useSaveConnectedDevice } from "LLM/components/DeviceConnection";
+import {
+  useCheckIsNewConnectedDevice,
+  useCheckIsNewDevice,
+  useSaveConnectedDevice,
+} from "LLM/components/DeviceConnection";
+import {
+  getConnectedDeviceTrackingProperties,
+  trackDeviceConnected,
+} from "LLM/components/DeviceIntentExecutor/utils/trackDeviceIntent";
 import { useSelector } from "~/context/hooks";
 import { isMockServerEnabledSelector } from "~/reducers/settings";
 import type {
-  ConnectNewDeviceErrorUIState,
   ConnectNewDeviceNonErrorUIState,
   ConnectNewDeviceProps,
+  ConnectNewDeviceViewProps,
 } from "./types";
+import { useConnectNewDeviceTracking } from "./useConnectNewDeviceTracking";
+import { isErrorState } from "./utils/isErrorState";
 
 const LOG_TYPE = "ConnectNewDevice";
-
-const ERROR_STATE_TYPES = new Set<ConnectNewDeviceUIState["type"]>([
-  ConnectNewDeviceUIStateTypes.DiscoveryError,
-  ConnectNewDeviceUIStateTypes.ConnectionError,
-  ConnectNewDeviceUIStateTypes.UnknownError,
-]);
-
-export function isErrorState(
-  state: ConnectNewDeviceUIState,
-): state is ConnectNewDeviceErrorUIState {
-  return ERROR_STATE_TYPES.has(state.type);
-}
 
 // Shown until the use case emits its first state.
 const INITIAL_STATE: ConnectNewDeviceNonErrorUIState = {
@@ -39,38 +35,31 @@ const INITIAL_STATE: ConnectNewDeviceNonErrorUIState = {
   showDeviceNotFound: false,
 };
 
-type ViewState = {
-  state: ConnectNewDeviceUIState;
-  /** Shown under the error bottom sheet. */
-  lastNonErrorState: ConnectNewDeviceNonErrorUIState;
-};
-
-export type ConnectNewDeviceViewModel = ViewState & {
-  platform: Exclude<AppPlatform, "desktop">;
-  onDeviceNotFound?: () => void;
-  onCloseErrorSheet: () => void;
-};
+type ViewState = Pick<ConnectNewDeviceViewProps, "state" | "lastNonErrorState">;
 
 export function useConnectNewDeviceViewModel({
+  sourceFlow,
   onConnected,
   onDeviceNotFound,
   onClose,
   delays,
-}: ConnectNewDeviceProps): ConnectNewDeviceViewModel {
+}: ConnectNewDeviceProps): ConnectNewDeviceViewProps {
   const platform = Platform.OS === "ios" ? "ios" : "android";
   const dmk = useDeviceManagementKit();
   const isMockServerEnabled = useSelector(isMockServerEnabledSelector);
-  const saveConnectedDevice = useSaveConnectedDevice({ isNewDevice: true });
+  const saveConnectedDevice = useSaveConnectedDevice();
+  const checkIsNewConnectedDevice = useCheckIsNewConnectedDevice();
+  const checkIsNewDevice = useCheckIsNewDevice();
   const [viewState, setViewState] = useState<ViewState>({
     state: INITIAL_STATE,
     lastNonErrorState: INITIAL_STATE,
   });
 
   // The flow starts once per mount: callers can pass new callbacks without restarting it.
-  const callbacksRef = useRef({ onConnected, onClose });
+  const callbacksRef = useRef({ onConnected, onClose, sourceFlow, checkIsNewConnectedDevice });
   useEffect(() => {
-    callbacksRef.current = { onConnected, onClose };
-  }, [onConnected, onClose]);
+    callbacksRef.current = { onConnected, onClose, sourceFlow, checkIsNewConnectedDevice };
+  }, [onConnected, onClose, sourceFlow, checkIsNewConnectedDevice]);
   const initialDelaysRef = useRef(delays);
 
   if (!dmk) {
@@ -82,7 +71,16 @@ export function useConnectNewDeviceViewModel({
     const subscription = connectNewDevice({
       dmk,
       onConnected: result => {
-        saveConnectedDevice(result.connectedDevice);
+        const { connectedDevice } = result;
+        // Before the save, which makes every device known.
+        trackDeviceConnected({
+          sourceFlow: callbacksRef.current.sourceFlow,
+          ...getConnectedDeviceTrackingProperties(connectedDevice),
+          extraProperties: {
+            isNewDevice: callbacksRef.current.checkIsNewConnectedDevice(connectedDevice),
+          },
+        });
+        saveConnectedDevice(connectedDevice);
         callbacksRef.current.onConnected(result);
       },
       onClose: () => callbacksRef.current.onClose(),
@@ -101,6 +99,7 @@ export function useConnectNewDeviceViewModel({
   }, [dmk, isMockServerEnabled, saveConnectedDevice]);
 
   const { state } = viewState;
+  useConnectNewDeviceTracking(state, { reportsOutcome: true });
 
   const onCloseErrorSheet = useCallback(() => {
     switch (state.type) {
@@ -122,5 +121,6 @@ export function useConnectNewDeviceViewModel({
     platform,
     onDeviceNotFound,
     onCloseErrorSheet,
+    checkIsNewDevice,
   };
 }

@@ -19,9 +19,7 @@ import type {
 import { ASSET_DETAIL_TEST_IDS } from "LLM/features/AssetDetail/testIds";
 import type { RangeKey } from "../../utils/rangeMapping";
 import { ChartOptions } from "./ChartOptions";
-
-/** Figma asset-detail chart height (343 × 208). Width follows the screen inset. */
-export const ASSET_DETAIL_CHART_HEIGHT = 208;
+import { ASSET_DETAIL_CHART_HEIGHT } from "./constants";
 
 type Range = Readonly<{ label: string; value: RangeKey }>;
 

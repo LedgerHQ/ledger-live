@@ -1,5 +1,45 @@
 # @features/flow-fear-and-greed
 
+## 0.6.1
+
+### Patch Changes
+
+- Updated dependencies [[`74c967e`](https://github.com/LedgerHQ/ledger-live/commit/74c967eb7dda848648df0db683910140b5d6e906)]:
+  - @shared/analytics@0.5.0
+
+## 0.6.1-next.0
+
+### Patch Changes
+
+- Updated dependencies [[`74c967e`](https://github.com/LedgerHQ/ledger-live/commit/74c967eb7dda848648df0db683910140b5d6e906)]:
+  - @shared/analytics@0.5.0-next.0
+
+## 0.6.0
+
+### Minor Changes
+
+- [#24616](https://github.com/LedgerHQ/ledger-live/pull/24616) [`0413ec3`](https://github.com/LedgerHQ/ledger-live/commit/0413ec3d26b430e0e39a49c3f19cbead2317f855) Thanks [@ysitbon](https://github.com/ysitbon)! - Import the web view by its platform-neutral specifier and drop the package's platform suffix waiver.
+
+## 0.6.0-next.0
+
+### Minor Changes
+
+- [#24616](https://github.com/LedgerHQ/ledger-live/pull/24616) [`0413ec3`](https://github.com/LedgerHQ/ledger-live/commit/0413ec3d26b430e0e39a49c3f19cbead2317f855) Thanks [@ysitbon](https://github.com/ysitbon)! - Import the web view by its platform-neutral specifier and drop the package's platform suffix waiver.
+
+## 0.5.2
+
+### Patch Changes
+
+- Updated dependencies [[`934970a`](https://github.com/LedgerHQ/ledger-live/commit/934970adec67ed88f1d546d03b1bb555cbfd128f)]:
+  - @domain/api-market-index-fear-and-greed@0.5.0
+
+## 0.5.2-next.0
+
+### Patch Changes
+
+- Updated dependencies [[`934970a`](https://github.com/LedgerHQ/ledger-live/commit/934970adec67ed88f1d546d03b1bb555cbfd128f)]:
+  - @domain/api-market-index-fear-and-greed@0.5.0-next.0
+
 ## 0.5.1
 
 ### Patch Changes

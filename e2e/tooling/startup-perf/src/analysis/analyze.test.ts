@@ -1,0 +1,247 @@
+import assert from "node:assert/strict";
+import { describe, it } from "node:test";
+import { isInconclusiveVerdict } from "../../ci/step.mts";
+import { debugBase, failedRows, pairUp, runInfoOf, summarise, type Row } from "./analyze.ts";
+import { comparison, launch } from "./fake-samples.ts";
+
+const GATE = { preset: "custom", thresholdMs: 100 };
+function rowOf(rows: Row[], measure: (name: string) => boolean): Row {
+  const row = rows.find(r => measure(r.measure));
+  assert.ok(row, "no such row");
+  return row;
+}
+const debugRow = (rows: Row[]) => rowOf(rows, name => name === "Debug screen");
+
+describe("pairUp", () => {
+  it("pairs A and B of the same round and drops warm-ups, failures and unpaired launches", () => {
+    const samples = [
+      launch({ side: "A", round: -1, warmup: true, appStartupTime: 5000 }),
+      launch({ side: "A", round: 0, appStartupTime: 1000 }),
+      launch({ side: "B", round: 0, appStartupTime: 1100 }),
+      launch({ side: "A", round: 1, appStartupTime: 1000 }),
+      launch({ side: "B", round: 1, ok: false, appStartupTime: 900 }),
+      launch({ side: "A", round: 2, appStartupTime: 1000 }),
+    ];
+    assert.deepEqual(
+      pairUp(samples, s => s.appStartupTime),
+      [{ platform: "android", scenario: "accounts", phase: 0, A: 1000, B: 1100 }],
+    );
+  });
+});
+
+describe("runInfoOf", () => {
+  const options = { preset: "prod-vs-develop", thresholdMs: 100, labelA: "a (1)", labelB: "b (2)" };
+  it("describes the run with its planned pairs", () => {
+    assert.deepEqual(runInfoOf(options, "20"), { ...options, pairs: 20 });
+  });
+  it("has no planned pairs when none or no number was given", () => {
+    assert.equal(runInfoOf(options, undefined).pairs, null);
+    assert.equal(runInfoOf(options, "x").pairs, null);
+  });
+});
+
+describe("failedRows", () => {
+  it("fails without rows", () => {
+    assert.equal(failedRows([]), true);
+  });
+  for (const verdict of ["FAIL: B is slower", "Not detected [0, 0]", "Not enough pairs"]) {
+    it(`fails on "${verdict}"`, () => {
+      assert.equal(failedRows([{ verdict: "PASS" }, { verdict }]), true);
+    });
+  }
+  for (const verdict of [
+    "PASS (inconclusive: [50, 150] contains 100 ms)",
+    "Detected: B is 300 ms slower",
+    "OK: resolves about ±20 ms",
+  ]) {
+    it(`passes on "${verdict}"`, () => {
+      assert.equal(failedRows([{ verdict }]), false);
+    });
+  }
+});
+
+describe("debugBase", () => {
+  it("is js when the Debug value starts at the first JS import", () => {
+    assert.equal(debugBase(launch({ side: "A", appStartupTime: 700, jsStartOffset: 5 })), "js");
+  });
+  it("is process when the first JS import comes well after its start", () => {
+    const s = launch({ side: "A", appStartupTime: 1500, jsStartOffset: 800 });
+    assert.equal(debugBase(s), "process");
+  });
+  it("is null without startup events", () => {
+    const s = launch({ side: "A", appStartupTime: 1000 });
+    delete s.events;
+    assert.equal(debugBase(s), null);
+  });
+});
+
+describe("summarise", () => {
+  it("passes when B is as fast as A", () => {
+    const rows = summarise(comparison({ deltaMs: 0 }), GATE);
+    assert.deepEqual(
+      rows.map(r => [r.measure, r.verdict]),
+      [["Debug screen", "PASS"]],
+    );
+  });
+
+  it("fails when B is slower than A by more than the threshold", () => {
+    const row = debugRow(summarise(comparison({ deltaMs: 200 }), GATE));
+    assert.equal(row.hl?.estimate, 200);
+    assert.equal(row.verdict, "FAIL: B is slower by more than 100 ms");
+    assert.equal(isInconclusiveVerdict(row.verdict), false);
+  });
+
+  it("takes the device bias out of B − A", () => {
+    const row = debugRow(summarise(comparison({ deltaMs: 0, secondDeviceSlowerByMs: 300 }), GATE));
+    assert.equal(row.instanceBias, 300);
+    assert.deepEqual(row.hl, { estimate: 0, low: 0, high: 0 });
+    assert.equal(row.verdict, "PASS");
+  });
+
+  const noisy = (slowdowns: number[]) => {
+    const samples = comparison({ pairs: 12, deltaMs: 0 });
+    samples
+      .filter(s => s.side === "B")
+      .forEach(
+        (s, i) => (s.appStartupTime = (s.appStartupTime ?? 0) + slowdowns[i % slowdowns.length]),
+      );
+    return debugRow(summarise(samples, GATE));
+  };
+
+  it("gates on the estimate and says when the interval holds the threshold", () => {
+    const row = noisy([-60, 140, 40, 230, 90, 180]);
+    assert.deepEqual(row.hl, { estimate: 110, low: 40, high: 180 });
+    assert.equal(
+      row.verdict,
+      "FAIL: B is slower by more than 100 ms (inconclusive: [40, 180] contains 100 ms)",
+    );
+    assert.ok(isInconclusiveVerdict(row.verdict));
+  });
+
+  it("passes an estimate under the threshold even when the interval holds it", () => {
+    const row = noisy([-100, 100, 0, 190, 50, 140]);
+    assert.deepEqual(row.hl, { estimate: 70, low: 0, high: 140 });
+    assert.equal(row.verdict, "PASS (inconclusive: [0, 140] contains 100 ms)");
+    assert.ok(isInconclusiveVerdict(row.verdict));
+  });
+
+  it("gives no verdict without pairs on both sides of the device swap", () => {
+    const row = debugRow(summarise(comparison({ deltaMs: 0, phases: [0] }), GATE));
+    assert.equal(
+      row.verdict,
+      "Not enough pairs: 3 before the device swap, 0 after (3 needed on each side)",
+    );
+    assert.equal(failedRows([row]), true);
+  });
+
+  it("gives no verdict below three pairs on each side of the device swap", () => {
+    const row = debugRow(summarise(comparison({ pairs: 4, deltaMs: 0 }), GATE));
+    assert.equal(
+      row.verdict,
+      "Not enough pairs: 2 before the device swap, 2 after (3 needed on each side)",
+    );
+  });
+
+  it("does not rest the device bias on a phase of one pair", () => {
+    const pair = (phase: number, round: number, a: number, b: number) => [
+      launch({ side: "A", phase, round, appStartupTime: a }),
+      launch({ side: "B", phase, round, appStartupTime: b }),
+    ];
+    const samples = [
+      ...Array.from({ length: 9 }, (_, round) => pair(0, round, 1000, 1000)).flat(),
+      ...pair(1, 0, 1400, 1000),
+    ];
+    const row = debugRow(summarise(samples, { preset: "known-regression", thresholdMs: 100 }));
+    assert.equal(
+      row.verdict,
+      "Not enough pairs: 9 before the device swap, 1 after (3 needed on each side)",
+    );
+    assert.equal(failedRows([row]), true);
+  });
+
+  it("still gives a verdict with three pairs on one side of the device swap", () => {
+    const pair = (phase: number, round: number, b: number) => [
+      launch({ side: "A", phase, round, appStartupTime: 1000 }),
+      launch({ side: "B", phase, round, appStartupTime: b }),
+    ];
+    const samples = [
+      ...[990, 1000, 1010].map((b, round) => pair(0, round, b)).flat(),
+      ...[980, 995, 1000, 1005, 1020, 990, 1010, 1000, 985]
+        .map((b, round) => pair(1, round, b))
+        .flat(),
+    ];
+    const row = debugRow(summarise(samples, GATE));
+    assert.deepEqual(row.pairsPerPhase, [3, 9]);
+    assert.match(row.verdict, /^PASS/);
+  });
+
+  it("leaves out a launch that counted from the first JS import", () => {
+    const samples = comparison({ pairs: 8, deltaMs: 0 });
+    const firstA = samples.find(s => s.side === "A");
+    assert.ok(firstA?.events);
+    firstA.events["Before js imports"].time = 0;
+    const row = debugRow(summarise(samples, GATE));
+    assert.deepEqual(row.jsStartLaunches, { A: 1, B: 0 });
+    assert.equal(row.pairs, 7);
+  });
+
+  it("fails as not enough pairs when a build counts every launch from the first JS import", () => {
+    for (const both of [false, true]) {
+      const js = { jsStartOffset: 0 };
+      const row = debugRow(
+        summarise(comparison({ deltaMs: 0, a: js, ...(both ? { b: js } : {}) }), GATE),
+      );
+      assert.deepEqual(row.bases, { A: "js", B: both ? "js" : "process" });
+      assert.deepEqual(row.jsStartLaunches, { A: 6, B: both ? 6 : 0 });
+      assert.equal(row.pairs, 0);
+      assert.equal(row.verdict, "Not enough pairs");
+      assert.equal(failedRows([row]), true);
+    }
+  });
+
+  it("fails as not enough pairs when both builds count most launches from the first JS import", () => {
+    const samples = comparison({ pairs: 12, deltaMs: 0 });
+    for (const s of samples) {
+      if (s.round < 4 && s.events) s.events["Before js imports"].time = 0;
+    }
+    const row = debugRow(summarise(samples, GATE));
+    assert.deepEqual(row.bases, { A: "js", B: "js" });
+    assert.deepEqual(row.jsStartLaunches, { A: 8, B: 8 });
+    assert.deepEqual(row.pairsPerPhase, [2, 2]);
+    assert.match(row.verdict, /^Not enough pairs: 2 before the device swap, 2 after/);
+    assert.equal(failedRows([row]), true);
+  });
+
+  it("counts failed launches but not warm-ups", () => {
+    const samples = [
+      ...comparison({ deltaMs: 0 }),
+      launch({ side: "A", round: -1, warmup: true, ok: false, appStartupTime: NaN }),
+      launch({ side: "B", round: 9, ok: false, appStartupTime: NaN }),
+    ];
+    const row = debugRow(summarise(samples, GATE));
+    assert.equal(row.failed, 1);
+    assert.equal(row.launches, 13);
+  });
+
+  it("detects the re-added regression when B is slower by more than the threshold", () => {
+    const row = debugRow(
+      summarise(comparison({ deltaMs: 300 }), { preset: "known-regression", thresholdMs: 100 }),
+    );
+    assert.equal(row.verdict, "Detected: B is 300 ms slower");
+  });
+
+  it("fails known-regression when B is not slower by more than the threshold", () => {
+    const row = debugRow(
+      summarise(comparison({ deltaMs: 80 }), { preset: "known-regression", thresholdMs: 100 }),
+    );
+    assert.equal(row.verdict, "Not detected: B − A is 80 ms [80, 80], not above 100 ms");
+    assert.equal(failedRows([row]), true);
+  });
+
+  it("reports the resolution of an A/A run", () => {
+    const row = debugRow(
+      summarise(comparison({ deltaMs: 0 }), { preset: "aa-noise", thresholdMs: 100 }),
+    );
+    assert.equal(row.verdict, "OK: resolves about ±0 ms");
+  });
+});

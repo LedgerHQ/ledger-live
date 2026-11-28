@@ -1,12 +1,10 @@
 import network from "@ledgerhq/live-network";
 import { createApi } from "../../api";
-import type { BitcoinContext } from "../../config";
+import { bitcoinDefaults, type BitcoinContext } from "../../config";
 import { mapTxToOperations } from "../../logic";
 import { toOperation } from "../../logic/listOperations";
 import type { ExplorerTx } from "../../network/types";
 import { EMPTIED_P2PKH, EMPTIED_P2WPKH, FUNDED_P2WPKH } from "../../logic/tests/helpers/fixtures";
-
-const EXPLORER = "https://explorers.api.live.ledger.com";
 
 const shown = (operation: { type: string; value: bigint; tx: { fees: bigint } }) =>
   operation.type === "IN" ? operation.value : operation.value + operation.tx.fees;
@@ -21,7 +19,7 @@ describe("listOperations parity with the bridge (mainnet)", () => {
     "maps every transaction of %s as the bridge does",
     async address => {
       const { data } = await network<{ data: ExplorerTx[] }>({
-        url: `${EXPLORER}/blockchain/v4/btc/address/${address}/txs?batch_size=20`,
+        url: `${bitcoinDefaults.bitcoin.explorer.url}/blockchain/v4/${bitcoinDefaults.bitcoin.explorerId}/address/${address}/txs?batch_size=20`,
       });
       expect(data.data.length).toBeGreaterThan(0);
       for (const tx of data.data) {
@@ -46,26 +44,21 @@ describe("listOperations parity with the bridge (mainnet)", () => {
 
   // The formats the Ledger app builds itself.
   it.each([
-    ["komodo", "kmd", "RW8gfgpCUdgZbkPAs1uJQF2S9681JVkGRi"],
-    ["decred", "dcr", "DsVETTBzJSuzszSTiJLmrswY47GcCKCRu5E"],
-  ])(
+    ["komodo", "RW8gfgpCUdgZbkPAs1uJQF2S9681JVkGRi"],
+    ["decred", "DsVETTBzJSuzszSTiJLmrswY47GcCKCRu5E"],
+  ] as const)(
     "maps the %s operations of an address as the bridge does",
-    async (currencyId, explorerId, address) => {
+    async (currencyId, address) => {
+      const { explorer, explorerId } = bitcoinDefaults[currencyId];
       const context: BitcoinContext = {
-        config: async () => ({
-          status: { type: "active" },
-          name: explorerId,
-          unit: { name: explorerId, code: explorerId.toUpperCase(), magnitude: 8 },
-          explorer: { url: EXPLORER },
-          explorerId,
-        }),
+        config: async () => bitcoinDefaults[currencyId],
         logger: () => {},
       };
       const { items } = await createApi(currencyId).listOperations(context, address, {
         minHeight: 0,
       });
       const { data } = await network<{ data: ExplorerTx[] }>({
-        url: `${EXPLORER}/blockchain/v4/${explorerId}/address/${address}/txs?batch_size=50`,
+        url: `${explorer.url}/blockchain/v4/${explorerId}/address/${address}/txs?batch_size=50`,
       });
       expect(items.length).toBeGreaterThan(0);
       for (const operation of items) {

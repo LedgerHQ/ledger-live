@@ -14,6 +14,7 @@ import {
   type TrustchainSDK,
 } from "@ledgerhq/ledger-key-ring-protocol/types";
 import { lastValueFrom } from "rxjs";
+import { createLedgerSyncResultOrder } from "../../ledgerSyncResultOrder";
 import type {
   LedgerSyncAwaitingDeviceConfirmationJobState,
   LedgerSyncCompletedJobState,
@@ -29,6 +30,7 @@ import {
   recordJob,
 } from "../../internals/ledgerSyncJobTestKit";
 import { addMemberIntentJob } from "./job";
+import type { AddMemberIntentInput } from "./types";
 
 type GetOrCreateTrustchain = TrustchainSDK["getOrCreateTrustchain"];
 
@@ -79,20 +81,40 @@ function deviceCall(
   );
 }
 
-function createJob(getOrCreateTrustchain: GetOrCreateTrustchain, currentTrustchain?: Trustchain) {
+type OnInitialResponse = AddMemberIntentInput["onInitialResponse"];
+
+function createJob(
+  getOrCreateTrustchain: GetOrCreateTrustchain,
+  currentTrustchain?: Trustchain,
+  onInitialResponse?: OnInitialResponse,
+) {
   const createSessionSdk = jest.fn(() => fakeTrustchainSdk({ getOrCreateTrustchain }));
   const onResult = jest.fn();
   const job$ = addMemberIntentJob({
     deviceConnectionResult: CONNECTION,
     deviceExtractedContext: {} as never,
-    input: { memberCredentials: MEMBER_CREDENTIALS, currentTrustchain, createSessionSdk },
+    input: {
+      memberCredentials: MEMBER_CREDENTIALS,
+      currentTrustchain,
+      createSessionSdk,
+      resultOrder: createLedgerSyncResultOrder(),
+      ...(onInitialResponse && { onInitialResponse }),
+    },
     onResult,
   });
   return { job$, onResult, createSessionSdk };
 }
 
-function startJob(getOrCreateTrustchain: GetOrCreateTrustchain, currentTrustchain?: Trustchain) {
-  const { job$, onResult, createSessionSdk } = createJob(getOrCreateTrustchain, currentTrustchain);
+function startJob(
+  getOrCreateTrustchain: GetOrCreateTrustchain,
+  currentTrustchain?: Trustchain,
+  onInitialResponse?: OnInitialResponse,
+) {
+  const { job$, onResult, createSessionSdk } = createJob(
+    getOrCreateTrustchain,
+    currentTrustchain,
+    onInitialResponse,
+  );
   return { ...recordJob(job$), onResult, createSessionSdk };
 }
 
@@ -157,6 +179,50 @@ describe("addMemberIntentJob", () => {
     expect(getOrCreateTrustchain).toHaveBeenCalledTimes(2);
   });
 
+  it("should pass onInitialResponse to the SDK with the device callbacks", async () => {
+    const onInitialResponse = jest.fn();
+    const getOrCreateTrustchain = deviceCall(() => Promise.resolve(RESULT));
+    const { ended } = startJob(getOrCreateTrustchain, undefined, onInitialResponse);
+
+    expect(await ended()).toEqual([PENDING, AWAITING, PROCESSING, COMPLETED]);
+    expect(getOrCreateTrustchain).toHaveBeenCalledWith(
+      "compat-1",
+      MEMBER_CREDENTIALS,
+      {
+        onStartRequestUserInteraction: expect.any(Function),
+        onEndRequestUserInteraction: expect.any(Function),
+        onInitialResponse,
+      },
+      undefined,
+      undefined,
+    );
+  });
+
+  it("should end as failed with no-trustchain when onInitialResponse throws NoTrustchainInitialized", async () => {
+    const error = new NoTrustchainInitialized();
+    const getOrCreateTrustchain = jest.fn<
+      ReturnType<GetOrCreateTrustchain>,
+      Parameters<GetOrCreateTrustchain>
+    >(async (_deviceId, _credentials, callbacks) => {
+      callbacks?.onInitialResponse?.({});
+      return RESULT;
+    });
+    const { ended, onResult } = startJob(getOrCreateTrustchain, undefined, () => {
+      throw error;
+    });
+
+    expect(await ended()).toEqual([PENDING, failedState("no-trustchain", error)]);
+    expect(onResult).not.toHaveBeenCalled();
+  });
+
+  it("should pass the device callbacks only when onInitialResponse is not given", async () => {
+    const getOrCreateTrustchain = deviceCall(() => Promise.resolve(RESULT));
+    const { ended } = startJob(getOrCreateTrustchain);
+
+    await ended();
+    expect(getOrCreateTrustchain.mock.calls[0][2]).not.toHaveProperty("onInitialResponse");
+  });
+
   it.each([
     [new TrustchainAlreadyInitialized(), "already-secured-same-seed"],
     [new TrustchainAlreadyInitializedWithOtherSeed(), "already-secured-other-seed"],
@@ -207,6 +273,7 @@ describe("addMemberIntentJob", () => {
           createSessionSdk: () => {
             throw error;
           },
+          resultOrder: createLedgerSyncResultOrder(),
         },
         onResult,
       }),
@@ -216,7 +283,7 @@ describe("addMemberIntentJob", () => {
     expect(onResult).not.toHaveBeenCalled();
   });
 
-  it("should emit nothing after unsubscribe", async () => {
+  it("should emit no state but still report the result after unsubscribe", async () => {
     const deviceAnswer = createDeferred<TrustchainResult>();
     const getOrCreateTrustchain = jest.fn<
       ReturnType<GetOrCreateTrustchain>,
@@ -239,6 +306,7 @@ describe("addMemberIntentJob", () => {
 
     expect(witness.onResult).toHaveBeenCalledWith(RESULT);
     expect(cancelled.states).toEqual([PENDING]);
-    expect(cancelled.onResult).not.toHaveBeenCalled();
+    expect(cancelled.onResult).toHaveBeenCalledTimes(1);
+    expect(cancelled.onResult).toHaveBeenCalledWith(RESULT);
   });
 });

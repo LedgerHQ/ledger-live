@@ -15,7 +15,9 @@ const checkCanShow = async (protectId: string) => {
 
     return (
       recoverSubscriptionState !== undefined &&
-      (recoverSubscriptionState in LedgerRecoverSubscriptionStateInProgressEnum ||
+      (Object.values<string>(LedgerRecoverSubscriptionStateInProgressEnum).includes(
+        recoverSubscriptionState,
+      ) ||
         recoverSubscriptionState === LedgerRecoverSubscriptionStateEnum.BACKUP_DONE)
     );
   } catch {

@@ -26,7 +26,8 @@ import {
 import { lastConnectedDeviceSelector } from "~/reducers/settings";
 import { useFeature } from "@features/platform-feature-flags";
 import { rnBleTransportIdentifier, rnHidTransportIdentifier } from "@ledgerhq/live-dmk-mobile";
-import { hasOsUpdatesSelector } from "LLM/features/OsUpdate/state/osUpdateSlice";
+import { selectHasOsUpdates } from "@domain/entity-device-os-update";
+import { isOsUpdateTransportSupported } from "LLM/features/OsUpdate/utils/isOsUpdateTransportSupported";
 import { UpdateStep } from "../FirmwareUpdate";
 import {
   AppWithDependencies,
@@ -65,13 +66,13 @@ const MyLedgerDevice = ({ navigation, route }: NavigationProps) => {
   }, [device.wired, lastConnectedDevice, navigation]);
 
   const isOsUpdatesEnabled = useFeature("ldmkOsUpdates")?.enabled ?? false;
-  const hasOsUpdates = useSelector(hasOsUpdatesSelector);
+  const hasOsUpdates = useSelector(selectHasOsUpdates);
   // Landing here with `firmwareUpdate` (e.g. from the portfolio banner) opens the OS update "What's new".
   useEffect(() => {
     if (!isOsUpdatesEnabled || !firmwareUpdate) return;
     // One-shot request: consumed on landing, whether or not there is an update to show.
     navigation.setParams({ firmwareUpdate: undefined });
-    if (hasOsUpdates) {
+    if (hasOsUpdates && isOsUpdateTransportSupported(device, deviceInfo?.version)) {
       baseNavigation.navigate(ScreenName.OsUpdate, {
         device: {
           id: device.deviceId,
@@ -81,7 +82,15 @@ const MyLedgerDevice = ({ navigation, route }: NavigationProps) => {
         },
       });
     }
-  }, [isOsUpdatesEnabled, firmwareUpdate, hasOsUpdates, navigation, baseNavigation, device]);
+  }, [
+    isOsUpdatesEnabled,
+    firmwareUpdate,
+    hasOsUpdates,
+    navigation,
+    baseNavigation,
+    device,
+    deviceInfo?.version,
+  ]);
 
   const refreshDeviceInfo = useCallback(() => {
     firstValueFrom(withDevice(deviceId)(transport => from(getDeviceInfo(transport)))).then(

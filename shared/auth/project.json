@@ -1,8 +1,0 @@
-{
-  "name": "@shared/auth",
-  "targets": {
-    "build": {
-      "executor": "nx:noop"
-    }
-  }
-}

@@ -26,7 +26,6 @@ import type { AccountsNavigatorParamList } from "./types/AccountsNavigator";
 import { hasNoAccountsSelector } from "~/reducers/accounts";
 import AccountsList from "LLM/features/Accounts/screens/AccountsList";
 import { CryptoScreen } from "LLM/features/Crypto";
-import { useFeature } from "@features/platform-feature-flags";
 import { NavigationHeaderBackButton } from "../NavigationHeaderBackButton";
 import {
   NavigationProp,
@@ -87,7 +86,6 @@ export default function AccountsNavigator() {
     () => getStackNavigationConfigV4(lumenTheme, "expanded"),
     [lumenTheme],
   );
-  const accountListUIFF = useFeature("llmAccountListUI");
   const route = useRoute();
   const navigation = useNavigation();
 
@@ -155,18 +153,16 @@ export default function AccountsNavigator() {
           headerShown: false,
         }}
       />
-      {accountListUIFF?.enabled && (
-        <Stack.Screen
-          name={ScreenName.AccountsList}
-          component={AccountsList}
-          options={{
-            ...stackNavConfig,
-            headerTitle: "",
-            headerLeft: () => <NavigationHeaderBackButton onPress={onPressBack} />,
-            headerRight: () => <AccountsListHeaderRight />,
-          }}
-        />
-      )}
+      <Stack.Screen
+        name={ScreenName.AccountsList}
+        component={AccountsList}
+        options={{
+          ...stackNavConfig,
+          headerTitle: "",
+          headerLeft: () => <NavigationHeaderBackButton onPress={onPressBack} />,
+          headerRight: () => <AccountsListHeaderRight />,
+        }}
+      />
       <Stack.Screen
         name={ScreenName.CryptoAddresses}
         component={CryptoAddressesScreen}

@@ -1,5 +1,63 @@
 # @features/platform-verify-address-intent
 
+## 0.5.0
+
+### Minor Changes
+
+- [#24874](https://github.com/LedgerHQ/ledger-live/pull/24874) [`e1db61a`](https://github.com/LedgerHQ/ledger-live/commit/e1db61afaa383e6c5f0f5608ac0c7cf83436fff6) Thanks [@LucasWerey](https://github.com/LucasWerey)! - Report how a verify-address intent ended as a Result, stop the remaining device requests and the running signer action of a cancelled verification, and give the Device Intent Executor wrappers the error screen the user closed
+
+### Patch Changes
+
+- Updated dependencies [[`74c967e`](https://github.com/LedgerHQ/ledger-live/commit/74c967eb7dda848648df0db683910140b5d6e906)]:
+  - @features/platform-device-intent@5.6.0
+
+## 0.5.0-next.0
+
+### Minor Changes
+
+- [#24874](https://github.com/LedgerHQ/ledger-live/pull/24874) [`e1db61a`](https://github.com/LedgerHQ/ledger-live/commit/e1db61afaa383e6c5f0f5608ac0c7cf83436fff6) Thanks [@LucasWerey](https://github.com/LucasWerey)! - Report how a verify-address intent ended as a Result, stop the remaining device requests and the running signer action of a cancelled verification, and give the Device Intent Executor wrappers the error screen the user closed
+
+### Patch Changes
+
+- Updated dependencies [[`74c967e`](https://github.com/LedgerHQ/ledger-live/commit/74c967eb7dda848648df0db683910140b5d6e906)]:
+  - @features/platform-device-intent@5.6.0-next.0
+
+## 0.4.0
+
+### Minor Changes
+
+- [#24766](https://github.com/LedgerHQ/ledger-live/pull/24766) [`12939e3`](https://github.com/LedgerHQ/ledger-live/commit/12939e3bdd940eed4c5f0d1a684fefa689a2b9c9) Thanks [@LucasWerey](https://github.com/LucasWerey)! - Emit an `addressDisplayed` verify-address intent state once the address request is sent to the device
+
+### Patch Changes
+
+- Updated dependencies [[`91056c1`](https://github.com/LedgerHQ/ledger-live/commit/91056c17c325bf042f6449c3ed74412adcb84899)]:
+  - @features/platform-device-intent@5.5.0
+
+## 0.4.0-next.0
+
+### Minor Changes
+
+- [#24766](https://github.com/LedgerHQ/ledger-live/pull/24766) [`12939e3`](https://github.com/LedgerHQ/ledger-live/commit/12939e3bdd940eed4c5f0d1a684fefa689a2b9c9) Thanks [@LucasWerey](https://github.com/LucasWerey)! - Emit an `addressDisplayed` verify-address intent state once the address request is sent to the device
+
+### Patch Changes
+
+- Updated dependencies [[`91056c1`](https://github.com/LedgerHQ/ledger-live/commit/91056c17c325bf042f6449c3ed74412adcb84899)]:
+  - @features/platform-device-intent@5.5.0-next.0
+
+## 0.3.2
+
+### Patch Changes
+
+- Updated dependencies [[`235a1ae`](https://github.com/LedgerHQ/ledger-live/commit/235a1ae2d5de213ab2f59a2aa584ef59e2058372)]:
+  - @features/platform-device-intent@5.4.0
+
+## 0.3.2-next.0
+
+### Patch Changes
+
+- Updated dependencies [[`235a1ae`](https://github.com/LedgerHQ/ledger-live/commit/235a1ae2d5de213ab2f59a2aa584ef59e2058372)]:
+  - @features/platform-device-intent@5.4.0-next.0
+
 ## 0.3.1
 
 ### Patch Changes

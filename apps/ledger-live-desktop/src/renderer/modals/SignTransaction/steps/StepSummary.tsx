@@ -83,9 +83,10 @@ const StepSummary = (props: StepProps) => {
     (account.subAccounts || []).some(subAccount => subAccount.balance.gt(0));
   const SpecificSummaryNetworkFeesRow = specific?.StepSummaryNetworkFeesRow;
 
-  const memo = "memo" in transaction ? transaction.memo : undefined;
+  const memo =
+    specific?.getMemoValue?.(transaction) ?? ("memo" in transaction ? transaction.memo : undefined);
 
-  const isSolanaRawTransaction = "raw" in transaction && transaction.raw;
+  const hidesSummaryAmount = specific?.hidesSummaryAmount?.(transaction) ?? false;
 
   return (
     <Box flow={4} mx={40}>
@@ -200,7 +201,7 @@ const StepSummary = (props: StepProps) => {
             </Ellipsis>
           </Box>
         )}
-        {!isSolanaRawTransaction ? (
+        {!hidesSummaryAmount ? (
           <Box horizontal justifyContent="space-between" mb={2}>
             <Text ff="Inter|Medium" color="neutral.c60" fontSize={4}>
               <Trans i18nKey="send.steps.details.amount" />
@@ -283,7 +284,7 @@ const StepSummary = (props: StepProps) => {
           </>
         )}
 
-        {!totalSpent.eq(amount) && !isSolanaRawTransaction ? (
+        {!totalSpent.eq(amount) && !hidesSummaryAmount ? (
           <>
             <Separator />
             <Box horizontal justifyContent="space-between">

@@ -37,12 +37,13 @@ const config: Config = {
     {
       ...sharedConfig,
       displayName: "unit",
-      testMatch: ["<rootDir>/src/signer.test.ts"],
+      testMatch: ["<rootDir>/src/signer.test.ts", "<rootDir>/src/regtestNode.test.ts"],
     },
     {
       ...sharedConfig,
       displayName: "devnet",
-      testMatch: ["<rootDir>/src/scenarii.test.ts"],
+      // Both need Docker and the same host ports: run them serially (--runInBand).
+      testMatch: ["<rootDir>/src/scenarii.test.ts", "<rootDir>/src/nu7Activation.test.ts"],
     },
   ],
 };

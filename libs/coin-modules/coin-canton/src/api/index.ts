@@ -1,22 +1,79 @@
-import type { CoinModuleApi } from "@ledgerhq/coin-module-framework/api/index";
+import type {
+  CoinModuleApi,
+  FeeEstimation,
+  TransactionIntent,
+} from "@ledgerhq/coin-module-framework/api/index";
 import { notSupportedApi } from "@ledgerhq/coin-module-framework/api/index";
+import { rejectBalanceOptions } from "@ledgerhq/coin-module-framework/api/getBalance/rejectBalanceOptions";
 import { craftTransactionData } from "@ledgerhq/coin-module-framework/logic/craftTransactionData";
 import { validateAddress } from "../bridge/validateAddress";
-import { combine } from "../common-logic/transaction/combine";
-import { type CantonCoinConfig } from "../config";
+import { pinConfig, type CantonCoinConfig, type CantonContext } from "../config";
+import { broadcast } from "../logic/broadcast";
+import { combine } from "../logic/combine";
+import { craftTransaction } from "../logic/craftTransaction";
+import { estimateFees, estimateSendMax } from "../logic/estimateFees";
+import { getAccountStatus, type CantonAccountStatus } from "../logic/getAccountStatus";
+import { getBalance } from "../logic/getBalance";
+import { lastBlock } from "../logic/lastBlock";
+import { listOperations } from "../logic/listOperations";
+import { validateIntent } from "../logic/validateIntent";
+import type { CantonMemo } from "../types/transaction";
+
+// Not in `CoinModuleApi` yet.
+type AccountStatusCapability<C> = {
+  getAccountStatus: (context: C, key: string) => Promise<CantonAccountStatus>;
+};
+
+/**
+ * A tiered native Send max fee depends on the amount the balance allows, so the balance is read.
+ * The caller must put the returned `parameters.amount` in the intent: `validateIntent` checks that amount.
+ * A fixed fee needs no read: the caller fills its own spendable balance minus the fee.
+ */
+async function estimateIntentFees(
+  context: CantonContext,
+  intent: TransactionIntent<CantonMemo>,
+): Promise<FeeEstimation> {
+  const config = await context.config();
+  const pinned = pinConfig(context, config);
+  if (!intent.useAllAmount || intent.asset.type !== "native" || config.fee !== undefined) {
+    return { value: await estimateFees(pinned, intent.amount) };
+  }
+  const native = (await getBalance(pinned, intent.sender)).find(
+    ({ asset }) => asset.type === "native",
+  );
+  const spendable = native ? native.value - (native.locked ?? 0n) : 0n;
+  const { amount, fee } = await estimateSendMax(pinned, spendable);
+  return { value: fee, parameters: { amount } };
+}
 
 // The caller builds the {@link CantonContext} (config + logger) and passes it to each method (ADR-019).
-// Canton is single-chain and its Alpaca methods don't read config, so createApi takes nothing.
 //
-// Only three methods are wired so far: the rest of the chain's support is still to come, and
-// spreading `notSupportedApi()` keeps that state readable — what is listed below is what this
-// module does, everything else raises "<method> is not supported" from the framework. The
-// message follows the method name, so it can no longer disagree with the method it stands for.
-export function createApi(): CoinModuleApi<CantonCoinConfig> {
+// Not supported by design:
+// - getBlock, getBlockInfo: the ledger exposes offsets, not blocks.
+// - getStakes, getRewards, getValidators: Canton has no staking.
+// - register: no indexer enrollment backend.
+// - call: the gateway exposes no read-only contract call.
+// - craftRawTransaction: the gateway prepares every transaction, so there is no external one to wrap.
+// - onboarding, pre-approval, transfer instructions and tap: crafted and submitted by the bridge only.
+export function createApi(
+  currencyId = "canton_network",
+): CoinModuleApi<CantonCoinConfig, CantonMemo> & AccountStatusCapability<CantonContext> {
   return {
-    ...notSupportedApi<CantonCoinConfig>(),
+    ...notSupportedApi<CantonCoinConfig, CantonMemo>(),
+    lastBlock,
+    getBalance: (context, address, options?) =>
+      rejectBalanceOptions(() => getBalance(context, address), options),
+    listOperations,
+    craftTransaction: (context, intent, _options?) => craftTransaction(context, intent),
+    estimateFees: (context, intent, _options?) => estimateIntentFees(context, intent),
     combine: (_context, tx, signature, _options?) => combine(tx, signature),
+    broadcast: (context, tx, _options?) => broadcast(context, tx),
+    validateIntent: (context, intent, balances, options?) =>
+      validateIntent(context, intent, balances, options?.customFees),
     validateAddress: (_context, address, parameters) => validateAddress(address, parameters),
     craftTransactionData: (_context, intent) => craftTransactionData(intent),
+    // Canton has no account nonce; the generic signOperation calls this when the transaction has none, so it must not throw.
+    getNextSequence: (_context, _address) => Promise.resolve(0n),
+    getAccountStatus: (context, publicKey) => getAccountStatus(context, currencyId, publicKey),
   };
 }

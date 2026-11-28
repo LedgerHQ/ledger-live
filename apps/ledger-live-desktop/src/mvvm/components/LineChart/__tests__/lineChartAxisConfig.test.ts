@@ -1,6 +1,7 @@
+import { DEFAULT_LINE_CHART_HEIGHT, LINE_CHART_DRAWING_INSET } from "../constants";
 import { getEvenlySpacedTicks } from "../utils/getEvenlySpacedTicks";
 import {
-  buildLineChartBottomPaddedYAxisConfig,
+  buildLineChartPaddedYAxisConfig,
   buildLineChartXAxisConfig,
 } from "../utils/lineChartAxisConfig";
 
@@ -37,16 +38,23 @@ describe("buildLineChartXAxisConfig", () => {
   });
 });
 
-describe("buildLineChartBottomPaddedYAxisConfig", () => {
-  it("extends the min domain below the data range", () => {
-    const config = buildLineChartBottomPaddedYAxisConfig(240, 50);
-    const domainFn = config.domain;
-    if (typeof domainFn !== "function") {
-      throw new Error("Expected y-axis domain to be a function");
-    }
-    const domain = domainFn({ min: 100, max: 200 });
+const DRAWING_HEIGHT = DEFAULT_LINE_CHART_HEIGHT - LINE_CHART_DRAWING_INSET.top;
 
-    expect(domain.max).toBe(200);
-    expect(domain.min).toBeCloseTo(79.16666666666667);
+function paddingPxOf(min: number, max: number) {
+  const domainFn = buildLineChartPaddedYAxisConfig().domain;
+  if (typeof domainFn !== "function") {
+    throw new Error("Expected y-axis domain to be a function");
+  }
+  const domain = domainFn({ min, max });
+  const valuePerPx = (domain.max - domain.min) / DRAWING_HEIGHT;
+  return { top: (domain.max - max) / valuePerPx, bottom: (min - domain.min) / valuePerPx };
+}
+
+describe("buildLineChartPaddedYAxisConfig", () => {
+  it("leaves 24px above the max and 32px below the min so their labels stay under the scrubber overlay", () => {
+    const padding = paddingPxOf(100, 200);
+
+    expect(padding.top).toBeCloseTo(24);
+    expect(padding.bottom).toBeCloseTo(32);
   });
 });

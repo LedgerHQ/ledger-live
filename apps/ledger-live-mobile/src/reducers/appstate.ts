@@ -103,8 +103,6 @@ export const hasConnectedDeviceSelector = (state: State) => state.appstate.hasCo
 
 export const backgroundEventsSelector = (state: State) => state.appstate.backgroundEvents;
 
-export const nextBackgroundEventSelector = (state: State) => state.appstate.backgroundEvents[0];
-
 export const isMainNavigatorVisibleSelector = (state: State) =>
   state.appstate.isMainNavigatorVisible;
 

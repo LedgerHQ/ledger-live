@@ -20,8 +20,6 @@ export const files: FilesBridge = {
     ipcRenderer.invoke(CHANNELS.saveLogs, request, logsJson),
   exportOperations: (request: SaveRequest, csv: string) =>
     ipcRenderer.invoke(CHANNELS.exportOperations, request, csv),
-  savePng: (options: Electron.SaveDialogOptions, base64: string) =>
-    ipcRenderer.invoke(CHANNELS.savePng, options, base64),
   openUserDataDirectory: () => ipcRenderer.invoke(CHANNELS.openUserDataDirectory),
 };
 
@@ -31,6 +29,6 @@ export const power: PowerBridge = {
 };
 
 export const store: StoreBridge = {
-  set: (key: string, value: unknown) => ipcRenderer.send(CHANNELS.storeSet, key, value),
-  clear: () => ipcRenderer.send(CHANNELS.storeClear),
+  set: (key: string, value: unknown) => ipcRenderer.invoke(CHANNELS.storeSet, key, value),
+  clear: () => ipcRenderer.invoke(CHANNELS.storeClear),
 };

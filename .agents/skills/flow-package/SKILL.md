@@ -92,14 +92,16 @@ Do not add `steps/`. Some older packages still have one (`@features/flow-app-unl
 
 | State                                                     | Home                                | Example                                                       |
 | --------------------------------------------------------- | ----------------------------------- | ------------------------------------------------------------- |
-| Business data several flows read (contacts, accounts)     | `domain/entity/<name>` slice        | `@domain/entity-contact`: `slice.ts`, `selectors.ts`          |
-| Flow UI state the app registers or persists (a filter)    | `src/state/slice.ts`, `selectors.ts` | `@features/flow-pay-balance`: `state/`, exported as `./state` |
+| Business data several flows read (contacts, accounts)     | `domain/entity/<name>` slice        | `@domain/entity-account`: `slice.ts`                          |
+| Flow UI state the app registers or persists (a filter)    | `src/state/slice.ts`                 | `@features/flow-large-screen-upsell`: `state/`                |
 | Flow UI state that lives while the flow is open (a step)  | `src/state/` reducer used by React   | `@features/flow-contacts-add-address`: `state/addAddressFlowReducer.ts` |
 
 - A flow slice holds what the flow alone decides, never a copy of entity data. Read entities
   through their selectors.
-- Selectors live beside the slice and type their root as `{ <sliceName>: State }`, as in
-  `@features/flow-pay-balance` `state/selectors.ts`.
+- Selectors that read the flow slice go in its `createSlice({ selectors })`, as in
+  `@features/flow-large-screen-upsell` `state/slice.ts`; see
+  [slice-selectors](../slice-selectors/SKILL.md). `@features/flow-pay-balance`
+  `state/selectors.ts` predates the rule: move its selectors into the slice when you touch it.
 - The app registers the reducer: `apps/ledger-live-desktop/src/renderer/reducers/index.ts` imports
   `payCardBalanceSlice` from `@features/flow-pay-balance/state`.
 

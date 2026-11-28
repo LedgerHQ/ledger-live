@@ -1,12 +1,15 @@
 import React, { useCallback, useEffect, useRef, useState } from "react";
 import {
+  Dimensions,
   FlatList,
   Linking,
   TouchableHighlight,
   RefreshControl,
+  View,
   type ViewToken,
 } from "react-native";
 
+import { useFocusEffect } from "@react-navigation/native";
 import { NotificationCard, Box, Flex, Text } from "@ledgerhq/native-ui";
 
 import styled, { useTheme } from "styled-components/native";
@@ -18,8 +21,9 @@ import { TrashMedium } from "@ledgerhq/native-ui/assets/icons";
 import { LNUpsellBanner, useLNUpsellBannerState } from "LLM/features/LNUpsell";
 import useDynamicContent from "~/dynamicContent/useDynamicContent";
 import { ContentCardEvent } from "@ledgerhq/live-common/braze/contentCardExtras";
+import { getCurrentTrackingPage, track } from "@shared/analytics";
 import SettingsNavigationScrollView from "../Settings/SettingsNavigationScrollView";
-import { NotificationContentCard } from "~/dynamicContent/types";
+import { ContentCardLocation, NotificationContentCard } from "~/dynamicContent/types";
 import { getTime } from "./helper";
 import {
   setDynamicContentNotificationCards,
@@ -237,6 +241,40 @@ export default function NotificationCenter() {
     [logImpressionCard],
   );
 
+  const listRef = useRef<View>(null);
+  const wasVisibleRef = useRef(false);
+  const hasNotifications = notificationCards.length > 0;
+  useFocusEffect(
+    useCallback(() => {
+      if (!hasNotifications) return;
+      let active = true;
+      wasVisibleRef.current = false;
+      const id = setInterval(() => {
+        listRef.current?.measureInWindow((x, y, width, height) => {
+          if (!active) return;
+          const screen = Dimensions.get("window");
+          const share = (start: number, length: number, screenLength: number) => {
+            const visible = Math.min(start + length, screenLength) - Math.max(start, 0);
+            const comparable = Math.min(length, screenLength);
+            return comparable <= 0 || visible <= 0 ? 0 : visible / comparable;
+          };
+          const isVisible = share(x, width, screen.width) * share(y, height, screen.height) >= 0.8;
+          if (isVisible && !wasVisibleRef.current) {
+            track("container_impression", {
+              page: getCurrentTrackingPage(),
+              location: ContentCardLocation.NotificationCenter,
+            });
+          }
+          wasVisibleRef.current = isVisible;
+        });
+      }, 200);
+      return () => {
+        active = false;
+        clearInterval(id);
+      };
+    }, [hasNotifications]),
+  );
+
   return (
     <Container
       refreshControl={
@@ -248,18 +286,24 @@ export default function NotificationCenter() {
         />
       }
     >
-      <FlatList
-        data={notificationCards}
-        keyExtractor={({ id }) => id}
-        renderItem={elem => ListItem(elem.item)}
-        ListHeaderComponent={<LNUpsellBanner location="notification_center" mx={6} my={5} />}
-        ItemSeparatorComponent={() => <Box height={1} width="100%" backgroundColor="neutral.c30" />}
-        viewabilityConfig={{ itemVisiblePercentThreshold: 50 }}
-        onViewableItemsChanged={handleViewableItemsChanged}
-        ListEmptyComponent={isLNUpsellBannerShown ? null : <EmptyComponent />}
-      />
+      <View ref={listRef}>
+        <FlatList
+          data={notificationCards}
+          keyExtractor={({ id }) => id}
+          renderItem={elem => ListItem(elem.item)}
+          ListHeaderComponent={<LNUpsellBanner location="notification_center" mx={6} my={5} />}
+          ItemSeparatorComponent={NotificationSeparator}
+          viewabilityConfig={{ itemVisiblePercentThreshold: 50 }}
+          onViewableItemsChanged={handleViewableItemsChanged}
+          ListEmptyComponent={isLNUpsellBannerShown ? null : <EmptyComponent />}
+        />
+      </View>
     </Container>
   );
+}
+
+function NotificationSeparator() {
+  return <Box height={1} width="100%" backgroundColor="neutral.c30" />;
 }
 
 function EmptyComponent() {

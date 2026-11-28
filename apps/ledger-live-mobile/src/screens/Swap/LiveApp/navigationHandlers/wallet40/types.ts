@@ -1,11 +1,3 @@
-export const SWAP_WALLET40_ALLOWED_PATHS = [
-  "/",
-  "/multi-step-transaction",
-  "/dev-settings",
-] as const;
-
-export type SwapWallet40AllowedPath = (typeof SWAP_WALLET40_ALLOWED_PATHS)[number];
-
 export type SwapWallet40RouteName =
   | "home"
   | "quotesList"

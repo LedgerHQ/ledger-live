@@ -1,12 +1,12 @@
-import { createFixtureConfig } from "../../test/fixtures";
+import { concordiumDefaults } from "../../config";
 import { estimateFees } from "./estimateFees";
 
 describe("estimateFees", () => {
-  const config = createFixtureConfig();
+  const config = concordiumDefaults.concordium_testnet;
 
   describe("Simple transfer", () => {
     it("should return fee estimation for simple transfer", async () => {
-      const result = await estimateFees(config, "concordium_testnet");
+      const result = await estimateFees(config);
 
       expect(result).toHaveProperty("cost");
       expect(result).toHaveProperty("energy");
@@ -17,8 +17,8 @@ describe("estimateFees", () => {
     });
 
     it("should return consistent results for same parameters", async () => {
-      const result1 = await estimateFees(config, "concordium_testnet");
-      const result2 = await estimateFees(config, "concordium_testnet");
+      const result1 = await estimateFees(config);
+      const result2 = await estimateFees(config);
 
       expect(result1.cost).toBe(result2.cost);
       expect(result1.energy).toBe(result2.energy);
@@ -29,8 +29,8 @@ describe("estimateFees", () => {
     it("should return higher fee for transfer with memo", async () => {
       const memo = "Test memo";
 
-      const resultWithoutMemo = await estimateFees(config, "concordium_testnet");
-      const resultWithMemo = await estimateFees(config, "concordium_testnet", memo);
+      const resultWithoutMemo = await estimateFees(config);
+      const resultWithMemo = await estimateFees(config, memo);
 
       expect(resultWithMemo.cost).toBeGreaterThan(resultWithoutMemo.cost);
       expect(resultWithMemo.energy).toBeGreaterThan(resultWithoutMemo.energy);
@@ -40,8 +40,8 @@ describe("estimateFees", () => {
       const shortMemo = "Hi";
       const longMemo = "This is a longer memo with more characters";
 
-      const resultShort = await estimateFees(config, "concordium_testnet", shortMemo);
-      const resultLong = await estimateFees(config, "concordium_testnet", longMemo);
+      const resultShort = await estimateFees(config, shortMemo);
+      const resultLong = await estimateFees(config, longMemo);
 
       expect(resultLong.cost).toBeGreaterThanOrEqual(resultShort.cost);
       expect(resultLong.energy).toBeGreaterThanOrEqual(resultShort.energy);
@@ -50,21 +50,21 @@ describe("estimateFees", () => {
 
   describe("Fee estimation structure", () => {
     it("should return bigint values for precision", async () => {
-      const result = await estimateFees(config, "concordium_testnet");
+      const result = await estimateFees(config);
 
       expect(typeof result.cost).toBe("bigint");
       expect(typeof result.energy).toBe("bigint");
     });
 
     it("should have reasonable cost values", async () => {
-      const result = await estimateFees(config, "concordium_testnet");
+      const result = await estimateFees(config);
 
       expect(result.cost).toBeGreaterThan(BigInt(100));
       expect(result.cost).toBeLessThan(BigInt(10000000));
     });
 
     it("should have reasonable energy values", async () => {
-      const result = await estimateFees(config, "concordium_testnet");
+      const result = await estimateFees(config);
 
       expect(result.energy).toBeGreaterThan(BigInt(100));
       expect(result.energy).toBeLessThan(BigInt(10000000));
@@ -74,9 +74,12 @@ describe("estimateFees", () => {
   describe("Error handling", () => {
     it("should return fallback values on network error", async () => {
       // Use a distinct currencyId to avoid hitting the cached proxyClient
-      const invalidConfig = createFixtureConfig({ proxyUrl: "https://invalid-proxy.invalid" });
+      const invalidConfig = {
+        ...concordiumDefaults.concordium_testnet,
+        proxyUrl: "https://invalid-proxy.invalid",
+      };
 
-      const result = await estimateFees(invalidConfig, "concordium_testnet_invalid");
+      const result = await estimateFees(invalidConfig);
 
       expect(typeof result.cost).toBe("bigint");
       expect(typeof result.energy).toBe("bigint");

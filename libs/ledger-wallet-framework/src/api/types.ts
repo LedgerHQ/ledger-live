@@ -2,6 +2,7 @@ import type {
   AccountInfo,
   AssetInfo,
   BalanceOptions,
+  BlockInfo,
   TxData,
 } from "@ledgerhq/coin-module-framework/api/types";
 import type { GetAddressResult } from "../derivation";
@@ -147,7 +148,11 @@ export type BridgeApi = {
     address: string,
   ) => Promise<Record<string, FamilyAccountShape>> | Record<string, FamilyAccountShape>;
   refreshOperations?: (operations: LiveOperation[]) => Promise<LiveOperation[]>;
-  adaptOperations?: (address: string, operations: LiveOperation[]) => LiveOperation[];
+  adaptOperations?: (
+    address: string,
+    operations: LiveOperation[],
+    blockInfo: BlockInfo,
+  ) => LiveOperation[];
   validateTransaction?: (signature: string) => Promise<{ error: Error | undefined }>;
   /**
    * When true, `signOperation` forwards the last estimation's `FeeEstimation.parameters` (carried on
@@ -192,7 +197,7 @@ export type BridgeApi = {
   usesStakingPositions?: boolean;
   /**
    * When true, the account balance and locked amount sum all native `getBalance` entries (Tezos,
-   * Solana). The entries are disjoint parts of the account, so each unit of funds sits in exactly
+   * Solana, NEAR). The entries are disjoint parts of the account, so each unit of funds sits in exactly
    * one of them; their order and what each carries (stake metadata, `locked`) is the family's.
    * Opt-in: EVM's stakes are extra and carry no `locked`, so summing them would inflate the balance.
    */
@@ -204,6 +209,52 @@ export type BridgeApi = {
    */
   getHeldNativeAmount?: (position: StakingDelegation | StakingUnbonding) => BigNumber;
   balanceOptions?: BalanceOptions;
+  /**
+   * When true, a sync that does not start from scratch reads the history only when the spendable
+   * balance changed, is zero, an operation is pending, or a previous read left a
+   * `account.historyRecheck`. Otherwise `getBalance` alone tells the account has not moved.
+   * Only for a family whose balance has a single native asset: a balance holding another asset
+   * falls back to the regular sync. The module's `getBalance` must accept `knownValidatorIds` and
+   * `listValidators` (both hints): the sync reads once without listing the validators, and again
+   * with the listing when the spendable balance changed or is zero, or the last history read failed.
+   */
+  syncsHistoryOnStateChange?: boolean;
+  /**
+   * The validators the account is known to hold positions with, for a family that also keeps them
+   * outside `account.stakingPositions` (for instance from another sync). Defaults to the delegates of
+   * the stored staking positions. Read only with `syncsHistoryOnStateChange`.
+   */
+  getKnownValidatorIds?: (account: Account) => string[];
+  /**
+   * The validator a synced operation called to open or fund a position, whatever its type. Defaults
+   * to the first recipient of a `STAKE` or `DELEGATE` operation. Read only with
+   * `syncsHistoryOnStateChange`: such a validator, when the positions lack it, is read on the next sync.
+   */
+  getStakingCallValidatorId?: (operation: LiveOperation) => string | undefined;
+  /**
+   * False for an operation the indexer returned before it recorded the transaction's outcome (so its
+   * fee and status are not final). The range is read again, for up to an hour, until none is left.
+   * Read only with `syncsHistoryOnStateChange`.
+   */
+  isOperationSettled?: (operation: LiveOperation) => boolean;
+  /**
+   * True for a new operation that may have moved funds into a pool the sync cannot name from it (a
+   * call relayed by another account): the next sync lists the pools once. Read only with
+   * `syncsHistoryOnStateChange`.
+   */
+  needsValidatorListing?: (operation: LiveOperation) => boolean;
+  /**
+   * True when a rise of the spendable balance, with no new operation to explain it, is the refund
+   * of the account's own recent transactions (a chain that refunds unused gas in a later block). The
+   * sync then takes the new state as explained instead of reading the history again for an hour,
+   * and lists no pools for it. Read only with `syncsHistoryOnStateChange`.
+   */
+  isGasRefund?: (
+    increase: bigint,
+    operations: readonly LiveOperation[],
+    address: string,
+    now: number,
+  ) => boolean;
   /**
    * Optional hook called after operations are merged, allowing a chain bridge to
    * enrich the staking resources built from `getBalance` data (e.g. by fetching
@@ -260,11 +311,30 @@ export type BridgeApi = {
    */
   balanceListsEveryToken?: boolean;
   /**
+   * When true, a stored token missing from `getBalance` is no longer held: its sub-account goes at
+   * this sync. Left unset, a missing token is kept at 0 with its history.
+   */
+  dropsMissingTokens?: boolean;
+  /**
    * When true, sync matches a token on its exact (`assetOwner`, `assetReference`) pair: on XRPL
    * `USD` and `usd` are two currencies, and so are `USD` from two issuers. Left unset, references
    * match in any case, as Stacks needs.
    */
   exactAssetMatch?: boolean;
+  /**
+   * When true, a transaction with no native operation whose token operation is an `OPT_IN`,
+   * `OPT_OUT` or `OPT_EDIT` gets a parent row of that type, worth the fee the account paid and sent
+   * to the token's `assetOwner`. Left
+   * unset, its parent row is `FEES`, or `NONE` when the account paid no fee.
+   */
+  tokenOptParentRow?: boolean;
+  /**
+   * When true, the coin module names the payer of every fee its account paid (ADR-016): a native
+   * operation's value leaves out a fee whose `feesPayer` is another account or is unset, as on a
+   * zkSync paymaster transaction. Left unset, the value holds the fee whoever paid it, and a family
+   * such as Hedera takes a sponsored fee out in its own `adaptOperations`.
+   */
+  excludesFeesPaidByOthers?: boolean;
   /**
    * For a family whose legacy bridge keyed account ids on the public key rather than the address.
    * When true, a synced account keeps the `xpubOrAddress` already in its id, and a scanned one is

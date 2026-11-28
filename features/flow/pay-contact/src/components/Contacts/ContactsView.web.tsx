@@ -3,8 +3,14 @@ import { ContactsAddContactDialog } from "@features/flow-contacts-add-contact/we
 import { EmptyState } from "../EmptyState/EmptyState";
 import { ContactsTable } from "../ContactsTable/ContactsTable";
 import type { AddContactDialogViewModel } from "@features/flow-contacts-add-contact";
-import type { ContactRowViewModel, ContactsTableLabels, EmptyStateProps } from "../../types";
+import type { Contact } from "@domain/entity-contact";
+import type { ContactsTableLabels, EmptyStateProps } from "../../types";
 import type { ContactsProps } from "./Contacts";
+
+export type ContactRowViewModel = Readonly<{
+  contact: Contact;
+  transactionCount: number;
+}>;
 
 export type ContactsViewProps = Pick<
   ContactsProps,

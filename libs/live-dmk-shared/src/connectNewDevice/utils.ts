@@ -18,10 +18,10 @@ export const toDevice = (discoveredDevice: DiscoveredDevice): Device => ({
 
 export const getScanningTransports = (
   transportIds: Array<TransportIdentifier>,
-  skipTransportIds: Array<TransportIdentifier>,
+  ignoredTransportIds: Array<TransportIdentifier>,
 ): Array<TransportIdentifier> => {
-  const skippedTransportIds = new Set(skipTransportIds);
-  return transportIds.filter(transportId => !skippedTransportIds.has(transportId));
+  const ignored = new Set(ignoredTransportIds);
+  return transportIds.filter(transportId => !ignored.has(transportId));
 };
 
 export const buildSelectableDevices = <

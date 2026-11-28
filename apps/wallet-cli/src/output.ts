@@ -11,13 +11,16 @@
 import type { Spinner } from "yocto-spinner";
 import { z } from "zod";
 import { getCryptoAssetsStore } from "@ledgerhq/ledger-wallet-framework/cryptoAssetsStore";
+import type { Address } from "@domain/entity-network";
 import { CliProcessExitError } from "./cli-process-exit-error";
 import { type DeviceState, isTerminalDeviceState, renderDeviceState } from "./device/device-state";
+import { type UsbAccessEvidence, usbAccessHint } from "./device/usb-access-evidence";
 import { WalletCliDeviceError } from "./device/wallet-cli-device-error";
 import { KeychainUnavailableError } from "./key-ring/keychain-unavailable-error";
 import { HumanFormatter } from "./wallet/formatter/human";
 import { JsonFormatter } from "./wallet/formatter/json";
 import { makeEnvelope } from "./shared/response";
+import { failedRequestHint, findFailedRequest } from "./shared/failed-request";
 import {
   spinner,
   colors,
@@ -122,13 +125,13 @@ export interface CommandOutput {
   operations(items: Operation[], currencyId: string, nextCursor?: string): Promise<void>;
   token(t: TokenInfo): void;
   /** Output a receive / fresh address. `verified` indicates whether the device attested it. */
-  address(addr: string, verified: boolean): void;
+  address(addr: Address, verified: boolean): void;
   /**
    * Surface the derived address before device confirmation so the user (or an agent
    * watching the stream) can compare it with what the Ledger displays.
    * Human: stderr line. Json: NDJSON `pre-verify-address` event.
    */
-  preVerifyAddress(addr: string): void;
+  preVerifyAddress(addr: Address): void;
   /** Output the result of a successful device genuine check. */
   genuineCheck(): void;
 
@@ -394,6 +397,12 @@ function redactProfileUrls(profile: AgentIntentProfileMeta): AgentIntentProfileM
 // HumanCommandOutput
 // ---------------------------------------------------------------------------
 
+function describeUsbAccess(evidence: UsbAccessEvidence): string {
+  const hint = usbAccessHint(evidence.kind);
+  const failure = `USB access failed with ${evidence.error}.`;
+  return hint === undefined ? failure : `${failure} ${hint}`;
+}
+
 class HumanCommandOutput implements CommandOutput {
   private _activeSpin: Spinner | null = null;
   // Labels as printed live during the scan, in stream order — kept only to diff against the
@@ -434,6 +443,7 @@ class HumanCommandOutput implements CommandOutput {
       const displayText = HumanCommandOutput._formatErrorForSpinner(err);
       this._activeSpin?.error(displayText);
       this._activeSpin = null;
+      HumanCommandOutput._writeFailedRequestHint(err);
       throw err;
     }
   }
@@ -453,6 +463,11 @@ class HumanCommandOutput implements CommandOutput {
     return HumanFormatter.formatError(err);
   }
 
+  private static _writeFailedRequestHint(err: unknown): void {
+    const failedRequest = findFailedRequest(err);
+    if (failedRequest) writeStderr(failedRequestHint(failedRequest) + "\n");
+  }
+
   private _exitWithDeviceError(err: WalletCliDeviceError): never {
     const displayText = HumanCommandOutput._formatErrorForSpinner(err);
     if (isInteractive() && this._activeSpin) {
@@ -461,6 +476,11 @@ class HumanCommandOutput implements CommandOutput {
       writeStderr(displayText + "\n");
     }
     this._activeSpin = null;
+    if (err.state.code === "unknown" && err.state.usbAccess) {
+      writeStderr(colors.dim(`    ${describeUsbAccess(err.state.usbAccess)}`) + "\n");
+    }
+    // account discover maps every failure, an explorer request too, to a device error.
+    HumanCommandOutput._writeFailedRequestHint(err);
     throw new CliProcessExitError(err.exitCode);
   }
 
@@ -480,7 +500,7 @@ class HumanCommandOutput implements CommandOutput {
     }
   }
 
-  address(addr: string, verified: boolean): void {
+  address(addr: Address, verified: boolean): void {
     if (!verified) {
       writeStderr("Warning: address was NOT verified on device\n");
     }
@@ -491,7 +511,7 @@ class HumanCommandOutput implements CommandOutput {
     writeStdout(this._fmt.formatTokenInfo(t));
   }
 
-  preVerifyAddress(addr: string): void {
+  preVerifyAddress(addr: Address): void {
     writeStderr(addr + "\n");
     writeStderr("Compare the address above with what's shown on your Ledger…\n");
   }
@@ -1190,6 +1210,11 @@ function sendIntentSummaryLines(summary: SendIntentSummary): string[] {
 // JsonCommandOutput
 // ---------------------------------------------------------------------------
 
+function usbAccessFields(evidence: UsbAccessEvidence): Record<string, string> {
+  const hint = usbAccessHint(evidence.kind);
+  return { usb_access_error: evidence.error, ...(hint === undefined ? {} : { hint }) };
+}
+
 const BUILT_IN_ERROR_NAMES = new Set([
   "Error",
   "TypeError",
@@ -1218,6 +1243,10 @@ class JsonCommandOutput implements CommandOutput {
   }
 
   private _errorEnvelope(e: unknown): Record<string, unknown> {
+    const failedRequest = findFailedRequest(e);
+    const failedRequestFields = failedRequest
+      ? { host: failedRequest.host, hint: failedRequestHint(failedRequest) }
+      : {};
     if (e instanceof WalletCliDeviceError) {
       const { message } = renderDeviceState(e.state);
       return {
@@ -1226,6 +1255,9 @@ class JsonCommandOutput implements CommandOutput {
           command: this._ctx.command,
           code: e.state.code,
           message,
+          ...(e.state.code === "unknown" && e.state.usbAccess
+            ? usbAccessFields(e.state.usbAccess)
+            : failedRequestFields),
         },
       };
     }
@@ -1245,6 +1277,7 @@ class JsonCommandOutput implements CommandOutput {
         ...(e instanceof CodedCommandError ? { code: e.code } : {}),
         message: HumanFormatter.formatError(e),
         ...(typeof httpStatus === "number" ? { http_status: httpStatus } : {}),
+        ...failedRequestFields,
       },
     };
   }
@@ -1314,10 +1347,10 @@ class JsonCommandOutput implements CommandOutput {
 
   async operations(items: Operation[], currencyId: string, nextCursor?: string): Promise<void> {
     const operations = await this._jsonFmt.operations(items, currencyId, this._ctx.account ?? "");
-    this._writeNdjson(this._envelope({ operations, nextCursor }));
+    this._writeNdjson(this._envelope({ operations, nextCursor: nextCursor ?? null }));
   }
 
-  address(addr: string, verified: boolean): void {
+  address(addr: Address, verified: boolean): void {
     this._writeNdjson(
       this._envelope({
         address: addr,
@@ -1331,7 +1364,7 @@ class JsonCommandOutput implements CommandOutput {
     this._writeNdjson(this._envelope({ token: this._jsonFmt.token(t) }));
   }
 
-  preVerifyAddress(addr: string): void {
+  preVerifyAddress(addr: Address): void {
     this._writeNdjson({
       type: "pre-verify-address",
       command: this._ctx.command,

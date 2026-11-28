@@ -36,7 +36,6 @@ const transformIncludePatterns = [
   "expo-modules-core",
   "uuid",
   "react-native-ble-plx",
-  "react-native-qrcode-svg",
   "react-native-video",
   "ky",
   "@gorhom/bottom-sheet",
@@ -45,6 +44,7 @@ const transformIncludePatterns = [
   "@shopify/flash-list",
   "@ledgerhq/lumen-.*",
   "immer",
+  "color(-convert|-name|-string)?",
   "@features/.*",
   "@ronradtke",
   "@sbaiahmed1/react-native-blur",
@@ -76,6 +76,9 @@ module.exports = {
   ],
   testMatch: ["**/src/**/*.test.(ts|tsx)"],
   transform: {
+    // libs/ packages are consumed from source. Babel keeps what their built outputs had: the
+    // worklets plugin and plain export assignments that mocks can spread mid-cycle.
+    "/libs/.+\\.tsx?$": "babel-jest",
     "^.+\\.(t)sx?$": [
       "@swc/jest",
       {
@@ -193,6 +196,7 @@ module.exports = {
     "^expo-file-system$": "<rootDir>/__mocks__/expo-file-system.ts",
     "^expo-web-browser$": "<rootDir>/__mocks__/expo-web-browser.ts",
     "^expo-clipboard$": "<rootDir>/__mocks__/expo-clipboard.js",
+    "^expo-localization$": "<rootDir>/__mocks__/expo-localization.ts",
     "^expo-image-picker$": "<rootDir>/__mocks__/expo-image-picker.ts",
     "^@shared/network-status$": "<rootDir>/__mocks__/@shared/network-status.ts",
     // react-native-fast-crypto ships ESM and needs a native runtime; one stub for every copy.

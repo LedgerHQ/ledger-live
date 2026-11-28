@@ -10,9 +10,7 @@ import {
 import { useLocalLiveAppContext } from "@ledgerhq/live-common/wallet-api/LocalLiveAppProvider/index";
 
 import {
-  INITIAL_PLATFORM_STATE,
   DAPP_DISCLAIMER_ID,
-  DISCOVER_STORE_KEY,
   BROWSE_SEARCH_OPTIONS,
   WC_ID,
   LEDGER_SHOP_ID,
@@ -22,7 +20,7 @@ import { useNavigation, useRoute } from "@react-navigation/native";
 import { useSelector } from "~/context/hooks";
 import { useSearch } from "@ledgerhq/live-common/hooks/useSearch";
 import { useWalletFeaturesConfig } from "@features/platform-feature-flags";
-import { useDB } from "../../../db";
+import { useDiscoverDB } from "../../../discoverDB";
 import { setOriginFlow } from "~/analytics/originFlow";
 import { HOOKS_TRACKING_LOCATIONS } from "~/analytics/hooks/variables";
 import { NavigatorName, ScreenName } from "~/const";
@@ -198,11 +196,7 @@ function selectRecentlyUsedDB(state: DiscoverDB) {
 }
 
 export function useRecentlyUsedDB() {
-  return useDB<DiscoverDB, DiscoverDB["recentlyUsed"]>(
-    DISCOVER_STORE_KEY,
-    INITIAL_PLATFORM_STATE,
-    selectRecentlyUsedDB,
-  );
+  return useDiscoverDB(selectRecentlyUsedDB);
 }
 
 function selectCurrentAccountHistDB(state: DiscoverDB) {
@@ -210,11 +204,7 @@ function selectCurrentAccountHistDB(state: DiscoverDB) {
 }
 
 export function useCurrentAccountHistDB() {
-  return useDB<DiscoverDB, DiscoverDB["currentAccountHist"]>(
-    DISCOVER_STORE_KEY,
-    INITIAL_PLATFORM_STATE,
-    selectCurrentAccountHistDB,
-  );
+  return useDiscoverDB(selectCurrentAccountHistDB);
 }
 
 function selectCacheBustedLiveAppsDB(state: DiscoverDB) {
@@ -222,9 +212,5 @@ function selectCacheBustedLiveAppsDB(state: DiscoverDB) {
 }
 
 export function useCacheBustedLiveAppsDB() {
-  return useDB<DiscoverDB, DiscoverDB["cacheBustedLiveApps"]>(
-    DISCOVER_STORE_KEY,
-    INITIAL_PLATFORM_STATE,
-    selectCacheBustedLiveAppsDB,
-  );
+  return useDiscoverDB(selectCacheBustedLiveAppsDB);
 }

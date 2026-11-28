@@ -31,9 +31,8 @@ function toPltBalance(entry: PltAccountToken, address: string): Balance | undefi
 export async function getBalance(
   config: ConcordiumCoinConfig,
   address: string,
-  currencyId: string,
 ): Promise<Balance[]> {
-  const balanceResponse = await getAccountBalance(config, currencyId, address);
+  const balanceResponse = await getAccountBalance(config, address);
 
   // Reporting a zero native balance for an address that does not exist matches
   // what the chain holds for it, where throwing would surface as an

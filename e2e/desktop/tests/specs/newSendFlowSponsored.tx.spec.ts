@@ -11,7 +11,11 @@ import { FF_NEW_SEND_FLOW_ENABLED } from "tests/utils/featureFlagUtils";
 import { buildTags } from "tests/utils/tagsUtils";
 import { reachAmountStep, reachAmountStepFromCurrentAccount } from "tests/utils/newSendFlowUtils";
 
-const tx = new Transaction(TokenAccount.TRX_USDT, TokenAccount.TRX_USDT_2, "1");
+const tx = new Transaction({
+  accountToDebit: TokenAccount.TRX_USDT,
+  accountToCredit: TokenAccount.TRX_USDT_2,
+  amount: "1",
+});
 
 // The fake's rents as the app rounds them; the device shows them in full (FAKE_TRONIFY_RENT).
 const QUOTED_RENT_SHOWN = "3.16945 USDT";

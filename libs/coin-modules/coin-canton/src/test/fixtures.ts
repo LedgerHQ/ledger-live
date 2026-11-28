@@ -1,18 +1,22 @@
-import { CoinConfig } from "@ledgerhq/coin-module-framework/config";
 import {
   createEmptyHistoryCache,
   encodeAccountId,
 } from "@ledgerhq/ledger-wallet-framework/account";
 import { SignerContext } from "@ledgerhq/ledger-wallet-framework/signer";
 import prepareTransferMock from "@ledgerhq/hw-app-canton/tests/fixtures/prepare-transfer.json";
-import { CryptoCurrency, CryptoCurrencyIdSchema } from "@ledgerhq/ledger-wallet-framework/types";
-import type { Account } from "@ledgerhq/types-live";
+import {
+  CryptoCurrency,
+  CryptoCurrencyIdSchema,
+  type TokenCurrency,
+} from "@ledgerhq/ledger-wallet-framework/types";
+import type { Account, TokenAccount } from "@ledgerhq/types-live";
 import BigNumber from "bignumber.js";
-import coinConfig, { type CantonCoinConfig, type CantonContext } from "../config";
+import { cantonDefaults, type CantonCoinConfig, type CantonContext } from "../config";
 import type { CantonAccount, Transaction } from "../types";
 import type {
   InstrumentBalance,
   OnboardingPrepareResponse,
+  OperationView,
   PrepareTransferResponse,
   TransferProposal,
 } from "../types/gateway";
@@ -36,6 +40,7 @@ const DEFAULT_VALUES = {
   CONFIG: {
     GATEWAY_URL: "https://canton-gateway-devnet.api.live.ledger-test.com",
     NETWORK_TYPE: "devnet",
+    NODE_ID: "ledger-live-devnet",
   },
 } as const;
 
@@ -127,6 +132,23 @@ export const createMockCantonAccount = (
 
   return baseAccount as CantonAccount;
 };
+
+export const createMockTokenAccount = (overrides: Partial<TokenAccount> = {}): TokenAccount =>
+  ({
+    type: "TokenAccount",
+    id: "canton-token-account",
+    parentId: "canton-account",
+    token: {
+      id: "canton_network/usdcx",
+      name: "USDCx",
+      contractAddress: "issuer::1220",
+    } as TokenCurrency,
+    balance: new BigNumber(0),
+    spendableBalance: new BigNumber(0),
+    operations: [],
+    pendingOperations: [],
+    ...overrides,
+  }) as TokenAccount;
 
 class MockCantonSigner implements CantonSigner {
   private readonly keyPair: CantonTestKeyPair;
@@ -253,24 +275,13 @@ export const createMockInstrumentBalances = (
   );
 };
 
-export const setupMockCoinConfig = (overrides: Partial<Record<string, unknown>> = {}): void => {
-  coinConfig.setCoinConfig(
-    () =>
-      ({
-        gatewayUrl: DEFAULT_VALUES.CONFIG.GATEWAY_URL,
-        useGateway: true,
-        networkType: DEFAULT_VALUES.CONFIG.NETWORK_TYPE,
-        nativeInstrumentId: DEFAULT_VALUES.INSTRUMENT.ID,
-        status: {
-          type: "active",
-        },
-        ...overrides,
-      }) as unknown as ReturnType<Parameters<typeof coinConfig.setCoinConfig>[0]>,
-  );
-};
+const { gateway, calTokensCacheTtlMs } = cantonDefaults.canton_network_devnet;
 
-export const createMockCoinConfigValue = createFactory({
+export const createMockCoinConfigValue = createFactory<CantonCoinConfig>({
+  gateway,
+  calTokensCacheTtlMs,
   gatewayUrl: DEFAULT_VALUES.CONFIG.GATEWAY_URL,
+  nodeId: DEFAULT_VALUES.CONFIG.NODE_ID,
   useGateway: true,
   networkType: DEFAULT_VALUES.CONFIG.NETWORK_TYPE,
   nativeInstrumentId: DEFAULT_VALUES.INSTRUMENT.ID,
@@ -280,18 +291,26 @@ export const createMockCoinConfigValue = createFactory({
   unit: { name: "cc", code: "CC", magnitude: 38 },
 });
 
-export const createMockCoinConfig = (): CoinConfig<CantonCoinConfig> => {
-  const configValue = createMockCoinConfigValue();
-  return jest.fn(() => configValue);
-};
-
 /** A mock {@link CantonContext} resolving to {@link createMockCoinConfigValue}. */
 export const createMockContext = (
   config: CantonCoinConfig = createMockCoinConfigValue(),
 ): CantonContext => ({
-  config: async () => config,
+  config: () => Promise.resolve(config),
   logger: () => {},
 });
+
+/** A context that resolves `first` once, then `later`: any layer that resolves twice sees the swap. */
+export const createSwitchingContext = (
+  first: CantonCoinConfig,
+  later: CantonCoinConfig,
+): CantonContext & { config: jest.Mock } => ({
+  config: jest.fn().mockResolvedValueOnce(first).mockResolvedValue(later),
+  logger: () => {},
+});
+
+/** The config the context argument of a mocked call resolves, whether pinned or not. */
+export const configOfCall = (call: readonly unknown[]): Promise<CantonCoinConfig> =>
+  (call[0] as CantonContext).config();
 
 export const createMockPendingTransferProposal = createFactory<TransferProposal>({
   contract_id: "test-contract-id",
@@ -303,6 +322,33 @@ export const createMockPendingTransferProposal = createFactory<TransferProposal>
   memo: "test memo",
   expires_at_micros: 1_800_000_000_000_000, // fixed far-future timestamp (microseconds)
   update_id: "test-update-id",
+});
+
+export const createMockOperationView = createFactory<OperationView>({
+  uid: "uid-1",
+  transaction_hash: "0xtxhash",
+  transaction_timestamp: "2024-01-01T00:00:00.000Z",
+  status: "Success",
+  type: "Send",
+  senders: ["alice-party"],
+  recipients: ["bob-party"],
+  transfers: [{ address: "bob-party", type: "Send", value: "100", details: {}, asset: "Amulet" }],
+  block: { height: 10, time: "2024-01-01T00:00:00.000Z", hash: "blockhash" },
+  fee: {
+    value: "1",
+    asset: {
+      type: "native",
+      instrumentAdmin: DEFAULT_VALUES.INSTRUMENT.ADMIN_ID,
+      instrumentId: DEFAULT_VALUES.INSTRUMENT.ID,
+    },
+    details: {},
+  },
+  asset: {
+    type: "native",
+    instrumentAdmin: DEFAULT_VALUES.INSTRUMENT.ADMIN_ID,
+    instrumentId: DEFAULT_VALUES.INSTRUMENT.ID,
+  },
+  details: {},
 });
 
 export { generateMockKeyPair };

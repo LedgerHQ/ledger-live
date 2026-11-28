@@ -3,7 +3,8 @@ import {
   type ExecutorPlatformConfiguration,
 } from "@features/platform-device-intent";
 import { DeviceIntentExecutor as BaseDeviceIntentExecutor } from "@features/platform-device-intent/react";
-import { DeviceIntentExecutorHeaderContext } from "@ledgerhq/live-dmk-shared";
+import type { DeviceFlowFailure } from "@ledgerhq/live-dmk-shared";
+import { DeviceIntentExecutorHeaderContext } from "@ledgerhq/live-dmk-shared/react";
 import { BottomSheetHeader, BottomSheetScrollView } from "@ledgerhq/lumen-ui-rnative";
 import { QueuedBottomSheet } from "@shared/ui-queued-bottom-sheet";
 import React from "react";
@@ -22,23 +23,17 @@ import {
 import type { InitializationInput } from "./types";
 import { useDeviceIntentExecutorViewModel } from "./useDeviceIntentExecutorViewModel";
 
-export {
-  buildDeviceInitializationInput,
-  type BuildDeviceInitializationInputParams,
-} from "./ContextInitializer/utils/buildDeviceInitializationInput";
+export { buildDeviceInitializationInput } from "./ContextInitializer/utils/buildDeviceInitializationInput";
 export type { InitializationInput } from "./types";
-export type {
-  DeviceIntentTrackingProperties,
-  SourceFlow,
-} from "./utils/DeviceIntentTrackingContext";
+export { ContinueOnDevice } from "./components/DeviceGenericStates/ContinueOnDevice";
+export type { SourceFlow } from "./utils/DeviceIntentTrackingContext";
 
-type Props<JobState, Input, ExtraProps, Result = undefined> = DeviceIntentExecutorProps<
-  JobState,
-  Input,
-  ExtraProps,
-  InitializationInput,
-  Result
+type Props<JobState, Input, ExtraProps, Result = undefined> = Omit<
+  DeviceIntentExecutorProps<JobState, Input, ExtraProps, InitializationInput, Result>,
+  "onUserCancel"
 > & {
+  /** Gets the error screen the user closed, if any. */
+  onUserCancel: (failure: DeviceFlowFailure | null) => void;
   initializerConfig?: InitializerConfig;
   /**
    * Originating user intent that initiated the device flow. Required for analytics.
@@ -101,6 +96,8 @@ export function DeviceIntentExecutor<JobState, Input, ExtraProps, Result = undef
         <DeviceIntentExecutorHeaderContext.Provider value={headerContextValue}>
           <BottomSheetScrollView
             contentContainerStyle={{ paddingBottom: bottomInset + 16 }}
+            stickyHeaderIndices={hasHeaderOverride ? undefined : [0]}
+            bounces={false}
             showsVerticalScrollIndicator={false}
           >
             {!hasHeaderOverride && <BottomSheetHeader density="expanded" />}

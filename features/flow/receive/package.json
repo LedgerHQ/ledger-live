@@ -1,0 +1,114 @@
+{
+  "name": "@features/flow-receive",
+  "version": "0.3.0",
+  "private": true,
+  "description": "Receive flow for Ledger Wallet",
+  "main": "src/index.ts",
+  "react-native": "src/index.native.ts",
+  "types": "src/index.ts",
+  "exports": {
+    ".": {
+      "react-native": "./src/index.native.ts",
+      "default": "./src/index.ts"
+    },
+    "./state": "./src/state/index.ts",
+    "./types.mock": "./src/types.mock.ts",
+    "./package.json": "./package.json"
+  },
+  "sideEffects": false,
+  "scripts": {
+    "lint": "oxlint src",
+    "format": "oxfmt src",
+    "format:check": "oxfmt src --check",
+    "typecheck": "tsc --noEmit -p tsconfig.web.json && tsc --noEmit -p tsconfig.native.json",
+    "test": "jest",
+    "coverage": "jest --coverage"
+  },
+  "dependencies": {
+    "@domain/entity-account": "workspace:*",
+    "@domain/entity-account-data": "workspace:*",
+    "@domain/entity-account-receive": "workspace:*",
+    "@domain/entity-account-status": "workspace:*",
+    "@domain/entity-currency": "workspace:*",
+    "@features/platform-account-data": "workspace:*",
+    "@features/platform-currencies": "workspace:*",
+    "@features/platform-device-intent": "workspace:*",
+    "@features/platform-intent-verify-address": "workspace:*",
+    "@reduxjs/toolkit": "catalog:",
+    "@shared/analytics": "workspace:*",
+    "@shared/feature-flags": "workspace:*",
+    "@shared/i18n": "workspace:*",
+    "@shared/linking": "workspace:*",
+    "@shared/share-sheet": "workspace:*",
+    "@shared/ui-animated-qr-code": "workspace:*",
+    "@shared/ui-info-state": "workspace:*",
+    "@shared/ui-queued-bottom-sheet": "workspace:*"
+  },
+  "devDependencies": {
+    "@domain/api-account-data": "workspace:*",
+    "@domain/api-currency-token": "workspace:*",
+    "@domain/entity-account-descriptor": "workspace:*",
+    "@domain/entity-currency-token": "workspace:*",
+    "@ledgerhq/crypto-icons": "catalog:",
+    "@ledgerhq/device-management-kit": "catalog:",
+    "@ledgerhq/lumen-ui-react": "catalog:",
+    "@ledgerhq/lumen-ui-rnative": "catalog:",
+    "@ledgerhq/test-quarantine": "workspace:*",
+    "@shared/api-services": "workspace:*",
+    "@support/jest": "workspace:*",
+    "@support/lint": "workspace:*",
+    "@swc/core": "catalog:",
+    "@swc/jest": "catalog:",
+    "@testing-library/dom": "catalog:",
+    "@testing-library/jest-dom": "catalog:",
+    "@testing-library/react": "catalog:",
+    "@testing-library/react-native": "catalog:",
+    "@testing-library/user-event": "catalog:",
+    "@types/jest": "catalog:",
+    "@types/react": "catalog:",
+    "@typescript/native": "catalog:",
+    "jest": "catalog:",
+    "jest-environment-jsdom": "catalog:",
+    "oxfmt": "catalog:",
+    "oxlint": "catalog:",
+    "react": "catalog:",
+    "react-dom": "catalog:",
+    "react-native": "catalog:",
+    "react-native-reanimated": "catalog:",
+    "react-native-safe-area-context": "catalog:",
+    "react-redux": "catalog:",
+    "react-test-renderer": "catalog:",
+    "typescript": "catalog:"
+  },
+  "peerDependencies": {
+    "@ledgerhq/crypto-icons": "catalog:",
+    "@ledgerhq/device-management-kit": "catalog:",
+    "@ledgerhq/lumen-ui-react": "catalog:",
+    "@ledgerhq/lumen-ui-rnative": "catalog:",
+    "react": "catalog:",
+    "react-native": "catalog:",
+    "react-native-reanimated": "catalog:",
+    "react-native-safe-area-context": "catalog:",
+    "react-redux": "catalog:"
+  },
+  "peerDependenciesMeta": {
+    "react-native": {
+      "optional": true
+    },
+    "@ledgerhq/lumen-ui-react": {
+      "optional": true
+    },
+    "@ledgerhq/lumen-ui-rnative": {
+      "optional": true
+    },
+    "react-native-safe-area-context": {
+      "optional": true
+    },
+    "@ledgerhq/crypto-icons": {
+      "optional": true
+    },
+    "react-native-reanimated": {
+      "optional": true
+    }
+  }
+}

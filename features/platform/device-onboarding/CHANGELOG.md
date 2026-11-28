@@ -1,5 +1,81 @@
 # @features/platform-device-onboarding
 
+## 0.7.0
+
+### Minor Changes
+
+- [#24986](https://github.com/LedgerHQ/ledger-live/pull/24986) [`d1f10fb`](https://github.com/LedgerHQ/ledger-live/commit/d1f10fbe2b9a1c9a90d28e0b79a7113932437bdc) Thanks [@jiyuzhuang](https://github.com/jiyuzhuang)! - Show an info card and its bottom sheet on the unseeded setup screen, from the new @features/flow-device-onboarding-setup-info package
+
+- [#24915](https://github.com/LedgerHQ/ledger-live/pull/24915) [`f04c3ec`](https://github.com/LedgerHQ/ledger-live/commit/f04c3ec7af3bfec56b14facc2a103d5d496492e2) Thanks [@tonykhaov](https://github.com/tonykhaov)! - End an unseeded device restore on the success karaoke, and show the karaoke glow in light mode
+
+- [#24979](https://github.com/LedgerHQ/ledger-live/pull/24979) [`bda46c4`](https://github.com/LedgerHQ/ledger-live/commit/bda46c496fdacc801de3264d2854e00eb38b8499) Thanks [@RobinVncnt](https://github.com/RobinVncnt)! - Keep the checks screen and ask to power the device back on when it switches off during device onboarding
+
+- [#25087](https://github.com/LedgerHQ/ledger-live/pull/25087) [`7c824f3`](https://github.com/LedgerHQ/ledger-live/commit/7c824f377ec4a7bcc86f3edb71a198d7ea6ca9a5) Thanks [@RobinVncnt](https://github.com/RobinVncnt)! - Keep the pairing and checks screens up for a locked or updating device, ask to power on after 20 seconds then offer to try again, and reconnect only to the updated device after an OS update
+
+- [#25219](https://github.com/LedgerHQ/ledger-live/pull/25219) [`c20c157`](https://github.com/LedgerHQ/ledger-live/commit/c20c157c991dbfcd47f9300b997f74fac0f6d303) Thanks [@sarneijim](https://github.com/sarneijim)! - Show a Wallet screen before restoring with Recover and pause seed polling while the Live App is open
+
+## 0.7.0-next.0
+
+### Minor Changes
+
+- [#24986](https://github.com/LedgerHQ/ledger-live/pull/24986) [`d1f10fb`](https://github.com/LedgerHQ/ledger-live/commit/d1f10fbe2b9a1c9a90d28e0b79a7113932437bdc) Thanks [@jiyuzhuang](https://github.com/jiyuzhuang)! - Show an info card and its bottom sheet on the unseeded setup screen, from the new @features/flow-device-onboarding-setup-info package
+
+- [#24915](https://github.com/LedgerHQ/ledger-live/pull/24915) [`f04c3ec`](https://github.com/LedgerHQ/ledger-live/commit/f04c3ec7af3bfec56b14facc2a103d5d496492e2) Thanks [@tonykhaov](https://github.com/tonykhaov)! - End an unseeded device restore on the success karaoke, and show the karaoke glow in light mode
+
+- [#24979](https://github.com/LedgerHQ/ledger-live/pull/24979) [`bda46c4`](https://github.com/LedgerHQ/ledger-live/commit/bda46c496fdacc801de3264d2854e00eb38b8499) Thanks [@RobinVncnt](https://github.com/RobinVncnt)! - Keep the checks screen and ask to power the device back on when it switches off during device onboarding
+
+- [#25087](https://github.com/LedgerHQ/ledger-live/pull/25087) [`7c824f3`](https://github.com/LedgerHQ/ledger-live/commit/7c824f377ec4a7bcc86f3edb71a198d7ea6ca9a5) Thanks [@RobinVncnt](https://github.com/RobinVncnt)! - Keep the pairing and checks screens up for a locked or updating device, ask to power on after 20 seconds then offer to try again, and reconnect only to the updated device after an OS update
+
+- [#25219](https://github.com/LedgerHQ/ledger-live/pull/25219) [`c20c157`](https://github.com/LedgerHQ/ledger-live/commit/c20c157c991dbfcd47f9300b997f74fac0f6d303) Thanks [@sarneijim](https://github.com/sarneijim)! - Show a Wallet screen before restoring with Recover and pause seed polling while the Live App is open
+
+## 0.6.0
+
+### Minor Changes
+
+- [#24738](https://github.com/LedgerHQ/ledger-live/pull/24738) [`0e964a8`](https://github.com/LedgerHQ/ledger-live/commit/0e964a897b6d740d172a55060b8aba960800b2cc) Thanks [@tonykhaov](https://github.com/tonykhaov)! - Show the intro karaoke to a new (unseeded) device before the checks. Each tap shows the next phrase. On a Nano S, Nano S Plus or Nano X with the counterfeit flag on, the last button opens the counterfeit warning first.
+
+  `send` from `useDeviceOnboardingActor` now returns whether the machine took the event, so a caller can let the user retry (for example after a device lock).
+
+## 0.6.0-next.0
+
+### Minor Changes
+
+- [#24738](https://github.com/LedgerHQ/ledger-live/pull/24738) [`0e964a8`](https://github.com/LedgerHQ/ledger-live/commit/0e964a897b6d740d172a55060b8aba960800b2cc) Thanks [@tonykhaov](https://github.com/tonykhaov)! - Show the intro karaoke to a new (unseeded) device before the checks. Each tap shows the next phrase. On a Nano S, Nano S Plus or Nano X with the counterfeit flag on, the last button opens the counterfeit warning first.
+
+  `send` from `useDeviceOnboardingActor` now returns whether the machine took the event, so a caller can let the user retry (for example after a device lock).
+
+## 0.5.0
+
+### Minor Changes
+
+- [#24346](https://github.com/LedgerHQ/ledger-live/pull/24346) [`72da4b1`](https://github.com/LedgerHQ/ledger-live/commit/72da4b19bd803dc85ef83d3b09a45445f95186fa) Thanks [@RobinVncnt](https://github.com/RobinVncnt)! - Confirm before leaving an unseeded device setup, and keep onboarding incomplete until the end
+
+- [#24303](https://github.com/LedgerHQ/ledger-live/pull/24303) [`e8ca231`](https://github.com/LedgerHQ/ledger-live/commit/e8ca231d007f43839987343437507ea02d0dad0d) Thanks [@ysitbon](https://github.com/ysitbon)! - Split device onboarding by job: `@features/platform-device-onboarding` runs the actor with `useDeviceOnboardingActor`, and `@devtools/bindings` builds the devtool's log, context and next states with `useDeviceOnboardingToolState` and `useDeviceOnboardingToolProps`. The mobile funnel no longer imports `@devtools/*`, and the desktop device onboarding code moves under DevTools
+
+- [#24273](https://github.com/LedgerHQ/ledger-live/pull/24273) [`8dae360`](https://github.com/LedgerHQ/ledger-live/commit/8dae360c044392da40c67e29416d11bbe34afd8b) Thanks [@RobinVncnt](https://github.com/RobinVncnt)! - Keep polling the device through seed entry before treating the transport as lost
+
+- [#24441](https://github.com/LedgerHQ/ledger-live/pull/24441) [`e0ac369`](https://github.com/LedgerHQ/ledger-live/commit/e0ac36999d2ff30c0788c40a4a7ed80293d72fe0) Thanks [@RobinVncnt](https://github.com/RobinVncnt)! - Show the unlock sheet when a device locks during onboarding checks
+
+- [#24282](https://github.com/LedgerHQ/ledger-live/pull/24282) [`80b6233`](https://github.com/LedgerHQ/ledger-live/commit/80b62337e7e2b754004ca5f93b9f7d569015e1eb) Thanks [@jiyuzhuang](https://github.com/jiyuzhuang)! - Remember which seed path an unseeded device took
+
+- [#24199](https://github.com/LedgerHQ/ledger-live/pull/24199) [`f53d517`](https://github.com/LedgerHQ/ledger-live/commit/f53d517815a694c54cb535ba39ebc1b249a88775) Thanks [@RobinVncnt](https://github.com/RobinVncnt)! - Open the unseeded device funnel from Set up your Ledger, and skip Ledger Sync after setup
+
+## 0.5.0-next.0
+
+### Minor Changes
+
+- [#24346](https://github.com/LedgerHQ/ledger-live/pull/24346) [`72da4b1`](https://github.com/LedgerHQ/ledger-live/commit/72da4b19bd803dc85ef83d3b09a45445f95186fa) Thanks [@RobinVncnt](https://github.com/RobinVncnt)! - Confirm before leaving an unseeded device setup, and keep onboarding incomplete until the end
+
+- [#24303](https://github.com/LedgerHQ/ledger-live/pull/24303) [`e8ca231`](https://github.com/LedgerHQ/ledger-live/commit/e8ca231d007f43839987343437507ea02d0dad0d) Thanks [@ysitbon](https://github.com/ysitbon)! - Split device onboarding by job: `@features/platform-device-onboarding` runs the actor with `useDeviceOnboardingActor`, and `@devtools/bindings` builds the devtool's log, context and next states with `useDeviceOnboardingToolState` and `useDeviceOnboardingToolProps`. The mobile funnel no longer imports `@devtools/*`, and the desktop device onboarding code moves under DevTools
+
+- [#24273](https://github.com/LedgerHQ/ledger-live/pull/24273) [`8dae360`](https://github.com/LedgerHQ/ledger-live/commit/8dae360c044392da40c67e29416d11bbe34afd8b) Thanks [@RobinVncnt](https://github.com/RobinVncnt)! - Keep polling the device through seed entry before treating the transport as lost
+
+- [#24441](https://github.com/LedgerHQ/ledger-live/pull/24441) [`e0ac369`](https://github.com/LedgerHQ/ledger-live/commit/e0ac36999d2ff30c0788c40a4a7ed80293d72fe0) Thanks [@RobinVncnt](https://github.com/RobinVncnt)! - Show the unlock sheet when a device locks during onboarding checks
+
+- [#24282](https://github.com/LedgerHQ/ledger-live/pull/24282) [`80b6233`](https://github.com/LedgerHQ/ledger-live/commit/80b62337e7e2b754004ca5f93b9f7d569015e1eb) Thanks [@jiyuzhuang](https://github.com/jiyuzhuang)! - Remember which seed path an unseeded device took
+
+- [#24199](https://github.com/LedgerHQ/ledger-live/pull/24199) [`f53d517`](https://github.com/LedgerHQ/ledger-live/commit/f53d517815a694c54cb535ba39ebc1b249a88775) Thanks [@RobinVncnt](https://github.com/RobinVncnt)! - Open the unseeded device funnel from Set up your Ledger, and skip Ledger Sync after setup
+
 ## 0.4.0
 
 ### Minor Changes

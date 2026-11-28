@@ -24,6 +24,7 @@ function renderTool(accounts: AccountBalanceHistoryToolAccount[]) {
   const onRead = jest.fn();
   const onReadAll = jest.fn();
   const onRangeChange = jest.fn();
+  const onCountervalueChange = jest.fn();
   render(
     <AccountBalanceHistory
       ranges={["day", "week", "month"]}
@@ -32,12 +33,34 @@ function renderTool(accounts: AccountBalanceHistoryToolAccount[]) {
       accounts={accounts}
       onRead={onRead}
       onReadAll={onReadAll}
+      fiat="USD"
+      countervalue={false}
+      onCountervalueChange={onCountervalueChange}
     />,
   );
-  return { onRead, onReadAll, onRangeChange };
+  return { onRead, onReadAll, onRangeChange, onCountervalueChange };
 }
 
 describe("AccountBalanceHistory", () => {
+  it("asks for the app's fiat when its checkbox is checked", async () => {
+    const { onCountervalueChange } = renderTool([]);
+    await userEvent.click(screen.getByRole("checkbox", { name: "USD" }));
+    expect(onCountervalueChange).toHaveBeenCalledWith(true);
+  });
+
+  it("shows the last valued point and how many points are valued", async () => {
+    renderTool([
+      makeAccount({
+        series: [
+          { ...series, valuedCount: 2, lastCountervalue: "$4,500.00", countervalues: [10, 20] },
+        ],
+      }),
+    ]);
+    expect(screen.getByText("$4,500.00")).toBeVisible();
+    await userEvent.click(screen.getByText("ethereum"));
+    expect(screen.getByText(/2 valued/)).toBeVisible();
+  });
+
   it("says when the accounts slice is empty", () => {
     renderTool([]);
     expect(screen.getByText("0 accounts")).toBeVisible();

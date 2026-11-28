@@ -3,6 +3,8 @@
 import fs from "node:fs";
 import path from "node:path";
 
+import { isSpecifierCall } from "./specifier-calls.js";
+
 const RELATIVE_SUFFIX = /\.(?:web|native)(\.[cm]?[jt]sx?)?$/;
 const SUBPATH_SUFFIX = /\/(web|native)(?:\.[cm]?[jt]sx?)?$/;
 
@@ -136,28 +138,6 @@ function findPlatformSuffix(specifier, filename) {
   return null;
 }
 
-// `require()`, `import()` and the jest mocking helpers, which take the specifier as an argument
-// rather than on a `source` property.
-const CALLEE_NAMES = new Set(["require"]);
-const JEST_METHODS = new Set(["mock", "unmock", "doMock", "requireActual", "requireMock"]);
-
-/**
- * @param {{ callee?: { type: string, name?: string, object?: { type: string, name?: string }, property?: { type: string, name?: string } } }} node
- * @returns {boolean} whether the call takes a module specifier as its first argument
- */
-function isSpecifierCall(node) {
-  const callee = node.callee;
-  if (!callee) return false;
-  if (callee.type === "Identifier") return CALLEE_NAMES.has(callee.name);
-  return (
-    callee.type === "MemberExpression" &&
-    callee.object?.type === "Identifier" &&
-    callee.object.name === "jest" &&
-    callee.property?.type === "Identifier" &&
-    JEST_METHODS.has(callee.property.name)
-  );
-}
-
 const noPlatformSuffixImports = {
   meta: { fixable: "code" },
   createOnce(context) {
@@ -201,22 +181,7 @@ const noPlatformSuffixImports = {
   },
 };
 
-/**
- * The override that waives the rule for `packages`, the packages of a layer that still import with
- * a platform suffix. An entry goes in the change that cleans its package up, so the list only
- * shrinks. Package names are globs relative to the layer config that re-exports the preset.
- *
- * @param {string[]} packages
- * @returns {{ files: string[], rules: Record<string, "off"> }}
- */
-function platformSuffixWaivers(packages) {
-  return {
-    files: packages.map(pkg => `${pkg}/**`),
-    rules: { "suffix-imports/no-platform-suffix": "off" },
-  };
-}
-
-export { findPlatformSuffix, platformSuffixWaivers };
+export { findPlatformSuffix };
 
 export default {
   meta: {

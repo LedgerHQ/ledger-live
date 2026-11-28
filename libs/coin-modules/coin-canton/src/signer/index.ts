@@ -4,4 +4,6 @@
 
 import getAddress from "./getAddress";
 
+export { createFrameworkSigner, type CantonFrameworkSigner } from "./frameworkSigner";
+
 export default getAddress;

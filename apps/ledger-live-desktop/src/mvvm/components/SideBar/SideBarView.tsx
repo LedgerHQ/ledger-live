@@ -18,6 +18,7 @@ import {
   Compass,
   DollarFill,
   Dollar,
+  Robot,
 } from "@ledgerhq/lumen-ui-react/symbols";
 import React from "react";
 import { useTranslation } from "react-i18next";
@@ -95,6 +96,14 @@ export function SideBarView({ viewModel }: SideBarViewProps) {
                 disabled={viewModel.isCardDisabled}
               />
             )}
+            {viewModel.isAgentsEnabled ? (
+              <SideBarItem
+                value="agents"
+                icon={Robot}
+                activeIcon={Robot}
+                label={t("sidebar.agents")}
+              />
+            ) : null}
           </SideBarLeading>
           <SideBarTrailing>
             <SideBarCollapseToggle />

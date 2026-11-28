@@ -611,7 +611,6 @@ describe("canStake", () => {
       receiptCreationSend: new BigNumber(0),
       receiptCreationExecution: new BigNumber(0),
       accountCreationCharge: new BigNumber(0),
-      validators: [],
     });
   });
 

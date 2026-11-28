@@ -1,4 +1,5 @@
 import { from } from "rxjs";
+import { DeviceModelId } from "@ledgerhq/device-management-kit";
 import calService, { convertCertificateToDeviceData } from "@ledgerhq/ledger-cal-service";
 import { DmkSignerHyperliquid } from "@ledgerhq/live-signer-hyperliquid";
 import { UserRefusedOnDevice } from "@ledgerhq/ledger-wallet-framework/errors";
@@ -44,6 +45,9 @@ jest.mock("@ledgerhq/ledger-cal-service", () => ({
 
 jest.mock("@ledgerhq/live-signer-hyperliquid", () => ({
   DmkSignerHyperliquid: jest.fn(),
+  SignActionsAbortedError: class SignActionsAbortedError extends Error {
+    override name = "SignActionsAbortedError";
+  },
 }));
 
 jest.mock("../converters", () => ({
@@ -208,6 +212,7 @@ describe("Perps handlers", () => {
         mockDeviceData,
         new Uint8Array(Buffer.from(baseParams.metadataWithSignature, "hex")),
         [{ type: "cancel", cancels: [{ a: 1, o: 42 }], nonce: 1 }],
+        undefined,
       );
     });
 
@@ -245,8 +250,8 @@ describe("Perps handlers", () => {
       mockUiSigningExecute.mockImplementation(({ onCancel }) => onCancel());
 
       // WHEN & THEN
-      await expect(serverHandlers["custom.perps.signActions"](baseParams)).rejects.toThrow(
-        "User cancelled signing",
+      await expect(serverHandlers["custom.perps.signActions"](baseParams)).rejects.toBeInstanceOf(
+        UserRefusedOnDevice,
       );
     });
 
@@ -258,6 +263,91 @@ describe("Perps handlers", () => {
       await expect(serverHandlers["custom.perps.signActions"](baseParams)).rejects.toThrow(
         "Not DMK transport",
       );
+    });
+
+    describe("signOnSession", () => {
+      const session = {
+        dmk: {},
+        sessionId: "die-session",
+        connectedDevice: { modelId: DeviceModelId.FLEX },
+      };
+      let controller: AbortController;
+
+      beforeEach(() => {
+        controller = new AbortController();
+        mockUiSigningExecute.mockImplementation(async ({ signOnSession, onSuccess, onError }) => {
+          try {
+            onSuccess(await signOnSession(session, controller.signal));
+          } catch (err) {
+            onError(err);
+          }
+        });
+      });
+
+      it("should return signatures without opening a device", async () => {
+        // GIVEN
+        const expectedSignatures = [{ r: "0xr", s: "0xs", v: 27 }];
+        mockSignActions.mockResolvedValue(expectedSignatures);
+
+        // WHEN
+        const result = await serverHandlers["custom.perps.signActions"](baseParams);
+
+        // THEN
+        expect(result).toEqual({ signatures: expectedSignatures });
+        expect(withDevice).not.toHaveBeenCalled();
+        expect(DmkSignerHyperliquid).toHaveBeenCalledWith(session.dmk, "die-session");
+      });
+
+      it("should fetch the certificate for the session's device model", async () => {
+        // GIVEN
+        mockSignActions.mockResolvedValue([]);
+
+        // WHEN
+        await serverHandlers["custom.perps.signActions"](baseParams);
+
+        // THEN
+        expect(calService.getCertificate).toHaveBeenCalledWith("europa", "perps_data");
+      });
+
+      it("should sign without opening the app again", async () => {
+        // GIVEN
+        mockSignActions.mockResolvedValue([]);
+
+        // WHEN
+        await serverHandlers["custom.perps.signActions"](baseParams);
+
+        // THEN
+        expect(mockSignActions).toHaveBeenCalledWith(
+          DERIVATION_PATH,
+          mockDeviceData,
+          new Uint8Array(Buffer.from(baseParams.metadataWithSignature, "hex")),
+          [{ type: "cancel", cancels: [{ a: 1, o: 42 }], nonce: 1 }],
+          { skipOpenApp: true, signal: controller.signal },
+        );
+      });
+
+      it("should not start signing when aborted while the certificate is fetched", async () => {
+        // GIVEN
+        jest.mocked(calService.getCertificate).mockImplementation(async () => {
+          controller.abort();
+          return mockCertificate;
+        });
+
+        // WHEN & THEN
+        await expect(serverHandlers["custom.perps.signActions"](baseParams)).rejects.toMatchObject({
+          name: "SignActionsAbortedError",
+        });
+        expect(mockSignActions).not.toHaveBeenCalled();
+      });
+
+      it("should reject with the signer's error", async () => {
+        // GIVEN
+        const refusal = new UserRefusedOnDevice();
+        mockSignActions.mockRejectedValue(refusal);
+
+        // WHEN & THEN
+        await expect(serverHandlers["custom.perps.signActions"](baseParams)).rejects.toBe(refusal);
+      });
     });
   });
 

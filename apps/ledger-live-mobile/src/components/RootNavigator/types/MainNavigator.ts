@@ -7,6 +7,7 @@ import { PortfolioNavigatorStackParamList } from "./PortfolioNavigator";
 import { EarnLiveAppNavigatorParamList } from "./EarnLiveAppNavigator";
 import type { CardLandingNavigatorParamList } from "LLM/features/Card";
 import type { PayTabNavigatorParamList } from "LLM/features/PayTab";
+import type { AgentIntentNavigatorParamList } from "LLM/features/AgentIntent";
 import type { SwapNavigatorParamList } from "./SwapNavigator";
 
 export type MainNavigatorParamList = {
@@ -19,4 +20,5 @@ export type MainNavigatorParamList = {
   [NavigatorName.MyLedger]: NavigatorScreenParams<MyLedgerNavigatorStackParamList> | undefined;
   [NavigatorName.CardTab]: NavigatorScreenParams<CardLandingNavigatorParamList> | undefined;
   [NavigatorName.PayTab]: NavigatorScreenParams<PayTabNavigatorParamList> | undefined;
+  [NavigatorName.AgentIntentTab]: NavigatorScreenParams<AgentIntentNavigatorParamList> | undefined;
 };

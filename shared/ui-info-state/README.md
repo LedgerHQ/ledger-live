@@ -33,6 +33,19 @@ import { InfoState } from "@shared/ui-info-state";
 />
 ```
 
+A CTA can show a Lumen symbol before its label. Pass the symbol of the caller's platform
+(`@ledgerhq/lumen-ui-react/symbols` on web, `@ledgerhq/lumen-ui-rnative/symbols` on native):
+
+```tsx
+import { ExternalLink } from "@ledgerhq/lumen-ui-react/symbols";
+
+<InfoState
+  preset="info"
+  title="Receive unavailable"
+  primaryCta={{ label: "Learn more", icon: ExternalLink, onPress: openSupportArticle }}
+/>
+```
+
 The status presets (`success`, `error`, `info`) tint the enclosing dialog or bottom sheet with
 their tone. The `spot` preset tints it only when given a `backgroundTone`. On web, the dialog
 draws the gradient when wrapped in `DialogBackgroundToneProvider`:

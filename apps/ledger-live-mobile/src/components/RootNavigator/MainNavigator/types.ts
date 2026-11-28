@@ -5,19 +5,7 @@ type CommonTabNavigatorProps = {
   screenOptions: object;
 };
 
-export type TabNavigatorProps = CommonTabNavigatorProps & {
-  managerLockAwareCallback: (callback: () => void) => void;
-  readOnlyModeEnabled: boolean;
-  hasOrderedNano: boolean;
-  navigateToRebornFlow: () => void;
-};
-
 export type Wallet40TabNavigatorProps = CommonTabNavigatorProps & {
   isPayTabEnabled: boolean;
-};
-
-export type LegacyTabNavigatorProps = TabNavigatorProps & {
-  openTransferDrawer: (params: { sourceScreenName: string }) => void;
-  web3hubEnabled: boolean;
-  earnYieldLabel: string;
+  isAgentIntentTabEnabled: boolean;
 };

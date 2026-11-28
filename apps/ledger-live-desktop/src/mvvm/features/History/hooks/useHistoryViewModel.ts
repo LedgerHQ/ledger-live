@@ -5,14 +5,13 @@ import {
   SMALL_VALUE_OPERATIONS_THRESHOLD_REFERENCE_CURRENCY,
 } from "@ledgerhq/live-common/hideSmallValueTokenOperations/smallValueOperationsThreshold";
 import { ContactIdSchema, selectContactById, type Contact } from "@domain/entity-contact";
-import { useFeature } from "@features/platform-feature-flags";
+import { useDustFilteringFeature, useFeature } from "@features/platform-feature-flags";
 import { useDispatch, useSelector } from "LLD/hooks/redux";
 import { useHideSmallValueTokenOperations } from "~/renderer/actions/settings";
 import { addExtraTrackingPairs } from "~/renderer/reducers/countervaluesExtraTracking";
 import {
   historyDustFilterCounterValueCurrencyForDisplaySelector,
   historyDustFilterCountervaluesStateForDisplaySelector,
-  historyDustFilteringFeatureEnabledSelector,
   historyDustFilterLocaleSelector,
   markOperationsAsSeen,
 } from "~/renderer/reducers/history";
@@ -132,7 +131,7 @@ export function useHistoryViewModel(): HistoryViewModel {
   const hasPendingOperations = useMemo(() => operations.some(op => op.isPending), [operations]);
   const [hideSmallValueTokenOperations, setHideSmallValueTokenOperations] =
     useHideSmallValueTokenOperations();
-  const showDustFilterOption = useSelector(historyDustFilteringFeatureEnabledSelector);
+  const { isEnabled: showDustFilterOption } = useDustFilteringFeature("desktop");
   const counterValueCurrency = useSelector(historyDustFilterCounterValueCurrencyForDisplaySelector);
   const countervaluesState = useSelector(historyDustFilterCountervaluesStateForDisplaySelector);
   useEffect(() => {

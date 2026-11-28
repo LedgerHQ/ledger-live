@@ -3,6 +3,12 @@ import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
 import { genMockAccount } from "@ledgerhq/live-common/mock/account";
 import type { Account, DistributionItem } from "@ledgerhq/types-live";
 import * as walletPnlHooks from "@ledgerhq/wallet-pnl/hooks";
+
+// A plain copy of the module, so jest.spyOn can redefine its hooks.
+jest.mock("@ledgerhq/wallet-pnl/hooks", () => ({
+  __esModule: true,
+  ...jest.requireActual("@ledgerhq/wallet-pnl/hooks"),
+}));
 import { act, renderHook } from "@tests/test-renderer";
 import {
   PNL_BUTTON,

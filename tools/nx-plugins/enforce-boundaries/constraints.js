@@ -90,11 +90,21 @@ const LEGACY_PACKAGES = [
 ];
 
 /**
- * Third-party packages a tagged source may neither declare in its manifest nor import.
+ * Third-party packages a tagged source may neither declare in its manifest nor import:
+ * { sourceTag, packages, exceptProjects? }. `exceptProjects` lists graph node names the entry skips.
  * Entities hold schemas, types and state: no UI framework.
+ * `styled-components` stays behind `@features/platform-style` in the new layers.
  */
 const BANNED_EXTERNALS_BY_TAG = [
   { sourceTag: "type:domain-entity", packages: ["react", "react-native"] },
+  { sourceTag: "scope:shared", packages: ["styled-components"] },
+  { sourceTag: "scope:domain", packages: ["styled-components"] },
+  {
+    sourceTag: "scope:features",
+    packages: ["styled-components"],
+    exceptProjects: ["@features/platform-style"],
+  },
+  { sourceTag: "scope:support", packages: ["styled-components"] },
 ];
 
 /**
@@ -148,7 +158,7 @@ const DEVTOOLS_LAZY_RULE =
   'A DEVTOOLS_LAZY_IMPORTS target may only be reached through `import type`, `export type … from`, `typeof import("…")` or `import()`: the shell loads the registry eagerly, so a value import or `require()` would bundle the tool with it.';
 
 /**
- * App roots, their DevTools folder and its static entries; see `DEVTOOLS_HOST_APP_RULE` and
+ * App roots, their DevTools folder and its entries; see `DEVTOOLS_HOST_APP_RULE` and
  * `DEVTOOLS_HOST_FOLDER_RULE`.
  */
 const DEVTOOLS_HOST_APPS = [
@@ -158,6 +168,7 @@ const DEVTOOLS_HOST_APPS = [
     entries: [
       "src/mvvm/features/DevTools/components/DevToolsWindow/index.tsx",
       "src/mvvm/features/DevTools/components/DevToolsWindow/devToolsWindow.ts",
+      "src/mvvm/features/DevTools/screens/DevToolsScreen/index.tsx",
     ],
   },
   {
@@ -171,7 +182,7 @@ const DEVTOOLS_HOST_APP_RULE =
   "A DEVTOOLS_HOST_APPS app may import `@devtools/*` (type imports included) only from files under its `allowedUnder` folder: product code must not depend on debug tooling.";
 
 const DEVTOOLS_HOST_FOLDER_RULE =
-  "A file outside a DEVTOOLS_HOST_APPS `allowedUnder` folder may import a file under it only through `import()` / `lazy(() => import(...))`, unless that file is one of the app's `entries`: a static import would reach `@devtools/*` in one hop. Test files (`*.test.*`, `__tests__/`, `__integrations__/`) are exempt.";
+  "A file outside a DEVTOOLS_HOST_APPS `allowedUnder` folder may reach a file under it, statically or through `import()` / `lazy(() => import(...))`, only when that file is one of the app's `entries`: product code reaches the DevTools folder only through its entries, so no product code depends on a tool module at runtime. Test files (`*.test.*`, `__tests__/`, `__integrations__/`) are exempt.";
 
 module.exports = {
   DEP_CONSTRAINTS,

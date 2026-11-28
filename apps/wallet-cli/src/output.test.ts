@@ -14,9 +14,11 @@ import { _setTestSpinner, installOutputCapture } from "./shared/ui";
 import { FakeSpinners } from "./testing/fake-spinner";
 import { resetTestSeams } from "./shared/test-seam";
 import { ETH_ADDR, SOL_ADDR } from "./shared/accountDescriptor/test-fixtures";
-import { NetworkIdSchema } from "./shared/accountDescriptor";
+import { DerivationPathSchema, NetworkIdSchema } from "./shared/accountDescriptor";
 import type { SendIntentSummary } from "./agent-intent/send-intent";
 import type { SwapIntentSummary } from "./agent-intent/swap-intent";
+
+const XPUB = "xpub6BosfCnifzxcA";
 
 const spinners = new FakeSpinners();
 beforeAll(() => _setTestSpinner(spinners.create));
@@ -450,8 +452,8 @@ describe("HumanCommandOutput", () => {
       version: "2",
       type: "utxo",
       network: NetworkIdSchema.parse("bitcoin"),
-      xpub: "xpub6BosfCnifzxcA",
-      path: "m/84h/0h/0h",
+      key: XPUB,
+      path: DerivationPathSchema.parse("m/84h/0h/0h"),
     } as const;
     try {
       const out = createCommandOutput("human", {
@@ -930,11 +932,54 @@ describe.each(["human", "json"] as const)("%s proposal warnings", format => {
   });
 });
 
+describe("human device error with a failed USB open (LIVE-31394)", () => {
+  let stderrWrites: string[] = [];
+  let restore: () => void;
+
+  beforeEach(() => {
+    stderrWrites = [];
+    restore = installOutputCapture({ stderr: chunk => stderrWrites.push(chunk) });
+  });
+
+  afterEach(() => restore());
+
+  const stderrAfterFailing = (error: WalletCliDeviceError): string => {
+    const out = createCommandOutput("human", { command: "genuine-check", network: "all" });
+    expect(() => out.fail(error)).toThrow();
+    return stderrWrites.join("");
+  };
+
+  it("names the USB error and its likely fixes on one line under the message", () => {
+    const stderr = stderrAfterFailing(
+      new WalletCliDeviceError({
+        code: "unknown",
+        cause: new Error("No Ledger device found. Unlock the device and try again."),
+        usbAccess: { error: "LIBUSB_ERROR_ACCESS", kind: "access_denied" },
+      }),
+    );
+
+    expect(stderr).toContain("No Ledger device found. Unlock the device and try again.");
+    expect(stderr).toContain(
+      "USB access failed with LIBUSB_ERROR_ACCESS. The host refused USB access to the Ledger (sandbox, udev rules or permissions), or another process holds it (Ledger Live, or a browser tab using WebUSB).",
+    );
+  });
+
+  it("adds nothing when no USB open failed", () => {
+    const stderr = stderrAfterFailing(new WalletCliDeviceError({ code: "timeout" }));
+
+    expect(stderr).not.toContain("USB access failed");
+  });
+});
+
 describe("output command handling", () => {
   const ROOT = path.resolve(import.meta.dir, "..");
   const HUMAN_DEVICE_ERROR_EXIT = path.resolve(
     import.meta.dir,
     "./testing/human-device-error-exit.ts",
+  );
+  const HUMAN_DEVICE_ERROR_WITH_REQUEST = path.resolve(
+    import.meta.dir,
+    "./testing/human-device-error-with-request.ts",
   );
   const OUTPUT_LOADS_SOLANA_SDK = path.resolve(
     import.meta.dir,
@@ -968,6 +1013,20 @@ describe("output command handling", () => {
     expect(exitCode).toBe(DEVICE_EXIT_CODES.timeout);
     expect(await new Response(proc.stderr).text()).toContain(
       new WalletCliDeviceError({ code: "timeout" }).message,
+    );
+  });
+
+  it("names the host of a failed request behind a device error", async () => {
+    const proc = Bun.spawn(["bun", "--cwd", ROOT, HUMAN_DEVICE_ERROR_WITH_REQUEST], {
+      env: { ...process.env, CLAUDECODE: "1", NO_COLOR: "1" },
+      stdin: "ignore",
+      stdout: "pipe",
+      stderr: "pipe",
+    });
+
+    expect(await proc.exited).not.toBe(0);
+    expect(await new Response(proc.stderr).text()).toContain(
+      "Could not reach explorers.api.live.ledger.com. If wallet-cli runs in a sandbox, allow explorers.api.live.ledger.com in its network allowlist.",
     );
   });
 });

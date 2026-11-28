@@ -37,8 +37,14 @@ import { predictionsSlice } from "@domain/entity-predictions";
 import { accountsPersistedStateChanged } from "@ledgerhq/live-common/account/index";
 import { isPayAction, persistPayCard } from "./payPersistence";
 import {
+  receiveVerifyHintPersistedSelector,
+  receiveVerifyHintSlice,
+} from "@features/flow-receive/state";
+import {
   accountAnalyticsIntroductionPersistedSelector,
   dismissAccountAnalyticsIntroduction,
+  overrideAccountAnalyticsIntroductionEligibility,
+  recordAccountAnalyticsIntroductionEligibility,
   resetAccountAnalyticsIntroduction,
 } from "@features/flow-account-detail-analytics-notice/state";
 
@@ -47,6 +53,7 @@ let DB_MIDDLEWARE_ENABLED = true;
 /** Used during hard reset (reset.ts): disable persist so we don't re-write app.json while clearing. */
 export const disable = (ms = 1000) => {
   DB_MIDDLEWARE_ENABLED = false;
+  saveCryptoAssetsCache.cancel();
   setTimeout(() => (DB_MIDDLEWARE_ENABLED = true), ms);
 };
 
@@ -79,6 +86,8 @@ const saveCryptoAssetsCache = throttle((state: State) => {
     console.warn("crypto assets cache write failed:", e);
   }
 }, 5000);
+
+export const flushCryptoAssetsCache = () => saveCryptoAssetsCache.flush();
 
 const DBMiddleware: Middleware<object, State> = store => next => action => {
   if (!isActionWithType(action)) {
@@ -153,6 +162,12 @@ const DBMiddleware: Middleware<object, State> = store => next => action => {
     return res;
   }
 
+  if (action.type.startsWith(`${receiveVerifyHintSlice.name}/`)) {
+    const res = next(action);
+    setKey("app", "receiveVerifyHint", receiveVerifyHintPersistedSelector(store.getState()));
+    return res;
+  }
+
   if (isPayAction(action.type)) {
     const res = next(action);
     persistPayCard(store.getState());
@@ -172,7 +187,9 @@ const DBMiddleware: Middleware<object, State> = store => next => action => {
 
   if (
     (dismissAccountAnalyticsIntroduction.match(action) ||
-      resetAccountAnalyticsIntroduction.match(action)) &&
+      resetAccountAnalyticsIntroduction.match(action) ||
+      recordAccountAnalyticsIntroductionEligibility.match(action) ||
+      overrideAccountAnalyticsIntroductionEligibility.match(action)) &&
     oldState.accountAnalyticsIntroduction !== newState.accountAnalyticsIntroduction
   ) {
     setKey(

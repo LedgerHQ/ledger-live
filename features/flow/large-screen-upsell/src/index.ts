@@ -15,6 +15,6 @@ export * from "./utils/isNanoSOnlyWallet";
 export * from "./utils/isLargeScreenUpsellBannerEnabled";
 export * from "./assets";
 export * from "./screens/LargeScreenUpsellModal/LargeScreenUpsellModal";
-export * from "./screens/LargeScreenUpsellModal/LargeScreenUpsellModalView.web";
+export * from "./screens/LargeScreenUpsellModal/LargeScreenUpsellModalView";
 export * from "./screens/LargeScreenUpsellModal/types";
 export * from "./screens/LargeScreenUpsellModal/analyticsPorts";

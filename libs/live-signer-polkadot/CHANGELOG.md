@@ -1,5 +1,47 @@
 # @ledgerhq/live-signer-polkadot
 
+## 0.1.7
+
+### Patch Changes
+
+- Updated dependencies [[`347dbb6`](https://github.com/LedgerHQ/ledger-live/commit/347dbb6c160a61827cfe69b7568426399ee56ae0), [`114ab5f`](https://github.com/LedgerHQ/ledger-live/commit/114ab5f12a49550b01305bd131db441c472b230c)]:
+  - @ledgerhq/coin-polkadot@9.4.0
+
+## 0.1.7-next.0
+
+### Patch Changes
+
+- Updated dependencies [[`347dbb6`](https://github.com/LedgerHQ/ledger-live/commit/347dbb6c160a61827cfe69b7568426399ee56ae0), [`114ab5f`](https://github.com/LedgerHQ/ledger-live/commit/114ab5f12a49550b01305bd131db441c472b230c)]:
+  - @ledgerhq/coin-polkadot@9.4.0-next.0
+
+## 0.1.6
+
+### Patch Changes
+
+- Updated dependencies [[`393695d`](https://github.com/LedgerHQ/ledger-live/commit/393695db90c73639ddf7e8d38dc2cf88dad19064)]:
+  - @ledgerhq/coin-polkadot@9.3.0
+
+## 0.1.6-next.0
+
+### Patch Changes
+
+- Updated dependencies [[`393695d`](https://github.com/LedgerHQ/ledger-live/commit/393695db90c73639ddf7e8d38dc2cf88dad19064)]:
+  - @ledgerhq/coin-polkadot@9.3.0-next.0
+
+## 0.1.5
+
+### Patch Changes
+
+- Updated dependencies [[`189dc9a`](https://github.com/LedgerHQ/ledger-live/commit/189dc9a18a3b93ff96cad3c9d2e0950b92b2646c), [`6ab5a87`](https://github.com/LedgerHQ/ledger-live/commit/6ab5a87d796726b2fc38b34862209abf82521f72), [`4aec050`](https://github.com/LedgerHQ/ledger-live/commit/4aec05059b0c8ab2057aabeb9e7bec564b5c809f), [`a466fb9`](https://github.com/LedgerHQ/ledger-live/commit/a466fb9e11a7f572d289537e91d10404f5f32a13), [`e67063f`](https://github.com/LedgerHQ/ledger-live/commit/e67063fc1fdb96c419c42a452433870b588f201e)]:
+  - @ledgerhq/coin-polkadot@9.2.0
+
+## 0.1.5-next.0
+
+### Patch Changes
+
+- Updated dependencies [[`189dc9a`](https://github.com/LedgerHQ/ledger-live/commit/189dc9a18a3b93ff96cad3c9d2e0950b92b2646c), [`6ab5a87`](https://github.com/LedgerHQ/ledger-live/commit/6ab5a87d796726b2fc38b34862209abf82521f72), [`4aec050`](https://github.com/LedgerHQ/ledger-live/commit/4aec05059b0c8ab2057aabeb9e7bec564b5c809f), [`a466fb9`](https://github.com/LedgerHQ/ledger-live/commit/a466fb9e11a7f572d289537e91d10404f5f32a13), [`e67063f`](https://github.com/LedgerHQ/ledger-live/commit/e67063fc1fdb96c419c42a452433870b588f201e)]:
+  - @ledgerhq/coin-polkadot@9.2.0-next.0
+
 ## 0.1.4
 
 ### Patch Changes

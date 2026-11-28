@@ -1,13 +1,11 @@
 import { afterAll, beforeAll, describe, expect, it } from "bun:test";
 import { writeFileSync } from "node:fs";
-import { join } from "node:path";
 import { YAML } from "bun";
 import { createSoftwareAgentIdentity } from "@ledgerhq/agent-intent-sdk";
 import { MockServer } from "../../testing/mock-server";
 import { runCli } from "../../testing/cli-runner";
 import { makeSessionDir } from "../../testing/session-fixture";
 import { USDT_API_RESPONSE, USDT_CONTRACT } from "../../testing/cal-fixtures";
-import { APP_NAME } from "../../session/session-store";
 import { toChecksumAddress } from "../../agent-intent/evm";
 
 // Contract test through the real CLI: flag parsing, session profile lookup and the CAL token lookup
@@ -110,7 +108,7 @@ describe("agent-intent send (CLI, --dry-run)", () => {
   // makeSessionDir only writes accounts; the profile is added to the same file right after.
   const fixture = makeSessionDir([]);
   writeFileSync(
-    join(fixture.env.XDG_STATE_HOME, APP_NAME, "session.yaml"),
+    fixture.sessionPath,
     YAML.stringify({
       accounts: [
         {

@@ -35,11 +35,31 @@ export {
   ConnectNewDeviceUIStateTypes,
   type MobileConnectNewDeviceUIState as ConnectNewDeviceUIState,
 } from "./connectNewDevice/types";
+export {
+  ConnectKnownOrNewDeviceUIStateTypes,
+  type MobileConnectKnownOrNewDevice as ConnectKnownOrNewDevice,
+  type MobileConnectKnownOrNewDeviceUIState as ConnectKnownOrNewDeviceUIState,
+} from "./connectKnownOrNewDevice/types";
 export type { DisplayedDevice, SelectableDevice } from "@ledgerhq/live-dmk-shared";
+export { DeviceListItemStatuses } from "@ledgerhq/live-dmk-shared";
+export type {
+  DeviceConnectivity,
+  DeviceListItem,
+  SelectableDeviceListItem,
+} from "@ledgerhq/live-dmk-shared";
 export { connectDevice, type ConnectDeviceInput } from "./connectDevice/connectDevice";
 export { connectNewDevice, type ConnectNewDeviceInput } from "./connectNewDevice/connectNewDevice";
+export {
+  connectKnownOrNewDevice,
+  type ConnectKnownOrNewDeviceInput,
+} from "./connectKnownOrNewDevice/connectKnownOrNewDevice";
+export { buildDiscoverySources } from "./connectNewDevice/buildDiscoverySources";
+export { filterListedDevices } from "./connectNewDevice/filterListedDevices";
+export { getDiscoveredDeviceKey } from "./connectNewDevice/getDiscoveredDeviceKey";
+export { buildMobileCompatDeviceId, createConnectionError } from "./connectDevice/utils";
 export * from "./errors";
 export * from "./hooks";
 export * from "./utils/matchDevicesByNameOrId";
+export { findMatchingDevice } from "./utils/findMatchingDevice";
 export { type DmkError } from "@ledgerhq/device-management-kit";
 export { getActiveConnectedDevice } from "./utils/getActiveConnectedDevice";

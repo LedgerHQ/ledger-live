@@ -10,7 +10,7 @@ import {
 import { getAvailableAccountsById } from "@ledgerhq/live-common/exchange/swap/utils/index";
 import { useLazySwapNetworkCurrencyIds } from "@features/platform-aggregated-assets";
 import { useFeature } from "@features/platform-feature-flags";
-import { useOpenAssetAndAccount } from "LLD/features/ModularDialog/Web3AppWebview/AssetAndAccountDrawer";
+import { useOpenAssetAndAccount } from "LLD/features/ModularDialog/hooks/useOpenAssetAndAccount";
 import { buildSwapNavigationState } from "../utils/swapNavigation";
 import type { CryptoOrTokenCurrency } from "@domain/entity-currency";
 

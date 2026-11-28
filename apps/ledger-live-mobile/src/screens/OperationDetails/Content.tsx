@@ -10,13 +10,17 @@ import {
   useTheme,
 } from "@react-navigation/native";
 import type { Account, Operation, AccountLike } from "@ledgerhq/types-live";
-import { getFeesCurrency, getFeesUnit } from "@ledgerhq/live-common/account/index";
+import { getFeesUnit } from "@ledgerhq/live-common/account/index";
 import {
   getOperationAmountNumber,
   isConfirmedOperation,
   getOperationConfirmationDisplayableNumber,
 } from "@ledgerhq/live-common/operation";
 import { useAccountBridge } from "@ledgerhq/live-common/bridge/useAccountBridge";
+import {
+  resolveFeeDisplay,
+  useOperationFeeCurrency,
+} from "@ledgerhq/live-common/bridge/generic-coin-framework/operationFee";
 import { CryptoCurrency } from "@domain/entity-currency-crypto";
 import { TokenCurrency } from "@domain/entity-currency-token";
 import { NavigatorName, ScreenName } from "~/const";
@@ -74,6 +78,19 @@ type Props = {
   mainAccount: Account;
 };
 
+const getSubOperationToken = (
+  account: AccountLike,
+  subOperations: Operation[],
+): TokenCurrency | undefined => {
+  if (account.type !== "Account") return undefined;
+
+  const subOperationAccountIds = new Set(subOperations.map(op => op.accountId));
+  const tokenAccount = (account.subAccounts ?? []).find(subAccount =>
+    subOperationAccountIds.has(subAccount.id),
+  );
+  return tokenAccount?.token;
+};
+
 export default function Content({
   account,
   mainAccount,
@@ -125,7 +142,6 @@ export default function Content({
   const currencySettings = useCurrencySettingsForAccount(mainAccount);
   const bridge = useAccountBridge(mainAccount);
 
-  const isToken = currency.type === "TokenCurrency";
   const accountName = useAccountName(account);
   const unit = useAccountUnit(account);
   const amount = getOperationAmountNumber(operation);
@@ -135,6 +151,8 @@ export default function Content({
   const uniqueRecipients = uniq<(typeof operation.recipients)[0]>(operation.recipients);
   const { type, hasFailed } = operation;
   const subOperations = operation.subOperations || [];
+  const subOperationToken = getSubOperationToken(account, subOperations);
+  const isToken = subOperationToken !== undefined;
   const internalOperations = operation.internalOperations || [];
   const shouldDisplayTo = uniqueRecipients.length > 0 && !!uniqueRecipients[0];
 
@@ -159,15 +177,23 @@ export default function Content({
       ? specificOperationDetails.useFeesCurrency
       : undefined;
   const customFeesCurrency = useFeesCurrencyOverride?.(operation, mainAccount);
-  const feeCurrency = customFeesCurrency ?? getFeesCurrency(mainAccount);
-  const feeUnit = getFeesUnit(feeCurrency);
+  const tokenFee = useOperationFeeCurrency(operation, mainAccount);
   const getDisplayFeeOverride =
     specificOperationDetails && "getDisplayFee" in specificOperationDetails
       ? specificOperationDetails.getDisplayFee
       : undefined;
-  const displayFee = operation.fee
-    ? (getDisplayFeeOverride?.(operation, mainAccount, feeCurrency) ?? operation.fee)
-    : operation.fee;
+  const {
+    currency: feeCurrency,
+    amount: displayFee,
+    isUnresolved: isFeeCurrencyUnresolved,
+  } = resolveFeeDisplay({
+    operation,
+    account: mainAccount,
+    familyCurrency: customFeesCurrency,
+    tokenFee,
+    getDisplayFee: getDisplayFeeOverride,
+  });
+  const feeUnit = getFeesUnit(feeCurrency);
 
   const { EditOperationPanel: SpecificEditOperationPanel = undefined } =
     byFamiliesEditOperationPanel[
@@ -292,7 +318,7 @@ export default function Content({
 
       {subOperations.length > 0 && account.type === "Account" && (
         <>
-          <View style={[sectionStyles.wrapper]}>
+          <View style={[sectionStyles.wrapper, styles.subOperationsTitle]}>
             <LText color="grey" semiBold>
               <Trans
                 i18nKey={
@@ -303,7 +329,13 @@ export default function Content({
               />
             </LText>
             {isToken ? (
-              <Touchable style={styles.info} onPress={onPressInfo} event="TokenOperationsInfo">
+              <Touchable
+                style={styles.info}
+                onPress={onPressInfo}
+                event="TokenOperationsInfo"
+                accessibilityRole="button"
+                accessibilityLabel={t("operationDetails.tokenOperationsInfo")}
+              >
                 <Info size={12} color={colors.grey} />
               </Touchable>
             ) : null}
@@ -384,7 +416,7 @@ export default function Content({
         value={<FormatDate withHoursMinutes date={operation.date} />}
       />
 
-      {isNegative || operation.fee ? (
+      {(isNegative || operation.fee) && !isFeeCurrencyUnresolved ? (
         <Section
           title={t("operationDetails.fees")}
           headerRight={
@@ -477,7 +509,9 @@ export default function Content({
         </View>
       )}
 
-      <Modal isOpened={isModalOpened} onClose={onModalClose} currency={currency} />
+      {subOperationToken ? (
+        <Modal isOpened={isModalOpened} onClose={onModalClose} currency={subOperationToken} />
+      ) : null}
     </>
   );
 }
@@ -526,6 +560,10 @@ const styles = StyleSheet.create({
   },
   confirmation: {
     fontSize: 16,
+  },
+  subOperationsTitle: {
+    flexDirection: "row",
+    alignItems: "center",
   },
   info: {
     marginLeft: 5,

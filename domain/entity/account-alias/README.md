@@ -1,7 +1,7 @@
 # @domain/entity-account-alias
 
-> [!CAUTION]
-> **Status: UNSTABLE** — New package, API still being designed.
+> [!NOTE]
+> **Status: STABLE** — Production-ready; API is considered stable.
 
 ## Why
 

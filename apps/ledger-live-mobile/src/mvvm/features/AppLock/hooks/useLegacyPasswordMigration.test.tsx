@@ -8,29 +8,31 @@ jest.mock("@features/platform-app-lock", () => ({
   ...jest.requireActual("@features/platform-app-lock"),
   migrateLegacyPassword: jest.fn(),
   isLegacyMigrationComplete: jest.fn(async () => false),
+  storeBiometricsMarker: jest.fn(async () => true),
 }));
 
 jest.mock("expo-crypto", () => ({
   getRandomBytesAsync: jest.fn(async (length: number) => new Uint8Array(length).fill(7)),
 }));
 
-const { migrateLegacyPassword, isLegacyMigrationComplete } = jest.requireMock(
-  "@features/platform-app-lock",
-);
+const { migrateLegacyPassword, isLegacyMigrationComplete, storeBiometricsMarker } =
+  jest.requireMock("@features/platform-app-lock");
 
 function Probe() {
   useLegacyPasswordMigration();
   return null;
 }
 
-const legacyUser = (overrides: Partial<{ hasPassword: boolean; isLocked: boolean }> = {}) => {
-  const { hasPassword = true, isLocked = false } = overrides;
+const legacyUser = (
+  overrides: Partial<{ hasPassword: boolean; isLocked: boolean; biometricsEnabled: boolean }> = {},
+) => {
+  const { hasPassword = true, isLocked = false, biometricsEnabled = false } = overrides;
 
   return withFlagOverrides({ lwmPasswordRevamp: { enabled: true } }, (state: State) => ({
     ...state,
     appLock: { ...state.appLock, isHydrated: true, hasPassword: false },
     auth: { ...state.auth, isLocked },
-    settings: { ...state.settings, privacy: { hasPassword, biometricsEnabled: false } },
+    settings: { ...state.settings, privacy: { hasPassword, biometricsEnabled } },
   }));
 };
 
@@ -38,6 +40,7 @@ beforeEach(() => {
   jest.clearAllMocks();
   // An implementation outlives `clearAllMocks`, so every case says what the keychain answers.
   isLegacyMigrationComplete.mockResolvedValue(false);
+  storeBiometricsMarker.mockResolvedValue(true);
 });
 
 describe("migrating a legacy password", () => {
@@ -88,6 +91,45 @@ describe("migrating a legacy password", () => {
     });
   });
 
+  it("keeps biometrics for a user who unlocked with them, so the next unlock does not ask for the password", async () => {
+    migrateLegacyPassword.mockResolvedValue({ status: "migrated", needsLongerPassword: false });
+
+    const { store } = render(<Probe />, {
+      overrideInitialState: legacyUser({ biometricsEnabled: true }),
+    });
+
+    await waitFor(() => expect(store.getState().appLock.hasPassword).toBe(true));
+
+    expect(storeBiometricsMarker).toHaveBeenCalledTimes(1);
+    expect(store.getState().appLock.biometricsEnabled).toBe(true);
+    expect(store.getState().settings.privacy?.biometricsEnabled).toBeFalsy();
+  });
+
+  it("leaves biometrics off for a user who never turned them on", async () => {
+    migrateLegacyPassword.mockResolvedValue({ status: "migrated", needsLongerPassword: false });
+
+    const { store } = render(<Probe />, { overrideInitialState: legacyUser() });
+
+    await waitFor(() => expect(store.getState().appLock.hasPassword).toBe(true));
+
+    expect(storeBiometricsMarker).not.toHaveBeenCalled();
+    expect(store.getState().appLock.biometricsEnabled).toBeFalsy();
+  });
+
+  it("still migrates the password when the biometrics marker will not store", async () => {
+    migrateLegacyPassword.mockResolvedValue({ status: "migrated", needsLongerPassword: false });
+    storeBiometricsMarker.mockRejectedValue(new Error("keychain unavailable"));
+
+    const { store } = render(<Probe />, {
+      overrideInitialState: legacyUser({ biometricsEnabled: true }),
+    });
+
+    await waitFor(() => expect(store.getState().appLock.hasPassword).toBe(true));
+
+    expect(store.getState().appLock.biometricsEnabled).toBeFalsy();
+    expect(store.getState().settings.privacy?.hasPassword).toBeFalsy();
+  });
+
   it("keeps the legacy lock when the migration defers, so the user still has a way in", async () => {
     migrateLegacyPassword.mockResolvedValue({ status: "deferred" });
 
@@ -125,6 +167,19 @@ describe("a migration an earlier run left half-recorded", () => {
     expect(store.getState().appLock.hasPassword).toBe(true);
     expect(migrateLegacyPassword).not.toHaveBeenCalled();
     expect(track).not.toHaveBeenCalled();
+  });
+
+  it("keeps the biometrics the legacy lock had when it releases it", async () => {
+    isLegacyMigrationComplete.mockResolvedValue(true);
+
+    const { store } = render(<Probe />, {
+      overrideInitialState: legacyUser({ isLocked: true, biometricsEnabled: true }),
+    });
+
+    await waitFor(() => expect(store.getState().appLock.hasPassword).toBe(true));
+
+    expect(storeBiometricsMarker).toHaveBeenCalledTimes(1);
+    expect(store.getState().appLock.biometricsEnabled).toBe(true);
   });
 
   it("leaves a legacy user alone while their entry is still there", async () => {

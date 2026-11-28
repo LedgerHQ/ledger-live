@@ -1,13 +1,18 @@
 import { getEnv } from "@ledgerhq/live-env";
 import network from "@ledgerhq/live-network";
-import { makeLRUCache, minutes } from "@ledgerhq/live-network/cache";
 import type { LiveNetworkRequest, LiveNetworkResponse } from "@ledgerhq/live-network/network";
-import type { CryptoCurrency } from "@ledgerhq/ledger-wallet-framework/types";
-import coinConfig from "../config";
-import { TopologyChangeError, TransferOfferExpiredError } from "../types/errors";
+import { pinConfig, type CantonCoinConfig, type CantonContext } from "../config";
+import { boolean, nonEmptyString, positiveInt } from "../tuning";
+import { makeConfigurableLRUCache } from "./cache";
+import {
+  CantonInvalidConfigError,
+  TopologyChangeError,
+  TransferOfferExpiredError,
+} from "../types/errors";
 import type {
   GetBalanceResponse,
   GetTransferPreApprovalResponse,
+  NodeInfo,
   OnboardingPrepareRequest,
   OnboardingPrepareResponse,
   OnboardingSubmitRequest,
@@ -38,20 +43,18 @@ export const DEFAULT_TAP_REQUEST_AMOUNT = "1000000000000000000000000000000000000
 
 export const getKey = (id: string, adminId: string) => `${id}${SEPARATOR}${adminId}`;
 
-const getGatewayUrl = (currency: CryptoCurrency) =>
-  coinConfig.getCoinConfig(currency.id).gatewayUrl;
-const getNodeId = (currency: CryptoCurrency) => {
+const getGatewayUrl = (config: CantonCoinConfig) => nonEmptyString("gatewayUrl", config.gatewayUrl);
+export const getNodeId = (config: CantonCoinConfig) => {
   const overrideNodeId = getEnv("CANTON_NODE_ID_OVERRIDE");
   if (overrideNodeId) {
     return overrideNodeId;
   }
-  return coinConfig.getCoinConfig(currency.id).nodeId || "ledger-live-devnet";
+  return nonEmptyString("nodeId", config.nodeId);
 };
-export const getNetworkType = (currency: CryptoCurrency) =>
-  coinConfig.getCoinConfig(currency.id).networkType;
+export const getNetworkType = (config: CantonCoinConfig) => config.networkType;
 
-export function isGatewayEnabled(currency: CryptoCurrency): boolean {
-  return coinConfig.getCoinConfig(currency.id).useGateway === true;
+export function isGatewayEnabled(config: CantonCoinConfig): boolean {
+  return boolean("useGateway", config.useGateway);
 }
 
 export const isPartyNotFound = (error: unknown): boolean => {
@@ -61,6 +64,10 @@ export const isPartyNotFound = (error: unknown): boolean => {
   }
   return false;
 };
+
+// The gateway's 400 PARTY_NOT_FOUND_BY_PUBLIC_KEY: `Party with public key "…" does not exist`.
+export const isPartyNotFoundByPublicKey = (error: unknown): boolean =>
+  error instanceof Error && /party with public key .* does not exist/i.test(error.message);
 
 // live-network keeps only the body `message` and drops the gateway's TRANSFER_OFFER_EXPIRED `type`.
 export const isTransferOfferExpired = (error: unknown): boolean =>
@@ -98,36 +105,90 @@ const gatewayNetwork = async <T, U = unknown>(
 };
 
 /*
+ * Nodes
+ * @see https://canton-gateway.api.live.ledger.com/docs/openapi/redoc/index.html#tag/Nodes
+ */
+
+export async function getNodeInfo(context: CantonContext): Promise<NodeInfo> {
+  const config = await context.config();
+  const { data } = await gatewayNetwork<NodeInfo>({
+    method: "GET",
+    url: `${getGatewayUrl(config)}/v1/node/${getNodeId(config)}`,
+  });
+  return data;
+}
+
+async function getDsoPartyId(context: CantonContext): Promise<string> {
+  const { dso_id } = await getNodeInfo(context);
+  if (!dso_id) throw new Error("canton: the gateway node info has no DSO party");
+  return dso_id;
+}
+
+const getDsoPartyIdCacheKey = (config: CantonCoinConfig) =>
+  `${getGatewayUrl(config)}_${getNodeId(config)}`;
+
+// A DSO party cached before a network reset hides CC balances until node info is read again.
+export const getDsoPartyIdCached = makeConfigurableLRUCache(
+  getDsoPartyId,
+  getDsoPartyIdCacheKey,
+  config => positiveInt("gateway.dsoPartyCacheTtlMs", config.gateway?.dsoPartyCacheTtlMs),
+);
+
+export async function clearDsoPartyIdCache(context: CantonContext): Promise<void> {
+  getDsoPartyIdCached.clear(getDsoPartyIdCacheKey(await context.config()));
+}
+
+/** The native instrument: its id, issued by the network's DSO party. Any party can issue under the same id. */
+export async function getNativeInstrument(
+  context: CantonContext,
+): Promise<{ instrumentId: string; instrumentAdmin: string }> {
+  const config = await context.config();
+  return {
+    instrumentId: config.nativeInstrumentId,
+    instrumentAdmin: await getDsoPartyIdCached(pinConfig(context, config)),
+  };
+}
+
+/*
  * Parties
  * @see https://canton-gateway.api.live.ledger.com/docs/openapi/redoc/index.html#tag/Parties
  */
 
-export async function getPartyById(currency: CryptoCurrency, partyId: string): Promise<Party> {
-  return await getParty(currency, partyId, "party-id");
+export async function getPartyById(context: CantonContext, partyId: string): Promise<Party> {
+  return await getParty(context, partyId, "party-id");
 }
 
-export async function getPartyByPubKey(currency: CryptoCurrency, pubKey: string): Promise<Party> {
-  return await getParty(currency, pubKey, "public-key");
+export const getPartyByIdCached = makeConfigurableLRUCache(
+  getPartyById,
+  (config: CantonCoinConfig, partyId: string) =>
+    `${getGatewayUrl(config)}_${getNodeId(config)}_${partyId}`,
+  config => positiveInt("gateway.partyCacheTtlMs", config.gateway?.partyCacheTtlMs),
+);
+
+export async function getPartyByPubKey(context: CantonContext, pubKey: string): Promise<Party> {
+  return await getParty(context, pubKey, "public-key");
 }
 
 async function getParty(
-  currency: CryptoCurrency,
+  context: CantonContext,
   identifier: string,
   by: "party-id" | "public-key",
 ): Promise<Party> {
+  const config = await context.config();
   const { data } = await gatewayNetwork<Party>({
     method: "GET",
-    url: `${getGatewayUrl(currency)}/v1/node/${getNodeId(currency)}/party/${identifier}?by=${by}`,
+    url: `${getGatewayUrl(config)}/v1/node/${getNodeId(config)}/party/${identifier}?by=${by}`,
   });
   return data;
 }
 
 export async function prepareOnboarding(
-  currency: CryptoCurrency,
+  context: CantonContext,
   pubKey: string,
 ): Promise<OnboardingPrepareResponse> {
-  const gatewayUrl = getGatewayUrl(currency);
-  const nodeId = getNodeId(currency);
+  const config = await context.config();
+  const gatewayUrl = getGatewayUrl(config);
+  const nodeId = getNodeId(config);
   const fullUrl = `${gatewayUrl}/v1/node/${nodeId}/onboarding/prepare`;
 
   const { data } = await gatewayNetwork<OnboardingPrepareResponse, OnboardingPrepareRequest>({
@@ -142,9 +203,9 @@ export async function prepareOnboarding(
   return data;
 }
 
-export async function isTopologyChangeRequired(currency: CryptoCurrency, pubKey: string) {
+export async function isTopologyChangeRequired(context: CantonContext, pubKey: string) {
   try {
-    const response = await prepareOnboarding(currency, pubKey);
+    const response = await prepareOnboarding(context, pubKey);
     // if response is not undefined (we have a transaction to sign) topology change is required
     if (response) {
       return true;
@@ -158,19 +219,20 @@ export async function isTopologyChangeRequired(currency: CryptoCurrency, pubKey:
   }
 }
 
-const getIsTopologyChangeRequiredCacheKey = (currency: CryptoCurrency, pubKey: string): string => {
-  const nodeId = getNodeId(currency);
-  return `${pubKey}_${nodeId}`;
-};
+const getIsTopologyChangeRequiredCacheKey = (config: CantonCoinConfig, pubKey: string): string =>
+  `${getGatewayUrl(config)}_${getNodeId(config)}_${pubKey}`;
 
-export const isTopologyChangeRequiredCached = makeLRUCache(
+export const isTopologyChangeRequiredCached = makeConfigurableLRUCache(
   isTopologyChangeRequired,
   getIsTopologyChangeRequiredCacheKey,
-  minutes(10),
+  config => positiveInt("gateway.topologyCacheTtlMs", config.gateway?.topologyCacheTtlMs),
 );
 
-export function clearIsTopologyChangeRequiredCache(currency: CryptoCurrency, pubKey: string): void {
-  const cacheKey = getIsTopologyChangeRequiredCacheKey(currency, pubKey);
+export async function clearIsTopologyChangeRequiredCache(
+  context: CantonContext,
+  pubKey: string,
+): Promise<void> {
+  const cacheKey = getIsTopologyChangeRequiredCacheKey(await context.config(), pubKey);
   isTopologyChangeRequiredCached.clear(cacheKey);
 }
 
@@ -181,46 +243,65 @@ export type InstrumentInfo = {
 
 export type InstrumentsResponse = InstrumentInfo[];
 
-export async function getEnabledInstruments(currency: CryptoCurrency): Promise<Set<string>> {
+async function readEnabledInstruments(context: CantonContext): Promise<Set<string>> {
+  const config = await context.config();
+  const { data } = await gatewayNetwork<InstrumentsResponse>({
+    method: "GET",
+    url: `${getGatewayUrl(config)}/v1/node/${getNodeId(config)}/instruments`,
+  });
+  return new Set(data.map(({ id, admin }) => getKey(id, admin)));
+}
+
+export async function getEnabledInstruments(context: CantonContext): Promise<Set<string>> {
   try {
-    const { data } = await gatewayNetwork<InstrumentsResponse>({
-      method: "GET",
-      url: `${getGatewayUrl(currency)}/v1/node/${getNodeId(currency)}/instruments`,
-    });
-    return new Set(data.map(({ id, admin }) => getKey(id, admin)));
+    return await readEnabledInstruments(context);
   } catch (error) {
+    if (error instanceof CantonInvalidConfigError) throw error;
     // If API fails, return empty array (fail-safe: only native instrument will work)
-    console.error("Failed to fetch enabled instruments:", error);
+    // The message only: a raw axios error carries the request headers, the API key among them.
+    context.logger("canton/gateway", "Failed to fetch enabled instruments", {
+      error: error instanceof Error ? error.message : String(error),
+    });
     return new Set();
   }
 }
 
-const getEnabledInstrumentsCacheKey = (currency: CryptoCurrency): string => {
-  const nodeId = getNodeId(currency);
-  return `instruments_${nodeId}`;
-};
+const getEnabledInstrumentsCacheKey = (config: CantonCoinConfig): string =>
+  `instruments_${getGatewayUrl(config)}_${getNodeId(config)}`;
 
-export const getEnabledInstrumentsCached = makeLRUCache(
+const instrumentsTtlOf = (config: CantonCoinConfig) =>
+  positiveInt("gateway.instrumentsCacheTtlMs", config.gateway?.instrumentsCacheTtlMs);
+
+export const getEnabledInstrumentsCached = makeConfigurableLRUCache(
   getEnabledInstruments,
   getEnabledInstrumentsCacheKey,
-  minutes(15),
+  instrumentsTtlOf,
 );
 
-export function clearEnabledInstrumentsCache(currency: CryptoCurrency): void {
-  const cacheKey = getEnabledInstrumentsCacheKey(currency);
+/** Rejects on a failed read, never cached, where an empty set would read as "no token enabled". */
+export const getEnabledInstrumentsStrictCached = makeConfigurableLRUCache(
+  readEnabledInstruments,
+  getEnabledInstrumentsCacheKey,
+  instrumentsTtlOf,
+);
+
+export async function clearEnabledInstrumentsCache(context: CantonContext): Promise<void> {
+  const cacheKey = getEnabledInstrumentsCacheKey(await context.config());
   getEnabledInstrumentsCached.clear(cacheKey);
+  getEnabledInstrumentsStrictCached.clear(cacheKey);
 }
 
 export async function submitOnboarding(
-  currency: CryptoCurrency,
+  context: CantonContext,
   publicKey: string,
   prepareResponse: OnboardingPrepareResponse,
   { signature, applicationSignature }: CantonSignature,
 ) {
+  const config = await context.config();
   try {
     const { data } = await gatewayNetwork<OnboardingSubmitResponse, OnboardingSubmitRequest>({
       method: "POST",
-      url: `${getGatewayUrl(currency)}/v1/node/${getNodeId(currency)}/onboarding/submit`,
+      url: `${getGatewayUrl(config)}/v1/node/${getNodeId(config)}/onboarding/submit`,
       data: {
         prepare_request: {
           public_key: publicKey,
@@ -253,16 +334,17 @@ export async function submitOnboarding(
  * @see https://canton-gateway.api.live.ledger.com/docs/openapi/redoc/index.html#tag/State
  */
 
-export async function getBalance(currency: CryptoCurrency, partyId: string) {
+export async function getBalance(context: CantonContext, partyId: string) {
+  const config = await context.config();
   const { data } = await gatewayNetwork<GetBalanceResponse>({
     method: "GET",
-    url: `${getGatewayUrl(currency)}/v1/node/${getNodeId(currency)}/party/${partyId}/balance`,
+    url: `${getGatewayUrl(config)}/v1/node/${getNodeId(config)}/party/${partyId}/balance`,
   });
   return Array.isArray(data) ? data : (data.balances ?? []);
 }
 
 export async function getOperations(
-  currency: CryptoCurrency,
+  context: CantonContext,
   partyId: string,
   options?: {
     cursor?: number | undefined;
@@ -274,37 +356,41 @@ export async function getOperations(
   next: number;
   operations: OperationView[];
 }> {
+  const config = await context.config();
   const { data } = await gatewayNetwork<{
     next: number;
     operations: OperationView[];
   }>({
     method: "GET",
-    url: `${getGatewayUrl(currency)}/v1/node/${getNodeId(currency)}/party/${partyId}/operations`,
+    url: `${getGatewayUrl(config)}/v1/node/${getNodeId(config)}/party/${partyId}/operations`,
     params: options,
   });
   return data;
 }
 
-export async function getPendingTransferProposals(currency: CryptoCurrency, partyId: string) {
+export async function getPendingTransferProposals(context: CantonContext, partyId: string) {
+  const config = await context.config();
   const { data } = await gatewayNetwork<TransferProposal[]>({
     method: "GET",
-    url: `${getGatewayUrl(currency)}/v1/node/${getNodeId(currency)}/party/${partyId}/transfer-proposals?timestamp=${Date.now()}`,
+    url: `${getGatewayUrl(config)}/v1/node/${getNodeId(config)}/party/${partyId}/transfer-proposals?timestamp=${Date.now()}`,
   });
   return data;
 }
 
-export async function getTransferPreApproval(currency: CryptoCurrency, partyId: string) {
+export async function getTransferPreApproval(context: CantonContext, partyId: string) {
+  const config = await context.config();
   const { data } = await gatewayNetwork<GetTransferPreApprovalResponse>({
     method: "GET",
-    url: `${getGatewayUrl(currency)}/v1/node/${getNodeId(currency)}/party/${partyId}/transfer-preapproval`,
+    url: `${getGatewayUrl(config)}/v1/node/${getNodeId(config)}/party/${partyId}/transfer-preapproval`,
   });
   return data;
 }
 
-export async function getLedgerEnd(currency: CryptoCurrency): Promise<number> {
+export async function getLedgerEnd(context: CantonContext): Promise<number> {
+  const config = await context.config();
   const { data } = await gatewayNetwork<number>({
     method: "GET",
-    url: `${getGatewayUrl(currency)}/v1/node/${getNodeId(currency)}/ledger-end`,
+    url: `${getGatewayUrl(config)}/v1/node/${getNodeId(config)}/ledger-end`,
   });
   return data;
 }
@@ -315,41 +401,43 @@ export async function getLedgerEnd(currency: CryptoCurrency): Promise<number> {
  */
 
 export async function prepare(
-  currency: CryptoCurrency,
+  context: CantonContext,
   partyId: string,
   params: PrepareTransferRequest | PrepareTransferInstructionRequest,
 ) {
+  const config = await context.config();
   const { data } = await gatewayNetwork<
     PrepareTransferResponse,
     PrepareTransferRequest | PrepareTransferInstructionRequest
   >({
     method: "POST",
-    url: `${getGatewayUrl(currency)}/v1/node/${getNodeId(currency)}/party/${partyId}/transaction/prepare`,
+    url: `${getGatewayUrl(config)}/v1/node/${getNodeId(config)}/party/${partyId}/transaction/prepare`,
     data: params,
   });
   return data;
 }
 
 export async function prepareTransferRequest(
-  currency: CryptoCurrency,
+  context: CantonContext,
   partyId: string,
   params: PrepareTransferRequest,
 ) {
-  return prepare(currency, partyId, params);
+  return prepare(context, partyId, params);
 }
 
 export async function prepareTransferInstruction(
-  currency: CryptoCurrency,
+  context: CantonContext,
   partyId: string,
   params: PrepareTransferInstructionRequest,
 ) {
-  return prepare(currency, partyId, params);
+  return prepare(context, partyId, params);
 }
 
-export async function preparePreApprovalTransaction(currency: CryptoCurrency, partyId: string) {
+export async function preparePreApprovalTransaction(context: CantonContext, partyId: string) {
+  const config = await context.config();
   const { data } = await gatewayNetwork<PrepareTransactionResponse, PrepareTransactionRequest>({
     method: "POST",
-    url: `${getGatewayUrl(currency)}/v1/node/${getNodeId(currency)}/party/${partyId}/transaction/prepare`,
+    url: `${getGatewayUrl(config)}/v1/node/${getNodeId(config)}/party/${partyId}/transaction/prepare`,
     data: {
       type: TransactionType.TRANSFER_PRE_APPROVAL_PROPOSAL,
       receiver: partyId,
@@ -358,13 +446,14 @@ export async function preparePreApprovalTransaction(currency: CryptoCurrency, pa
   return data;
 }
 
-export async function prepareTapRequest(currency: CryptoCurrency, { partyId, amount }: TapRequest) {
+export async function prepareTapRequest(context: CantonContext, { partyId, amount }: TapRequest) {
+  const config = await context.config();
   // Default to 1.0 in fixed-point representation (1 * 10^38)
   const fixedPointAmount = amount ?? DEFAULT_TAP_REQUEST_AMOUNT;
 
   const { data } = await gatewayNetwork<PrepareTapResponse, { amount: string; type: string }>({
     method: "POST",
-    url: `${getGatewayUrl(currency)}/v1/node/${getNodeId(currency)}/party/${partyId}/transaction/prepare`,
+    url: `${getGatewayUrl(config)}/v1/node/${getNodeId(config)}/party/${partyId}/transaction/prepare`,
     data: {
       amount: fixedPointAmount.toString(),
       type: TransactionType.TAP_REQUEST,
@@ -374,14 +463,15 @@ export async function prepareTapRequest(currency: CryptoCurrency, { partyId, amo
 }
 
 export async function submit(
-  currency: CryptoCurrency,
+  context: CantonContext,
   partyId: string,
   serialized: string,
   signature: string,
 ) {
+  const config = await context.config();
   const { data } = await gatewayNetwork<SubmitTransactionResponse, SubmitTransactionRequest>({
     method: "POST",
-    url: `${getGatewayUrl(currency)}/v1/node/${getNodeId(currency)}/party/${partyId}/transaction/submit`,
+    url: `${getGatewayUrl(config)}/v1/node/${getNodeId(config)}/party/${partyId}/transaction/submit`,
     data: {
       serialized,
       signature,
@@ -391,23 +481,24 @@ export async function submit(
 }
 
 export async function submitTransferInstruction(
-  currency: CryptoCurrency,
+  context: CantonContext,
   partyId: string,
   serialized: string,
   signature: string,
 ) {
-  return submit(currency, partyId, serialized, signature);
+  return submit(context, partyId, serialized, signature);
 }
 
 export async function submitPreApprovalTransaction(
-  currency: CryptoCurrency,
+  context: CantonContext,
   partyId: string,
   { serialized }: PrepareTransactionResponse,
   signature: string,
 ) {
+  const config = await context.config();
   const { data } = await gatewayNetwork<SubmitTransactionResponse, SubmitTransactionRequest>({
     method: "POST",
-    url: `${getGatewayUrl(currency)}/v1/node/${getNodeId(currency)}/party/${partyId}/transaction/submit`,
+    url: `${getGatewayUrl(config)}/v1/node/${getNodeId(config)}/party/${partyId}/transaction/submit`,
     data: {
       serialized,
       signature,
@@ -422,15 +513,16 @@ export async function submitPreApprovalTransaction(
 }
 
 export async function submitTapRequest(
-  currency: CryptoCurrency,
+  context: CantonContext,
   { partyId, serialized, signature }: SubmitTapRequestRequest,
 ) {
+  const config = await context.config();
   const { data } = await gatewayNetwork<
     SubmitTapRequestResponse,
     Omit<SubmitTapRequestRequest, "partyId">
   >({
     method: "POST",
-    url: `${getGatewayUrl(currency)}/v1/node/${getNodeId(currency)}/party/${partyId}/transaction/submit`,
+    url: `${getGatewayUrl(config)}/v1/node/${getNodeId(config)}/party/${partyId}/transaction/submit`,
     data: {
       serialized,
       signature,
@@ -450,13 +542,17 @@ export type CalToken = {
 };
 
 /**
- * Fetch Canton tokens from CAL service and create a map of id -> token_identifier
+ * Fetch Canton tokens from CAL service and create a map of id -> token_identifier.
+ * Keyed by currency id, which the config does not carry; the config sets the cache lifetime.
  */
-async function getCalTokens(currency: CryptoCurrency): Promise<Map<string, string>> {
+async function getCalTokens(
+  _context: CantonContext,
+  currencyId: string,
+): Promise<Map<string, string>> {
   const calUrl = getEnv("CAL_SERVICE_URL");
   const { data: calTokens } = await gatewayNetwork<CalToken[]>({
     method: "GET",
-    url: `${calUrl}/v1/tokens?network=${currency.id}&output=id,name,ticker,network,contract_address,token_identifier,units,standard`,
+    url: `${calUrl}/v1/tokens?network=${currencyId}&output=id,name,ticker,network,contract_address,token_identifier,units,standard`,
   });
 
   // Map id -> token_identifier
@@ -467,9 +563,13 @@ async function getCalTokens(currency: CryptoCurrency): Promise<Map<string, strin
   return tokenIdentifierMap;
 }
 
-const getCalTokensCacheKey = (currency: CryptoCurrency): string => currency.id;
+const getCalTokensCacheKey = (_config: CantonCoinConfig, currencyId: string): string => currencyId;
 
-export const getCalTokensCached = makeLRUCache(getCalTokens, getCalTokensCacheKey, minutes(30));
+export const getCalTokensCached = makeConfigurableLRUCache(
+  getCalTokens,
+  getCalTokensCacheKey,
+  config => positiveInt("calTokensCacheTtlMs", config.calTokensCacheTtlMs),
+);
 
 // Re-export types that are needed by other modules
 export type {

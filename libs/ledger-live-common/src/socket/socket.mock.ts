@@ -5,7 +5,7 @@ export const socketErrorSubject: Subject<any> = new Subject();
 export const withSocketErrors = (observable: Observable<SocketEvent>): Observable<SocketEvent> =>
   merge(observable, socketErrorSubject.pipe(mergeMap(e => throwError(() => e))));
 
-const pause = ms => interval(ms).pipe(take(1), ignoreElements());
+const pause = (ms: number) => interval(ms).pipe(take(1), ignoreElements());
 
 export const secureChannelMock = (managerGranted = false): Observable<SocketEvent> =>
   !managerGranted

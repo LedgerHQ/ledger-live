@@ -1,16 +1,22 @@
 import { useEffect, useState } from "react";
-import { AppState } from "react-native";
+import { AppState, type AppStateStatus } from "react-native";
 
-export default function useIsAppInBackground() {
-  const [isInBackground, setIsInBackground] = useState(AppState.currentState !== "active");
+type Options = {
+  /** With `false`, only `background` counts: iOS is also `inactive` while a system alert shows. */
+  includeInactive?: boolean;
+};
+
+function isBackground(appState: AppStateStatus, includeInactive: boolean): boolean {
+  return includeInactive ? appState !== "active" : appState === "background";
+}
+
+export default function useIsAppInBackground({ includeInactive = true }: Options = {}) {
+  const [appState, setAppState] = useState(AppState.currentState);
   useEffect(() => {
-    const listener = AppState.addEventListener("change", evt => {
-      if (evt === "active") setIsInBackground(false);
-      else setIsInBackground(true);
-    });
+    const listener = AppState.addEventListener("change", setAppState);
     return () => {
       listener.remove();
     };
   }, []);
-  return isInBackground;
+  return isBackground(appState, includeInactive);
 }

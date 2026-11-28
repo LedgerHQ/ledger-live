@@ -1,5 +1,73 @@
 # @features/platform-assets-table
 
+## 0.3.2
+
+### Patch Changes
+
+- Updated dependencies [[`b770536`](https://github.com/LedgerHQ/ledger-live/commit/b77053689b942642434c55e0de68fc987cbb661c)]:
+  - @features/platform-market-countervalues@0.6.0
+  - @domain/entity-currency@0.5.1
+
+## 0.3.2-next.0
+
+### Patch Changes
+
+- Updated dependencies [[`b770536`](https://github.com/LedgerHQ/ledger-live/commit/b77053689b942642434c55e0de68fc987cbb661c)]:
+  - @features/platform-market-countervalues@0.6.0-next.0
+  - @domain/entity-currency@0.5.1-next.0
+
+## 0.3.1
+
+### Patch Changes
+
+- Updated dependencies [[`4d9a494`](https://github.com/LedgerHQ/ledger-live/commit/4d9a4949a9c03da89241f0163325940217762f7e)]:
+  - @shared/trend@0.2.0
+  - @features/platform-market-countervalues@0.5.1
+
+## 0.3.1-next.0
+
+### Patch Changes
+
+- Updated dependencies [[`4d9a494`](https://github.com/LedgerHQ/ledger-live/commit/4d9a4949a9c03da89241f0163325940217762f7e)]:
+  - @shared/trend@0.2.0-next.0
+  - @features/platform-market-countervalues@0.5.1-next.0
+
+## 0.3.0
+
+### Minor Changes
+
+- [#24594](https://github.com/LedgerHQ/ledger-live/pull/24594) [`b67184a`](https://github.com/LedgerHQ/ledger-live/commit/b67184adc0aa9a2e0871a8a636fa8bdcee846877) Thanks [@claudiiafg](https://github.com/claudiiafg)! - Align desktop 1D asset and account variation with the market banner
+
+- [#24134](https://github.com/LedgerHQ/ledger-live/pull/24134) [`b582a36`](https://github.com/LedgerHQ/ledger-live/commit/b582a360738037ab8393a554f304d9e942892287) Thanks [@renovate-operator-ledger](https://github.com/apps/renovate-operator-ledger)! - chore(deps): update dependency @ledgerhq/crypto-icons to v2.0.7
+
+  - Updated `@ledgerhq/crypto-icons` to `2.0.7`
+
+- [#24522](https://github.com/LedgerHQ/ledger-live/pull/24522) [`e67063f`](https://github.com/LedgerHQ/ledger-live/commit/e67063fc1fdb96c419c42a452433870b588f201e) Thanks [@gre-ledger](https://github.com/gre-ledger)! - Import bignumber.js through its default export, the form bignumber.js 11 types support
+
+### Patch Changes
+
+- Updated dependencies [[`cea0076`](https://github.com/LedgerHQ/ledger-live/commit/cea0076fb3fd7c19d0e73b99ac76507278e390a4), [`934970a`](https://github.com/LedgerHQ/ledger-live/commit/934970adec67ed88f1d546d03b1bb555cbfd128f), [`e67063f`](https://github.com/LedgerHQ/ledger-live/commit/e67063fc1fdb96c419c42a452433870b588f201e)]:
+  - @domain/entity-currency@0.5.0
+  - @features/platform-market-countervalues@0.5.0
+
+## 0.3.0-next.0
+
+### Minor Changes
+
+- [#24594](https://github.com/LedgerHQ/ledger-live/pull/24594) [`b67184a`](https://github.com/LedgerHQ/ledger-live/commit/b67184adc0aa9a2e0871a8a636fa8bdcee846877) Thanks [@claudiiafg](https://github.com/claudiiafg)! - Align desktop 1D asset and account variation with the market banner
+
+- [#24134](https://github.com/LedgerHQ/ledger-live/pull/24134) [`b582a36`](https://github.com/LedgerHQ/ledger-live/commit/b582a360738037ab8393a554f304d9e942892287) Thanks [@renovate-operator-ledger](https://github.com/apps/renovate-operator-ledger)! - chore(deps): update dependency @ledgerhq/crypto-icons to v2.0.7
+
+  - Updated `@ledgerhq/crypto-icons` to `2.0.7`
+
+- [#24522](https://github.com/LedgerHQ/ledger-live/pull/24522) [`e67063f`](https://github.com/LedgerHQ/ledger-live/commit/e67063fc1fdb96c419c42a452433870b588f201e) Thanks [@gre-ledger](https://github.com/gre-ledger)! - Import bignumber.js through its default export, the form bignumber.js 11 types support
+
+### Patch Changes
+
+- Updated dependencies [[`cea0076`](https://github.com/LedgerHQ/ledger-live/commit/cea0076fb3fd7c19d0e73b99ac76507278e390a4), [`934970a`](https://github.com/LedgerHQ/ledger-live/commit/934970adec67ed88f1d546d03b1bb555cbfd128f), [`e67063f`](https://github.com/LedgerHQ/ledger-live/commit/e67063fc1fdb96c419c42a452433870b588f201e)]:
+  - @domain/entity-currency@0.5.0-next.0
+  - @features/platform-market-countervalues@0.5.0-next.0
+
 ## 0.2.0
 
 ### Minor Changes

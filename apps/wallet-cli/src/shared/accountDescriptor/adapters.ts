@@ -19,6 +19,11 @@ import {
   derivationModeSupportsIndex,
   asDerivationMode,
 } from "@ledgerhq/ledger-wallet-framework/derivation";
+import {
+  fromDescriptorPath,
+  LegacyDerivationPathSchema,
+  type DerivationPath,
+} from "@domain/entity-derivation";
 import type { AccountDescriptorV0 } from "./v0";
 import type { AccountDescriptorV1, UtxoAccountDescriptorV1, AccountBasedDescriptorV1 } from "./v1";
 import { networkOfV0, currencyIdFromNetwork } from "./network";
@@ -42,20 +47,18 @@ function isXpub(seedIdentifier: string): boolean {
   return /^[xyztuv]pub/.test(seedIdentifier) || /^[xyztuv]prv/.test(seedIdentifier);
 }
 
-/**
- * Normalize a derivation scheme output to V1 path format:
- * prepend "m/" and replace apostrophe hardened markers with "h" (shell-safe).
- */
-function toV1Path(schemePath: string): string {
-  return "m/" + schemePath.replaceAll("'", "h");
+export class InvalidDerivationPathError extends Error {
+  constructor(message: string) {
+    super(message);
+    this.name = "InvalidDerivationPathError";
+  }
 }
 
-/**
- * Normalize a V1 path segment back to the scheme format used by derivation.ts:
- * strip the "m/" prefix and replace "h" hardened markers with "'".
- */
-function fromV1Path(v1Path: string): string {
-  return v1Path.replace(/^m\//, "").replaceAll("h", "'");
+function toV1Path(legacyPath: string): DerivationPath {
+  const parsed = LegacyDerivationPathSchema.safeParse(legacyPath);
+  if (parsed.success) return parsed.data;
+  const reason = parsed.error.issues.map(issue => issue.message).join("; ");
+  throw new InvalidDerivationPathError(`Invalid derivation path "${legacyPath}": ${reason}`);
 }
 
 type SegmentMatch = { matched: false } | { matched: true; accountIndex?: number };
@@ -137,7 +140,8 @@ function matchSchemeToPath(
 
 /**
  * Convert a V0 (WalletSync / live-common) account descriptor to the V1 ADR format.
- * Throws UnsupportedFamilyError if the derivation scheme cannot be determined.
+ * Throws UnsupportedFamilyError if the derivation scheme cannot be determined, and
+ * InvalidDerivationPathError if the built path is no BIP32 path (an index of 2^31 or more).
  */
 export function toV1(v0: AccountDescriptorV0): AccountDescriptorV1 {
   const network = networkOfV0(v0);
@@ -152,7 +156,7 @@ export function toV1(v0: AccountDescriptorV0): AccountDescriptorV1 {
       version: "2",
       type: "utxo",
       network,
-      xpub: v0.seedIdentifier,
+      key: v0.seedIdentifier,
       path,
     } satisfies UtxoAccountDescriptorV1;
   }
@@ -165,7 +169,7 @@ export function toV1(v0: AccountDescriptorV0): AccountDescriptorV1 {
     version: "2",
     type: "address",
     network,
-    address: v0.seedIdentifier,
+    key: v0.seedIdentifier,
     path,
   } satisfies AccountBasedDescriptorV1;
 }
@@ -185,8 +189,8 @@ export function toV1(v0: AccountDescriptorV0): AccountDescriptorV1 {
 export function toV0(v1: AccountDescriptorV1): AccountDescriptorV0 {
   const currencyId = currencyIdFromNetwork(v1.network);
   const currency = getCryptoCurrencyById(currencyId);
-  const normalizedPath = fromV1Path(v1.path);
-  const seedIdentifier = v1.type === "utxo" ? v1.xpub : v1.address;
+  const normalizedPath = fromDescriptorPath(v1.path);
+  const seedIdentifier = v1.key;
 
   const modes = getDerivationModesForCurrency(currency);
   for (const mode of modes) {

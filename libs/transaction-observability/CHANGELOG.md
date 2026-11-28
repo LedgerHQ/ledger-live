@@ -1,5 +1,59 @@
 # @ledgerhq/transaction-observability
 
+## 0.7.0
+
+### Minor Changes
+
+- [#24861](https://github.com/LedgerHQ/ledger-live/pull/24861) [`16bc82a`](https://github.com/LedgerHQ/ledger-live/commit/16bc82a772d61b5c2ca659922ffa8e74eab283d7) Thanks [@henri-ly](https://github.com/henri-ly)! - Check a Solana transaction's blockhash before simulating it and report an expired one as `SolanaTxBlockhashExpired`, shown as is in the send flows with wording that asks the user to try again. Durable-nonce transactions skip the check, and a simulation that cannot find the blockhash runs once more after 500 ms
+
+### Patch Changes
+
+- Updated dependencies [[`081c422`](https://github.com/LedgerHQ/ledger-live/commit/081c422494180f04d0fbaf9de4d59370d7927863), [`a869e8b`](https://github.com/LedgerHQ/ledger-live/commit/a869e8b37d098ba06c01d36516ad7a6abb9aa0a5), [`4ea6c56`](https://github.com/LedgerHQ/ledger-live/commit/4ea6c566069a55a0345df95add6dc62e37a30b01), [`90af53f`](https://github.com/LedgerHQ/ledger-live/commit/90af53fdcab2448e07ced5f4cc8d37efad261c6b), [`e516034`](https://github.com/LedgerHQ/ledger-live/commit/e5160345b50c0dc9e7c490da72d641c631d2ef7f)]:
+  - @ledgerhq/types-live@6.133.0
+
+## 0.7.0-next.0
+
+### Minor Changes
+
+- [#24861](https://github.com/LedgerHQ/ledger-live/pull/24861) [`16bc82a`](https://github.com/LedgerHQ/ledger-live/commit/16bc82a772d61b5c2ca659922ffa8e74eab283d7) Thanks [@henri-ly](https://github.com/henri-ly)! - Check a Solana transaction's blockhash before simulating it and report an expired one as `SolanaTxBlockhashExpired`, shown as is in the send flows with wording that asks the user to try again. Durable-nonce transactions skip the check, and a simulation that cannot find the blockhash runs once more after 500 ms
+
+### Patch Changes
+
+- Updated dependencies [[`081c422`](https://github.com/LedgerHQ/ledger-live/commit/081c422494180f04d0fbaf9de4d59370d7927863), [`a869e8b`](https://github.com/LedgerHQ/ledger-live/commit/a869e8b37d098ba06c01d36516ad7a6abb9aa0a5), [`4ea6c56`](https://github.com/LedgerHQ/ledger-live/commit/4ea6c566069a55a0345df95add6dc62e37a30b01), [`90af53f`](https://github.com/LedgerHQ/ledger-live/commit/90af53fdcab2448e07ced5f4cc8d37efad261c6b), [`e516034`](https://github.com/LedgerHQ/ledger-live/commit/e5160345b50c0dc9e7c490da72d641c631d2ef7f)]:
+  - @ledgerhq/types-live@6.133.0-next.0
+
+## 0.6.3
+
+### Patch Changes
+
+- Updated dependencies [[`4aa3244`](https://github.com/LedgerHQ/ledger-live/commit/4aa32442c63cd17bd2894d63ad0721d51e0ca41a), [`5a9de42`](https://github.com/LedgerHQ/ledger-live/commit/5a9de42cd3a598f1f8954d58b9536280f5fd2927), [`120891d`](https://github.com/LedgerHQ/ledger-live/commit/120891d4dbd9e9bba22dbf552f1bbe0ab34685cc), [`0cf44d5`](https://github.com/LedgerHQ/ledger-live/commit/0cf44d56a449fb0f4448cd6f8e02c880fc47adb2)]:
+  - @ledgerhq/types-live@6.132.0
+  - @shared/env@0.14.0
+
+## 0.6.3-next.0
+
+### Patch Changes
+
+- Updated dependencies [[`4aa3244`](https://github.com/LedgerHQ/ledger-live/commit/4aa32442c63cd17bd2894d63ad0721d51e0ca41a), [`5a9de42`](https://github.com/LedgerHQ/ledger-live/commit/5a9de42cd3a598f1f8954d58b9536280f5fd2927), [`120891d`](https://github.com/LedgerHQ/ledger-live/commit/120891d4dbd9e9bba22dbf552f1bbe0ab34685cc), [`0cf44d5`](https://github.com/LedgerHQ/ledger-live/commit/0cf44d56a449fb0f4448cd6f8e02c880fc47adb2)]:
+  - @ledgerhq/types-live@6.132.0-next.0
+  - @shared/env@0.14.0-next.0
+
+## 0.6.2
+
+### Patch Changes
+
+- Updated dependencies [[`b77803f`](https://github.com/LedgerHQ/ledger-live/commit/b77803ffbca90848d55bca56b9d8cd3547464620), [`d36ed0a`](https://github.com/LedgerHQ/ledger-live/commit/d36ed0a5b624f1842e2ad3a857d502621dfb5fb9), [`420409b`](https://github.com/LedgerHQ/ledger-live/commit/420409ba20ed5eca81813b15b7dcb85a92de1b5b), [`ef95b2e`](https://github.com/LedgerHQ/ledger-live/commit/ef95b2e00e490f024b81bfbf35cb582b5fed8783), [`e051c84`](https://github.com/LedgerHQ/ledger-live/commit/e051c84a8486b78327ea49500c38b6e2138bbc21), [`3a0d8aa`](https://github.com/LedgerHQ/ledger-live/commit/3a0d8aa1d4904fa0ccc53528ec092bc32a63dcd4), [`96fac1e`](https://github.com/LedgerHQ/ledger-live/commit/96fac1eb64856beb33cc68594e98c25e8b308898), [`0d83181`](https://github.com/LedgerHQ/ledger-live/commit/0d83181e9a96f55811f2ce5532527739bdb7e62a), [`e186896`](https://github.com/LedgerHQ/ledger-live/commit/e186896213df32feb1e6a80e38f45cf189655866), [`e7b21f8`](https://github.com/LedgerHQ/ledger-live/commit/e7b21f816021dbbe7314ff51bf32cc4d87291b98), [`e67063f`](https://github.com/LedgerHQ/ledger-live/commit/e67063fc1fdb96c419c42a452433870b588f201e)]:
+  - @ledgerhq/types-live@6.131.0
+  - @shared/env@0.13.0
+
+## 0.6.2-next.0
+
+### Patch Changes
+
+- Updated dependencies [[`b77803f`](https://github.com/LedgerHQ/ledger-live/commit/b77803ffbca90848d55bca56b9d8cd3547464620), [`d36ed0a`](https://github.com/LedgerHQ/ledger-live/commit/d36ed0a5b624f1842e2ad3a857d502621dfb5fb9), [`420409b`](https://github.com/LedgerHQ/ledger-live/commit/420409ba20ed5eca81813b15b7dcb85a92de1b5b), [`ef95b2e`](https://github.com/LedgerHQ/ledger-live/commit/ef95b2e00e490f024b81bfbf35cb582b5fed8783), [`e051c84`](https://github.com/LedgerHQ/ledger-live/commit/e051c84a8486b78327ea49500c38b6e2138bbc21), [`3a0d8aa`](https://github.com/LedgerHQ/ledger-live/commit/3a0d8aa1d4904fa0ccc53528ec092bc32a63dcd4), [`96fac1e`](https://github.com/LedgerHQ/ledger-live/commit/96fac1eb64856beb33cc68594e98c25e8b308898), [`0d83181`](https://github.com/LedgerHQ/ledger-live/commit/0d83181e9a96f55811f2ce5532527739bdb7e62a), [`e186896`](https://github.com/LedgerHQ/ledger-live/commit/e186896213df32feb1e6a80e38f45cf189655866), [`e7b21f8`](https://github.com/LedgerHQ/ledger-live/commit/e7b21f816021dbbe7314ff51bf32cc4d87291b98), [`e67063f`](https://github.com/LedgerHQ/ledger-live/commit/e67063fc1fdb96c419c42a452433870b588f201e)]:
+  - @ledgerhq/types-live@6.131.0-next.0
+  - @shared/env@0.13.0-next.0
+
 ## 0.6.1
 
 ### Patch Changes
@@ -284,66 +338,4 @@
   - @ledgerhq/types-live@6.123.0-next.0
   - @ledgerhq/evm-tools@1.14.3-next.0
 
-## 0.2.0
-
-### Minor Changes
-
-- [#20819](https://github.com/LedgerHQ/ledger-live/pull/20819) [`edad3fb`](https://github.com/LedgerHQ/ledger-live/commit/edad3fb2dc1fea0277418374b5ebee9c9860f448) Thanks [@beths-ledger](https://github.com/beths-ledger)! - Report the originating live-app or dApp as `manifest_id` rather than `provider` on `earn_transaction_completed` / `earn_transaction_failed`.
-
-  The value was always a manifest id, and `provider` means something else in Ledger Wallet's analytics: the staking or swap partner behind a flow. `manifest_id` is also the name the rest of the codebase already uses for this identifier, including the feature-flag params that supply it.
-
-  No consumer is affected. The host apps only register the observer in the bridge-seam change, so no event has carried either property in production yet.
-
-- [#20819](https://github.com/LedgerHQ/ledger-live/pull/20819) [`0b024e8`](https://github.com/LedgerHQ/ledger-live/commit/0b024e8214eb3635d42c18986aa983bd1501c985) Thanks [@beths-ledger](https://github.com/beths-ledger)! - Correlate the sign and broadcast stages, so a broadcast event carries the transaction's own data rather than what survives on the optimistic operation.
-
-  `signOperation` emits a `SignedOperation` and that same object is later handed to `broadcast`, so object identity is the correlation key — nothing to invent, nothing to reconcile. A `WeakMap` means no TTL, no eviction policy and no size cap to get wrong, and no signature is retained: a transaction signed but never broadcast simply becomes garbage.
-
-  Without this, the broadcast stage is uneven in ways a data consumer cannot predict. Cosmos copies its validators into the optimistic operation and Solana does not; Hedera's `claim-rewards` and Algorand's `claimReward` are crafted as plain transfers and so report `OUT`, and Solana's `stake.withdraw` reports `IN` — indistinguishable from an incoming transfer. Correlation recovers the exact action, the delegation target and send-max for all of them.
-
-  Correlation legitimately misses when a signed operation is serialised and rehydrated (the wallet-api `transaction.sign` route, or one persisted and broadcast later) and for ACRE, which signs outside the wrapper. Those fall back to the operation type. `tx_data_source` on every event records which path produced it, so the hit rate is measurable rather than assumed. Route attribution still comes from the broadcast stage, which is the only stage that knows it.
-
-- [#20817](https://github.com/LedgerHQ/ledger-live/pull/20817) [`244454b`](https://github.com/LedgerHQ/ledger-live/commit/244454ba821c5590a56b4b0e5e5ec6ca2436e6ab) Thanks [@beths-ledger](https://github.com/beths-ledger)! - Add `@ledgerhq/transaction-observability`: the sign/broadcast log-event model, a global observer registry, error classification, staking-action derivation and the Segment mapping behind `earn_transaction_completed` / `earn_transaction_failed`. Nothing consumes it yet — the account-bridge seam and the host registrations follow.
-
-  It lives in a dedicated `libs/*` package rather than `@ledgerhq/live-common` (which no longer accepts new top-level modules), and deliberately does not depend on live-common, since live-common depends on it.
-
-  The two lifecycle stages see different things, and that drives the design: `signOperation` gets the rich transaction (the family's own `mode`, the delegation target), while `broadcast` gets only the optimistic operation and so has to read a coarser `OperationType`. There are therefore two derivations — `deriveEarnTransactionType` and `deriveFromOperationType` — and a per-family matrix test asserts they agree. Without the second one a successful Solana stake derives no action at all and is dropped, because its sign-stage `stake.createAccount` becomes a `DELEGATE` operation at broadcast.
-
-  Emission is gated on having derived a staking action, so plain sends and swaps are ignored without needing a currency allowlist, and generic operation types (`OUT`, `IN`, `NONE`, `FEES`) are never mapped. Transactions originating from the Earn live-app are skipped because that app emits these events itself. Events carry `stage`, `transaction_type`, `raw_transaction_type`, `input_currency`, `network`, `validators`, `error_category` + `error_reason` on failure, and `tx_data_source` so the sign-vs-broadcast provenance is measurable — never a raw error message or signature.
-
-### Patch Changes
-
-- Updated dependencies [[`5e45fdd`](https://github.com/LedgerHQ/ledger-live/commit/5e45fddee9f3483ac3daa7b93f58b01e725e6d4b), [`a8c34d0`](https://github.com/LedgerHQ/ledger-live/commit/a8c34d0d9469b4e11339edfbef53445e58194fd8), [`27388a8`](https://github.com/LedgerHQ/ledger-live/commit/27388a894eaac67b8e162a60f6d3368aad0a8682)]:
-  - @shared/env@0.5.0
-  - @ledgerhq/types-live@6.122.0
-
-## 0.2.0-next.0
-
-### Minor Changes
-
-- [#20819](https://github.com/LedgerHQ/ledger-live/pull/20819) [`edad3fb`](https://github.com/LedgerHQ/ledger-live/commit/edad3fb2dc1fea0277418374b5ebee9c9860f448) Thanks [@beths-ledger](https://github.com/beths-ledger)! - Report the originating live-app or dApp as `manifest_id` rather than `provider` on `earn_transaction_completed` / `earn_transaction_failed`.
-
-  The value was always a manifest id, and `provider` means something else in Ledger Wallet's analytics: the staking or swap partner behind a flow. `manifest_id` is also the name the rest of the codebase already uses for this identifier, including the feature-flag params that supply it.
-
-  No consumer is affected. The host apps only register the observer in the bridge-seam change, so no event has carried either property in production yet.
-
-- [#20819](https://github.com/LedgerHQ/ledger-live/pull/20819) [`0b024e8`](https://github.com/LedgerHQ/ledger-live/commit/0b024e8214eb3635d42c18986aa983bd1501c985) Thanks [@beths-ledger](https://github.com/beths-ledger)! - Correlate the sign and broadcast stages, so a broadcast event carries the transaction's own data rather than what survives on the optimistic operation.
-
-  `signOperation` emits a `SignedOperation` and that same object is later handed to `broadcast`, so object identity is the correlation key — nothing to invent, nothing to reconcile. A `WeakMap` means no TTL, no eviction policy and no size cap to get wrong, and no signature is retained: a transaction signed but never broadcast simply becomes garbage.
-
-  Without this, the broadcast stage is uneven in ways a data consumer cannot predict. Cosmos copies its validators into the optimistic operation and Solana does not; Hedera's `claim-rewards` and Algorand's `claimReward` are crafted as plain transfers and so report `OUT`, and Solana's `stake.withdraw` reports `IN` — indistinguishable from an incoming transfer. Correlation recovers the exact action, the delegation target and send-max for all of them.
-
-  Correlation legitimately misses when a signed operation is serialised and rehydrated (the wallet-api `transaction.sign` route, or one persisted and broadcast later) and for ACRE, which signs outside the wrapper. Those fall back to the operation type. `tx_data_source` on every event records which path produced it, so the hit rate is measurable rather than assumed. Route attribution still comes from the broadcast stage, which is the only stage that knows it.
-
-- [#20817](https://github.com/LedgerHQ/ledger-live/pull/20817) [`244454b`](https://github.com/LedgerHQ/ledger-live/commit/244454ba821c5590a56b4b0e5e5ec6ca2436e6ab) Thanks [@beths-ledger](https://github.com/beths-ledger)! - Add `@ledgerhq/transaction-observability`: the sign/broadcast log-event model, a global observer registry, error classification, staking-action derivation and the Segment mapping behind `earn_transaction_completed` / `earn_transaction_failed`. Nothing consumes it yet — the account-bridge seam and the host registrations follow.
-
-  It lives in a dedicated `libs/*` package rather than `@ledgerhq/live-common` (which no longer accepts new top-level modules), and deliberately does not depend on live-common, since live-common depends on it.
-
-  The two lifecycle stages see different things, and that drives the design: `signOperation` gets the rich transaction (the family's own `mode`, the delegation target), while `broadcast` gets only the optimistic operation and so has to read a coarser `OperationType`. There are therefore two derivations — `deriveEarnTransactionType` and `deriveFromOperationType` — and a per-family matrix test asserts they agree. Without the second one a successful Solana stake derives no action at all and is dropped, because its sign-stage `stake.createAccount` becomes a `DELEGATE` operation at broadcast.
-
-  Emission is gated on having derived a staking action, so plain sends and swaps are ignored without needing a currency allowlist, and generic operation types (`OUT`, `IN`, `NONE`, `FEES`) are never mapped. Transactions originating from the Earn live-app are skipped because that app emits these events itself. Events carry `stage`, `transaction_type`, `raw_transaction_type`, `input_currency`, `network`, `validators`, `error_category` + `error_reason` on failure, and `tx_data_source` so the sign-vs-broadcast provenance is measurable — never a raw error message or signature.
-
-### Patch Changes
-
-- Updated dependencies [[`5e45fdd`](https://github.com/LedgerHQ/ledger-live/commit/5e45fddee9f3483ac3daa7b93f58b01e725e6d4b), [`a8c34d0`](https://github.com/LedgerHQ/ledger-live/commit/a8c34d0d9469b4e11339edfbef53445e58194fd8), [`27388a8`](https://github.com/LedgerHQ/ledger-live/commit/27388a894eaac67b8e162a60f6d3368aad0a8682)]:
-  - @shared/env@0.5.0-next.0
-  - @ledgerhq/types-live@6.122.0-next.0
+<!-- changelog-pruned: older entries were removed to keep this file small. Full history is in `git log -p CHANGELOG.md` and in the GitHub release for each version. -->

@@ -1,7 +1,7 @@
 # @shared/ui-qr-code
 
-> [!CAUTION]
-> **Status: UNSTABLE** — New package; pending platform team review for API and placement.
+> [!NOTE]
+> **Status: STABLE** — Production-ready; API is considered stable.
 
 Reusable QR code UI for web and React Native. Encodes a plain string (typically a wallet address)
 as a scannable QR with optional center content (e.g. a crypto icon or a logo).

@@ -335,13 +335,18 @@ export type FlowEffect = Readonly<{
 }>;
 
 export type SendAmountDescriptor = Readonly<{
-  canSendMax?: boolean;
+  canSendMax?: boolean | ((currency: CryptoOrTokenCurrency) => boolean);
   /**
    * Generic and family agnostic effects executed by the `useFlowEffects` runner
    * while the Amount step is active. Each effect returns a transaction
    * patch applied through the `bridge.updateTransaction`
    */
   effects?: readonly FlowEffect[];
+  /**
+   * Rounds an amount the app computed (from fiat or a share of the balance), in base units, to
+   * one the chain accepts. Left unset, the amount is kept as is.
+   */
+  roundAmount?: (amount: BigNumber, currency: CryptoOrTokenCurrency) => BigNumber;
 }>;
 
 /**

@@ -1,5 +1,21 @@
 # @features/platform-pay-analytics
 
+## 0.4.1
+
+### Patch Changes
+
+- Updated dependencies [[`74c967e`](https://github.com/LedgerHQ/ledger-live/commit/74c967eb7dda848648df0db683910140b5d6e906)]:
+  - @shared/analytics@0.5.0
+  - @shared/analytics-react@0.5.1
+
+## 0.4.1-next.0
+
+### Patch Changes
+
+- Updated dependencies [[`74c967e`](https://github.com/LedgerHQ/ledger-live/commit/74c967eb7dda848648df0db683910140b5d6e906)]:
+  - @shared/analytics@0.5.0-next.0
+  - @shared/analytics-react@0.5.1-next.0
+
 ## 0.4.0
 
 ### Minor Changes

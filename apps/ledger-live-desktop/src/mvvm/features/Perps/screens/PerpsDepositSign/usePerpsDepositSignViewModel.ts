@@ -1,10 +1,14 @@
 import { useCallback, useEffect, useRef } from "react";
 import { cancelDepositRequest } from "@ledgerhq/live-common/wallet-api/Perps/deposit/request";
+import { getAccountCurrency } from "@ledgerhq/live-common/account/index";
+import { PERPS_SWAPKIT_PROVIDER } from "@ledgerhq/live-common/wallet-api/Perps/constants";
 import {
   usePerpsDepositExecution,
   type PerpsDepositDeviceStep,
+  type PerpsDepositOutcome,
 } from "LLD/features/Perps/hooks/usePerpsDepositExecution";
-import { isUserRefusal } from "LLD/features/Perps/utils/isUserRefusal";
+import { openPerpsTransactionSigned } from "../PerpsTransactionSigned/PerpsTransactionSignedDialog";
+import { isUserRefusal } from "@ledgerhq/live-common/wallet-api/Perps/isUserRefusal";
 import { openPerpsDeposit } from "../PerpsDeposit/PerpsDepositDialog";
 import { openPerpsReview } from "../PerpsReview/PerpsReviewDialog";
 import type { PerpsReviewData } from "../PerpsReview/usePerpsReviewViewModel";
@@ -35,8 +39,20 @@ export function usePerpsDepositSignViewModel(
     onClose();
   }, [data.draft, data.receiverAccount, onClose]);
 
+  const handleDone = useCallback(
+    ({ swapId }: PerpsDepositOutcome) => {
+      openPerpsTransactionSigned({
+        receiveCurrencyTicker: getAccountCurrency(data.receiverAccount).ticker,
+        swapId,
+        provider: PERPS_SWAPKIT_PROVIDER,
+      });
+      onClose();
+    },
+    [data.receiverAccount, onClose],
+  );
+
   const { deviceStep, executeDeposit, retry } = usePerpsDepositExecution(data, {
-    onDone: onClose,
+    onDone: handleDone,
     onRefused: handleRefused,
     onReturnToForm: returnToDeposit,
   });

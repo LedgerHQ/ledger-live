@@ -22,7 +22,7 @@ export const HEADER_X_LEDGER_NEXT = "x-ledger-next";
 export const UNCHECKED_TOKEN_TTL = 24 * 60 * 60 * 1000;
 
 /** Persisted-cache format version. Bump to invalidate older blobs (pinned via `z.literal`). */
-export const PERSISTENCE_VERSION = 3;
+export const PERSISTENCE_VERSION = 4;
 
 /** Matches an RTK Query `getTokensSyncHash` cache key, capturing the currency id. */
 export const SYNC_HASH_QUERY_KEY = /getTokensSyncHash\("([^"]+)"\)/;

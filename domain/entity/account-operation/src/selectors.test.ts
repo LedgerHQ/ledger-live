@@ -1,5 +1,5 @@
-import { computeAccountUUID } from "@domain/entity-account-descriptor";
 import { mockAddressAccountDescriptor } from "@domain/entity-account-descriptor/schema.mock";
+import { computeAccountUUID } from "@domain/entity-account/schema.mock";
 import { mockAccountOperation } from "./schema.mock";
 import { OperationIdSchema } from "./schema";
 import { selectAccountOperation, selectAccountOperations } from "./selectors";
@@ -7,7 +7,7 @@ import { mockAccountOperationsEntry, mockAccountOperationsState } from "./slice.
 
 const accountUUID = computeAccountUUID(mockAddressAccountDescriptor());
 const otherAccountUUID = computeAccountUUID(
-  mockAddressAccountDescriptor({ address: "0x0000000000000000000000000000000000000001" }),
+  mockAddressAccountDescriptor({ key: "0x0000000000000000000000000000000000000001" }),
 );
 const eth = mockAccountOperation({ id: "op-1", assetId: "ethereum" });
 const usdt = mockAccountOperation({

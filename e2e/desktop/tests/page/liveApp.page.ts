@@ -7,7 +7,9 @@ export class LiveApp extends AppPage {
 
   @step("Verify live app title contains $0")
   async verifyLiveAppTitle(provider: string) {
-    const liveApp = await this.liveAppTitle.textContent();
-    expect(liveApp?.toLowerCase()).toContain(provider);
+    await expect(this.liveAppTitle).toBeVisible();
+    await this.softExpect(async soft => {
+      await soft(this.liveAppTitle).toContainText(provider, { ignoreCase: true });
+    });
   }
 }

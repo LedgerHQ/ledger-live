@@ -1,11 +1,10 @@
-import hederaCoinConfig from "../config";
+import hederaCoinConfig, { hederaDefaults } from "../config";
 import { MAINNET_TEST_ACCOUNTS } from "../test/fixtures/account.fixture";
-import { getMockedConfig } from "../test/fixtures/config.fixture";
 import { rpcClient } from "./rpc";
 import { apiClient } from "./api";
 
 describe("apiClient", () => {
-  const coinConfig = getMockedConfig();
+  const coinConfig = hederaDefaults.hedera;
 
   beforeAll(() => {
     hederaCoinConfig.setCoinConfig(() => coinConfig);

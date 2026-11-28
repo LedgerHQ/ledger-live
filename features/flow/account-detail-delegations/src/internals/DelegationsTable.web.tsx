@@ -20,7 +20,8 @@ import type {
   DelegationColumn,
   DelegationRow,
 } from "../components/AccountDelegations/AccountDelegations.types";
-import { displayCell, initialOf } from "./display";
+import { CellTitle } from "./CellTitle";
+import { initialOf } from "./display";
 import { RowActionsMenu } from "./RowActionsMenu";
 import { StatusTag } from "./StatusTag";
 
@@ -114,7 +115,7 @@ export const DelegationsTable = ({
                   <TableCell key={columnId} align={align}>
                     <TableCellItem align={align}>
                       <TableCellContent>
-                        <TableCellContentTitle>{displayCell(cell, discreet)}</TableCellContentTitle>
+                        <CellTitle cell={cell} discreet={discreet} />
                       </TableCellContent>
                     </TableCellItem>
                   </TableCell>

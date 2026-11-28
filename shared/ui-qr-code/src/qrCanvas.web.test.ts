@@ -1,5 +1,5 @@
 import qrcode from "qrcode";
-import { drawStyledQrCode } from "./qrCanvas.web";
+import { drawStyledQrCode } from "./qrCanvas";
 
 jest.mock("qrcode", () => ({
   __esModule: true,

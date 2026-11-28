@@ -52,8 +52,8 @@ export class SwapConfirmationDrawer extends Drawer {
 
   @step("Check share your feedback link is visible")
   async checkShareYourFeedbackLinkVisible() {
-    await expect(this.shareYourFeedbackLink).toBeVisible();
     await this.softExpect(async soft => {
+      await soft(this.shareYourFeedbackLink).toBeVisible();
       await soft(this.shareYourFeedbackLink).toHaveText(/tell us about your experience/i);
     });
   }

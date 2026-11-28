@@ -114,16 +114,23 @@ export function useSortedValidators(
   validatorSearchFilter: PolkadotSearchFilter = searchFilter,
 ): PolkadotValidator[] {
   const initialVotes = useMemoOnce(() => nominations.map(({ address }) => address));
-  const sortedVotes = useMemo(
+  const nominableValidators = useMemo(
     () =>
-      validators
-        .filter(validator => initialVotes.includes(validator.address))
-        .concat(validators.filter(validator => !initialVotes.includes(validator.address))),
+      validators.filter(
+        validator => !validator.isBlocked || initialVotes.includes(validator.address),
+      ),
     [validators, initialVotes],
   );
+  const sortedVotes = useMemo(
+    () =>
+      nominableValidators
+        .filter(validator => initialVotes.includes(validator.address))
+        .concat(nominableValidators.filter(validator => !initialVotes.includes(validator.address))),
+    [nominableValidators, initialVotes],
+  );
   const sr = useMemo(
-    () => (search ? validators.filter(validatorSearchFilter(search)) : sortedVotes),
-    [search, validators, sortedVotes, validatorSearchFilter],
+    () => (search ? nominableValidators.filter(validatorSearchFilter(search)) : sortedVotes),
+    [search, nominableValidators, sortedVotes, validatorSearchFilter],
   );
   return sr;
 }

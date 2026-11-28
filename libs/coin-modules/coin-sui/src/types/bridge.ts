@@ -160,7 +160,8 @@ export type SuiSignedOperation = {
   signature: string;
   rawData: {
     unsigned: string;
-    serializedSignature: string;
+    /** Bare signature for the node, set by raw signing, whose `signature` holds the full signed data. */
+    serializedSignature?: string;
   };
 };
 

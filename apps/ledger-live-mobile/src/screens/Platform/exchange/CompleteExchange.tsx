@@ -1,9 +1,13 @@
 import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { StyleSheet } from "react-native";
-import { useSelector } from "~/context/hooks";
+import { useDispatch, useSelector } from "~/context/hooks";
 import SafeAreaView from "~/components/SafeAreaView";
 import { TokenCurrency } from "@domain/entity-currency-token";
+import { getMainAccount } from "@ledgerhq/live-common/account/index";
+import { addSellOperation } from "@ledgerhq/live-common/exchange/sell/sellOperations";
 import { useBroadcast } from "@ledgerhq/live-common/hooks/useBroadcast";
+import { ExchangeType } from "@ledgerhq/live-common/wallet-api/react";
+import { updateAccountWithUpdater } from "~/actions/accounts";
 import { broadcastLogger } from "~/datadog";
 import DeviceActionModal from "~/components/DeviceActionModal";
 import { StackNavigatorProps } from "~/components/RootNavigator/types/helpers";
@@ -29,6 +33,7 @@ const PlatformCompleteExchange: React.FC<Props> = ({
   },
   navigation,
 }) => {
+  const dispatch = useDispatch();
   const mevProtected = useSelector(mevProtectionSelector);
   const { fromAccount: account, fromParentAccount: parentAccount } = request.exchange;
   let tokenCurrency: TokenCurrency | undefined;
@@ -61,6 +66,18 @@ const PlatformCompleteExchange: React.FC<Props> = ({
       hasBroadcastedTransaction.current = true;
       broadcast(signedOperation).then(
         operation => {
+          if (
+            request.exchangeType === ExchangeType.SELL ||
+            request.exchangeType === ExchangeType.SELL_NG
+          ) {
+            const mainAccount = getMainAccount(account, parentAccount);
+            dispatch(
+              updateAccountWithUpdater({
+                accountId: mainAccount.id,
+                updater: a => addSellOperation(a, operation),
+              }),
+            );
+          }
           onResult({ operation });
         },
         error => {
@@ -74,7 +91,15 @@ const PlatformCompleteExchange: React.FC<Props> = ({
         },
       );
     }
-  }, [broadcast, onResult, signedOperation]);
+  }, [
+    broadcast,
+    onResult,
+    signedOperation,
+    request.exchangeType,
+    account,
+    parentAccount,
+    dispatch,
+  ]);
 
   useEffect(() => {
     if (error) {

@@ -1,13 +1,13 @@
 import React from "react";
 import type { TokenCurrency } from "@domain/entity-currency-token";
+import { useTokenOptions } from "@ledgerhq/live-common/families/xrp/react";
 import type { Transaction } from "@ledgerhq/live-common/families/xrp/types";
 import { fireEvent, render, screen } from "tests/testSetup";
 import StepToken, { StepTokenFooter } from "./StepToken";
-import { useTokenOptions } from "../useTokenOptions";
 import { xrpIouToken } from "../../__mocks__/currency.mock";
 import { makeStepProps } from "../../__mocks__/stepProps.mock";
 
-jest.mock("../useTokenOptions");
+jest.mock("@ledgerhq/live-common/families/xrp/react");
 const mockUseTokenOptions = jest.mocked(useTokenOptions);
 
 type SelectProps = {
@@ -76,11 +76,11 @@ describe("StepToken", () => {
     expect(loadNext).toHaveBeenCalled();
   });
 
-  it("says every token is added once none is left", () => {
+  it("says no token is available once the list is empty", () => {
     renderStepToken();
 
     expect(selectProps().noOptionsMessage({ inputValue: "" })).toBe(
-      "xrp.addToken.steps.token.allAdded",
+      "xrp.addToken.steps.token.empty",
     );
   });
 

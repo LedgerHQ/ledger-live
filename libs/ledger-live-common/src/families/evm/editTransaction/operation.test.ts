@@ -118,6 +118,23 @@ describe("EVM Family", () => {
 
           expect(isEditableOperation(account, operation, () => false)).toBe(false);
         });
+
+        it("if the operation was broadcast by a sell flow", () => {
+          const genAcc = genAccount("myAccount", { currency: ethereum });
+          const tokenAccount = genTokenAccount(0, genAcc, usdc);
+          const operation: Operation = {
+            ...genOperation(genAcc, tokenAccount, genAcc.operations, new Prando("")),
+            value: new BigNumber(0),
+            blockHeight: null, // pending transaction
+            transactionRaw: {
+              amount: "1",
+              recipient: "MockRecipient",
+            },
+          };
+          const account = { ...genAcc, sellOperationIds: [operation.id] };
+
+          expect(isEditableOperation(account, operation, () => true)).toBe(false);
+        });
       });
 
       describe("should return true", () => {

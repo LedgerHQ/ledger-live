@@ -1,0 +1,48 @@
+name: Mobile E2E hashes
+description: |
+  Computes the missing mobile e2e build hashes: e2e:bundle Nx hashes and native Expo fingerprints.
+  Needs the Build JS jobs' install: pnpm i --frozen-lockfile --filter=live-mobile... --filter=ledger-live --ignore-scripts
+inputs:
+  js_bundle_hash_ios:
+    description: Known Nx hash of live-mobile:e2e:bundle:ios, empty to compute it
+    required: false
+    default: ""
+  js_bundle_hash_android:
+    description: Known Nx hash of live-mobile:e2e:bundle:android, empty to compute it
+    required: false
+    default: ""
+  native_fingerprint_ios:
+    description: Known Expo fingerprint of the iOS native project, empty to compute it
+    required: false
+    default: ""
+  native_fingerprint_android:
+    description: Known Expo fingerprint of the Android native project, empty to compute it
+    required: false
+    default: ""
+outputs:
+  js_bundle_hash_ios:
+    description: Nx hash of live-mobile:e2e:bundle:ios
+    value: ${{ inputs.js_bundle_hash_ios || steps.js.outputs.ios }}
+  js_bundle_hash_android:
+    description: Nx hash of live-mobile:e2e:bundle:android
+    value: ${{ inputs.js_bundle_hash_android || steps.js.outputs.android }}
+  native_fingerprint_ios:
+    description: Expo fingerprint of the iOS native project
+    value: ${{ inputs.native_fingerprint_ios || steps.native.outputs.ios }}
+  native_fingerprint_android:
+    description: Expo fingerprint of the Android native project
+    value: ${{ inputs.native_fingerprint_android || steps.native.outputs.android }}
+runs:
+  using: composite
+  steps:
+    - name: Compute mobile JS bundle Nx hashes
+      id: js
+      if: ${{ !(inputs.js_bundle_hash_ios && inputs.js_bundle_hash_android) }}
+      shell: bash
+      run: node tools/nx/task-hash.mjs live-mobile e2e:bundle ios android | tee -a "$GITHUB_OUTPUT"
+
+    - name: Compute mobile native fingerprints
+      id: native
+      if: ${{ !(inputs.native_fingerprint_ios && inputs.native_fingerprint_android) }}
+      shell: bash
+      run: node apps/ledger-live-mobile/scripts/native-fingerprint.mjs ios android | tee -a "$GITHUB_OUTPUT"

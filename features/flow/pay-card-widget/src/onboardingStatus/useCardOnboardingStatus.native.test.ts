@@ -16,7 +16,7 @@ import {
   useGetUserQuery,
 } from "@domain/api-card-management";
 import { useCardLinkedWallets } from "@features/flow-pay-card-wallets";
-import { useCardOnboardingStatus } from "./useCardOnboardingStatus.native";
+import { useCardOnboardingStatus } from "./useCardOnboardingStatus";
 
 const refetchUser = jest.fn();
 const refetchCardStatus = jest.fn();

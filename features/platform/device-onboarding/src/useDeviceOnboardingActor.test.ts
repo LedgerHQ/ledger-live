@@ -5,7 +5,7 @@ import { CommandResultFactory, DeviceModelId } from "@ledgerhq/device-management
 import { act, renderHook } from "@testing-library/react";
 import * as host from "./host";
 import type { DeviceOnboardingPorts } from "./ports";
-import { settle } from "./tests/actorHarness";
+import { settle } from "./__tests__/actorHarness";
 import { createFakeOnboardingDmk } from "./tests/fakeDmk";
 import { createOsVersionResponse } from "./tests/osVersionResponse";
 import {
@@ -63,7 +63,7 @@ function renderActor(options: Partial<UseDeviceOnboardingActorOptions> = {}) {
         deviceId: "device",
         deviceModelId: DeviceModelId.STAX,
         offerSync: false,
-        hostsSeedSetup: true,
+        connectUnseededDevice: true,
       }),
     );
     await act(() => settle());
@@ -147,6 +147,25 @@ describe("useDeviceOnboardingActor", () => {
     await start();
 
     expect(result.current.sendableEvents).toContainEqual({ event: { type: "QUIT" } });
+  });
+
+  it("tells the caller whether the machine took the event", async () => {
+    const { result, start } = renderActor();
+    expect(result.current.send({ type: "QUIT" })).toBe(false);
+
+    await start();
+
+    let accepted = true;
+    act(() => {
+      accepted = result.current.send({ type: "USER_ACCEPT" });
+    });
+    expect(accepted).toBe(false);
+
+    act(() => {
+      accepted = result.current.send({ type: "QUIT" });
+    });
+    expect(accepted).toBe(true);
+    await act(() => settle());
   });
 
   it("clears the snapshot and the exit when the run is reset", async () => {

@@ -3,8 +3,10 @@ import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
 import type { CryptoCurrency, TokenCurrency } from "../types";
 import { setCryptoAssetsStore } from "../cryptoAssetsStore";
 import { genAccount } from "../mocks/account";
+import { generateHistoryFromOperations, startOfHour } from "../account/balanceHistoryCache";
 import { inferSubOperations } from "./operation";
 import { fromAccountRaw, toAccountRaw } from "./account";
+import BigNumber from "bignumber.js";
 
 const ethereum = getCryptoCurrencyById("ethereum") as unknown as CryptoCurrency;
 
@@ -44,6 +46,23 @@ describe("account serialization — readiness", () => {
   });
 });
 
+describe("account serialization — assignFromAccountRaw", () => {
+  it("waits for an async family hook before returning the account", async () => {
+    const account = genAccount("async-hook-acc", { currency: ethereum });
+    account.subAccounts = [];
+    const raw = toAccountRaw(account);
+
+    const back = await fromAccountRaw(raw, {
+      assignFromAccountRaw: async (_raw, acc) => {
+        await new Promise(resolve => setTimeout(resolve, 0));
+        delete acc.subAccounts;
+      },
+    });
+
+    expect(back.subAccounts).toBeUndefined();
+  });
+});
+
 describe("account serialization — sequence", () => {
   it("round-trips a sequence of zero", async () => {
     const account = genAccount("sequence-acc", { currency: ethereum });
@@ -67,6 +86,61 @@ describe("account serialization — sequence", () => {
 
     const back = await fromAccountRaw(raw);
     expect(back.sequence).toBeUndefined();
+  });
+});
+
+describe("account serialization — historyRecheck", () => {
+  it.each([
+    [{ reason: "failed" }],
+    [{ reason: "confirm" }],
+    [{ reason: "unexplained", since: 1_700_000_000_000, spendableBalance: "150" }],
+  ] as const)("round-trips %p", async historyRecheck => {
+    const account = genAccount("history-recheck-acc", { currency: ethereum });
+    account.subAccounts = [];
+    account.historyRecheck = { ...historyRecheck };
+
+    const raw = toAccountRaw(account);
+    expect(raw.historyRecheck).toEqual(historyRecheck);
+
+    const back = await fromAccountRaw(JSON.parse(JSON.stringify(raw)));
+    expect(back.historyRecheck).toEqual(historyRecheck);
+  });
+
+  it("leaves historyRecheck absent when it is not set", async () => {
+    const account = genAccount("no-history-recheck-acc", { currency: ethereum });
+    account.subAccounts = [];
+    delete account.historyRecheck;
+
+    const raw = toAccountRaw(account);
+    expect(raw).not.toHaveProperty("historyRecheck");
+
+    const back = await fromAccountRaw(raw);
+    expect(back).not.toHaveProperty("historyRecheck");
+  });
+});
+
+describe("account serialization — sellOperationIds", () => {
+  it("round-trips sellOperationIds through to/fromAccountRaw", async () => {
+    const account = genAccount("sell-acc", { currency: ethereum });
+    account.subAccounts = [];
+    account.sellOperationIds = ["op-1", "op-2"];
+
+    const raw = toAccountRaw(account);
+    expect(raw.sellOperationIds).toEqual(["op-1", "op-2"]);
+
+    const back = await fromAccountRaw(raw);
+    expect(back.sellOperationIds).toEqual(["op-1", "op-2"]);
+  });
+
+  it("leaves sellOperationIds undefined when absent", async () => {
+    const account = genAccount("no-sell-acc", { currency: ethereum });
+    account.subAccounts = [];
+
+    const raw = toAccountRaw(account);
+    expect(raw.sellOperationIds).toBeUndefined();
+
+    const back = await fromAccountRaw(raw);
+    expect(back.sellOperationIds).toBeUndefined();
   });
 });
 
@@ -165,6 +239,20 @@ describe("account serialization — sub-account operation indexing", () => {
     expect(account.pendingOperations).toEqual([]);
   });
 
+  it("rebuilds the balance history from no operations when a token lookup fails", async () => {
+    const now = startOfHour(new Date()).getTime();
+    const savedHistory = { latestDate: now, balances: [5, Number(rawAccount.balance)] };
+    const rawWithUnknownToken: AccountRaw = {
+      ...rawAccount,
+      balanceHistoryCache: { HOUR: savedHistory, DAY: savedHistory, WEEK: savedHistory },
+      subAccounts: [{ ...subAccountRaw, tokenId: "unknown-token-id" }],
+    };
+
+    const account = await fromAccountRaw(rawWithUnknownToken);
+
+    expect(account.balanceHistoryCache).toEqual(generateHistoryFromOperations(account));
+  });
+
   it("hands each restored token account its own raw when an earlier token lookup fails", async () => {
     const unknownSubAccountRaw = {
       ...subAccountRaw,
@@ -183,5 +271,205 @@ describe("account serialization — sub-account operation indexing", () => {
       subAccountRaw,
       expect.objectContaining({ id: subAccountRaw.id }),
     );
+  });
+});
+
+describe("account serialization — balance history", () => {
+  const HOUR_MS = 60 * 60 * 1000;
+  const DAY_MS = 24 * HOUR_MS;
+  const savedAt = new Date("2024-06-12T15:30:00.000Z");
+  const token = {
+    id: "ethereum/erc20/history_token",
+    contractAddress: "0x0000000000000000000000000000000000000001",
+    parentCurrency: ethereum,
+  } as unknown as TokenCurrency;
+
+  const operationRaw = (
+    id: string,
+    accountId: string,
+    value: string,
+    daysBeforeSave: number,
+  ): OperationRaw => ({
+    id,
+    hash: id,
+    type: "IN",
+    value,
+    fee: "0",
+    senders: [],
+    recipients: [],
+    blockHeight: null,
+    blockHash: null,
+    accountId,
+    date: new Date(savedAt.getTime() - daysBeforeSave * DAY_MS).toISOString(),
+    extra: {},
+  });
+
+  const rawAccount: AccountRaw = {
+    id: "history-account",
+    seedIdentifier: "seed",
+    derivationMode: "",
+    index: 0,
+    freshAddress: "0xabc",
+    freshAddressPath: "44'/60'/0'/0/0",
+    balance: "1000",
+    blockHeight: 0,
+    currencyId: "ethereum",
+    operations: [
+      operationRaw("recent", "history-account", "600", 2),
+      operationRaw("oldest", "history-account", "400", 40),
+    ],
+    pendingOperations: [],
+    subAccounts: [
+      {
+        type: "TokenAccountRaw",
+        id: "history-account+token",
+        parentId: "history-account",
+        tokenId: token.id,
+        balance: "70",
+        operations: [
+          operationRaw("token-recent", "history-account+token", "50", 3),
+          operationRaw("token-oldest", "history-account+token", "20", 50),
+        ],
+        pendingOperations: [],
+      },
+    ],
+  };
+
+  beforeAll(() => {
+    setCryptoAssetsStore({
+      findTokenById: async (id: string) => (id === token.id ? token : undefined),
+      findTokenByAddressInCurrency: async () => undefined,
+      getTokensSyncHash: async () => "",
+    });
+  });
+
+  afterEach(() => {
+    jest.useRealTimers();
+  });
+
+  it("restores the saved points of pruned operations and adds the periods since the save", async () => {
+    jest.useFakeTimers({ now: savedAt });
+    const account = await fromAccountRaw(rawAccount);
+    const prunedOnSave = {
+      ...account,
+      operations: account.operations.slice(0, 1),
+      subAccounts: (account.subAccounts ?? []).map(sub => ({
+        ...sub,
+        operations: sub.operations.slice(0, 1),
+      })),
+    };
+    const saved = toAccountRaw(prunedOnSave);
+
+    jest.setSystemTime(savedAt.getTime() + 3 * DAY_MS + 5 * HOUR_MS);
+    const restored = await fromAccountRaw(saved);
+    const rebuiltFromAllOperations = await fromAccountRaw(rawAccount);
+
+    expect(restored.balanceHistoryCache).toEqual(rebuiltFromAllOperations.balanceHistoryCache);
+    expect(restored.subAccounts?.[0].balanceHistoryCache).toEqual(
+      rebuiltFromAllOperations.subAccounts?.[0].balanceHistoryCache,
+    );
+  });
+});
+
+describe("account serialization — balances", () => {
+  const token = {
+    id: "ethereum/erc20/usd_tether__erc20_",
+    contractAddress: "0xdac17f958d2ee523a2206206994597c13d831ec",
+    parentCurrency: ethereum,
+  } as unknown as TokenCurrency;
+
+  const tokenRaw = {
+    type: "TokenAccountRaw" as const,
+    id: "balances-account+token",
+    parentId: "balances-account",
+    tokenId: token.id,
+    operations: [],
+    pendingOperations: [],
+    balance: "100",
+    spendableBalance: "70",
+  };
+
+  const rawAccount: AccountRaw = {
+    id: "balances-account",
+    seedIdentifier: "seed",
+    derivationMode: "",
+    index: 0,
+    freshAddress: "0xabc",
+    freshAddressPath: "44'/60'/0'/0/0",
+    balance: "500",
+    spendableBalance: "450",
+    blockHeight: 0,
+    currencyId: "ethereum",
+    operations: [],
+    pendingOperations: [],
+    subAccounts: [tokenRaw],
+  };
+
+  beforeAll(() => {
+    setCryptoAssetsStore({
+      findTokenById: async (id: string) => (id === token.id ? token : undefined),
+      findTokenByAddressInCurrency: async () => undefined,
+      getTokensSyncHash: async () => "",
+    });
+  });
+
+  it("gives an account persisted without balances the default row, and its token accounts too", async () => {
+    const account = await fromAccountRaw(rawAccount);
+
+    expect(account.balances).toEqual([{ value: new BigNumber(500), locked: new BigNumber(50) }]);
+    expect(account.subAccounts?.[0].balances).toEqual([
+      { value: new BigNumber(100), locked: new BigNumber(30) },
+    ]);
+  });
+
+  it("does not write balances that were never set, then writes the default row once restored", async () => {
+    const restored = await fromAccountRaw(rawAccount);
+    const raw = toAccountRaw(restored);
+
+    expect(raw.balances).toEqual([{ value: "500", locked: "50" }]);
+    expect(await fromAccountRaw(raw)).toEqual(restored);
+  });
+
+  it("restores the rows of a raw account identically after a round-trip", async () => {
+    const balances = [
+      { value: "300", locked: "20", pool: "transparent" },
+      { value: "200", private: true, pool: "ironwood" },
+    ];
+    const raw: AccountRaw = {
+      ...rawAccount,
+      balances,
+      subAccounts: [
+        {
+          ...tokenRaw,
+          balances: [
+            { value: "60", pool: "p" },
+            { value: "40", locked: "10", private: true },
+          ],
+        },
+      ],
+    };
+
+    const account = await fromAccountRaw(raw);
+    expect(account.balances).toEqual([
+      { value: new BigNumber(300), locked: new BigNumber(20), pool: "transparent" },
+      { value: new BigNumber(200), private: true, pool: "ironwood" },
+    ]);
+
+    const back = toAccountRaw(account);
+    expect(back.balances).toEqual(balances);
+    expect(back.subAccounts?.[0]).toMatchObject({
+      balances: [
+        { value: "60", pool: "p" },
+        { value: "40", locked: "10", private: true },
+      ],
+    });
+  });
+
+  it("omits balances from the raw account when the account has none", () => {
+    const account = genAccount("no-balances-acc", { currency: ethereum });
+    account.subAccounts = [];
+    delete account.balances;
+
+    expect(toAccountRaw(account).balances).toBeUndefined();
   });
 });

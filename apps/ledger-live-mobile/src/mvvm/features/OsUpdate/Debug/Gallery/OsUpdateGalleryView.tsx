@@ -2,10 +2,12 @@ import React, { useEffect, useState } from "react";
 import { ScrollView, StyleSheet } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Box, Button, NavBar, NavBarBackButton, Text } from "@ledgerhq/lumen-ui-rnative";
-import { CloseConfirmation } from "../../components/CloseConfirmation";
-import { OsUpdateStep } from "../../components/OsUpdateStep";
-import type { OsUpdateStepProps } from "../../components/OsUpdateStep/useOsUpdateStepViewModel";
-import { WhatsNewScreen } from "../../screens/WhatsNewScreen";
+import {
+  CloseConfirmation,
+  OsUpdateStep,
+  WhatsNewScreen,
+} from "@features/flow-device-os-update/native";
+import { type OsUpdateStepProps } from "@features/platform-device-os-update";
 import { progressPresets, updateCounts } from "./fixtures";
 import type { Preview } from "./previews";
 import type { OsUpdateGalleryViewModel } from "./useOsUpdateGalleryViewModel";

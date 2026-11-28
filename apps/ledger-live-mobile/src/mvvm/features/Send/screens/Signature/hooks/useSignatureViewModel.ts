@@ -104,7 +104,11 @@ export function useSignatureViewModel() {
     [finishSigning, isSponsoredTransfer, sponsoredActions, signedPaymentTxId],
   );
 
-  const { request, finishWithError, onDeviceActionResult } = useSendFlowSignatureCore({
+  const {
+    request: liveRequest,
+    finishWithError,
+    onDeviceActionResult,
+  } = useSendFlowSignatureCore({
     account,
     parentAccount,
     transaction,
@@ -117,6 +121,16 @@ export function useSignatureViewModel() {
     registerPendingOperation,
     recipientEnsName: state.recipient?.ensName,
   });
+
+  // Syncs rebuild the request and finishWithError; restarting setup unmounts the executor.
+  const [request, setRequest] = useState(liveRequest);
+  if (request === null && liveRequest !== null) {
+    setRequest(liveRequest);
+  }
+  const finishWithErrorRef = useRef(finishWithError);
+  useEffect(() => {
+    finishWithErrorRef.current = finishWithError;
+  }, [finishWithError]);
 
   useEffect(() => {
     if (!request) {
@@ -147,14 +161,14 @@ export function useSignatureViewModel() {
       })
       .catch(error => {
         if (!cancelled) {
-          finishWithError(normalizeError(error));
+          finishWithErrorRef.current(normalizeError(error));
         }
       });
 
     return () => {
       cancelled = true;
     };
-  }, [finishWithError, request]);
+  }, [request]);
 
   const signatureIntent = useMemo(
     () => (request ? createIntent(signTransactionIntentLWMDefinition, request) : null),

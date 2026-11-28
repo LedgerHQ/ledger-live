@@ -286,4 +286,49 @@ describe("getCompleteSwapHistory", () => {
 
     expect(result[0].data[0].finalAmount?.toString()).toBe("3000000000000000");
   });
+
+  describe("an entry held by the receiving account (perps withdraw)", () => {
+    const txHash = "0xpayouthash";
+    const source = genAccount("withdraw-source", { operationsSize: 0, currency: ethereum });
+    const makeReceiver = (operationId: string): Account => {
+      const receiver = genAccount("withdraw-receiver", { operationsSize: 0, currency: ethereum });
+      const payout = makeOperation({
+        id: `${receiver.id}-${txHash}-IN`,
+        hash: txHash,
+        type: "IN",
+        value: new BigNumber(1),
+        accountId: receiver.id,
+      });
+      return {
+        ...receiver,
+        operations: [payout],
+        pendingOperations: [],
+        swapHistory: [
+          {
+            ...makeSwapOperation(receiver.id, payout),
+            operationId,
+            fromAccountId: source.id,
+          },
+        ],
+      };
+    };
+
+    it("shows the source account as the sender once anchored to the payout tx", async () => {
+      const receiver = makeReceiver(txHash);
+
+      const [section] = await getCompleteSwapHistory([source, receiver]);
+
+      expect(section.data[0].fromAccount.id).toBe(source.id);
+      expect(section.data[0].toAccount.id).toBe(receiver.id);
+      expect(section.data[0].operation.hash).toBe(txHash);
+    });
+
+    it("is left out until it is anchored to an operation", async () => {
+      expect(await getCompleteSwapHistory([source, makeReceiver("")])).toEqual([]);
+    });
+
+    it("is left out when the source account is gone", async () => {
+      expect(await getCompleteSwapHistory([makeReceiver(txHash)])).toEqual([]);
+    });
+  });
 });

@@ -2,7 +2,8 @@ import { findCryptoCurrencyByKeyword } from "@domain/entity-currency-crypto";
 import { parseCurrencyUnit } from "@ledgerhq/live-common/currencies/index";
 import { getCryptoAssetsStore } from "@ledgerhq/ledger-wallet-framework/cryptoAssetsStore";
 import { Account, TokenAccount } from "@ledgerhq/types-live";
-import { openModal } from "~/renderer/actions/modals";
+import { openModalWithReceiveFlow, openReceiveFlow } from "LLD/features/Receive/openReceiveFlow";
+import { importLLDCoinFamily } from "~/renderer/families";
 import { DeeplinkHandler, DeeplinkHandlerContext } from "../types";
 import { getAccountsOrSubAccountsByCurrency } from "../utils";
 
@@ -26,6 +27,7 @@ import { getAccountsOrSubAccountsByCurrency } from "../utils";
  * 4. **Currency found with existing accounts**
  *    - Opens modal with first matching account pre-selected
  *    - For tokens: includes both token account and parent account
+ *    - Receive: the new flow lets the user pick among the currency's accounts
  *
  * @example Basic flows
  * ledgerwallet://send                    // Open send modal, no pre-selection
@@ -42,15 +44,16 @@ async function handleTransactionFlow(
   recipient: string | undefined,
   amount: string | undefined,
   context: DeeplinkHandlerContext,
+  delegateModal?: "MODAL_DELEGATE",
 ): Promise<void> {
   const { dispatch, accounts, openAddAccountFlow, openAssetFlow, openSendFlow } = context;
 
   const modalMap = {
     send: "MODAL_SEND",
-    delegate: "MODAL_DELEGATE",
     receive: "MODAL_RECEIVE",
   } as const;
-  const modal = modalMap[flowType];
+  const modal = flowType === "delegate" ? delegateModal : modalMap[flowType];
+  if (!modal) return;
 
   const sendRecipient = typeof recipient === "string" ? recipient : undefined;
   const sendAmount = typeof amount === "string" ? amount : undefined;
@@ -63,7 +66,7 @@ async function handleTransactionFlow(
       });
     } else {
       dispatch(
-        openModal(modal, {
+        openModalWithReceiveFlow(modal, {
           ...(flowType === "receive" ? { shouldUseReceiveOptions: false } : {}),
         }),
       );
@@ -94,7 +97,7 @@ async function handleTransactionFlow(
     }
 
     dispatch(
-      openModal(modal, {
+      openModalWithReceiveFlow(modal, {
         ...(flowType === "receive" ? { shouldUseReceiveOptions: false } : {}),
         recipient,
         account,
@@ -120,15 +123,25 @@ async function handleTransactionFlow(
   }
 
   const [selectedAccount] = matchingAccounts;
+  const parentAccount =
+    selectedAccount?.type === "Account"
+      ? undefined
+      : accounts.find(acc => acc.id === selectedAccount?.parentId);
+  if (!selectedAccount || (selectedAccount.type !== "Account" && !parentAccount)) return;
 
-  if (selectedAccount?.type === "Account") {
-    openModalWithAccount(selectedAccount);
-  } else {
-    const parentAccount = accounts.find(acc => acc.id === selectedAccount?.parentId);
-    if (parentAccount && selectedAccount) {
-      openModalWithAccount(selectedAccount, parentAccount);
-    }
+  if (flowType === "receive") {
+    dispatch(
+      openReceiveFlow({
+        shouldUseReceiveOptions: false,
+        sourcePage: "deeplink",
+        currencyIds: [foundCurrency.id],
+        legacyAccount: { account: selectedAccount, parentAccount },
+      }),
+    );
+    return;
   }
+
+  openModalWithAccount(selectedAccount, parentAccount);
 }
 
 export const sendHandler: DeeplinkHandler<"send"> = async (route, context) => {
@@ -140,7 +153,18 @@ export const receiveHandler: DeeplinkHandler<"receive"> = async (route, context)
 };
 
 export const delegateHandler: DeeplinkHandler<"delegate"> = async (route, context) => {
-  if (route.currency !== "tezos") return;
+  const currency = route.currency ? findCryptoCurrencyByKeyword(route.currency) : undefined;
+  if (!currency) return;
 
-  await handleTransactionFlow("delegate", route.currency, route.recipient, route.amount, context);
+  const family = await importLLDCoinFamily(currency.family);
+  if (!family.delegateDeeplinkModal) return;
+
+  await handleTransactionFlow(
+    "delegate",
+    route.currency,
+    route.recipient,
+    route.amount,
+    context,
+    family.delegateDeeplinkModal,
+  );
 };

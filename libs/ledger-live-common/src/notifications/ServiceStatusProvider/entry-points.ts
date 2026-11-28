@@ -1,3 +1,1 @@
-type EntryPoint = "notifications" | "flow";
-
-export { EntryPoint };
+export type EntryPoint = "notifications" | "flow";

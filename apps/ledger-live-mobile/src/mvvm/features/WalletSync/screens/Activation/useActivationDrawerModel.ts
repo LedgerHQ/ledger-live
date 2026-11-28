@@ -18,6 +18,7 @@ import { readOnlyModeEnabledSelector } from "~/reducers/settings";
 import { openRebornBuyDeviceDrawer } from "~/reducers/rebornBuyDeviceDrawer";
 import { closePostOnboardingHubDrawer } from "~/reducers/postOnboardingHubDrawer";
 import { useQueuedBottomSheetContext } from "@shared/ui-queued-bottom-sheet";
+import { useActivationDeviceIntentStep } from "./useActivationDeviceIntentStep";
 
 type Props = {
   isOpen: boolean;
@@ -42,6 +43,7 @@ const useActivationDrawerModel = ({
 
   const dispatch = useDispatch();
   const readOnlyModeEnabled = useSelector(readOnlyModeEnabledSelector);
+  const deviceIntentStep = useActivationDeviceIntentStep();
 
   useEffect(() => {
     setCurrentStep(startingStep);
@@ -50,6 +52,7 @@ const useActivationDrawerModel = ({
   const [currentOption, setCurrentOption] = useState<Options>(Options.SCAN);
   const navigation = useNavigation<NavigationProps["navigation"]>();
   const hasCustomHeader = useMemo(() => currentStep === Steps.QrCodeMethod, [currentStep]);
+  const hasScrollableInstructions = currentStep === Steps.QrCodeMethod;
   const canGoBack = useMemo(
     () => currentStep === Steps.ChooseSyncMethod && startingStep === Steps.Activation,
     [currentStep, startingStep],
@@ -96,6 +99,10 @@ const useActivationDrawerModel = ({
     handleNavigate();
     closeAllBottomSheets();
     dispatch(closePostOnboardingHubDrawer());
+    if (deviceIntentStep.isEnabled) {
+      deviceIntentStep.start();
+      return;
+    }
     navigation.navigate(NavigatorName.WalletSync, {
       screen: ScreenName.WalletSyncActivationProcess,
     });
@@ -123,6 +130,7 @@ const useActivationDrawerModel = ({
   return {
     isOpen,
     hasCustomHeader,
+    hasScrollableInstructions,
     canGoBack,
     navigateToChooseSyncMethod,
     navigateToQrCodeMethod,
@@ -135,6 +143,7 @@ const useActivationDrawerModel = ({
     setCurrentOption,
     onCreateKey,
     navigateToWalletSyncActivationProcess,
+    deviceIntentStepElement: deviceIntentStep.element,
   };
 };
 

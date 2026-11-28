@@ -1,11 +1,13 @@
 import { Operation } from "@ledgerhq/coin-module-framework/api/types";
-import { cardanoCoinConfig as config } from "../fixtures/config";
+import { cardanoDefaults } from "../config";
 import {
   address as TyphonAddress,
   types as TyphonTypes,
   utils as TyphonUtils,
 } from "@stricahq/typhonjs";
 import { listOperations } from "./listOperations";
+
+const config = cardanoDefaults.cardano;
 
 /**
  * Integration tests for listOperations against Cardano mainnet API.

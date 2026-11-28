@@ -7,12 +7,11 @@ import {
   MAX_MEMO_LENGTH,
   PLT_MAX_DECIMALS,
 } from "@ledgerhq/concordium-core";
-import type { ConcordiumCoinConfig, Transaction } from "../types";
+import type { ConcordiumCoinConfig, ConcordiumContext, Transaction } from "../types";
 import { estimateFees, estimateTokenFees } from "../logic";
 import type { FeeEstimation } from "../logic/transaction/estimateFees";
 import { CONCORDIUM_DUMMY_ADDRESS } from "../constants";
 import { effectivePltAmount } from "./tokens";
-import coinConfig from "../config";
 
 /**
  * Parses the recipient, falling back to the dummy address.
@@ -52,7 +51,6 @@ function recipientForEstimation(recipient: string): AccountAddress {
  */
 async function estimatePltFees(
   config: ConcordiumCoinConfig,
-  currencyId: string,
   subAccount: TokenAccount,
   transaction: Transaction,
 ): Promise<FeeEstimation | undefined> {
@@ -69,51 +67,50 @@ async function estimatePltFees(
     ...(memo ? { memo } : {}),
   });
 
-  return estimateTokenFees(config, currencyId, {
+  return estimateTokenFees(config, {
     tokenId: subAccount.token.contractAddress,
     listOperationsSize: operations.length,
   });
 }
 
-export const prepareTransaction: AccountBridge<Transaction>["prepareTransaction"] = async (
-  account,
-  transaction,
-) => {
-  const config = coinConfig.getCoinConfig(account.currency.id);
-  const subAccount = findSubAccountById(account, transaction.subAccountId ?? "");
+export const buildPrepareTransaction =
+  (context: ConcordiumContext): AccountBridge<Transaction>["prepareTransaction"] =>
+  async (account, transaction) => {
+    const config = await context.config(account.currency.id);
+    const subAccount = findSubAccountById(account, transaction.subAccountId ?? "");
 
-  // Leaving the fee unset is what lets status report the stale reference.
-  if (subAccount?.type !== "TokenAccount" && transaction.subAccountId) {
-    return transaction;
-  }
-
-  if (subAccount?.type === "TokenAccount") {
-    const estimation = await estimatePltFees(config, account.currency.id, subAccount, transaction);
-    if (!estimation) return transaction;
-
-    const fee = new BigNumber(estimation.cost.toString());
-    const energy = Number(estimation.energy);
-
-    // Both are compared, so that a re-estimate which moves only the energy is
-    // still persisted rather than discarded as unchanged.
-    if (transaction.fee?.isEqualTo(fee) && transaction.energy === energy) {
+    // Leaving the fee unset is what lets status report the stale reference.
+    if (subAccount?.type !== "TokenAccount" && transaction.subAccountId) {
       return transaction;
     }
 
-    return { ...transaction, fee, energy };
-  }
+    if (subAccount?.type === "TokenAccount") {
+      const estimation = await estimatePltFees(config, subAccount, transaction);
+      if (!estimation) return transaction;
 
-  const estimation = await estimateFees(config, account.currency.id, transaction.memo);
-  const fee = new BigNumber(estimation.cost.toString());
+      const fee = new BigNumber(estimation.cost.toString());
+      const energy = Number(estimation.energy);
 
-  // Only the PLT path persists `energy`, so one arriving here belonged to a
-  // token transfer the account has since moved away from. `updateTransaction`
-  // resets `fee` on every patch but carries `energy` across, so it is dropped
-  // here rather than left for signing to pair with a native fee.
-  if (transaction.fee?.isEqualTo(fee) && transaction.energy === undefined) {
-    return transaction;
-  }
+      // Both are compared, so that a re-estimate which moves only the energy is
+      // still persisted rather than discarded as unchanged.
+      if (transaction.fee?.isEqualTo(fee) && transaction.energy === energy) {
+        return transaction;
+      }
 
-  const { energy: _stale, ...withoutEnergy } = transaction;
-  return { ...withoutEnergy, fee };
-};
+      return { ...transaction, fee, energy };
+    }
+
+    const estimation = await estimateFees(config, transaction.memo);
+    const fee = new BigNumber(estimation.cost.toString());
+
+    // Only the PLT path persists `energy`, so one arriving here belonged to a
+    // token transfer the account has since moved away from. `updateTransaction`
+    // resets `fee` on every patch but carries `energy` across, so it is dropped
+    // here rather than left for signing to pair with a native fee.
+    if (transaction.fee?.isEqualTo(fee) && transaction.energy === undefined) {
+      return transaction;
+    }
+
+    const { energy: _stale, ...withoutEnergy } = transaction;
+    return { ...withoutEnergy, fee };
+  };

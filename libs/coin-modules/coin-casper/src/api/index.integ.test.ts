@@ -5,6 +5,7 @@ import type {
   TransactionIntent,
 } from "@ledgerhq/coin-module-framework/api/index";
 import { withDefaults } from "@ledgerhq/coin-module-framework/api/index";
+import { casperDefaults } from "../config";
 import { createApi } from "./index";
 import { createMockContext } from "../__tests__/fixtures/config.fixture";
 import {
@@ -24,7 +25,7 @@ import type { CasperConfig, CasperContext, CasperMemo } from "../types";
 import { LANE_KEYS, LANE_LIMIT_TUPLE_INDEX } from "../constants";
 import { fetchChainspecToml } from "../network/api";
 
-const context: CasperContext = createMockContext();
+const context: CasperContext = createMockContext(casperDefaults.casper);
 const getConfig = async (): Promise<CasperConfig> => context.config();
 
 const nativeTransferIntent: TransactionIntent<MemoNotSupported> = {

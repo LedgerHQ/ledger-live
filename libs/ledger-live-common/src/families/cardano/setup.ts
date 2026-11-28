@@ -26,6 +26,7 @@ import type { Resolver } from "../../hw/getAddress/types";
 import signerSerializer from "./signerSerializer";
 import { getCurrencyConfiguration } from "../../config";
 import { CardanoCoinConfig } from "@ledgerhq/coin-cardano/config";
+import { createDeriveAccountDescriptor } from "./deriveAccountDescriptor";
 
 function findNetwork(networkParams: CardanoLikeNetworkParameters) {
   return networkParams.networkId === Networks.Mainnet.networkId
@@ -95,4 +96,6 @@ const bridge: Bridge<Transaction, CardanoAccount, TransactionStatus> = createBri
 
 const resolver: Resolver = createResolver(createSigner, cardanoResolver);
 
-export { bridge, resolver };
+const deriveAccountDescriptor = createDeriveAccountDescriptor(resolver, createSigner);
+
+export { bridge, resolver, deriveAccountDescriptor };

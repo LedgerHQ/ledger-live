@@ -20,6 +20,7 @@ import {
 } from "../utils/networkFeesDisplay";
 import type { FeesValueMode } from "../utils/networkFeesDisplay";
 import { useFeePresetValuesCore } from "./useFeePresetValuesCore";
+import type { FeePresetValueMap } from "./useFeePresetValuesCore";
 import type { SendAmountDisplayMode } from "../amount/SendAmountDisplayModeContext";
 import type { FeeStrategyOption } from "../utils/feeSelectorOptions";
 
@@ -56,6 +57,20 @@ export type UseNetworkFeesCoreResult = Readonly<{
   hasCustomFees: boolean;
   hasCoinControl: boolean;
 }>;
+
+function findSingleFeeLevelPresetId(
+  presetIds: readonly string[],
+  valuesByPreset: FeePresetValueMap,
+): string | null {
+  if (presetIds.length < 2) return null;
+  const estimates = presetIds.map(id => valuesByPreset[id]?.amount);
+  const [firstEstimate] = estimates;
+  const allEstimatedAndEqual =
+    firstEstimate !== undefined &&
+    estimates.every(estimate => estimate !== undefined && estimate.isEqualTo(firstEstimate));
+  if (!allEstimatedAndEqual) return null;
+  return presetIds.includes("medium") ? "medium" : presetIds[0];
+}
 
 export function useNetworkFeesCore({
   account,
@@ -133,7 +148,27 @@ export function useNetworkFeesCore({
 
   const selectedFeeStrategy = transaction.feesStrategy ?? null;
 
+  const singleFeeLevelPresetId = useMemo(
+    () =>
+      presetEstimation.feePresetOptions.length === 0
+        ? findSingleFeeLevelPresetId(presetEstimation.fallbackPresetIds ?? [], valuesByPreset)
+        : null,
+    [presetEstimation.fallbackPresetIds, presetEstimation.feePresetOptions, valuesByPreset],
+  );
+
   const feeStrategyOptions = useMemo<readonly FeeStrategyOption[]>(() => {
+    if (uiConfig.hasFeePresets && singleFeeLevelPresetId) {
+      return [
+        {
+          id: "default",
+          kind: "default",
+          sublabelFiat: valuesByPreset[singleFeeLevelPresetId]?.fiat ?? null,
+          sublabelCrypto: valuesByPreset[singleFeeLevelPresetId]?.crypto ?? null,
+          sublabelLegend: null,
+        },
+      ];
+    }
+
     if (!uiConfig.hasFeePresets) {
       return uiConfig.hasDefaultStrategy
         ? [
@@ -164,6 +199,7 @@ export function useNetworkFeesCore({
     legendByPreset,
     presetEstimation.fallbackPresetIds,
     presetEstimation.feePresetOptions,
+    singleFeeLevelPresetId,
     uiConfig.hasDefaultStrategy,
     uiConfig.hasFeePresets,
     valuesByPreset,
@@ -220,14 +256,16 @@ export function useNetworkFeesCore({
 
   const onSelectFeeStrategyId = useCallback(
     (id: string) => {
-      if (id === "default") {
+      if (id === "default" && singleFeeLevelPresetId) {
+        updateTransactionWithPatch({ feesStrategy: asFeesStrategy(singleFeeLevelPresetId) });
+      } else if (id === "default") {
         const patch = sendFeatures.getDefaultStrategyPatch(accountCurrency);
         updateTransactionWithPatch((patch ?? {}) as Partial<Transaction>);
       } else {
         updateTransactionWithPatch({ feesStrategy: asFeesStrategy(id) });
       }
     },
-    [accountCurrency, updateTransactionWithPatch],
+    [accountCurrency, singleFeeLevelPresetId, updateTransactionWithPatch],
   );
 
   return {

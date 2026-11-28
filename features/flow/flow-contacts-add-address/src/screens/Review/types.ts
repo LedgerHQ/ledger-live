@@ -19,12 +19,3 @@ export type ContactsAddAddressReviewProps = Readonly<{
   displayContext: AddAddressDisplayContext;
   onContinue: () => void;
 }>;
-
-export type ContactsAddAddressReviewViewProps = Readonly<{
-  address: string;
-  currency: string;
-  network: string;
-  name: string;
-  labels: ContactsAddAddressReviewLabels;
-  onContinue: () => void;
-}>;

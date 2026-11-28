@@ -18,10 +18,9 @@ function validate<T>(schema: ZodType<T>, value: unknown): T {
   return result.data;
 }
 
-/** `<purpose>:2:<type>:<network_id>:<xpub or address>:<path>`, the purpose being `account` or `mock` */
+/** `<purpose>:2:<type>:<network_id>:<key>:<path>`, the purpose being `account` or `mock` */
 export function serializeAccountDescriptor(descriptor: AccountDescriptor): string {
-  const subject = descriptor.type === "utxo" ? descriptor.xpub : descriptor.address;
-  return formatDescriptorFields({ ...descriptor, subject });
+  return formatDescriptorFields(descriptor);
 }
 
 export function parseAccountDescriptor(input: string): AccountDescriptor {
@@ -42,15 +41,11 @@ export function parseAccountDescriptor(input: string): AccountDescriptor {
   }
 
   const path = rest.at(-1);
-  const subject = rest.slice(0, -1).join(SEP);
-  const common = { purpose: purpose.data, version, type, network, path };
+  const key = rest.slice(0, -1).join(SEP);
+  const fields = { purpose: purpose.data, version, type, network, key, path };
 
-  if (type === "utxo") {
-    return validate(UtxoAccountDescriptorSchema, { ...common, xpub: subject });
-  }
-  if (type === "address") {
-    return validate(AddressAccountDescriptorSchema, { ...common, address: subject });
-  }
+  if (type === "utxo") return validate(UtxoAccountDescriptorSchema, fields);
+  if (type === "address") return validate(AddressAccountDescriptorSchema, fields);
   throw new InvalidAccountDescriptorError(
     `Invalid AccountDescriptor type (expected "utxo" or "address")`,
   );

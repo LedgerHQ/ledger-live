@@ -1,10 +1,7 @@
 import React from "react";
 import { Box } from "@ledgerhq/lumen-ui-rnative";
-import {
-  DeviceInteractionRequiredType,
-  OverrideDeviceIntentExecutorHeader,
-  type EnsureAppReadyState,
-} from "@ledgerhq/live-dmk-shared";
+import { DeviceInteractionRequiredType, type EnsureAppReadyState } from "@ledgerhq/live-dmk-shared";
+import { OverrideDeviceIntentExecutorHeader } from "@ledgerhq/live-dmk-shared/react";
 import { UnlockDevice } from "LLM/components/DeviceIntentExecutor/components/DeviceGenericStates/UnlockDevice";
 import ModalLock from "~/components/ModalLock";
 import { TrackDIEScreen } from "../../components/TrackDIEScreen";

@@ -1,10 +1,17 @@
 import React from "react";
 import { render, screen, within } from "@testing-library/react";
 import { FiatCurrencyTickerSchema } from "@domain/entity-currency-fiat";
+import { I18nTestProvider } from "@shared/i18n/testing";
 import { AccountAnalyticsView } from "./AccountAnalyticsView";
 import { analyticsCatalog } from "./analytics.mock";
 import type { AccountAnalyticsViewProps } from "./AccountAnalytics.types";
 import type { AnalyticsSelection } from "./types";
+
+function renderAnalytics(ui: React.ReactElement) {
+  return render(ui, {
+    wrapper: ({ children }) => <I18nTestProvider resources={{}}>{children}</I18nTestProvider>,
+  });
+}
 
 function createProps(
   selection: AnalyticsSelection = { assetId: null, accountId: null, metric: "balance" },
@@ -58,7 +65,7 @@ function createProps(
 describe("Account Analytics feedback", () => {
   it("should preserve unavailable PnL feedback when only the chart fails", () => {
     const props = createProps();
-    const { rerender } = render(<AccountAnalyticsView {...props} />);
+    const { rerender } = renderAnalytics(<AccountAnalyticsView {...props} />);
     const pnl = screen.getByRole("region", { name: "Profit and loss" });
     expect(within(pnl).getByRole("status")).toHaveTextContent("Data unavailable");
     rerender(
@@ -77,7 +84,7 @@ describe("Account Analytics feedback", () => {
 
   it("should announce the PnL error when its catalog cannot be loaded", () => {
     const props = createProps();
-    render(
+    renderAnalytics(
       <AccountAnalyticsView
         {...props}
         catalogStatus="error"
@@ -92,7 +99,7 @@ describe("Account Analytics feedback", () => {
 
 describe("Account Analytics filters", () => {
   it("should offer the account filter only once an asset is selected", () => {
-    const { rerender } = render(<AccountAnalyticsView {...createProps()} />);
+    const { rerender } = renderAnalytics(<AccountAnalyticsView {...createProps()} />);
     expect(screen.getByTestId("analytics-asset-filter")).toHaveTextContent("All assets");
     expect(screen.queryByTestId("analytics-account-filter")).not.toBeInTheDocument();
 

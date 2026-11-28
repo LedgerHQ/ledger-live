@@ -15,7 +15,7 @@ import path from "path";
 import { glob } from "glob";
 import { log } from "detox";
 import { Subject } from "rxjs";
-import { NativeElementHelpers } from "@e2e/helpers/elementHelpers";
+import { byId } from "@e2e/helpers/elements/native";
 import { sanitizeError } from "@ledgerhq/live-e2e-shared/index";
 import { withTimeout } from "@e2e/utils/withTimeout";
 import { TIMEOUT } from "@e2e/utils/timeouts";
@@ -43,11 +43,11 @@ globalThis.webSocket = {
 globalThis.pendingCallbacks = new Map<string, { callback: (data: string) => void }>();
 
 export default async () => {
-  await withTimeout(
-    releaseTrackedSpeculos({ orphansOnly: true }),
-    TIMEOUT.xlarge,
-    "releaseTrackedSpeculos",
-  );
+  await withTimeout({
+    operation: releaseTrackedSpeculos({ orphansOnly: true }),
+    timeoutMs: TIMEOUT.xlarge,
+    label: "releaseTrackedSpeculos",
+  });
 
   if (process.env.CI && process.env.SHARD_INDEX === "1") {
     try {
@@ -55,10 +55,7 @@ export default async () => {
       await launchApp({ newInstance: true });
       await setFeatureFlags(getMergedFeatureFlags());
       await loadConfig("1AccountBTC1AccountETHReadOnlyFalse", true);
-      await NativeElementHelpers.waitForElementById(
-        "topbar-discover",
-        GLOBAL_TEARDOWN_APP_READY_TIMEOUT,
-      );
+      await byId("topbar-discover").waitVisible(GLOBAL_TEARDOWN_APP_READY_TIMEOUT);
     } catch (err) {
       log.warn("Error starting the app in CI global teardown:", sanitizeError(err));
     }
@@ -71,7 +68,11 @@ export default async () => {
     }
     try {
       await closeBridge();
-      await withTimeout(cleanupDetox(), GLOBAL_CLEANUP_TIMEOUT, "cleanupDetox");
+      await withTimeout({
+        operation: cleanupDetox(),
+        timeoutMs: GLOBAL_CLEANUP_TIMEOUT,
+        label: "cleanupDetox",
+      });
     } catch (cleanupErr) {
       log.warn("Error during cleanup in CI global teardown:", sanitizeError(cleanupErr));
     }
@@ -85,7 +86,10 @@ export default async () => {
 
   // default Detox teardown with timeout protection to prevent CI hangs from proper-lockfile issues.
   // Surface real failures (orphaned simulators, broken cleanup) instead of swallowing them.
-  await withTimeout(globalTeardown(), GLOBAL_TEARDOWN_TIMEOUT, "globalTeardown", {
+  await withTimeout({
+    operation: globalTeardown(),
+    timeoutMs: GLOBAL_TEARDOWN_TIMEOUT,
+    label: "globalTeardown",
     rethrow: true,
   });
 

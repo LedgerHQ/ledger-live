@@ -1,3 +1,4 @@
+import type React from "react";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { Linking } from "react-native";
 import {
@@ -9,6 +10,7 @@ import {
 } from "@react-navigation/native";
 import { trustchainSelector } from "@ledgerhq/ledger-key-ring-protocol/store";
 import { useFeature } from "@features/platform-feature-flags";
+import { seededProps, trackSeededDone } from "@features/platform-device-onboarding-analytics";
 import { useCompleteSeededOnboarding } from "LLM/features/DeviceOnboarding/hooks/useCompleteSeededOnboarding";
 import { closeOnboarding } from "LLM/features/DeviceOnboarding/utils/exitActions";
 import { useNotificationsPrompt } from "LLM/features/NotificationsPrompt";
@@ -18,7 +20,8 @@ import { NavigatorName, ScreenName } from "~/const";
 import { setOnboardingType } from "~/actions/settings";
 import { useDispatch, useSelector } from "~/context/hooks";
 import { OnboardingType } from "~/reducers/types";
-import type { OnboardingNavigatorParamList } from "~/components/RootNavigator/types/OnboardingNavigator";
+import type { DeviceOnboardingNavigatorParamList } from "LLM/features/DeviceOnboarding/navigation/types";
+import { useActivationDeviceIntentStep } from "LLM/features/WalletSync/screens/Activation/useActivationDeviceIntentStep";
 import type { SyncOfferPhase, SyncOfferScreenProps } from "./useSyncOfferScreenViewModel";
 
 const DEFAULT_WATCH_INITIAL_TIMEOUT_MS = 1000;
@@ -32,12 +35,24 @@ export function syncOfferSettleDelay(initialTimeout: number): number {
 const LEDGER_SYNC_LEARN_MORE_URL =
   "https://www.ledger.com/academy/topics/ledgersolutions/ledger-sync-effortlessly-sync-your-accounts-in-ledger-live-safely-securely-and-with-complete-privacy";
 
-type OfferRoute = RouteProp<OnboardingNavigatorParamList, ScreenName.DeviceOnboardingSyncOffer>;
+type OfferRoute = RouteProp<
+  DeviceOnboardingNavigatorParamList,
+  ScreenName.DeviceOnboardingSyncOffer
+>;
 
-export function useSyncOfferRouteViewModel(): SyncOfferScreenProps {
+type SyncOfferRouteViewModel = SyncOfferScreenProps &
+  Readonly<{ deviceIntentStepElement: React.ReactElement | null }>;
+
+export function useSyncOfferRouteViewModel(): SyncOfferRouteViewModel {
   const navigation = useNavigation<NavigationProp<ParamListBase>>();
   const dispatch = useDispatch();
-  const { device, wasReadOnlyAtEntry } = useRoute<OfferRoute>().params;
+  const {
+    device,
+    wasReadOnlyAtEntry,
+    unseeded = false,
+    seededResult,
+    unseededProps = null,
+  } = useRoute<OfferRoute>().params;
   const hasTrustchain = Boolean(useSelector(trustchainSelector)?.rootId);
   const { visualPending } = useWalletSyncUserState();
   const featureWalletSync = useFeature("llmWalletSync");
@@ -46,10 +61,13 @@ export function useSyncOfferRouteViewModel(): SyncOfferScreenProps {
   const [handoverStarted, setHandoverStarted] = useState(false);
   const [watchLoopSettled, setWatchLoopSettled] = useState(false);
   const completedOnSync = useRef(false);
+  const doneTracked = useRef(false);
   const initialSyncDone = useRef(false);
   const allowLeave = useRef(false);
   const complete = useCompleteSeededOnboarding(wasReadOnlyAtEntry);
   const { notifyFlowCompleted } = useNotificationsPrompt();
+  const deviceIntentStep = useActivationDeviceIntentStep();
+  const { isEnabled: isDeviceIntentStepEnabled, start: startDeviceIntentStep } = deviceIntentStep;
   const learnMoreUrl = useLocalizedUrl(LEDGER_SYNC_LEARN_MORE_URL);
   const awaitingSync = handoverStarted && hasTrustchain;
   if (awaitingSync && watchLoopSettled && !visualPending) {
@@ -74,24 +92,46 @@ export function useSyncOfferRouteViewModel(): SyncOfferScreenProps {
     return () => clearTimeout(timeout);
   }, [awaitingSync, initialTimeout]);
 
+  const trackDone = useCallback(
+    (syncDone: boolean) => {
+      if (!seededResult || doneTracked.current) return;
+      doneTracked.current = true;
+      trackSeededDone(seededResult, syncDone);
+    },
+    [seededResult],
+  );
+
+  useEffect(() => {
+    if (phase === "success") trackDone(true);
+  }, [phase, trackDone]);
+
   const finishOnboarding = useCallback(() => {
     if (completedOnSync.current) return;
     completedOnSync.current = true;
     allowLeave.current = true;
+    if (unseeded) {
+      navigation.goBack();
+      return;
+    }
+    trackDone(awaitingSync);
     complete();
     notifyFlowCompleted("onboarding");
     closeOnboarding(navigation);
-  }, [complete, navigation, notifyFlowCompleted]);
+  }, [awaitingSync, complete, navigation, notifyFlowCompleted, trackDone, unseeded]);
 
   const onActivate = useCallback(() => {
     setHandoverStarted(true);
     // Ledger Sync only creates a trustchain for a new setup or a completed onboarding.
     dispatch(setOnboardingType(OnboardingType.setupNew));
-    navigation.getParent()?.navigate(NavigatorName.WalletSync, {
+    if (isDeviceIntentStepEnabled) {
+      startDeviceIntentStep({ seededOffer: true });
+      return;
+    }
+    navigation.navigate(NavigatorName.WalletSync, {
       screen: ScreenName.WalletSyncActivationProcess,
       params: { device, seededOffer: true },
     });
-  }, [device, dispatch, navigation]);
+  }, [device, dispatch, isDeviceIntentStepEnabled, navigation, startDeviceIntentStep]);
 
   const onSkip = finishOnboarding;
 
@@ -106,6 +146,9 @@ export function useSyncOfferRouteViewModel(): SyncOfferScreenProps {
     onLearnMore,
     onContinue: finishOnboarding,
     phase,
+    showGlow: unseeded,
+    funnelProps: seededResult ? seededProps(seededResult.deviceType) : unseededProps,
+    deviceIntentStepElement: deviceIntentStep.element,
   };
 }
 

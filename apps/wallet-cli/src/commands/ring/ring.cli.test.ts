@@ -1,22 +1,23 @@
 import { describe, it, expect, beforeAll, afterAll, beforeEach, afterEach } from "bun:test";
 import { TrustchainEjected } from "@ledgerhq/ledger-key-ring-protocol/errors";
 import type { TrustchainSDK } from "@ledgerhq/ledger-key-ring-protocol/types";
-import { existsSync, mkdirSync, mkdtempSync, rmSync, statSync, writeFileSync } from "node:fs";
-import { dirname, join } from "node:path";
+import { existsSync, mkdtempSync, rmSync, statSync, writeFileSync } from "node:fs";
+import { join } from "node:path";
 import { tmpdir } from "node:os";
-import { Readable } from "node:stream";
+import { PassThrough, Readable } from "node:stream";
 import { YAML } from "bun";
 import { deriveWrappingKey } from "../../key-ring/crypto";
 import { loadMemberCredentials, savePrivateKey } from "../../key-ring/keychain";
 import { _setTestKeychain } from "../../key-ring/keychain-entry";
 import { _setTestLkrpSdk } from "../../key-ring/lkrp-sdk";
 import { loadDomainKey, loadKeyRing } from "../../key-ring/load-key-ring";
-import { APP_NAME } from "../../session/session-store";
 import { runCli, storedApiAuthPubkey, type RunResult } from "../../testing/cli-runner";
-import { makeSessionDir } from "../../testing/session-fixture";
+import { makeSessionDir, writeSessionIn } from "../../testing/session-fixture";
+import { pointStateHomeAt } from "../../testing/state-home";
 import { ETH_DESCRIPTOR } from "../../testing/constants";
 import { makeAuthenticatedQuoteServer } from "../../testing/authenticated-quote-server";
 import { InMemoryKeychain } from "../../testing/in-memory-keychain";
+import { CLEAR_AGENTS } from "../../testing/agent-env";
 import { resetTestSeams } from "../../shared/test-seam";
 
 function runCliWithStdin(
@@ -24,14 +25,61 @@ function runCliWithStdin(
   env: Record<string, string>,
   stdinLines: string[],
 ): Promise<RunResult> {
+  return runCliWithStdinText(args, env, stdinLines.map(line => `${line}\n`).join(""));
+}
+
+function runCliWithStdinText(
+  args: string[],
+  env: Record<string, string>,
+  text: string,
+): Promise<RunResult> {
   const origDesc = Object.getOwnPropertyDescriptor(process, "stdin");
   const fakeStdin = new Readable({ read() {} });
-  for (const line of stdinLines) fakeStdin.push(`${line}\n`);
+  if (text) fakeStdin.push(text);
   fakeStdin.push(null);
   Object.defineProperty(process, "stdin", { get: () => fakeStdin, configurable: true });
   return runCli(args, env).finally(() => {
     if (origDesc) Object.defineProperty(process, "stdin", origDesc);
   });
+}
+
+/**
+ * Runs the CLI for a person at a terminal (stdin and stderr are terminals, no AI agent) unless the
+ * options or `env` say otherwise. `transcript` holds stdout and what reached the terminal.
+ */
+async function runCliAtTerminal(
+  args: string[],
+  env: Record<string, string>,
+  type: (stdin: PassThrough) => void,
+  { stdinIsTTY = true, stderrIsTTY = true } = {},
+): Promise<RunResult & { transcript: string }> {
+  const stdinDesc = Object.getOwnPropertyDescriptor(process, "stdin");
+  const stderrIsTTYDesc = Object.getOwnPropertyDescriptor(process.stderr, "isTTY");
+  const stderrWrite = process.stderr.write;
+  const terminalOutput: string[] = [];
+  const terminalStdin = Object.assign(new PassThrough(), { isTTY: stdinIsTTY });
+  Object.defineProperty(process, "stdin", { get: () => terminalStdin, configurable: true });
+  // readline only parses key presses when its output is a terminal.
+  Object.defineProperty(process.stderr, "isTTY", { value: stderrIsTTY, configurable: true });
+  process.stderr.write = ((chunk: string | Uint8Array) => {
+    terminalOutput.push(Buffer.from(chunk).toString());
+    return true;
+  }) as typeof process.stderr.write;
+  try {
+    const pending = runCli(args, { ...CLEAR_AGENTS, ...env });
+    type(terminalStdin);
+    const result = await pending;
+    return {
+      ...result,
+      transcript: `stdout: ${result.stdout}\nterminal: ${terminalOutput.join("")}`,
+    };
+  } finally {
+    if (!terminalStdin.writableEnded) terminalStdin.end();
+    process.stderr.write = stderrWrite;
+    if (stderrIsTTYDesc) Object.defineProperty(process.stderr, "isTTY", stderrIsTTYDesc);
+    else delete (process.stderr as { isTTY?: boolean }).isTTY;
+    if (stdinDesc) Object.defineProperty(process, "stdin", stdinDesc);
+  }
 }
 
 // Fake OS keychain so tests never touch macOS Keychain / libsecret.
@@ -144,10 +192,13 @@ describe("ring — happy path", () => {
     expect(ct.byteLength).toBeGreaterThan("hello key ring".length);
   });
 
-  it("encrypt writes the output file with 0600 permissions", async () => {
-    await encryptPlainFile();
-    expect(statSync(encFile).mode & 0o777).toBe(0o600);
-  });
+  it.skipIf(process.platform === "win32")(
+    "encrypt writes the output file with 0600 permissions",
+    async () => {
+      await encryptPlainFile();
+      expect(statSync(encFile).mode & 0o777).toBe(0o600);
+    },
+  );
 
   it("keys shows key after encrypt", async () => {
     await encryptPlainFile();
@@ -396,7 +447,7 @@ describe("ring — the API auth key stays separate from a password-protected rin
     expect(await storedApiAuthPubkey(fixture.env)).toBe(before);
 
     // Reset empties the accounts but keeps the ring, so re-add the one the quote needs on top of it.
-    const sessionPath = join(fixture.env.XDG_STATE_HOME, APP_NAME, "session.yaml");
+    const sessionPath = fixture.sessionPath;
     const session = YAML.parse(await Bun.file(sessionPath).text()) as Record<string, unknown>;
     writeFileSync(sessionPath, YAML.stringify({ ...session, accounts }));
     expect((await runQuoteAndGetAuthSignature(fixture.env)).credential.publicKey).toBe(before);
@@ -410,8 +461,7 @@ describe("ring — uninitialized with a stray password-protected key", () => {
   // Asserted at unit level because Bunli prints a plain Error to the real stderr, which runCli's
   // output capture does not observe.
   it("throws 'not initialized' rather than a password error", async () => {
-    const saved = process.env.XDG_STATE_HOME;
-    process.env.XDG_STATE_HOME = dir; // pin the session dir + keychain account to this temp dir
+    const restoreStateHome = pointStateHomeAt(dir); // pin the session dir + keychain account to this temp dir
     try {
       _store.clear();
       const wrappingKey = await deriveWrappingKey("pw", "0".repeat(32));
@@ -421,8 +471,7 @@ describe("ring — uninitialized with a stray password-protected key", () => {
       await expect(loadKeyRing()).rejects.toThrow(/not initialized/i);
       await expect(loadKeyRing()).rejects.not.toThrow(/password/i);
     } finally {
-      if (saved === undefined) delete process.env.XDG_STATE_HOME;
-      else process.env.XDG_STATE_HOME = saved;
+      restoreStateHome();
     }
   });
 });
@@ -432,14 +481,12 @@ describe("ring init — orphan guard", () => {
   afterAll(cleanup);
 
   it("refuses to init over a stray keychain key when the session has no trustchain", async () => {
-    const saved = process.env.XDG_STATE_HOME;
-    process.env.XDG_STATE_HOME = dir; // pin the keychain account to this temp dir
+    const restoreStateHome = pointStateHomeAt(dir); // pin the keychain account to this temp dir
     try {
       _store.clear();
       await savePrivateKey("aa".repeat(32), "bb".repeat(33)); // stray key, no trustchain on disk
     } finally {
-      if (saved === undefined) delete process.env.XDG_STATE_HOME;
-      else process.env.XDG_STATE_HOME = saved;
+      restoreStateHome();
     }
 
     const before = [..._store.values()];
@@ -459,8 +506,7 @@ describe("ring — CRLF-stored keychain entry", () => {
 
   // Regression guard for a bare split("\n"), which left a trailing \r on the private-key line.
   it("loadMemberCredentials strips \\r from a CRLF-joined entry", async () => {
-    const saved = process.env.XDG_STATE_HOME;
-    process.env.XDG_STATE_HOME = dir;
+    const restoreStateHome = pointStateHomeAt(dir);
     try {
       _store.clear();
       const priv = "aa".repeat(32);
@@ -473,8 +519,7 @@ describe("ring — CRLF-stored keychain entry", () => {
       expect(creds?.privatekey).toBe(priv);
       expect(creds?.pubkey).toBe(pub);
     } finally {
-      if (saved === undefined) delete process.env.XDG_STATE_HOME;
-      else process.env.XDG_STATE_HOME = saved;
+      restoreStateHome();
     }
   });
 });
@@ -484,13 +529,11 @@ describe("ring — password-protected keychain entry decode errors", () => {
   afterAll(cleanup);
 
   async function withStateDir<T>(fn: () => Promise<T>): Promise<T> {
-    const saved = process.env.XDG_STATE_HOME;
-    process.env.XDG_STATE_HOME = dir; // pin the keychain account to this temp dir
+    const restoreStateHome = pointStateHomeAt(dir); // pin the keychain account to this temp dir
     try {
       return await fn();
     } finally {
-      if (saved === undefined) delete process.env.XDG_STATE_HOME;
-      else process.env.XDG_STATE_HOME = saved;
+      restoreStateHome();
     }
   }
 
@@ -524,14 +567,7 @@ describe("ring destroy — stray key with no trustchain (local-only recovery)", 
 
   it("wipes the stray local key and unblocks a fresh init", async () => {
     _store.clear();
-    const saved = process.env.XDG_STATE_HOME;
-    process.env.XDG_STATE_HOME = dir; // pin the keychain account to this temp dir
-    try {
-      await savePrivateKey("aa".repeat(32), "bb".repeat(33)); // stray key, no trustchain on disk
-    } finally {
-      if (saved === undefined) delete process.env.XDG_STATE_HOME;
-      else process.env.XDG_STATE_HOME = saved;
-    }
+    await saveMemberKeyIn(dir); // stray key, no trustchain on disk
     expect([..._store.values()]).toHaveLength(1);
 
     const r = await runCliWithStdin(["ring", "destroy"], env, ["destroy"]);
@@ -552,9 +588,7 @@ describe("ring encrypt — salt without trustchain must not prompt", () => {
   afterAll(cleanup);
 
   it("throws 'not initialized' without asking for a password", async () => {
-    const sessionPath = join(dir, "ledger-wallet-cli", "session.yaml");
-    mkdirSync(dirname(sessionPath), { recursive: true });
-    writeFileSync(sessionPath, YAML.stringify({ accounts: [], passwordSalt: "0".repeat(32) }));
+    writeSessionIn(dir, { accounts: [], passwordSalt: "0".repeat(32) });
 
     // Pass --input to skip the TTY-dependent "No input" guard, so the trustchain check is reached
     // regardless of TTY state. The file is never read — the throw precedes the input read.
@@ -647,25 +681,23 @@ describe("ring destroy — transient remote failure keeps the local key", () => 
 
 // Seeds the initialized ring state (session + keychain) without `ring init`, so a test fakes only
 // the LKRP SDK method under test.
-async function seedInitializedRing(dir: string): Promise<void> {
-  const sessionPath = join(dir, "ledger-wallet-cli", "session.yaml");
-  mkdirSync(dirname(sessionPath), { recursive: true });
-  writeFileSync(
-    sessionPath,
-    YAML.stringify({
-      accounts: [],
-      trustchain: { rootId: "seed-root", applicationPath: "m/0'/17'/0'" },
-    }),
-  );
-  // savePrivateKey hashes the account name from XDG_STATE_HOME, so pin it to this temp dir (matching
+async function seedInitializedRing(dir: string): Promise<string> {
+  const sessionPath = writeSessionIn(dir, {
+    accounts: [],
+    trustchain: { rootId: "seed-root", applicationPath: "m/0'/17'/0'" },
+  });
+  await saveMemberKeyIn(dir);
+  return sessionPath;
+}
+
+async function saveMemberKeyIn(dir: string): Promise<void> {
+  // savePrivateKey hashes the account name from the state dir, so pin it to this temp dir (matching
   // the env passed to runCli) before saving.
-  const saved = process.env.XDG_STATE_HOME;
-  process.env.XDG_STATE_HOME = dir;
+  const restoreStateHome = pointStateHomeAt(dir);
   try {
     await savePrivateKey("aa".repeat(32), "bb".repeat(33));
   } finally {
-    if (saved === undefined) delete process.env.XDG_STATE_HOME;
-    else process.env.XDG_STATE_HOME = saved;
+    restoreStateHome();
   }
 }
 
@@ -712,14 +744,12 @@ describe("ring encrypt/decrypt — closed application stream gives reactivation 
       },
     });
 
-    const saved = process.env.XDG_STATE_HOME;
-    process.env.XDG_STATE_HOME = dir; // pin the session dir + keychain account to this temp dir
+    const restoreStateHome = pointStateHomeAt(dir); // pin the session dir + keychain account to this temp dir
     try {
       await expect(loadDomainKey("mykey")).rejects.toThrow(/deactivated/i);
       await expect(loadDomainKey("mykey")).rejects.toThrow(/ring init/i);
     } finally {
-      if (saved === undefined) delete process.env.XDG_STATE_HOME;
-      else process.env.XDG_STATE_HOME = saved;
+      restoreStateHome();
     }
   });
 
@@ -791,5 +821,104 @@ describe("ring destroy — non-destructive deactivation keeps the ring but wipes
     // at the lib level) would run instead of hitting the "already initialized" guard.
     const keys = await runCli(["ring", "keys"], env);
     expect(keys.exitCode).toBe(1); // not initialized → init guard is clear
+  });
+});
+
+describe("ring destroy — confirmation prompt", () => {
+  let dir: string;
+  let env: Record<string, string>;
+
+  beforeEach(() => {
+    _store.clear();
+    ({ dir, env } = makeTmpDir());
+  });
+
+  afterEach(() => rmSync(dir, { recursive: true, force: true }));
+
+  it("fails without touching the ring or the remote when stdin is empty", async () => {
+    const sessionPath = await seedInitializedRing(dir);
+    const sessionBefore = await Bun.file(sessionPath).text();
+    const keysBefore = [..._store.values()];
+    let remoteCalled = false;
+    useLkrpSdk({
+      destroyApplication: async () => {
+        remoteCalled = true;
+        return { trustchainDestroyed: true };
+      },
+    });
+
+    const r = await runCliWithStdin(["ring", "destroy", "--output", "json"], env, []);
+    expect(r.exitCode).toBe(1);
+    expect(r.stdout).toMatch(/no confirmation received/i);
+    expect(remoteCalled).toBe(false);
+    expect([..._store.values()]).toEqual(keysBefore);
+    expect(await Bun.file(sessionPath).text()).toBe(sessionBefore);
+  });
+
+  it("fails without wiping a stray local key when stdin is empty", async () => {
+    await saveMemberKeyIn(dir);
+
+    const r = await runCliWithStdin(["ring", "destroy", "--output", "json"], env, []);
+    expect(r.exitCode).toBe(1);
+    expect(r.stdout).toMatch(/no confirmation received/i);
+    expect([..._store.values()]).toHaveLength(1);
+  });
+
+  it('accepts "destroy" without a trailing newline', async () => {
+    await seedInitializedRing(dir);
+    useLkrpSdk({ destroyApplication: async () => ({ trustchainDestroyed: true }) });
+
+    const r = await runCliWithStdinText(["ring", "destroy", "--output", "json"], env, "destroy");
+    expect(r.exitCode, r.stdout).toBe(0);
+    expect([..._store.values()]).toHaveLength(0);
+  });
+
+  it("exits 130 without changing anything on Ctrl-C at a terminal", async () => {
+    await seedInitializedRing(dir);
+
+    const r = await runCliAtTerminal(["ring", "destroy", "--output", "json"], env, stdin =>
+      stdin.write("\x03"),
+    );
+    expect(r.exitCode, r.transcript).toBe(130);
+    expect(r.stdout).toBe("");
+    expect([..._store.values()]).toHaveLength(1);
+  });
+
+  it("cancels on Ctrl-D at a terminal", async () => {
+    await seedInitializedRing(dir);
+
+    const r = await runCliAtTerminal(["ring", "destroy", "--output", "json"], env, stdin =>
+      stdin.write("\x04"),
+    );
+    expect(r.exitCode, r.transcript).toBe(0);
+    expect(JSON.parse(r.stdout)).toMatchObject({ cancelled: true });
+    expect([..._store.values()]).toHaveLength(1);
+  });
+
+  it.each([
+    ["stderr is redirected", {}, { stderrIsTTY: false }],
+    ["stdin is piped", {}, { stdinIsTTY: false }],
+    ["an AI agent runs it", { CLAUDECODE: "1" }, {}],
+  ])("fails when stdin ends and %s", async (situation, agentEnv, terminal) => {
+    await seedInitializedRing(dir);
+
+    const r = await runCliAtTerminal(
+      ["ring", "destroy", "--output", "json"],
+      { ...env, ...agentEnv },
+      stdin => stdin.end(),
+      terminal,
+    );
+    expect(r.exitCode, `${situation}: ${r.transcript}`).toBe(1);
+    expect(r.stdout).toMatch(/no confirmation received/i);
+    expect([..._store.values()]).toHaveLength(1);
+  });
+
+  it("cancels on a wrong answer", async () => {
+    await seedInitializedRing(dir);
+
+    const r = await runCliWithStdin(["ring", "destroy", "--output", "json"], env, ["nope"]);
+    expect(r.exitCode, r.stderr).toBe(0);
+    expect(JSON.parse(r.stdout)).toMatchObject({ cancelled: true });
+    expect([..._store.values()]).toHaveLength(1);
   });
 });

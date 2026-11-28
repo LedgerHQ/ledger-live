@@ -6,6 +6,7 @@ import { encodeTokenAccountId } from "@ledgerhq/ledger-wallet-framework/account/
 import { forbidRemoteRequests } from "@ledgerhq/coin-tester/localOnly";
 import { startSandbox } from "@ledgerhq/coin-tester/sandbox";
 import type { Sandbox } from "@ledgerhq/coin-tester/sandbox";
+import { sandboxVersions } from "@ledgerhq/coin-tester/versions";
 import type { EvmConfigInfo } from "@ledgerhq/coin-evm/config";
 import { makeAccount } from "../fixtures";
 import { blockscoutOf, swapTokens } from "../sandboxEvm";
@@ -98,13 +99,7 @@ export const scenarioScroll: Scenario<GenericTransaction, Account> = {
   name: "Ledger Live Basic Scroll Transactions",
   setup: async () => {
     const signer = await buildSigner();
-    sandbox = await startSandbox(
-      { family: "evm", network: "scroll" },
-      {
-        node: { implementation: "geth", version: "5.10.2" },
-        indexer: { implementation: "blockscout", version: "12.0.3" },
-      },
-    );
+    sandbox = await startSandbox({ family: "evm", network: "scroll" }, sandboxVersions("scroll"));
     const { node: rpc, indexer: explorer } = sandbox.endpoints;
     if (rpc === undefined || explorer === undefined) {
       throw new Error("the sandbox instance has no node or indexer endpoint");

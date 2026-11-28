@@ -19,6 +19,7 @@ const loadingViewModel: SwapTransactionStatusViewModel = {
   explorerUrl: undefined,
   feesAmount: undefined,
   isFooterLoading: true,
+  isPerpsWithdraw: false,
   isStatusSectionLoading: true,
   locale: "en-US",
   provider: "lifi",
@@ -32,6 +33,7 @@ const loadingViewModel: SwapTransactionStatusViewModel = {
   sendStatus: "pending",
   sentAmount: undefined,
   swapId: "swap-1",
+  title: undefined,
 };
 
 function useViewModelWithMountedSwapId({
@@ -43,6 +45,7 @@ function useViewModelWithMountedSwapId({
   return {
     ...loadingViewModel,
     isFooterLoading: true,
+    isPerpsWithdraw: false,
     isStatusSectionLoading: true,
     provider,
     swapId: mountedSwapId.current,
@@ -82,6 +85,7 @@ describe("SwapTransactionStatusDialog Integration", () => {
       ...loadingViewModel,
       explorerUrl: "https://scan.swaps.xyz/transactions/swap-1",
       isFooterLoading: false,
+      isPerpsWithdraw: false,
       isStatusSectionLoading: false,
       provider: "moonpay_trade",
       receiveStatus: "unknown",

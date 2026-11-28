@@ -1,10 +1,10 @@
 import { createDynamicMiddleware, type Middleware } from "@reduxjs/toolkit";
+import type { AccountDescriptor } from "@domain/entity-account-descriptor";
+import { computeAccountUUID } from "@domain/entity-account/descriptor";
+import type { AccountContext } from "@domain/entity-account-context";
 import type { AccountDataSource } from "@domain/api-account-data";
 import { findCryptoCurrencyById } from "@domain/entity-currency-crypto";
-import {
-  withOperationCountervalues,
-  type OperationCountervaluesHost,
-} from "@domain/api-market-countervalues";
+import { withCountervalues, type CountervaluesHost } from "@domain/api-market-countervalues";
 import {
   accountsSlice,
   connectAccountsStore,
@@ -14,11 +14,15 @@ import { createCoinModuleSource } from "@features/platform-account-source-coin-m
 import { countervaluesStateSelector } from "@features/platform-market-countervalues";
 import { getCryptoAssetsStore } from "@ledgerhq/ledger-wallet-framework/cryptoAssetsStore";
 import { fromLegacyAccount } from "@ledgerhq/live-common/account/accountDescriptor";
+import { addAccountsAction, sameAccountIdentity } from "@ledgerhq/live-common/account/addAccounts";
+import type { Account } from "@ledgerhq/types-live";
 import { createCoinModuleHost } from "@ledgerhq/live-common/account-data/coin-module/createCoinModuleHost";
+import { syncDetached } from "@ledgerhq/live-common/account-data/full-sync/syncDetached";
 import {
   createFullSyncSource,
   type FullSyncHost,
 } from "@ledgerhq/live-common/account-data/full-sync/createFullSyncSource";
+import logger from "~/renderer/logger";
 import { updateAccountWithUpdater } from "~/renderer/actions/accounts";
 import { prepareCurrency } from "~/renderer/bridge/cache";
 import { accountsSelector, type AccountsState } from "~/renderer/reducers/accounts";
@@ -76,7 +80,7 @@ export function accountDataSources(
   dispatch: (action: { type: string }) => unknown,
 ): readonly AccountDataSource[] {
   const blacklistedTokenIds = () => blacklistedTokenIdsSelector(getState());
-  const countervalues: OperationCountervaluesHost = {
+  const countervalues: CountervaluesHost = {
     rates: () => countervaluesStateSelector(getState()),
     findCurrency: assetId =>
       findCryptoCurrencyById(assetId) ?? getCryptoAssetsStore().findTokenById(assetId),
@@ -95,11 +99,11 @@ export function accountDataSources(
     blacklistedTokenIds,
   };
   return tapped([
-    withOperationCountervalues(
+    withCountervalues(
       createCoinModuleSource(createCoinModuleHost({ blacklistedTokenIds })),
       countervalues,
     ),
-    withOperationCountervalues(createFullSyncSource(fullSyncHost), countervalues),
+    withCountervalues(createFullSyncSource(fullSyncHost), countervalues),
   ]);
 }
 
@@ -108,6 +112,55 @@ export function connectAccounts(store: AccountsReduxStore<{ accounts: AccountsSt
   return connectAccountsStore(store, {
     selectLegacyAccounts: accountsSelector,
     toDescriptor: fromLegacyAccount,
-    onError: error => console.warn("Account left out of the accounts slice", error),
+    onError: error => logger.critical(error, "Account left out of the accounts slice"),
   });
+}
+
+/** Account discovery on the Device Intent session, with the legacy scan rules: UI reaches account data only through this file. */
+export { deriveOnSession } from "@ledgerhq/live-common/account-data/discovery/deriveOnSession";
+export { legacyScanRules } from "@ledgerhq/live-common/account-data/discovery/legacyScanRules";
+export {
+  completeOnSession,
+  needsCompletion,
+} from "@ledgerhq/live-common/account-data/discovery/completeOnSession";
+
+/** Syncs each discovered account with its context, adds those the store does not hold yet, then throws if any sync failed. */
+export async function addDiscoveredAccounts(
+  accounts: readonly { descriptor: AccountDescriptor; context?: AccountContext }[],
+  getState: () => State,
+  dispatch: (action: { type: string }) => unknown,
+): Promise<void> {
+  const options = { prepareCurrency, blacklistedTokenIds: blacklistedTokenIdsSelector(getState()) };
+  const results = await Promise.allSettled(
+    accounts.map(({ descriptor, context }) =>
+      syncDetached(descriptor, options, undefined, context),
+    ),
+  );
+  const state = getState();
+  const existingAccounts = accountsSelector(state);
+  // addAccountsAction would replace a held account with the synced one, dropping what only the held one keeps.
+  const isHeld = (account: Account, descriptor: AccountDescriptor) =>
+    selectAccountEntry(state, computeAccountUUID(descriptor)) !== undefined ||
+    existingAccounts.some(existing => sameAccountIdentity(existing, account));
+  const scannedAccounts = results.flatMap((result, index) =>
+    result.status === "fulfilled" && !isHeld(result.value, accounts[index].descriptor)
+      ? [result.value]
+      : [],
+  );
+  if (scannedAccounts.length > 0) {
+    dispatch(
+      addAccountsAction({
+        existingAccounts,
+        scannedAccounts,
+        selectedIds: scannedAccounts.map(({ id }) => id),
+        renamings: {},
+      }),
+    );
+  }
+  const failures = results.flatMap(result => (result.status === "rejected" ? [result.reason] : []));
+  if (failures.length > 0) {
+    throw new Error(
+      `${failures.length} of ${accounts.length} not synced: ${failures.map(String).join("; ")}`,
+    );
+  }
 }

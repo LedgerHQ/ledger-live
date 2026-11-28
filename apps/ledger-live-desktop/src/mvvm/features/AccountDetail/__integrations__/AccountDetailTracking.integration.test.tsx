@@ -68,6 +68,7 @@ function renderAccount(account: Account = ethAccount) {
           accountDetail: { enabled: true, params: { analyticsBanner: true } },
         }),
         accounts: [account],
+        accountAnalyticsIntroduction: { hasDismissed: false, isEligible: true },
       },
     },
   );

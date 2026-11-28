@@ -1,5 +1,75 @@
 # @features/platform-account-data
 
+## 0.4.2
+
+### Patch Changes
+
+- Updated dependencies [[`f8afe58`](https://github.com/LedgerHQ/ledger-live/commit/f8afe58413ae68f5331031c27d9655dca1a56143)]:
+  - @domain/entity-account-descriptor@0.7.0
+  - @domain/api-account-data@0.6.1
+  - @domain/entity-account-data@0.6.1
+
+## 0.4.2-next.0
+
+### Patch Changes
+
+- Updated dependencies [[`f8afe58`](https://github.com/LedgerHQ/ledger-live/commit/f8afe58413ae68f5331031c27d9655dca1a56143)]:
+  - @domain/entity-account-descriptor@0.7.0-next.0
+  - @domain/api-account-data@0.6.1-next.0
+  - @domain/entity-account-data@0.6.1-next.0
+
+## 0.4.1
+
+### Patch Changes
+
+- Updated dependencies [[`9f10baf`](https://github.com/LedgerHQ/ledger-live/commit/9f10bafef466914b2536c7e509ff7c3c2c49b5c8), [`0fc43ab`](https://github.com/LedgerHQ/ledger-live/commit/0fc43ab03928e17d2da761f747ec0c449228d4aa), [`5020021`](https://github.com/LedgerHQ/ledger-live/commit/5020021654f743e0e868cb9c8d011adc97f4ed9a), [`8064394`](https://github.com/LedgerHQ/ledger-live/commit/806439433d2c57b13db5a513688db52195bfc163)]:
+  - @domain/api-account-data@0.6.0
+  - @domain/entity-account-descriptor@0.6.0
+  - @domain/entity-account-data@0.6.0
+
+## 0.4.1-next.0
+
+### Patch Changes
+
+- Updated dependencies [[`9f10baf`](https://github.com/LedgerHQ/ledger-live/commit/9f10bafef466914b2536c7e509ff7c3c2c49b5c8), [`0fc43ab`](https://github.com/LedgerHQ/ledger-live/commit/0fc43ab03928e17d2da761f747ec0c449228d4aa), [`5020021`](https://github.com/LedgerHQ/ledger-live/commit/5020021654f743e0e868cb9c8d011adc97f4ed9a), [`8064394`](https://github.com/LedgerHQ/ledger-live/commit/806439433d2c57b13db5a513688db52195bfc163)]:
+  - @domain/api-account-data@0.6.0-next.0
+  - @domain/entity-account-descriptor@0.6.0-next.0
+  - @domain/entity-account-data@0.6.0-next.0
+
+## 0.4.0
+
+### Minor Changes
+
+- [#24559](https://github.com/LedgerHQ/ledger-live/pull/24559) [`2042095`](https://github.com/LedgerHQ/ledger-live/commit/2042095c0e778b7c16e6e0ccd2bf428ad9e30b84) Thanks [@gre-ledger](https://github.com/gre-ledger)! - Add `useAccountDataBatch` to keep one kind of data of many accounts read, batched per source
+
+- [#24392](https://github.com/LedgerHQ/ledger-live/pull/24392) [`934970a`](https://github.com/LedgerHQ/ledger-live/commit/934970adec67ed88f1d546d03b1bb555cbfd128f) Thanks [@renovate-operator-ledger](https://github.com/apps/renovate-operator-ledger)! - chore(deps): update dependency @reduxjs/toolkit to v2.13.0
+
+  - Updated `@reduxjs/toolkit` to `2.13.0`
+
+### Patch Changes
+
+- Updated dependencies [[`842a9a5`](https://github.com/LedgerHQ/ledger-live/commit/842a9a547be2224eec86295c57c288f0c51f8fbd), [`934970a`](https://github.com/LedgerHQ/ledger-live/commit/934970adec67ed88f1d546d03b1bb555cbfd128f)]:
+  - @domain/entity-account-descriptor@0.5.0
+  - @domain/api-account-data@0.5.0
+  - @domain/entity-account-data@0.5.0
+
+## 0.4.0-next.0
+
+### Minor Changes
+
+- [#24559](https://github.com/LedgerHQ/ledger-live/pull/24559) [`2042095`](https://github.com/LedgerHQ/ledger-live/commit/2042095c0e778b7c16e6e0ccd2bf428ad9e30b84) Thanks [@gre-ledger](https://github.com/gre-ledger)! - Add `useAccountDataBatch` to keep one kind of data of many accounts read, batched per source
+
+- [#24392](https://github.com/LedgerHQ/ledger-live/pull/24392) [`934970a`](https://github.com/LedgerHQ/ledger-live/commit/934970adec67ed88f1d546d03b1bb555cbfd128f) Thanks [@renovate-operator-ledger](https://github.com/apps/renovate-operator-ledger)! - chore(deps): update dependency @reduxjs/toolkit to v2.13.0
+
+  - Updated `@reduxjs/toolkit` to `2.13.0`
+
+### Patch Changes
+
+- Updated dependencies [[`842a9a5`](https://github.com/LedgerHQ/ledger-live/commit/842a9a547be2224eec86295c57c288f0c51f8fbd), [`934970a`](https://github.com/LedgerHQ/ledger-live/commit/934970adec67ed88f1d546d03b1bb555cbfd128f)]:
+  - @domain/entity-account-descriptor@0.5.0-next.0
+  - @domain/api-account-data@0.5.0-next.0
+  - @domain/entity-account-data@0.5.0-next.0
+
 ## 0.3.0
 
 ### Minor Changes

@@ -1,5 +1,5 @@
 import storage from "LLM/storage";
-import type { DeviceBackupStorage } from "@ledgerhq/live-dmk-shared";
+import type { DeviceBackupStorage } from "@features/platform-device-os-update";
 
 type Backup = NonNullable<Awaited<ReturnType<DeviceBackupStorage["getBackup"]>>>;
 

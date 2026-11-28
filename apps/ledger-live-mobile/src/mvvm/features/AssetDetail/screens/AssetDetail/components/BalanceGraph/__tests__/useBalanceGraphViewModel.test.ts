@@ -1,11 +1,11 @@
 import { track } from "@shared/analytics";
 import { renderHook, act } from "@tests/test-renderer";
 import { useBalanceGraphViewModel } from "../useBalanceGraphViewModel";
+import { useGetCurrencyDataQuery } from "@ledgerhq/live-common/market/state-manager/marketApi";
 import {
-  useGetCurrencyDataQuery,
   useGetAssetChartDataQuery,
   useGetSupportedChartCounterCurrenciesQuery,
-} from "@ledgerhq/live-common/market/state-manager/marketApi";
+} from "@domain/api-market-chart";
 import { useOpenReceiveDrawer } from "LLM/features/Receive";
 import { useUsdToFiatRate } from "@features/platform-market-countervalues";
 import {
@@ -19,10 +19,14 @@ import BigNumber from "bignumber.js";
 import type { State } from "~/reducers/types";
 import { marketCurrencyData } from "../../../__fixtures__/marketCurrencyData";
 import type { RangeKey } from "../../../utils/rangeMapping";
+import { ASSET_DETAIL_CHART_HEIGHT } from "../constants";
 
 jest.mock("@ledgerhq/live-common/market/state-manager/marketApi", () => ({
   ...jest.requireActual("@ledgerhq/live-common/market/state-manager/marketApi"),
   useGetCurrencyDataQuery: jest.fn(),
+}));
+jest.mock("@domain/api-market-chart", () => ({
+  ...jest.requireActual("@domain/api-market-chart"),
   useGetAssetChartDataQuery: jest.fn(),
   useGetSupportedChartCounterCurrenciesQuery: jest.fn(),
 }));
@@ -543,16 +547,17 @@ describe("useBalanceGraphViewModel", () => {
       expect(result.current.xAxis.ticks).toEqual([0, 1, 2, 3]);
     });
 
-    it("pads the y-axis domain asymmetrically (more headroom at the bottom)", () => {
+    it("pads the y-axis domain 32px below the min and 24px above the max for their labels", () => {
       const { result } = renderVM();
 
       const domain = result.current.yAxis.domain;
       expect(typeof domain).toBe("function");
       // @ts-expect-error domain is the function form here.
       const padded = domain({ min: 0, max: 100 });
-      expect(padded.min).toBeLessThan(0);
-      expect(padded.max).toBeGreaterThan(100);
-      expect(Math.abs(padded.min)).toBeGreaterThan(padded.max - 100);
+      const valuePerPx = (padded.max - padded.min) / ASSET_DETAIL_CHART_HEIGHT;
+
+      expect((0 - padded.min) / valuePerPx).toBeCloseTo(32);
+      expect((padded.max - 100) / valuePerPx).toBeCloseTo(24);
     });
   });
 

@@ -1,6 +1,6 @@
 {
   "name": "@ledgerhq/hw-app-celo",
-  "version": "7.3.1",
+  "version": "7.3.4",
   "description": "Ledger Hardware Wallet Celo Application API",
   "keywords": [
     "Ledger",
@@ -46,7 +46,6 @@
     "jest": "catalog:",
     "oxfmt": "catalog:",
     "rimraf": "4.4.1",
-    "source-map-support": "0.5.21",
     "oxlint": "catalog:"
   },
   "files": [

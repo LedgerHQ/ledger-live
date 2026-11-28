@@ -26,6 +26,7 @@ import Page from "LLD/components/Page";
 import NightlyLayer from "LLD/components/NightlyLayer";
 import { isFullscreenOverlayRoute, isWallet40Page } from "LLD/components/Page/utils";
 import { useIsAccountDetailPage } from "LLD/features/AccountDetail/hooks/useIsAccountDetailPage";
+import { useIsNewSettingsPage } from "LLD/features/Settings/hooks/useIsNewSettingsPage";
 import AnalyticsConsole from "~/renderer/components/AnalyticsConsole";
 import ThemeConsole from "~/renderer/components/ThemeConsole";
 import DebugMock from "~/renderer/components/debug/DebugMock";
@@ -80,6 +81,8 @@ import {
   BACKGROUND_SIZE,
   preloadBackgrounds,
 } from "LLD/components/Page/backgrounds";
+import { SettingsRoute } from "LLD/features/Settings";
+import { SETTINGS_ROUTE_PATH } from "LLD/features/Settings/routes";
 const PlatformCatalog = lazy(() => import("~/renderer/screens/platform"));
 const PortfolioPage = lazy(() => import("LLD/features/Portfolio/screens/PortfolioPage"));
 const Settings = lazy(() => import("~/renderer/screens/settings"));
@@ -95,6 +98,11 @@ const Swap2 = lazy(() => import("~/renderer/screens/exchange/Swap2"));
 const Perps = lazy(() => import("LLD/features/Perps"));
 const Borrow = lazy(() => import("LLD/features/Borrow"));
 const Predictions = lazy(() => import("LLD/features/Predictions"));
+const AgentIntent = lazy(() =>
+  import("LLD/features/AgentIntent").then(module => ({
+    default: module.AgentIntentPlaceholderScreen,
+  })),
+);
 const Market = lazy(() => import("LLD/features/Market"));
 
 const WelcomeScreenSettings = lazy(
@@ -208,7 +216,10 @@ function MainAppContent() {
           <Page>
             <Routes>
               <Route path="/" element={withSuspense(PortfolioPage)({})} />
-              <Route path="/settings/*" element={withSuspense(Settings)({})} />
+              <Route
+                path={SETTINGS_ROUTE_PATH}
+                element={<SettingsRoute legacySettings={withSuspense(Settings)({})} />}
+              />
               <Route path="/devtools" element={withSuspense(DevToolsScreen)({})} />
               <Route path="/accounts" element={withSuspense(Accounts)({})} />
               <Route path="/cryptos" element={withSuspense(CryptoAddresses)({})} />
@@ -238,6 +249,7 @@ function MainAppContent() {
               <Route path="/analytics" element={withSuspense(Analytics)({})} />
               <Route path="/history" element={withSuspense(History)({})} />
               <Route path="/contacts" element={withSuspense(Contacts)({})} />
+              <Route path="/agent-intent" element={withSuspense(AgentIntent)({})} />
             </Routes>
           </Page>
           <Drawer />
@@ -258,7 +270,8 @@ export const MainAppLayout = () => {
   const backgroundImage = getPageBackground(pathname, theme);
 
   const isAccountDetailPage = useIsAccountDetailPage(pathname);
-  const useWallet40Layout = isAccountDetailPage || isWallet40Page(pathname);
+  const isNewSettingsPage = useIsNewSettingsPage(pathname);
+  const useWallet40Layout = isAccountDetailPage || isNewSettingsPage || isWallet40Page(pathname);
 
   useEffect(() => {
     preloadBackgrounds();
@@ -485,7 +498,7 @@ export default function Default() {
                     ) : (
                       <>
                         <Route
-                          path="/settings/*"
+                          path={SETTINGS_ROUTE_PATH}
                           element={withSuspense(WelcomeScreenSettings)({})}
                         />
                         <Route

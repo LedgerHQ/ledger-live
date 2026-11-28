@@ -1,5 +1,8 @@
-import { signTransactionIntentJob } from "./job";
-import type { SignTransactionIntentDefinition } from "./types";
+import { signTransactionIntentJob, signTransactionIntentJobWithResult } from "./job";
+import type {
+  SignTransactionIntentDefinition,
+  SignTransactionIntentWithResultDefinition,
+} from "./types";
 
 export const signTransactionIntentDefinition: SignTransactionIntentDefinition = {
   label: "Sign transaction",
@@ -7,3 +10,9 @@ export const signTransactionIntentDefinition: SignTransactionIntentDefinition = 
   delegateDeviceLockStateHandlingToExecutor: false,
   job: signTransactionIntentJob,
 };
+
+export const signTransactionIntentWithResultDefinition: SignTransactionIntentWithResultDefinition =
+  {
+    ...signTransactionIntentDefinition,
+    job: signTransactionIntentJobWithResult,
+  };

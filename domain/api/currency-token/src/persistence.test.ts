@@ -106,6 +106,15 @@ describe("Token Persistence", () => {
       expect(parsed?.tokens[0].data).toEqual(mockToken);
     });
 
+    it.each([[["stocks"]], [[]]])("keeps token categories %j", categories => {
+      const parsed = parsePersistedCAL({
+        version: PERSISTENCE_VERSION,
+        tokens: [{ data: { ...mockToken, categories }, timestamp: 1000 }],
+      });
+
+      expect(parsed?.tokens[0].data.categories).toEqual(categories);
+    });
+
     it("returns null for an older format version", () => {
       expect(parsePersistedCAL({ version: PERSISTENCE_VERSION - 1, tokens: [] })).toBeNull();
     });

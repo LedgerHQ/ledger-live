@@ -17,7 +17,8 @@
  * (confirmed: config accepted, zero blocks ever produced after 90s+ of
  * waiting with it set to `true`).
  */
-import { ZEBRA_RPC_URL } from "./regtestNode";
+import { getChainTip } from "@ledgerhq/zcash-utils";
+import { ZAINO_GRPC_URL, ZEBRA_RPC_URL } from "./regtestNode";
 
 let nextRequestId = 0;
 
@@ -50,15 +51,6 @@ async function callZebraRpc<T>(method: string, params: unknown[] = []): Promise<
   }
   return body.result as T;
 }
-
-export type ZebraUtxo = {
-  address: string;
-  txid: string;
-  outputIndex: number;
-  script: string;
-  satoshis: number;
-  height: number;
-};
 
 export type ZebraTransactionInput = {
   txid?: string;
@@ -108,19 +100,11 @@ export async function generateBlocksToAddress(
   return callZebraRpc<string[]>("generatetoaddress", [numBlocks, address]);
 }
 
-export async function getBestBlockHash(): Promise<string> {
-  return callZebraRpc<string>("getbestblockhash");
-}
-
 export async function getBlock(
   hashOrHeight: string,
   verbosity = 1,
 ): Promise<Record<string, unknown>> {
   return callZebraRpc("getblock", [hashOrHeight, verbosity]);
-}
-
-export async function getAddressUtxos(addresses: string[]): Promise<ZebraUtxo[]> {
-  return callZebraRpc<ZebraUtxo[]>("getaddressutxos", [{ addresses }]);
 }
 
 export async function getAddressTxIds(
@@ -145,20 +129,26 @@ export async function sendRawTransaction(hex: string): Promise<string> {
   return callZebraRpc<string>("sendrawtransaction", [hex]);
 }
 
-export function sleep(ms: number): Promise<void> {
+function sleep(ms: number): Promise<void> {
   return new Promise(resolve => setTimeout(resolve, ms));
 }
 
-export async function waitForBlockHeight(target: number, timeoutMs = 120_000): Promise<void> {
+/**
+ * Waits until zaino reports zebra's current tip. The builder targets the block
+ * after zaino's tip, so a craft made while zaino still lags behind blocks just
+ * mined on zebra gets a stale target and an expiry the node rejects as already
+ * passed.
+ */
+export async function waitForZainoTip(timeoutMs = 120_000): Promise<number> {
+  const expected = await getBlockCount();
   const start = Date.now();
-  let height = await getBlockCount();
-  while (height < target) {
+  let zainoTip = await getChainTip(ZAINO_GRPC_URL);
+  while (zainoTip !== expected) {
     if (Date.now() - start > timeoutMs) {
-      throw new Error(
-        `Timed out waiting for zebra to reach height ${target} (currently ${height})`,
-      );
+      throw new Error(`zaino stopped at ${zainoTip}, zebra's tip is ${expected}`);
     }
     await sleep(1_000);
-    height = await getBlockCount();
+    zainoTip = await getChainTip(ZAINO_GRPC_URL);
   }
+  return expected;
 }

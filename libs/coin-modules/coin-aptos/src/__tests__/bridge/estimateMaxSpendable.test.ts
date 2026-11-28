@@ -1,5 +1,9 @@
 import BigNumber from "bignumber.js";
-import { createFixtureAccount, createFixtureTransaction } from "../../bridge/bridge.fixture";
+import {
+  createFixtureAccount,
+  createFixtureAccountWithSubAccount,
+  createFixtureTransaction,
+} from "../../bridge/bridge.fixture";
 import estimateMaxSpendable from "../../bridge/estimateMaxSpendable";
 import { DEFAULT_GAS, DEFAULT_GAS_PRICE } from "../../constants";
 
@@ -95,6 +99,17 @@ describe("estimateMaxSpendable Test", () => {
       const expected = spendableBalance.minus(DEFAULT_TOTAL_GAS);
 
       expect(result.isEqualTo(expected)).toBe(true);
+    });
+  });
+
+  describe("when the account is a token account", () => {
+    it("returns the token spendable balance without reserving gas", async () => {
+      const parentAccount = createFixtureAccountWithSubAccount("coin");
+      const tokenAccount = parentAccount.subAccounts![0];
+
+      const result = await estimateMaxSpendable({ account: tokenAccount, parentAccount });
+
+      expect(result).toEqual(tokenAccount.spendableBalance);
     });
   });
 });

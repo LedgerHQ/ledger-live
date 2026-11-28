@@ -1,4 +1,5 @@
 import type { CryptoOrTokenCurrency } from "@domain/entity-currency";
+import type BigNumber from "bignumber.js";
 import { getSendDescriptor } from "../registry";
 import type {
   BalanceTypeConfig,
@@ -45,7 +46,11 @@ const defaultSelfTransferPolicy: SelfTransferPolicy = "impossible";
 const noTrackingAttributes: Record<string, string> = {};
 
 export const sendFeatures = {
-  canSendMax: fromDescriptor(d => d.amount?.canSendMax, true),
+  canSendMax: (currency: CryptoOrTokenCurrency | undefined): boolean => {
+    const canSendMax = getSendDescriptor(currency)?.amount?.canSendMax;
+    if (typeof canSendMax === "function") return currency ? canSendMax(currency) : true;
+    return canSendMax ?? true;
+  },
   hasMemo: fromDescriptor(d => d.inputs.memo != null, false),
   /**
    * Whether to offer a memo input for `recipient`. The recipient is required rather
@@ -107,6 +112,10 @@ export const sendFeatures = {
     return allowZeroAmount ?? false;
   },
   getAmountEffects: fromDescriptor(d => d.amount?.effects, noAmountEffects),
+  roundAmount: (currency: CryptoOrTokenCurrency | undefined, amount: BigNumber): BigNumber => {
+    const roundAmount = getSendDescriptor(currency)?.amount?.roundAmount;
+    return currency && roundAmount ? roundAmount(amount, currency) : amount;
+  },
   getFeeCurrencyAccountId: (
     currency: CryptoOrTokenCurrency | undefined,
     transaction: unknown,

@@ -46,14 +46,22 @@ test.describe("Swap - cross account warning", () => {
       ],
     },
     async ({ app }) => {
-      const healthyProviders = await keepRunningProviders(dexProviders, fromAccount, toAccount);
+      const healthyProviders = await keepRunningProviders({
+        eligibleProviders: dexProviders,
+        accountFrom: fromAccount,
+        accountTo: toAccount,
+      });
       test.skip(
         healthyProviders.length === 0,
         "All DEX providers are currently down — skipping cross-account warning check",
       );
 
       const minAmount = await app.swap.getMinimumAmount(fromAccount, toAccount);
-      const swap = new Swap(fromAccount, toAccount, minAmount);
+      const swap = new Swap({
+        accountToDebit: fromAccount,
+        accountToCredit: toAccount,
+        amount: minAmount,
+      });
       const errorMessage =
         "Cross-account swaps are not currently supported. Please ensure your sending and receiving accounts are the same.";
       await performSwapUntilQuoteSelectionStep({ app, swap, minAmount });

@@ -19,18 +19,15 @@ import {
   type TransportFactory,
   type TransportIdentifier,
 } from "@ledgerhq/device-management-kit";
-import {
-  getDeviceList,
-  usb as usbBindings,
-  WebUSBDevice,
-  type Device as NativeUsbDevice,
-} from "usb";
+import { usb, type WebUSB } from "usb";
 import { Left, Maybe, Right } from "purify-ts";
 import { randomUUID } from "node:crypto";
-import { BehaviorSubject, from } from "rxjs";
-import { map, switchMap } from "rxjs/operators";
+import { existsSync } from "node:fs";
+import { BehaviorSubject, from, merge, Subject, throwError } from "rxjs";
+import { map, mergeMap, switchMap } from "rxjs/operators";
 import {
   NodeWebUsbApduSender,
+  type NodeUsbDevice,
   type NodeWebUsbApduSenderConstructorArgs,
   type NodeWebUsbApduSenderDependencies,
 } from "./NodeWebUsbApduSender";
@@ -42,11 +39,11 @@ import {
 export const nodeWebUsbIdentifier: TransportIdentifier = "NODE-WEBUSB";
 
 type WebUsbDiscoveredInternal = TransportDiscoveredDevice & {
-  webUsbDevice: WebUSBDevice;
+  webUsbDevice: NodeUsbDevice;
   interfaceNumber: number;
 };
 
-function getVendorInterfaceNumber(device: WebUSBDevice): number | null {
+function getVendorInterfaceNumber(device: USBDevice): number | null {
   const cfg = device.configurations[0];
   if (!cfg) {
     return null;
@@ -59,33 +56,54 @@ function getVendorInterfaceNumber(device: WebUSBDevice): number | null {
   return null;
 }
 
-type ScannedWebUsbDevice = { device: WebUSBDevice; interfaceNumber: number };
+type ScannedWebUsbDevice = { device: NodeUsbDevice; interfaceNumber: number };
 
-type NodeWebUsbBindings = Pick<typeof usbBindings, "on" | "removeListener" | "unrefHotplugEvents">;
+type LedgerScan = { opened: ScannedWebUsbDevice[]; openFailures: unknown[] };
+
+type NodeWebUsbBindings = Pick<WebUSB, "getDevices" | "addEventListener" | "removeEventListener">;
 
 type NodeWebUsbIntervalHandle = ReturnType<typeof globalThis.setInterval>;
 
 type NodeWebUsbTransportPlatform = {
   platform: NodeJS.Platform;
-  getDeviceList: typeof getDeviceList;
-  createWebUsbDevice: typeof WebUSBDevice.createInstance;
-  usbBindings: NodeWebUsbBindings;
+  usb: NodeWebUsbBindings;
   setInterval: (callback: () => void, delay: number) => NodeWebUsbIntervalHandle;
   clearInterval: (handle: NodeWebUsbIntervalHandle) => void;
+  hasUsbBus?: () => boolean;
 };
 
 const defaultNodeWebUsbTransportPlatform: NodeWebUsbTransportPlatform = {
   platform: process.platform,
-  getDeviceList,
-  createWebUsbDevice: native => WebUSBDevice.createInstance(native),
-  usbBindings,
+  usb,
   setInterval: globalThis.setInterval,
   clearInterval: globalThis.clearInterval,
+  // usb 3 enumerates natively when a listener is added, and warns on stderr when it fails.
+  hasUsbBus: () => process.platform !== "linux" || existsSync("/sys/bus/usb/devices"),
 };
 
+/** usb 3 builds a new object per enumeration: its nusb `handle` is what stays stable while plugged in. */
+function nusbDeviceHandle(device: USBDevice): string | undefined {
+  return "handle" in device && typeof device.handle === "string" ? device.handle : undefined;
+}
+
+const serialNumbersByDevice = new WeakMap<USBDevice, string>();
+
+/** nusb may fetch the serial from the device (Windows), which throws once it is unplugged. */
+function readSerialNumber(device: USBDevice): string | undefined {
+  const cached = serialNumbersByDevice.get(device);
+  if (cached) return cached;
+  try {
+    const serial = device.serialNumber ?? undefined;
+    if (serial) serialNumbersByDevice.set(device, serial);
+    return serial;
+  } catch {
+    return undefined;
+  }
+}
+
 /** Uses serialNumber when available so two same-model devices are distinguishable. */
-function deviceIdentityKey(device: WebUSBDevice): string {
-  const serial = device.serialNumber;
+function deviceIdentityKey(device: NodeUsbDevice): string {
+  const serial = readSerialNumber(device);
   return serial
     ? `${device.vendorId}:${device.productId}:${serial}`
     : `${device.vendorId}:${device.productId}`;
@@ -118,7 +136,7 @@ function areSameDiscoveredDevices(
 }
 
 /**
- * DMK transport for Node.js using Ledger WebUSB bulk over {@link WebUSBDevice} (node-usb).
+ * DMK transport for Node.js using Ledger WebUSB bulk over {@link NodeUsbDevice} (node-usb).
  */
 export class NodeWebUsbTransport implements Transport {
   private readonly _deviceModelDataSource: DeviceModelDataSource;
@@ -137,11 +155,11 @@ export class NodeWebUsbTransport implements Transport {
     [],
   );
   private readonly _deviceConnectionsByWebUsbDevice = new Map<
-    WebUSBDevice,
+    NodeUsbDevice,
     DeviceConnectionStateMachine<NodeWebUsbApduSenderDependencies>
   >();
   private readonly _deviceConnectionSetupsByWebUsbDevice = new Map<
-    WebUSBDevice,
+    NodeUsbDevice,
     Promise<DeviceConnectionStateMachine<NodeWebUsbApduSenderDependencies>>
   >();
   // Mirrors the values of _deviceConnectionsByWebUsbDevice so that membership
@@ -164,8 +182,8 @@ export class NodeWebUsbTransport implements Transport {
   private readonly _logger: LoggerPublisherService;
   private readonly connectionType = "USB" as const;
   private readonly identifier = nodeWebUsbIdentifier;
-  private _usbAttachHandler: ((d: NativeUsbDevice) => void) | null = null;
-  private _usbDetachHandler: ((d: NativeUsbDevice) => void) | null = null;
+  private _usbConnectHandler: ((event: USBConnectionEvent) => void) | null = null;
+  private _usbDisconnectHandler: ((event: USBConnectionEvent) => void) | null = null;
   private _discoveryPollInterval: NodeWebUsbIntervalHandle | null = null;
   private _explicitConnectionClosesInFlight = 0;
   // In-flight discovery refresh promise. While a scan is running, additional
@@ -175,6 +193,7 @@ export class NodeWebUsbTransport implements Transport {
   // NoAccessibleDeviceError when a refresh is already in progress.
   private _refreshDiscoveredDevicesInFlight: Promise<ScannedWebUsbDevice[]> | null = null;
   private _refreshDiscoveredDevicesQueued: Promise<ScannedWebUsbDevice[]> | null = null;
+  private readonly _ledgerOpenFailures = new Subject<NoAccessibleDeviceError>();
 
   constructor(
     deviceModelDataSource: DeviceModelDataSource,
@@ -223,14 +242,14 @@ export class NodeWebUsbTransport implements Transport {
   }
 
   private setActiveConnection(
-    device: WebUSBDevice,
+    device: NodeUsbDevice,
     machine: DeviceConnectionStateMachine<NodeWebUsbApduSenderDependencies>,
   ): void {
     this._deviceConnectionsByWebUsbDevice.set(device, machine);
     this._activeConnectionMachines.add(machine);
   }
 
-  private deleteActiveConnection(device: WebUSBDevice): void {
+  private deleteActiveConnection(device: NodeUsbDevice): void {
     const machine = this._deviceConnectionsByWebUsbDevice.get(device);
     if (!machine) {
       return;
@@ -286,10 +305,12 @@ export class NodeWebUsbTransport implements Transport {
   }): TransportConnectedDevice {
     const deviceId = row.id;
 
-    const sendApduToMachine: TransportConnectedDevice["sendApdu"] = async (...args) => {
+    const sendApduToMachine: TransportConnectedDevice["sendApdu"] = (...args) => {
       if (!this.isConnectionMachineRoutable(machine)) {
-        return Left(
-          new DeviceDisconnectedBeforeSendingApdu(`${deviceId} is no longer active or pending`),
+        return Promise.resolve(
+          Left(
+            new DeviceDisconnectedBeforeSendingApdu(`${deviceId} is no longer active or pending`),
+          ),
         );
       }
       return machine.sendApdu(...args);
@@ -337,7 +358,7 @@ export class NodeWebUsbTransport implements Transport {
     void this.updateTransportDiscoveredDevices();
   }
 
-  private getDeviceModel(device: WebUSBDevice): Maybe<TransportDeviceModel> {
+  private getDeviceModel(device: NodeUsbDevice): Maybe<TransportDeviceModel> {
     const { productId } = device;
     const model = this._deviceModelDataSource
       .getAllDeviceModels()
@@ -345,7 +366,7 @@ export class NodeWebUsbTransport implements Transport {
     return model ? Maybe.of(model) : Maybe.zero();
   }
 
-  private getUsbProductIdForMatch(device: WebUSBDevice): number {
+  private getUsbProductIdForMatch(device: NodeUsbDevice): number {
     return this.getDeviceModel(device).caseOf({
       Just: m => m.usbProductId,
       Nothing: () => device.productId >> 8,
@@ -353,12 +374,14 @@ export class NodeWebUsbTransport implements Transport {
   }
 
   private findPendingReconnectionMachine(
-    web: WebUSBDevice,
+    web: NodeUsbDevice,
   ): DeviceConnectionStateMachine<NodeWebUsbApduSenderDependencies> | undefined {
     return this._deviceConnectionsPendingReconnection.values().find(sm => {
       const previousDevice = sm.getDependencies().device;
-      if (previousDevice.serialNumber && web.serialNumber) {
-        return previousDevice.serialNumber === web.serialNumber;
+      const previousSerial = readSerialNumber(previousDevice);
+      const serial = readSerialNumber(web);
+      if (previousSerial && serial) {
+        return previousSerial === serial;
       }
 
       return this.getUsbProductIdForMatch(previousDevice) === this.getUsbProductIdForMatch(web);
@@ -376,24 +399,39 @@ export class NodeWebUsbTransport implements Transport {
     }
   }
 
-  private async scanLedgerWebUsbDevices(): Promise<ScannedWebUsbDevice[]> {
+  private async scanLedgerWebUsbDevices(): Promise<LedgerScan> {
     const collected: ScannedWebUsbDevice[] = [];
-    for (const native of this._platformBindings.getDeviceList()) {
-      if (native.deviceDescriptor.idVendor !== LEDGER_VENDOR_ID) {
+    const openFailures: unknown[] = [];
+    for (const device of await this._platformBindings.usb.getDevices()) {
+      if (device.vendorId !== LEDGER_VENDOR_ID) {
         continue;
       }
-      const device = await this._platformBindings.createWebUsbDevice(native);
-      const interfaceNumber = getVendorInterfaceNumber(device);
+      let interfaceNumber: number | null;
+      try {
+        // Reading configurations opens the device in usb 3, so it fails without USB access.
+        interfaceNumber = getVendorInterfaceNumber(device);
+      } catch (error) {
+        this._logger.error("Error while opening a Ledger WebUSB device", { data: { error } });
+        openFailures.push(error);
+        continue;
+      }
       if (interfaceNumber === null) {
         continue;
       }
       collected.push({ device, interfaceNumber });
     }
-    return dedupeLedgerWebUsbDevices(collected);
+    return { opened: dedupeLedgerWebUsbDevices(collected), openFailures };
+  }
+
+  /** Fails the device stream with the open error when it leaves no Ledger to offer. */
+  private reportLedgerOpenFailure(error: unknown): void {
+    if (this._transportDiscoveredDevices.getValue().length === 0) {
+      this._ledgerOpenFailures.next(new NoAccessibleDeviceError(error));
+    }
   }
 
   private mapWebUsbToDiscovered(
-    web: WebUSBDevice,
+    web: NodeUsbDevice,
     interfaceNumber: number,
   ): WebUsbDiscoveredInternal {
     const key = deviceIdentityKey(web);
@@ -430,8 +468,11 @@ export class NodeWebUsbTransport implements Transport {
 
   listenToAvailableDevices() {
     void this.updateTransportDiscoveredDevices();
-    return this._transportDiscoveredDevices.pipe(
-      map(list => list.map(({ webUsbDevice: _w, interfaceNumber: _i, ...rest }) => rest)),
+    return merge(
+      this._transportDiscoveredDevices.pipe(
+        map(list => list.map(({ webUsbDevice: _w, interfaceNumber: _i, ...rest }) => rest)),
+      ),
+      this._ledgerOpenFailures.pipe(mergeMap(error => throwError(() => error))),
     );
   }
 
@@ -469,12 +510,12 @@ export class NodeWebUsbTransport implements Transport {
 
   private async scanAndPublishDiscoveredDevices(): Promise<ScannedWebUsbDevice[]> {
     try {
-      const scanned = await this.scanLedgerWebUsbDevices();
-      await this.reconnectPendingMachines(scanned);
-      const next: WebUsbDiscoveredInternal[] = [];
-      for (const { device, interfaceNumber } of scanned) {
+      const { opened, openFailures } = await this.scanLedgerWebUsbDevices();
+      await this.reconnectPendingMachines(opened);
+      const found: WebUsbDiscoveredInternal[] = [];
+      for (const { device, interfaceNumber } of opened) {
         try {
-          next.push(this.mapWebUsbToDiscovered(device, interfaceNumber));
+          found.push(this.mapWebUsbToDiscovered(device, interfaceNumber));
         } catch (e) {
           if (e instanceof DeviceNotRecognizedError) {
             continue;
@@ -483,17 +524,26 @@ export class NodeWebUsbTransport implements Transport {
         }
       }
 
-      if (next.length > 0) {
+      if (found.length > 0) {
         this.stopWindowsDiscoveryPolling();
       } else {
         this.startWindowsDiscoveryPolling();
       }
 
-      if (!areSameDiscoveredDevices(this._transportDiscoveredDevices.getValue(), next)) {
+      const previous = this._transportDiscoveredDevices.getValue();
+      // A failed open does not say which listed Ledger it was, so all of them stay listed.
+      const next =
+        openFailures.length === 0
+          ? found
+          : [...found, ...previous.filter(row => !found.some(f => f.id === row.id))];
+      if (!areSameDiscoveredDevices(previous, next)) {
         this._transportDiscoveredDevices.next(next);
       }
+      if (openFailures.length > 0) {
+        this.reportLedgerOpenFailure(openFailures[0]);
+      }
 
-      return scanned;
+      return opened;
     } catch (e) {
       this._logger.error("Error while scanning Ledger WebUSB devices", { data: { error: e } });
       return [];
@@ -536,30 +586,34 @@ export class NodeWebUsbTransport implements Transport {
   }
 
   private startListeningToConnectionEvents(): void {
-    if (this._usbAttachHandler || this._usbDetachHandler) {
+    if (this._usbConnectHandler || this._usbDisconnectHandler) {
+      return;
+    }
+    if (this._platformBindings.hasUsbBus?.() === false) {
+      this._logger.debug("No USB bus, skipping hotplug listeners");
       return;
     }
     this._logger.debug("startListeningToConnectionEvents (WebUSB)");
-    this._usbAttachHandler = (d: NativeUsbDevice) => {
-      void this.handleDeviceConnection(d);
+    this._usbConnectHandler = event => {
+      void this.handleDeviceConnection(event.device);
     };
-    this._usbDetachHandler = (d: NativeUsbDevice) => {
-      void this.handleDeviceDisconnection(d);
+    this._usbDisconnectHandler = event => {
+      this.handleDeviceDisconnection(event.device);
     };
-    this._platformBindings.usbBindings.on("attach", this._usbAttachHandler);
-    this._platformBindings.usbBindings.on("detach", this._usbDetachHandler);
+    this._platformBindings.usb.addEventListener("connect", this._usbConnectHandler);
+    this._platformBindings.usb.addEventListener("disconnect", this._usbDisconnectHandler);
     this.startWindowsDiscoveryPolling();
   }
 
   private stopListeningToConnectionEvents(): void {
     this._logger.debug("stopListeningToConnectionEvents (WebUSB)");
-    if (this._usbAttachHandler) {
-      this._platformBindings.usbBindings.removeListener("attach", this._usbAttachHandler);
-      this._usbAttachHandler = null;
+    if (this._usbConnectHandler) {
+      this._platformBindings.usb.removeEventListener("connect", this._usbConnectHandler);
+      this._usbConnectHandler = null;
     }
-    if (this._usbDetachHandler) {
-      this._platformBindings.usbBindings.removeListener("detach", this._usbDetachHandler);
-      this._usbDetachHandler = null;
+    if (this._usbDisconnectHandler) {
+      this._platformBindings.usb.removeEventListener("disconnect", this._usbDisconnectHandler);
+      this._usbDisconnectHandler = null;
     }
     this.stopWindowsDiscoveryPolling();
   }
@@ -676,28 +730,28 @@ export class NodeWebUsbTransport implements Transport {
     return Right(undefined);
   }
 
-  async handleDeviceDisconnection(native: NativeUsbDevice): Promise<void> {
-    const { idVendor, idProduct } = native.deviceDescriptor;
-    if (idVendor !== LEDGER_VENDOR_ID) {
+  handleDeviceDisconnection(device: USBDevice): void {
+    const { vendorId, productId } = device;
+    if (vendorId !== LEDGER_VENDOR_ID) {
       return;
     }
     if (this._explicitConnectionClosesInFlight > 0) {
       this._logger.debug("[handleDeviceDisconnection] Ignoring detach during explicit close", {
-        data: { vendorId: idVendor, productId: idProduct },
+        data: { vendorId, productId },
       });
       return;
     }
     this._logger.info("[handleDeviceDisconnection] Device disconnected (WebUSB)", {
-      data: { vendorId: idVendor, productId: idProduct },
+      data: { vendorId, productId },
     });
     this.resumeDiscoveryAfterDisconnect();
 
-    // Native detach events only expose vendorId/productId — serialNumber is
-    // unavailable for a disconnecting device, so same-model disambiguation
-    // is not possible here.
-    const match = this._deviceConnectionsByWebUsbDevice
-      .entries()
-      .find(([dev]) => dev.vendorId === idVendor && dev.productId === idProduct);
+    const handle = nusbDeviceHandle(device);
+    const entries = [...this._deviceConnectionsByWebUsbDevice.entries()];
+    const match =
+      handle === undefined
+        ? entries.find(([dev]) => dev.vendorId === vendorId && dev.productId === productId)
+        : entries.find(([dev]) => nusbDeviceHandle(dev) === handle);
 
     if (match) {
       try {
@@ -707,14 +761,14 @@ export class NodeWebUsbTransport implements Transport {
       }
     } else {
       this._logger.debug("No matching WebUSB connection for detach event", {
-        data: { vendorId: idVendor, productId: idProduct },
+        data: { vendorId, productId },
       });
     }
   }
 
   async handleDeviceReconnection(
     machine: DeviceConnectionStateMachine<NodeWebUsbApduSenderDependencies>,
-    web: WebUSBDevice,
+    web: NodeUsbDevice,
     interfaceNumber: number,
   ): Promise<void> {
     const previousDependencies = machine.getDependencies();
@@ -736,26 +790,25 @@ export class NodeWebUsbTransport implements Transport {
     }
   }
 
-  async handleDeviceConnection(native: NativeUsbDevice): Promise<void> {
-    const { idVendor, idProduct } = native.deviceDescriptor;
-    if (idVendor !== LEDGER_VENDOR_ID) {
+  async handleDeviceConnection(device: USBDevice): Promise<void> {
+    const { vendorId, productId } = device;
+    if (vendorId !== LEDGER_VENDOR_ID) {
       return;
     }
     if (this._explicitConnectionClosesInFlight > 0) {
       this._logger.debug("[handleDeviceConnection] Ignoring attach during explicit close", {
-        data: { vendorId: idVendor, productId: idProduct },
+        data: { vendorId, productId },
       });
       return;
     }
     this._logger.info("[handleDeviceConnection] New device connected (WebUSB)", {
-      data: { vendorId: idVendor, productId: idProduct },
+      data: { vendorId, productId },
     });
 
     try {
-      const web = await this._platformBindings.createWebUsbDevice(native);
-      if (getVendorInterfaceNumber(web) === null) {
+      if (getVendorInterfaceNumber(device) === null) {
         this._logger.debug("[handleDeviceConnection] No Ledger WebUSB interface", {
-          data: { vendorId: idVendor, productId: idProduct },
+          data: { vendorId, productId },
         });
         return;
       }
@@ -765,6 +818,7 @@ export class NodeWebUsbTransport implements Transport {
       await this.updateTransportDiscoveredDevices();
     } catch (e) {
       this._logger.error("Error while handling WebUSB connection event", { data: { error: e } });
+      this.reportLedgerOpenFailure(e);
     }
   }
 
@@ -777,9 +831,6 @@ export class NodeWebUsbTransport implements Transport {
     );
     this._deviceConnectionsPendingReconnection.clear();
     this._activeConnectionMachines.clear();
-    // Unref last, after in-flight close transfers have settled, so we don't
-    // release hotplug refs while native USB ops are still running.
-    this._platformBindings.usbBindings.unrefHotplugEvents();
   }
 }
 

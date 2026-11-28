@@ -1,9 +1,8 @@
 import BigNumber from "bignumber.js";
 import invariant from "invariant";
-import hederaCoinConfig from "../config";
+import hederaCoinConfig, { hederaDefaults } from "../config";
 import { MAINNET_TEST_ACCOUNTS } from "../test/fixtures/account.fixture";
 import { getTokenCurrencyFromCAL } from "../test/fixtures/currency.fixture";
-import { getMockedConfig } from "../test/fixtures/config.fixture";
 import type { HederaMirrorTransaction } from "../types/mirror";
 import type { HederaValidator } from "../types/bridge";
 import { apiClient } from "./api";
@@ -19,7 +18,7 @@ import {
   toEVMAddress,
 } from "./utils";
 
-const coinConfig = getMockedConfig();
+const coinConfig = hederaDefaults.hedera;
 
 beforeAll(() => {
   hederaCoinConfig.setCoinConfig(() => coinConfig);

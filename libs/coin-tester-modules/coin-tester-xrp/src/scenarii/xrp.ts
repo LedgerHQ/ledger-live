@@ -1,19 +1,18 @@
 import BigNumber from "bignumber.js";
-import { setupServer } from "msw/node";
 import { Scenario, ScenarioTransaction } from "@ledgerhq/coin-tester/main";
+import { forbidRemoteRequests } from "@ledgerhq/coin-tester/localOnly";
 import type { Account } from "@ledgerhq/types-live";
 import type { GenericTransaction } from "@ledgerhq/live-common/bridge/generic-coin-framework/types";
-import { LiveConfig } from "@ledgerhq/live-config/LiveConfig";
-import { setCryptoAssetsStore } from "@ledgerhq/ledger-wallet-framework/cryptoAssetsStore";
-import { XRP, XRP_LOCAL_RPC, RECIPIENT, makeXrpAccount } from "../fixtures";
+import type { Sandbox } from "@ledgerhq/coin-tester/sandbox";
+import { XRP, RECIPIENT, makeXrpAccount } from "../fixtures";
 import { buildXrpSigner } from "../signer";
-import { getBridges } from "../helpers";
-import { fundAccount, spawnRippled, killRippled, waitForOperationInclusion } from "../rippled";
+import { getBridges, setLocalXrpConfig } from "../helpers";
+import { startXrpSandbox, waitForOperationInclusion } from "../rippled";
+import { installTokenStore } from "../tokenFixtures";
 
 global.console = require("console");
 jest.setTimeout(600_000);
 
-const mockServer = setupServer();
 const DESTINATION_TAG = 1337;
 
 /** 10 XRP base reserve in standalone genesis ledger (drops). */
@@ -82,17 +81,16 @@ function makeTransactions(): XrpScenarioTransaction[] {
   return [sendCreateAccount, sendOne, sendWithTag, sendNearMax];
 }
 
+let sandbox: Sandbox | undefined;
+let closeGuard: (() => void) | undefined;
+
 export const scenarioXrp: Scenario<GenericTransaction, Account> = {
   name: "Ledger Live XRP — basic Payment scenarios",
 
   setup: async () => {
-    setCryptoAssetsStore({
-      findTokenById: async () => undefined,
-      findTokenByAddressInCurrency: async () => undefined,
-      getTokensSyncHash: async () => "",
-    });
-
-    await spawnRippled();
+    closeGuard = forbidRemoteRequests();
+    installTokenStore([]);
+    sandbox = await startXrpSandbox();
 
     const signer = buildXrpSigner();
 
@@ -104,22 +102,12 @@ export const scenarioXrp: Scenario<GenericTransaction, Account> = {
       derivationMode: "",
     });
 
-    const localConfig = {
-      status: { type: "active" as const },
-      name: "XRP",
-      unit: { name: "XRP", code: "XRP", magnitude: 6 },
-      node: XRP_LOCAL_RPC,
-    };
-    LiveConfig.setConfig({
-      config_currency_ripple: {
-        type: "object",
-        default: localConfig,
-      },
-    });
+    setLocalXrpConfig();
 
     // Fund the test account with 50 XRP — covers the four sends and keeps
-    // the final balance just above the 10 XRP base reserve.
-    await fundAccount(address, 50);
+    // the final balance just above the 10 XRP base reserve. The sandbox
+    // validates the ledger before it answers.
+    await sandbox.airdrop(address, 50);
 
     const account = makeXrpAccount(address);
     return { currencyBridge, accountBridge, account, retryInterval: 2000, retryLimit: 20 };
@@ -132,13 +120,6 @@ export const scenarioXrp: Scenario<GenericTransaction, Account> = {
   },
 
   beforeAll: account => {
-    mockServer.listen({
-      onUnhandledRequest: request => {
-        const hostname = new URL(request.url).hostname;
-        if (["127.0.0.1", "localhost"].includes(hostname)) return;
-        throw new Error(`Unhandled request: ${request.method} ${request.url}`);
-      },
-    });
     expect(account.currency.id).toBe(XRP.id);
     expect(account.balance).toStrictEqual(new BigNumber(50_000_000));
     expect(account.spendableBalance.toNumber()).toBeGreaterThan(0);
@@ -156,7 +137,8 @@ export const scenarioXrp: Scenario<GenericTransaction, Account> = {
   },
 
   teardown: async () => {
-    mockServer.close();
-    await killRippled();
+    closeGuard?.();
+    await sandbox?.down();
+    sandbox = undefined;
   },
 };

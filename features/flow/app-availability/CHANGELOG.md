@@ -1,5 +1,39 @@
 # @features/flow-app-availability
 
+## 0.4.0
+
+### Minor Changes
+
+- [#25026](https://github.com/LedgerHQ/ledger-live/pull/25026) [`4060186`](https://github.com/LedgerHQ/ledger-live/commit/40601866b3d1903e03be990373f9152ac3418223) Thanks [@abdurrahman-ledger](https://github.com/abdurrahman-ledger)! - Add `selectAppAvailabilitySettled`, the store counterpart of `useAppAvailability` leaving pending
+
+- [#25139](https://github.com/LedgerHQ/ledger-live/pull/25139) [`0201072`](https://github.com/LedgerHQ/ledger-live/commit/0201072c5e4d8b91d2da5f5e9430f84b31486b42) Thanks [@LL782](https://github.com/LL782)! - Keep the OFAC blocked screen when a refetch of the check fails after a 451
+
+- [#24883](https://github.com/LedgerHQ/ledger-live/pull/24883) [`bb23f63`](https://github.com/LedgerHQ/ledger-live/commit/bb23f63969464f78d1e736b4d9d95881e7016e73) Thanks [@abdurrahman-ledger](https://github.com/abdurrahman-ledger)! - Keep the app on screen at launch when a failed OFAC check is sent again
+
+## 0.4.0-next.0
+
+### Minor Changes
+
+- [#25026](https://github.com/LedgerHQ/ledger-live/pull/25026) [`4060186`](https://github.com/LedgerHQ/ledger-live/commit/40601866b3d1903e03be990373f9152ac3418223) Thanks [@abdurrahman-ledger](https://github.com/abdurrahman-ledger)! - Add `selectAppAvailabilitySettled`, the store counterpart of `useAppAvailability` leaving pending
+
+- [#25139](https://github.com/LedgerHQ/ledger-live/pull/25139) [`0201072`](https://github.com/LedgerHQ/ledger-live/commit/0201072c5e4d8b91d2da5f5e9430f84b31486b42) Thanks [@LL782](https://github.com/LL782)! - Keep the OFAC blocked screen when a refetch of the check fails after a 451
+
+- [#24883](https://github.com/LedgerHQ/ledger-live/pull/24883) [`bb23f63`](https://github.com/LedgerHQ/ledger-live/commit/bb23f63969464f78d1e736b4d9d95881e7016e73) Thanks [@abdurrahman-ledger](https://github.com/abdurrahman-ledger)! - Keep the app on screen at launch when a failed OFAC check is sent again
+
+## 0.3.2
+
+### Patch Changes
+
+- Updated dependencies [[`934970a`](https://github.com/LedgerHQ/ledger-live/commit/934970adec67ed88f1d546d03b1bb555cbfd128f)]:
+  - @domain/api-ofac@0.2.0
+
+## 0.3.2-next.0
+
+### Patch Changes
+
+- Updated dependencies [[`934970a`](https://github.com/LedgerHQ/ledger-live/commit/934970adec67ed88f1d546d03b1bb555cbfd128f)]:
+  - @domain/api-ofac@0.2.0-next.0
+
 ## 0.3.1
 
 ### Patch Changes

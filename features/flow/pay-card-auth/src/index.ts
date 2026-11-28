@@ -1,4 +1,4 @@
-export * from "./components/CardLogin/CardLogin.web";
+export * from "./components/CardLogin/CardLogin";
 export * from "./components/CardLogin/CardLogin.types";
 export * from "./state/buildHostedPageUrl";
 export * from "./state/buildHostedUrl";

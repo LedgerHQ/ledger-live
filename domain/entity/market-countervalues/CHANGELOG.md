@@ -1,5 +1,53 @@
 # @domain/entity-market-countervalues
 
+## 0.6.0
+
+### Minor Changes
+
+- [#24982](https://github.com/LedgerHQ/ledger-live/pull/24982) [`b770536`](https://github.com/LedgerHQ/ledger-live/commit/b77053689b942642434c55e0de68fc987cbb661c) Thanks [@ysitbon](https://github.com/ysitbon)! - Give the countervalues rates slice its own selectors for the stored state and its cache
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @domain/entity-currency@0.5.1
+
+## 0.6.0-next.0
+
+### Minor Changes
+
+- [#24982](https://github.com/LedgerHQ/ledger-live/pull/24982) [`b770536`](https://github.com/LedgerHQ/ledger-live/commit/b77053689b942642434c55e0de68fc987cbb661c) Thanks [@ysitbon](https://github.com/ysitbon)! - Give the countervalues rates slice its own selectors for the stored state and its cache
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @domain/entity-currency@0.5.1-next.0
+
+## 0.5.0
+
+### Minor Changes
+
+- [#24392](https://github.com/LedgerHQ/ledger-live/pull/24392) [`934970a`](https://github.com/LedgerHQ/ledger-live/commit/934970adec67ed88f1d546d03b1bb555cbfd128f) Thanks [@renovate-operator-ledger](https://github.com/apps/renovate-operator-ledger)! - chore(deps): update dependency @reduxjs/toolkit to v2.13.0
+
+  - Updated `@reduxjs/toolkit` to `2.13.0`
+
+### Patch Changes
+
+- Updated dependencies [[`cea0076`](https://github.com/LedgerHQ/ledger-live/commit/cea0076fb3fd7c19d0e73b99ac76507278e390a4)]:
+  - @domain/entity-currency@0.5.0
+
+## 0.5.0-next.0
+
+### Minor Changes
+
+- [#24392](https://github.com/LedgerHQ/ledger-live/pull/24392) [`934970a`](https://github.com/LedgerHQ/ledger-live/commit/934970adec67ed88f1d546d03b1bb555cbfd128f) Thanks [@renovate-operator-ledger](https://github.com/apps/renovate-operator-ledger)! - chore(deps): update dependency @reduxjs/toolkit to v2.13.0
+
+  - Updated `@reduxjs/toolkit` to `2.13.0`
+
+### Patch Changes
+
+- Updated dependencies [[`cea0076`](https://github.com/LedgerHQ/ledger-live/commit/cea0076fb3fd7c19d0e73b99ac76507278e390a4)]:
+  - @domain/entity-currency@0.5.0-next.0
+
 ## 0.4.2
 
 ### Patch Changes

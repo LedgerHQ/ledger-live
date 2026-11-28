@@ -108,7 +108,12 @@ function parseGetAddressCliOutput(output: string): GetAddressResult {
   return parsed as GetAddressResult;
 }
 
-function parseCliFlag(command: string, flag: string): string | undefined {
+const CLI_ERROR_LABEL = "🧾 CLI Error :";
+
+type CliFlagOptions = { command: string; flag: string };
+
+function parseCliFlag(options: CliFlagOptions): string | undefined {
+  const { command, flag } = options;
   const parts = command.split("+");
   const idx = parts.findIndex(p => p === `--${flag}`);
   return idx !== -1 && idx + 1 < parts.length ? parts[idx + 1] : undefined;
@@ -121,11 +126,11 @@ function parseCliFlag(command: string, flag: string): string | undefined {
  * A re-spawn re-fetches the confirmed nonce and re-broadcasts.
  */
 export function isRetryableError(message: string): boolean {
+  const cliError = message.split(CLI_ERROR_LABEL)[1] ?? message;
   const retryablePatterns = [
-    /503/i,
-    /502/i,
-    /504/i,
+    /\b50[234]\b/,
     /GeneralDmkError/i,
+    /DeviceSessionNotFound/i,
     /ECONNREFUSED/i,
     /ETIMEDOUT/i,
     /ECONNRESET/i,
@@ -136,7 +141,7 @@ export function isRetryableError(message: string): boolean {
     /nonce (is )?too low/i,
     /not confirmed within/i,
   ];
-  return retryablePatterns.some(pattern => pattern.test(message));
+  return retryablePatterns.some(pattern => pattern.test(cliError));
 }
 
 /** Aborting `signal` kills the CLI; the promise still settles only once it has exited. */
@@ -167,8 +172,8 @@ export function runCliCommand(command: string, signal?: AbortSignal): Promise<st
       if (code === 0) {
         resolve(output);
       } else {
-        const currency = parseCliFlag(command, "currency");
-        const index = parseCliFlag(command, "index");
+        const currency = parseCliFlag({ command, flag: "currency" });
+        const index = parseCliFlag({ command, flag: "index" });
         const indexText = index && index !== "undefined" ? index : "N/A";
 
         const errorDetails = [
@@ -177,7 +182,7 @@ export function runCliCommand(command: string, signal?: AbortSignal): Promise<st
           `💱 Currency: ${currency}`,
           `🔢 Index: ${indexText}`,
           `🔢 Exit Code: ${code}`,
-          errorOutput ? `🧾 CLI Error : ${errorOutput.trim()}` : "",
+          errorOutput ? `${CLI_ERROR_LABEL} ${errorOutput.trim()}` : "",
         ].join("\n");
 
         reject(sanitizeError(errorDetails));
@@ -190,13 +195,15 @@ export function runCliCommand(command: string, signal?: AbortSignal): Promise<st
   });
 }
 
+type CliRetryOptions = { retries?: number; delayMs?: number };
+
 export async function runCliCommandWithRetry(
   command: string,
-  retries: number = 3,
-  delayMs: number = 3000,
+  options: CliRetryOptions = {},
 ): Promise<string> {
+  const { retries = 3, delayMs = 3000 } = options;
   let lastError: Error | null = null;
-  const currency = parseCliFlag(command, "currency");
+  const currency = parseCliFlag({ command, flag: "currency" });
 
   for (let attempt = 1; attempt <= retries; attempt++) {
     try {

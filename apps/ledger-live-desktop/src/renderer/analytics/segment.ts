@@ -28,6 +28,7 @@ import { buildContactsGlobalProperties } from "@features/platform-contacts";
 import { getPayAttributes } from "./getPayAttributes";
 import { getSwapConsoleAbtestAttributes } from "./getSwapConsoleAbtestAttributes";
 import { getServicesEntryPointsAttributes } from "@features/flow-portfolio-services-entry-points";
+import { getAgentIntentAttributes } from "@features/flow-agent-intent-entry-points";
 import { isAccountDetailAnalyticsBannerEnabled } from "@features/flow-account-detail";
 import type { AccountLike } from "@ledgerhq/types-live";
 import { idsToLanguage } from "@ledgerhq/types-live";
@@ -107,11 +108,13 @@ const getLedgerSyncAttributes = (state: State) => {
   if (!analyticsFeatureFlagMethod) return false;
   const walletSync = analyticsFeatureFlagMethod("lldWalletSync");
   const ledgerSyncOptimisation = analyticsFeatureFlagMethod("lwdLedgerSyncOptimisation");
+  const ledgerSyncDie = analyticsFeatureFlagMethod("lwdLedgerSyncDie");
 
   return {
     hasLedgerSync: !!walletSync?.enabled,
     ledgerSyncActivated: !!state.trustchain.trustchain?.rootId,
     ledger_sync_revamp: !!ledgerSyncOptimisation?.enabled,
+    ledger_sync_die: !!ledgerSyncDie?.enabled,
   };
 };
 
@@ -143,17 +146,6 @@ const getMADAttributes = () => {
     send_flow: madFeatureFlag?.params?.send_flow ?? false,
     isModularizationEnabled: madFeatureFlag?.params?.enableModularization ?? false,
     enableDialogDesktop: madFeatureFlag?.params?.enableDialogDesktop ?? false,
-  };
-};
-
-const getAddAccountAttributes = () => {
-  if (!analyticsFeatureFlagMethod) return {};
-  const addAccount = analyticsFeatureFlagMethod("lldNetworkBasedAddAccount");
-
-  const isEnabled = addAccount?.enabled ?? false;
-
-  return {
-    feature_add_account_desktop: isEnabled,
   };
 };
 
@@ -312,7 +304,6 @@ const extraProperties = (store: ReduxStore) => {
   const ledgerSyncAttributes = getLedgerSyncAttributes(state);
   const mevProtectionAttributes = getMEVAttributes(state);
   const madAttributes = getMADAttributes();
-  const addAccountAttributes = getAddAccountAttributes();
   const backupHubAttributes = getBackupHubAttributes();
   const productTourAttributes = getProductTourAttributes();
   const largeScreenUpsellAttributes = getLargeScreenUpsellAttributes();
@@ -361,9 +352,11 @@ const extraProperties = (store: ReduxStore) => {
   const entryPointsServices = getServicesEntryPointsAttributes(
     analyticsFeatureFlagMethod?.("entryPointsServices"),
   );
+  const agentIntent = getAgentIntentAttributes(analyticsFeatureFlagMethod?.("agentIntent"));
   const accountDetailFeature = analyticsFeatureFlagMethod?.("accountDetail");
   const accountDetail = accountDetailFeature?.enabled ?? false;
   const accountDetailAnalyticsBanner = isAccountDetailAnalyticsBannerEnabled(accountDetailFeature);
+  const newSettings = analyticsFeatureFlagMethod?.("newSettings")?.enabled ?? false;
   const remoteABTestingAttributes = getRemoteABTestingAttributes(analyticsFeatureFlagMethod);
   const payAttributes = getPayAttributes(
     state,
@@ -396,7 +389,6 @@ const extraProperties = (store: ReduxStore) => {
     ...deviceInfo,
     ...ledgerSyncAttributes,
     ...mevProtectionAttributes,
-    ...addAccountAttributes,
     ...backupHubAttributes,
     ...productTourAttributes,
     largeScreenUpsellAttributes,
@@ -424,8 +416,10 @@ const extraProperties = (store: ReduxStore) => {
     recoverV2,
     lwdSwapConsoleAbtest,
     entryPointsServices,
+    agentIntent,
     accountDetail,
     accountDetailAnalyticsBanner,
+    newSettings,
     ...remoteABTestingAttributes,
   };
 };

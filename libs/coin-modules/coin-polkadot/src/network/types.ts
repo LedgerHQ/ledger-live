@@ -25,6 +25,7 @@ interface ITarget {
   address: string;
   value: string;
   status: "active" | "inactive" | "waiting" | null;
+  isRegistered: boolean;
 }
 export interface IIdentity {
   display?: string | undefined;
@@ -50,6 +51,7 @@ export interface IValidator {
   rewardsPoints: string | null;
   isElected: boolean;
   isOversubscribed: boolean;
+  isBlocked: boolean;
 }
 interface IChainType {
   isDevelopment?: boolean;

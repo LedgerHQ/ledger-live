@@ -2,7 +2,7 @@ import React from "react";
 import { StyleSheet, View } from "react-native";
 import { cleanup, fireEvent, render, screen } from "@testing-library/react-native";
 import { trackedPages } from "@features/platform-pay-analytics/testing/module-mock";
-import { CardLoginIntroView } from "../CardLoginIntroView.native";
+import { CardLoginIntroView } from "../CardLoginIntroView";
 
 jest.mock("@features/platform-pay-analytics", () =>
   jest.requireActual("@features/platform-pay-analytics/testing/module-mock"),

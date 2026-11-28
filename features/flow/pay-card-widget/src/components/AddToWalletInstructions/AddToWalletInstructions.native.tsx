@@ -1,5 +1,5 @@
 import React from "react";
-import { AddToWalletInstructionsView } from "./AddToWalletInstructionsView.native";
+import { AddToWalletInstructionsView } from "./AddToWalletInstructionsView";
 import { useAddToWalletInstructionsViewModel } from "./useAddToWalletInstructionsViewModel";
 
 export type AddToWalletInstructionsProps = {

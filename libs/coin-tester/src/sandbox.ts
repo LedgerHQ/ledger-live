@@ -11,14 +11,14 @@ const DEFAULT_URL = "http://localhost:8000";
 const DEFAULT_TIMEOUT_MS = 20 * 60 * 1000;
 const DEFAULT_INTERVAL_MS = 2000; // when the server gives no Retry-After
 const DOWN_TIMEOUT_MS = 2 * 60 * 1000;
-const STATUSES = ["starting", "up", "unhealthy", "failed"];
+const STATUSES = ["preparing", "starting", "up", "unhealthy", "stopping", "failed"];
 const SIGNALS: NodeJS.Signals[] = ["SIGINT", "SIGTERM"];
 
 export type SandboxTarget = { family: string; network: string };
 
 export type SandboxInstance = SandboxTarget & {
   instance: string;
-  status: "starting" | "up" | "unhealthy" | "failed";
+  status: "preparing" | "starting" | "up" | "unhealthy" | "stopping" | "failed";
   endpoints?: Record<string, string>;
   software?: string;
   image?: string;
@@ -61,8 +61,8 @@ async function request(
   try {
     const response = await fetch(new URL(path, base), {
       method,
-      body: body && JSON.stringify(body),
-      signal,
+      body: body ? JSON.stringify(body) : null,
+      signal: signal ?? null,
     });
     const json: unknown = await response.json().catch(() => undefined);
     signal?.throwIfAborted();
@@ -103,6 +103,10 @@ async function waitUntilUp(
     if (current.status === "up") return current;
     if (current.status === "failed") {
       throw new Error(`coin-sandbox instance ${instance} failed: ${current.error ?? "no reason"}`);
+    }
+    // Someone else is removing the instance: it will not come up, there is nothing to wait for
+    if (current.status === "stopping") {
+      throw new Error(`coin-sandbox instance ${instance} is being stopped`);
     }
     // Wakes at once when the startup deadline passes: the next request then fails as timed out
     await sleep(intervalMs, undefined, { signal }).catch(() => undefined);

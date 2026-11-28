@@ -1,5 +1,67 @@
 # @domain/entity-account-alias
 
+## 0.3.0
+
+### Minor Changes
+
+- [#24955](https://github.com/LedgerHQ/ledger-live/pull/24955) [`98fb89f`](https://github.com/LedgerHQ/ledger-live/commit/98fb89f13d32e56709360157f71c67ff1eccd458) Thanks [@ysitbon](https://github.com/ysitbon)! - Nest `accountIdFromAliasSelector` and `resolveAccountIdSelector` in `accountAliasSlice` and export them through `getSelectors()`, keeping their slice-state signature.
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @domain/entity-account@0.4.1
+
+## 0.3.0-next.0
+
+### Minor Changes
+
+- [#24955](https://github.com/LedgerHQ/ledger-live/pull/24955) [`98fb89f`](https://github.com/LedgerHQ/ledger-live/commit/98fb89f13d32e56709360157f71c67ff1eccd458) Thanks [@ysitbon](https://github.com/ysitbon)! - Nest `accountIdFromAliasSelector` and `resolveAccountIdSelector` in `accountAliasSlice` and export them through `getSelectors()`, keeping their slice-state signature.
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @domain/entity-account@0.4.1-next.0
+
+## 0.2.1
+
+### Patch Changes
+
+- Updated dependencies [[`5020021`](https://github.com/LedgerHQ/ledger-live/commit/5020021654f743e0e868cb9c8d011adc97f4ed9a)]:
+  - @domain/entity-account@0.4.0
+
+## 0.2.1-next.0
+
+### Patch Changes
+
+- Updated dependencies [[`5020021`](https://github.com/LedgerHQ/ledger-live/commit/5020021654f743e0e868cb9c8d011adc97f4ed9a)]:
+  - @domain/entity-account@0.4.0-next.0
+
+## 0.2.0
+
+### Minor Changes
+
+- [#24392](https://github.com/LedgerHQ/ledger-live/pull/24392) [`934970a`](https://github.com/LedgerHQ/ledger-live/commit/934970adec67ed88f1d546d03b1bb555cbfd128f) Thanks [@renovate-operator-ledger](https://github.com/apps/renovate-operator-ledger)! - chore(deps): update dependency @reduxjs/toolkit to v2.13.0
+
+  - Updated `@reduxjs/toolkit` to `2.13.0`
+
+### Patch Changes
+
+- Updated dependencies [[`934970a`](https://github.com/LedgerHQ/ledger-live/commit/934970adec67ed88f1d546d03b1bb555cbfd128f)]:
+  - @domain/entity-account@0.3.0
+
+## 0.2.0-next.0
+
+### Minor Changes
+
+- [#24392](https://github.com/LedgerHQ/ledger-live/pull/24392) [`934970a`](https://github.com/LedgerHQ/ledger-live/commit/934970adec67ed88f1d546d03b1bb555cbfd128f) Thanks [@renovate-operator-ledger](https://github.com/apps/renovate-operator-ledger)! - chore(deps): update dependency @reduxjs/toolkit to v2.13.0
+
+  - Updated `@reduxjs/toolkit` to `2.13.0`
+
+### Patch Changes
+
+- Updated dependencies [[`934970a`](https://github.com/LedgerHQ/ledger-live/commit/934970adec67ed88f1d546d03b1bb555cbfd128f)]:
+  - @domain/entity-account@0.3.0-next.0
+
 ## 0.1.3
 
 ### Patch Changes

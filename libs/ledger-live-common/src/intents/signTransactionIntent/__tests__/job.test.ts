@@ -17,8 +17,12 @@ import type {
 import { DeviceModelId } from "@ledgerhq/types-devices";
 import { DeviceModelId as DMKDeviceModelId } from "@ledgerhq/device-management-kit";
 import { Observable, of, throwError } from "rxjs";
-import { signTransactionIntentJob } from "../job";
-import type { SignTransactionIntentInput, SignTransactionIntentJobState } from "../types";
+import { signTransactionIntentJob, signTransactionIntentJobWithResult } from "../job";
+import type {
+  SignTransactionIntentInput,
+  SignTransactionIntentJobState,
+  SignTransactionIntentWithResultJobState,
+} from "../types";
 
 jest.mock("../../../account/index", () => ({
   getMainAccount: jest.fn(),
@@ -241,5 +245,106 @@ describe("signTransactionIntentJob", () => {
 
     expect(states).toEqual([{ type: "pending", deviceModelId }]);
     expect(bridge.signOperation).not.toHaveBeenCalled();
+  });
+});
+
+describe("signTransactionIntentJobWithResult", () => {
+  beforeEach(() => {
+    jest.clearAllMocks();
+    jest.mocked(getMainAccount).mockReturnValue(mainAccount);
+  });
+
+  it("should report the signed operation as the job result before completing", async () => {
+    mockGetAccountBridgeResolvedValue(
+      createBridgeMock(of({ type: "signed", signedOperation } as SignOperationEvent)),
+    );
+    const onResult = jest.fn();
+
+    await new Promise<void>((resolve, reject) => {
+      signTransactionIntentJobWithResult({
+        deviceConnectionResult,
+        deviceExtractedContext,
+        input,
+        onResult,
+      }).subscribe({ error: reject, complete: resolve });
+    });
+
+    expect(onResult).toHaveBeenCalledTimes(1);
+    expect(onResult).toHaveBeenCalledWith(signedOperation);
+  });
+
+  it("should report nothing and stay retryable when the user refuses on device", async () => {
+    mockGetAccountBridgeResolvedValue(
+      createBridgeMock(throwError(() => new UserRefusedOnDevice())),
+    );
+    const onResult = jest.fn();
+    const states: SignTransactionIntentWithResultJobState[] = [];
+
+    const subscription = signTransactionIntentJobWithResult({
+      deviceConnectionResult,
+      deviceExtractedContext,
+      input,
+      onResult,
+    }).subscribe(state => states.push(state));
+    await flushPromises();
+
+    expect(onResult).not.toHaveBeenCalled();
+    expect(states.at(-1)).toEqual({ type: "cancelled", retry: expect.any(Function) });
+
+    subscription.unsubscribe();
+  });
+
+  it("should emit a retryable error state instead of erroring when signing fails", async () => {
+    const signingError = new Error("signing failed");
+    mockGetAccountBridgeResolvedValue(createBridgeMock(throwError(() => signingError)));
+    const onResult = jest.fn();
+    const onError = jest.fn();
+    const states: SignTransactionIntentWithResultJobState[] = [];
+
+    const subscription = signTransactionIntentJobWithResult({
+      deviceConnectionResult,
+      deviceExtractedContext,
+      input,
+      onResult,
+    }).subscribe({ next: state => states.push(state), error: onError });
+    await flushPromises();
+
+    expect(onError).not.toHaveBeenCalled();
+    expect(onResult).not.toHaveBeenCalled();
+    expect(states.at(-1)).toEqual({
+      type: "error",
+      error: signingError,
+      retry: expect.any(Function),
+    });
+    expect(subscription.closed).toBe(false);
+
+    subscription.unsubscribe();
+  });
+
+  it("should sign again when the error state retry is called", async () => {
+    const bridge = createBridgeMock(throwError(() => new Error("signing failed")));
+    mockGetAccountBridgeResolvedValue(bridge);
+    const onResult = jest.fn();
+    const states: SignTransactionIntentWithResultJobState[] = [];
+
+    const subscription = signTransactionIntentJobWithResult({
+      deviceConnectionResult,
+      deviceExtractedContext,
+      input,
+      onResult,
+    }).subscribe(state => states.push(state));
+    await flushPromises();
+
+    bridge.signOperation.mockReturnValue(of({ type: "signed", signedOperation }));
+    const errorState = states.at(-1);
+    if (errorState?.type !== "error") throw new Error("expected an error state");
+    errorState.retry();
+    await flushPromises();
+
+    expect(bridge.signOperation).toHaveBeenCalledTimes(2);
+    expect(states.at(-1)).toEqual({ type: "signed", signedOperation });
+    expect(onResult).toHaveBeenCalledWith(signedOperation);
+
+    subscription.unsubscribe();
   });
 });

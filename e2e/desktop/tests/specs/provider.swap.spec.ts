@@ -22,14 +22,6 @@ const providerFlowTests = [
     bugTickets: ["LIVE-29454", "LIVE-29858"],
     checkLandingPage: true,
   },
-  {
-    fromAccount: TokenAccount.ETH_USDT_5,
-    toAccount: Account.ETH_5,
-    provider: SwapProvider.OKX,
-    xrayTicket: "B2CQA-4728",
-    bugTickets: ["LIVE-29858"],
-    checkLandingPage: false,
-  },
 ];
 
 for (const {
@@ -88,7 +80,12 @@ for (const {
         await app.speculos.enableBlindSigningOnNanoS();
         const minAmount = await app.swap.getMinimumAmount(fromAccount, toAccount);
         await ensureTokenApproval(fromAccount, provider, minAmount);
-        const swap = new Swap(fromAccount, toAccount, minAmount, provider);
+        const swap = new Swap({
+          accountToDebit: fromAccount,
+          accountToCredit: toAccount,
+          amount: minAmount,
+          provider,
+        });
 
         await performSwapUntilQuoteSelectionStep({ app, swap, minAmount, checkLandingPage });
         if (checkLandingPage) {

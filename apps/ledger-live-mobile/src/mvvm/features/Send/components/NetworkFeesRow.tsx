@@ -170,8 +170,11 @@ export function NetworkFeesRow({ viewModel, sponsored, sponsoredRentNotice }: Ne
       separator: {
         marginVertical: theme.spacings.s8,
       },
+      infoSheetContent: {
+        paddingBottom: bottomInset,
+      },
     }),
-    [],
+    [bottomInset],
   );
 
   const sendFlowTrackingProperties = useSendFlowTrackingProperties();
@@ -295,7 +298,7 @@ export function NetworkFeesRow({ viewModel, sponsored, sponsoredRentNotice }: Ne
         snapPoints={null}
         backgroundComponent={BottomSheetInfoGradient}
       >
-        <BottomSheetView>
+        <BottomSheetView style={styles.infoSheetContent}>
           <BottomSheetHeader density="compact" />
           <InfoState
             preset="info"

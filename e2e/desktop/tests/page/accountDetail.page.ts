@@ -18,7 +18,7 @@ const CURRENCY_IDS_WITH_ADD_ASSET_BUTTON = new Set([
 // Networks where the native asset is the only one to buy: the app selects it and opens the buy page without showing the asset selector.
 const CURRENCY_IDS_WITHOUT_BUY_ASSET_SELECTOR = new Set([Currency.BTC.id]);
 
-export type EarnOptions = SyncWaitOptions & { asset?: Currency };
+export type EarnOptions = SyncWaitOptions & { asset: Currency };
 
 /** The account page shown when the `accountDetail` flag is on. */
 export class AccountDetailPage extends AppPage {
@@ -72,12 +72,10 @@ export class AccountDetailPage extends AppPage {
   }
 
   @step("Click `Earn` button")
-  async clickEarn({ asset, ...syncOptions }: EarnOptions = {}) {
+  async clickEarn({ asset, ...syncOptions }: EarnOptions) {
     await this.layout.waitForSyncButtonToBeEnabled(syncOptions);
     await this.heroAction("earn").click();
-    await this.pickAssetIfPickerOpens(
-      asset ? this.accountPickerRow(asset) : this.firstAccountPickerRow,
-    );
+    await this.pickAssetIfPickerOpens(this.accountPickerRow(asset));
   }
 
   @step("Click `Send` button")

@@ -121,7 +121,7 @@
     "addressCopied" : "地址已复制",
     "addressCopiedSuspicious" : "复制的地址和剪贴板中的地址不匹配。",
     "experimentalFeature" : "实验性功能",
-    "featureFlags" : "功能标志",
+    "devTools" : "开发工具",
     "ldmkEnabled" : "LDMK 传输",
     "information" : "信息",
     "search" : "搜索...",
@@ -187,6 +187,7 @@
       "FEES" : "费用",
       "OPT_IN" : "选择加入",
       "OPT_OUT" : "选择退出",
+      "OPT_EDIT" : "代币已更新",
       "CLOSE_ACCOUNT" : "关闭账户",
       "BOND" : "绑定",
       "UNBOND" : "解绑",
@@ -340,7 +341,15 @@
     "home" : "首页",
     "refer" : "推荐好友",
     "catalog" : "探索",
-    "recover" : "[L] Recover"
+    "recover" : "[L] Recover",
+    "agents" : "智能体"
+  },
+  "agentIntent" : {
+    "title" : "智能体",
+    "manageAgents" : {
+      "title" : "管理您的智能体",
+      "description" : "让 AI 代理管理您的资产。"
+    }
   },
   "stars" : {
     "tooltip" : "星标账户"
@@ -1950,13 +1959,13 @@
       "continue" : "继续操作，风险自担"
     },
     "info" : {
-      "title" : "自 {{date}} 起，{{device}}™ 将终止通过 Ledger Live™ 支持 {{coinName}}",
-      "subtitle" : "立即升级到较新的 Ledger 设备，以确保可以访问所有 Ledger Live 服务提供商并优化客户服务",
+      "title" : "自 {{date}} 起，{{device}}™ 将终止通过 Ledger Wallet™ 支持 {{coinName}}",
+      "subtitle" : "立即升级到较新的 Ledger 设备，以确保可以访问所有 Ledger Wallet 服务提供商并优化客户服务",
       "reminder" : "不再提醒"
     },
     "error" : {
       "title" : "{{device}}™ 不支持此功能",
-      "subtitle" : "立即升级到较新的 Ledger 设备，以确保可以访问所有最新的 Ledger Live 功能。"
+      "subtitle" : "立即升级到较新的 Ledger 设备，以确保可以访问所有最新的 Ledger Wallet 功能。"
     },
     "update" : "探索您的升级计划",
     "learnMore" : "了解更多",
@@ -2128,6 +2137,14 @@
       "link" : "详细了解 Stellar（恒星）资产",
       "seeTokens" : "显示资产 ({{tokenCount}})",
       "hideTokens" : "隐藏资产 ({{tokenCount}})"
+    },
+    "xrp" : {
+      "title" : "代币",
+      "cta" : "添加代币",
+      "placeholder" : "您可以向您的 {{currencyName}} 账户添加代币。",
+      "link" : "详细了解 XRP Ledger 代币",
+      "seeTokens" : "显示代币 ({{tokenCount}})",
+      "hideTokens" : "隐藏代币 ({{tokenCount}})"
     }
   },
   "subAccounts" : {
@@ -2756,6 +2773,39 @@
       }
     }
   },
+  "receiveAddress" : {
+    "title" : "接收 {{asset}}",
+    "networkLabel" : "{{network}} 网络",
+    "addressDisplayed" : {
+      "title" : "地址已安全显示",
+      "description" : "请验证粘贴或共享后的地址与您的 Ledger 设备上的地址一致。"
+    },
+    "addressVerified" : {
+      "title" : "地址已核实",
+      "description" : "Ledger Wallet 中的地址与您的 Ledger 设备上的地址一致。",
+      "doneCta" : "完成"
+    },
+    "addressMismatch" : {
+      "title" : "此地址与您的 Ledger 不符。",
+      "description" : "请勿使用此地址。您可能正在使用未配置此账户的 Ledger：请连接正确的设备并重新验证。如果仍然不符，请联系 Ledger 客服。",
+      "contactSupportCta" : "联系 Ledger 客服",
+      "closeCta" : "关闭"
+    },
+    "selectAddress" : {
+      "title" : "选择地址"
+    },
+    "addressOptions" : {
+      "transparent" : "公开地址",
+      "shielded" : "私密地址"
+    },
+    "close" : "关闭",
+    "back" : "返回",
+    "error" : {
+      "title" : "无法加载此地址",
+      "description" : "请检查您的互联网连接，然后重试。",
+      "retry" : "重试"
+    }
+  },
   "send" : {
     "title" : "发送",
     "totalSpent" : "总借额",
@@ -2983,7 +3033,13 @@
     "processingTransaction" : "您的交易正在处理中",
     "sign" : {
       "title" : "在您的 Ledger {{wording}} 上继续操作",
-      "description" : "按照安全触摸屏上的指示进行操作。"
+      "description" : "按照安全触摸屏上的指示进行操作。",
+      "cancelled" : {
+        "title" : "交易已取消",
+        "description" : "您拒绝了该交易。您的资金不会受到影响。",
+        "close" : "关闭",
+        "retry" : "重试"
+      }
     },
     "gasOptionsSync" : {
       "warningTitle" : "无法刷新网络费用",
@@ -3019,18 +3075,19 @@
       "insufficientFunds" : "您没有足够的 {{feeCurrency}} 来支付数额和 {{provider}} 能量租赁费用。"
     },
     "sponsoredRentSignature" : {
-      "title" : "第 1 步，共 2 步",
+      "title" : "批准网络费用赞助",
       "strategy" : "能量租赁 - {{provider}}",
       "crafting" : "正在准备能量租赁…",
       "submitting" : "正在提交能量租赁付款…",
-      "feeLabel" : "租赁费用"
+      "feeLabel" : "租赁费用",
+      "terms" : "签署此交易，即表示您同意 <0>{{provider}} 的条款与条件</0>。"
     },
     "sponsoredTransferSignature" : {
-      "title" : "第 2 步，共 2 步"
+      "title" : "确认转账"
     },
     "sponsoredPolling" : {
-      "title" : "正在等待能量交付",
-      "waiting" : "{{provider}} 正在交付租用的能量。此过程可能需要片刻。",
+      "title" : "您的能量正在交付中",
+      "waiting" : "此过程最多可能需要 2 分钟。",
       "elapsed" : "已用时间：{{time}}"
     },
     "sponsoredFailure" : {
@@ -3081,12 +3138,6 @@
         "subtitle" : "隐蔽",
         "pendingNoticeTitle" : "资金到期中",
         "pendingNotice" : "部分隐蔽资金尚未成熟，暂时可能无法支出。"
-      },
-      "aleoPublic" : {
-        "title" : "公开余额"
-      },
-      "aleoPrivate" : {
-        "title" : "私密余额"
       },
       "zeroBalance" : {
         "warning" : "无可用余额"
@@ -4274,6 +4325,126 @@
           "broadcastError" : "您的交易可能已失败。请稍候片刻并在重试之前查看交易记录。"
         }
       }
+    }
+  },
+  "xrp" : {
+    "addToken" : {
+      "title" : "添加代币",
+      "steps" : {
+        "token" : {
+          "title" : "代币",
+          "selectLabel" : "选择代币",
+          "empty" : "没有可添加至此账户的代币。",
+          "loadError" : "无法加载代币列表。",
+          "info" : "添加代币将发送一笔交易以支付网络费用，并在您持有该代币期间保留瑞波币 (XRP)。此交易将出现在您的交易记录中。"
+        },
+        "settings" : {
+          "title" : "设置",
+          "limit" : "信任上限",
+          "max" : "最高",
+          "limitInfo" : "信任额度是您的账户所能接受持有的最大 {{token}} 数量。开启 Max（最大值）以使用 XRP Ledger 允许的最高限额。",
+          "maximum" : "最大值"
+        },
+        "review" : {
+          "title" : "核对",
+          "token" : "代币",
+          "issuer" : "发行方",
+          "issuerFee" : "发行方费用",
+          "issuerFeeTooltip" : "发行方从持有人之间每笔转账中收取的比例。",
+          "issuerFeeError" : "无法提取发行方费用详情。",
+          "notEnoughReserve" : "您需要至少有 {{minimumAmount}} 可用才能添加此代币。",
+          "receive" : "接收"
+        },
+        "connectDevice" : {
+          "title" : "设备"
+        },
+        "confirmation" : {
+          "title" : "确认",
+          "success" : {
+            "title" : "添加 {{token}} 的请求已发送",
+            "text" : "交易一经网络确认即会生效。",
+            "cta" : "查看详情"
+          },
+          "broadcastError" : "您的交易可能失败了。请稍等片刻后检查交易记录，然后重试。"
+        }
+      }
+    },
+    "tokenSettings" : {
+      "title" : "代币设置",
+      "currentLimitZero" : "您的限额为 0：您无法接收该代币。",
+      "limitBelowBalance" : "您的余额 ({{balance}}) 已超出此限额。在您的余额低于此限额之前，您将无法接收此代币。",
+      "steps" : {
+        "confirmation" : {
+          "success" : {
+            "title" : "更新 {{token}} 的请求已发送"
+          }
+        }
+      }
+    },
+    "manageAssets" : {
+      "cta" : "管理",
+      "title" : "管理资产",
+      "tokenType" : "代币类型",
+      "tokenTypeTooltip" : "信任线 (IOU) 设有余额上限和余额流转设置。多用途代币 (MPT) 没有任何设置。",
+      "iou" : "信任线 (IOU)",
+      "mpt" : "多用途代币",
+      "transferFee" : "转账费用",
+      "lockedAmount" : "锁定数额",
+      "balanceLimit" : "余额限制",
+      "ripplingTooltip" : "余额流转功能允许其他用户的付款在货币代码相同的代币之间转移您的余额。",
+      "activated" : "已激活",
+      "deactivated" : "停用",
+      "edit" : "编辑",
+      "delete" : "删除"
+    },
+    "manageToken" : {
+      "title" : "管理代币",
+      "settings" : {
+        "title" : "高端设置",
+        "description" : "更改信任限额或 Rippling 设置。"
+      },
+      "remove" : {
+        "description" : "关闭此信任线并取回其瑞波币 (XRP) 准备金。"
+      }
+    },
+    "removeToken" : {
+      "title" : "移除代币",
+      "pending" : "等待移除",
+      "frozen" : "该代币已被冻结",
+      "steps" : {
+        "review" : {
+          "unlocked" : "{{amount}} 将被解锁并可再次使用。",
+          "info" : "您将无法再接收该代币。您稍后可重新添加该代币（{{amount}} 将再次被锁定）。",
+          "balanceLeft" : "您仍持有 {{balance}}。请在移除此代币前发送您的余额。",
+          "send" : "发送"
+        },
+        "connectDevice" : {
+          "limitZero" : "您的设备将显示信任额度为 0。这就是 XRP Ledger 移除代币的方式。"
+        },
+        "confirmation" : {
+          "success" : {
+            "title" : "移除 {{token}} 的请求已发送"
+          }
+        }
+      }
+    },
+    "tokenAccount" : {
+      "trustLimit" : "信任上限",
+      "trustLimitTooltip" : "您的账户可持有的该代币的最大数量。"
+    },
+    "rippling" : {
+      "label" : "余额流转",
+      "on" : "开启",
+      "off" : "关闭",
+      "warning" : "开启此功能将允许其他用户的付款在具有相同货币代码的代币之间转移您的余额。仅在充分了解其作用和风险时开启此功能。"
+    },
+    "send" : {
+      "issuerFee" : "发行方费用"
+    },
+    "receive" : {
+      "addToken" : "添加代币",
+      "addTokenFirst" : "若要接收 XRP Ledger 代币，请先将其添加到您的账户中。",
+      "tokenNotHeld" : "您的账户不再持有 {{token}}。请在接收前重新将其添加。"
     }
   },
   "stellar" : {
@@ -5524,7 +5695,14 @@
       },
       "devTools" : {
         "rowTitle" : "开发工具",
-        "rowDesc" : "打开 DevTools 开发工具界面（功能标志和开发者工具面板）。"
+        "rowDesc" : "打开 DevTools 开发工具界面（功能标志和开发者工具面板）。",
+        "appToggles" : {
+          "hideNightlyLayer" : {
+            "label" : "隐藏预发布版叠加层",
+            "description" : "隐藏每晚构建版本上显示的 “PRERELEASE” 水印，例如为了截取干净的屏幕截图。",
+            "lockedReason" : "该叠加层仅在每晚构建版本中显示。"
+          }
+        }
       },
       "brazeTools" : {
         "title" : "Braze 工具",
@@ -6886,6 +7064,7 @@
       "claimRewardCompound" : "将接收奖励的验证者",
       "compoundReward" : "将接收奖励的验证者",
       "optIn" : "接收方",
+      "changeTrust" : "接收方",
       "tokenAssociate" : "接收方",
       "nominate" : "验证者",
       "stake" : "验证者",
@@ -7064,6 +7243,9 @@
         "expiresAt" : "到期时间",
         "expiresIn" : "剩余时间",
         "amount" : "数额",
+        "unknownToken" : "未知代币",
+        "instrumentId" : "资产 ID",
+        "instrumentAdmin" : "资产管理员",
         "transaction" : "交易",
         "viewTransaction" : "查看交易",
         "action" : "操作",
@@ -7222,6 +7404,9 @@
     "AccountAwaitingSendPendingOperations" : {
       "title" : "此账户有一个待处理的操作",
       "description" : "请等待操作完成。"
+    },
+    "TokenNonTransferable" : {
+      "title" : "此代币无法发送。其智能合约不允许转账。"
     },
     "AccountNameRequired" : {
       "title" : "需要一个账户名",
@@ -7725,6 +7910,14 @@
       "title" : "网络错误",
       "description" : "确保您已连接到互联网，然后重试。"
     },
+    "WithdrawApiError" : {
+      "title" : "您的提取未能发送",
+      "description" : "您的永续合约 (Perps) 余额未扣除任何资金。关闭并使用新报价重试。"
+    },
+    "WithdrawSubmitUnknownOutcomeError" : {
+      "title" : "我们无法确认您的提取",
+      "description" : "该提取可能仍会通过。请在您重试前查看互换历史记录。"
+    },
     "WrongDeviceForAccount" : {
       "title" : "出错了",
       "description" : "请检查您的 Ledger 设备是否设置了与所选账户关联的恢复短语或密码短语。"
@@ -7892,6 +8085,9 @@
     "TezosStakeAmountTooSmall" : {
       "title" : "此数额过小，无法质押"
     },
+    "TezosDelegateRefusesStaking" : {
+      "title" : "您的验证者不接受质押。更改验证者以进行质押。"
+    },
     "RecommendSubAccountsToEmpty" : {
       "title" : "请先清空所有子账户"
     },
@@ -7985,7 +8181,8 @@
       "description" : "出错了，请重试；如有疑问，请联系 Ledger 客服。"
     },
     "EthAppPleaseEnableContractData" : {
-      "title" : "在以太坊应用程序中启用盲签名或合约数据"
+      "title" : "在以太坊应用程序中启用盲签名或合约数据",
+      "description" : "在您的设备上，打开以太坊应用的设置，启用盲签名，然后重试。"
     },
     "CeloAppPleaseEnableContractData" : {
       "title" : "请在 Celo 应用程序设置中启用合约数据"
@@ -7995,6 +8192,96 @@
     },
     "XrpDestinationTagRequired" : {
       "title" : "此接收方需要填写目标标签"
+    },
+    "XrpTokenStandardNotEnabled" : {
+      "title" : "暂不支持该代币类型"
+    },
+    "XrpAmountPrecisionExceeded" : {
+      "title" : "数额的位数过多",
+      "description" : "XRP Ledger 代币最多接受 16 位有效数字。"
+    },
+    "XrpTrustLimitZero" : {
+      "title" : "额度必须大于 0",
+      "description" : "如要停止持有该代币，请改为将其移除。"
+    },
+    "XrpTokenFrozen" : {
+      "title" : "代币已冻结",
+      "description" : "该代币的发行方已将其冻结。"
+    },
+    "XrpTokenNotAuthorized" : {
+      "title" : "您的账户未获批准",
+      "description" : "该代币的发行方尚未批准您的账户持有该代币。"
+    },
+    "XrpTokenCannotReceive" : {
+      "title" : "此接收方无法接收此代币",
+      "description" : "接收者可能需要先添加该代币，或者发行方不允许此项转账。"
+    },
+    "XrpTokenAmountNotDeliverable" : {
+      "title" : "无法交付此数额",
+      "description" : "接收者的限额或发行方的转账费用不允许进行该交易。请尝试较小的金额。"
+    },
+    "XrpTokenOptInRefused" : {
+      "title" : "发行方拒绝了此请求",
+      "description" : "发行方不接受该代币的新持有者，或者该代币不存在。"
+    },
+    "XrpTransactionWouldFail" : {
+      "title" : "此交易将会失败",
+      "description" : "XRP Ledger 因 {{code}} 拒绝了该交易。"
+    },
+    "XrpUnsupportedIntent" : {
+      "title" : "不支持此交易"
+    },
+    "XrpReserveIncrease" : {
+      "title" : "在添加此代币时，您的账户中的 {{amount}} 将被锁定。",
+      "description" : "您将在移除该代币时将其取回。"
+    },
+    "XrpAccountNotActivated" : {
+      "title" : "您的账户尚未激活",
+      "description" : "接收至少 {{amount}} 以激活该账户并添加此代币。此金额涵盖账户激活以及为该代币锁定的瑞波币 (XRP)。"
+    },
+    "XrpTrustLimitTooHigh" : {
+      "title" : "该限额已超出最大值",
+      "description" : "使用 Max 设置最高限额。"
+    },
+    "XrpTrustSetUnchanged" : {
+      "title" : "这些设置已生效",
+      "description" : "修改限额或余额流转设置，即可更新此代币。"
+    },
+    "XrpRecipientNotActivated" : {
+      "title" : "该账户尚未激活。",
+      "description" : "无法接收代币。"
+    },
+    "XrpRecipientTokenNotAdded" : {
+      "title" : "此接收者目前还无法接收此代币",
+      "description" : "请让对方先添加该代币。"
+    },
+    "XrpRecipientLimitTooLow" : {
+      "title" : "接收方限额过低",
+      "description" : "对方最多只能接收 {{maxAmount}} 个该代币。"
+    },
+    "XrpSendToIssuer" : {
+      "title" : "发送至代币的发行方",
+      "description" : "这些代币将被销毁，且不会记入任何人的账户。"
+    },
+    "XrpOptOutBalanceNotZero" : {
+      "title" : "您此代币的余额必须为 0",
+      "description" : "在您移除该代币之前，请将其全部发送。"
+    },
+    "XrpOptOutTokenInEscrow" : {
+      "title" : "此代币的一部分处于托管中",
+      "description" : "托管结束或取消后，请移除该代币。"
+    },
+    "XrpOptOutTokenFrozen" : {
+      "title" : "您无法移除 {{assetCode}}",
+      "description" : "该代币的发行方已在您的账户中将其冻结。"
+    },
+    "XrpOptOutIncomplete" : {
+      "title" : "此代币无法移除",
+      "description" : "XRP Ledger 会将其连同该账户锁定的瑞波币 (XRP) 一起保留在您的账户中。"
+    },
+    "XrpReserveRelease" : {
+      "title" : "为该代币锁定的 {{amount}} 将被释放。",
+      "description" : "移除该代币后，您即可将其花费。"
     },
     "InvalidExplorerResponse" : {
       "title" : "{{currencyName}} 浏览器的响应无效"
@@ -8126,6 +8413,10 @@
     },
     "SolanaTxConfirmationTimeout" : {
       "title" : "您的交易可能失败了。请稍等片刻后检查交易记录，然后重试。"
+    },
+    "SolanaTxBlockhashExpired" : {
+      "title" : "交易已过期",
+      "description" : "网络已不再接受此交易。请重试以创建新交易。"
     },
     "SolanaRecipientMemoIsRequired" : {
       "title" : "接收方地址需附加备忘标签"
@@ -8526,6 +8817,22 @@
     "SuiAddressBalanceAppUpdateRequired" : {
       "title" : "更新您的 Sui 应用程序",
       "description" : "您的 Ledger Sui 应用程序无法签署来自您 SUI 地址余额的转账。在您的 Ledger 设备上更新 Sui 应用程序并重试。"
+    },
+    "SuiRawTransactionInvalid" : {
+      "title" : "无法读取的 Sui 交易",
+      "description" : "该应用程序发送了 Ledger Wallet™ 无法读取的 Sui 交易。请通过该应用程序重试，或联系其支持团队。"
+    },
+    "SuiRawTransactionSenderMismatch" : {
+      "title" : "错误的 Sui 账户",
+      "description" : "此交易是为另一个 Sui 账户准备的。请选择与该应用程序连接的账户并重试。"
+    },
+    "SuiRawTransactionResolutionFailed" : {
+      "title" : "无法准备 Sui 交易",
+      "description" : "请检查该交易使用的资产是否仍然存在，以及账户是否能够支付网络费用，然后通过该应用程序重试。"
+    },
+    "SuiSponsoredTransactionBroadcastUnsupported" : {
+      "title" : "受赞助的 Sui 交易",
+      "description" : "此交易的网络费用由赞助方支付，因此 Ledger Wallet 无法将其发送至网络。该应用程序需要自行发送该交易。如果此情况持续发生，请联系该应用程序的支持团队。"
     },
     "NotEnoughBalanceForUnstaking" : {
       "message" : "您目前的可用（非质押）余额为 {{currentBalance}}，不足以支付解除质押 {{assetName}} 的网络费用。",
@@ -9625,6 +9932,74 @@
     "description" : "此账户与永续合约交易相关。此账户不支持交易操作",
     "cta" : "打开永续合约 (Perps)"
   },
+  "predictions" : {
+    "binding" : {
+      "preparing" : "正在准备签署",
+      "title" : "在您的 {{productName}} 上确认账户所有权",
+      "description" : "按照安全屏幕上的说明进行操作。",
+      "settingUp" : {
+        "title" : "设置您的交易账户"
+      },
+      "setUp" : {
+        "created" : "交易账户已创建",
+        "found" : "已找到交易账户",
+        "description" : "您的交易账户已准备就绪，可以开始使用。",
+        "continue" : "继续"
+      },
+      "mismatch" : {
+        "title" : "此签署与该账户不一致",
+        "description" : "请连接持有此账户的 Ledger，若您使用了密码短语，请使用相同的密码短语，然后重试。"
+      },
+      "setupFailed" : {
+        "title" : "无法设置您的交易账户",
+        "failed-deploy" : "MoonPay 无法部署您的交易钱包。",
+        "failed-permission" : "MoonPay 无法设置您的交易钱包权限。",
+        "timeout" : "设置用时过长。",
+        "unavailable" : "无法连接至 MoonPay。",
+        "unknown" : "进行设置时出现错误。"
+      }
+    },
+    "onboarding" : {
+      "intro" : {
+        "title" : "就未来事件进行交易",
+        "subtitle" : "现在，您可以访问全球最大的预测市场，并针对事件结果进行交易。提供方 MoonPay。",
+        "items" : {
+          "polymarket" : {
+            "title" : "在 Ledger Wallet 中访问 Polymarket",
+            "subtitle" : "现可在 Ledger Wallet 中使用"
+          },
+          "markets" : {
+            "title" : "体育、科技、加密货币、天气、政治",
+            "subtitle" : "以及更多，探索所有市场"
+          },
+          "clearSign" : {
+            "title" : "全部透明签名",
+            "subtitle" : "您可自定义并明文签名交易数额"
+          }
+        },
+        "discover" : "探索预测",
+        "learnMore" : "了解更多"
+      },
+      "terms" : {
+        "title" : "条款和条件",
+        "body" : "预测市场具有投机性，伴随重大风险，且可能不适合所有用户。在这些市场中进行交易涉及重大风险，包括：资金完全损失（头寸可能会失去其全部价值）；市场与决议风险（结果根据每个市场的规则进行结算，这可能与您的预期不符）；流动性风险（您可能无法以期望的价格出售头寸，甚至完全无法出售）；以及智能合约风险（代码漏洞）。在继续操作之前，请仔细评估这些风险并了解每个市场的运作方式。请参阅 <termsLink>使用条款</termsLink> 了解更多信息。",
+        "checkbox" : "您确认已阅读并理解上述免责声明，并接受在预测市场上进行交易的风险。",
+        "cta" : "同意并继续"
+      },
+      "consent" : {
+        "title" : "通过 MoonPay 在 Polymarket 上进行明文签署交易",
+        "description" : "选择一个 Ledger Wallet 地址来签署您的交易并提现您的预测余额。",
+        "bullets" : {
+          "dedicatedWallet" : "专用交易钱包：MoonPay Trade 会专门为您的 Polymarket 活动创建一个钱包。仅存入您计划进行交易的资金。不支持直接登录 Polymarket。",
+          "secureSigning" : "安全签署：每项交易指令均使用您选择的 Ledger Wallet 地址进行明文签署。",
+          "withdraw" : "随时提现：随时将您的交易余额转回您的 Ledger Wallet。"
+        },
+        "checkbox" : "继续操作即表示您同意创建一个 MoonPay Trade 钱包地址，并授权所选的 Ledger Wallet 地址签署交易指令，以及在您提现时接收您的资金。",
+        "cta" : "继续",
+        "footer" : "加密货币交易服务由第三方提供商 MoonPay 提供。Ledger 不提供任何建议或推荐。"
+      }
+    }
+  },
   "portfolio" : {
     "title" : "首页",
     "today" : "今天",
@@ -9655,6 +10030,10 @@
     "borrow" : {
       "title" : "贷款",
       "description" : "借入稳定币"
+    },
+    "predictions" : {
+      "title" : "预测",
+      "description" : "布局未来"
     }
   },
   "marketBanner" : {
@@ -10112,8 +10491,8 @@
       },
       "amount" : {
         "signingTime" : {
-          "label" : "签署时间",
-          "description" : "您的 Ledger 签署设备批准该交易使用的每条记录。从您的私密余额中发送更多资金可能会使用更多记录，并需要更长时间。"
+          "label" : "预估时间",
+          "description" : "从您的私密余额中发送更多资金可能会使用更多记录，并且每条记录都会增加处理时间。较大的数额需要更长的确认时间。"
         }
       },
       "mandatoryPrivateSync" : {
@@ -10546,6 +10925,7 @@
       "copied" : "已复制",
       "edit" : "编辑",
       "delete" : "删除",
+      "share" : "分享",
       "networkTag" : "{{name}} 网络"
     },
     "detailActions" : {
@@ -10655,11 +11035,18 @@
     }
   },
   "accountDetail" : {
+    "analyticsIntroduction" : {
+      "title" : "在寻找您的账户表现吗？",
+      "description" : "您的所有表现数据现在都位于“数据分析”页面。",
+      "cta" : "前往“数据分析”",
+      "dismiss" : "忽略“数据分析”介绍"
+    },
     "header" : {
       "settings" : "账户设置"
     },
     "assets" : {
-      "title" : "资产"
+      "title" : "资产",
+      "add" : "添加"
     }
   },
   "assetDetails" : {
@@ -11186,7 +11573,14 @@
     "depositDetailTitle" : "充值详情",
     "depositAmountLabel" : "存入数额",
     "depositReceiveLabel" : "接收账户",
-    "depositCTA" : "存款"
+    "depositCTA" : "存款",
+    "withdrawTitle" : "通过 SwapKit 提取",
+    "withdrawSubtitle" : "我们的服务提供商 SwapKit 在单笔交易中管理您的互换和提取——全部由您的 Ledger 设备保障安全。",
+    "withdrawDetailTitle" : "提取详情",
+    "withdrawReceiveLabel" : "接收账户",
+    "networkFeesLabel" : "网络费用",
+    "totalDebitedLabel" : "扣款总额",
+    "withdrawCTA" : "提取"
   },
   "perpsDeposit" : {
     "title" : "存款",
@@ -11196,9 +11590,33 @@
     "selectCurrencyAccount" : "{{accountName}} · <balance>{{counterValue}}</balance>",
     "selectCurrencyNoAccount" : "无账户",
     "review" : "审核",
+    "learnMore" : "了解更多",
     "formErrors" : {
+      "offline" : "互联网连接问题。",
       "amountExceedsBalance" : "余额不足",
+      "feeAccountEmpty" : "您需要更多 {{ticker}} 以支付网络费用。",
+      "notEnoughFees" : "您需要 {{fees}} {{ticker}} 以支付网络费用。",
+      "amountTooLow" : "输入至少 {{amount}} {{ticker}} 并重试。",
+      "amountTooHigh" : "进入 {{amount}} {{ticker}} 或更少并重试。",
+      "feeEstimationFailed" : "我们目前无法计算费用。您的加密货币账户可能未同步。重启 Ledger Wallet 应用程序并重试。",
+      "accountNotReady" : "该账户尚未准备好进行发送。在您的账户中将其打开，然后重试。",
+      "seiEvmUnlinked" : "在进行互换前必须关联 SEI EVM 账户。",
+      "aleoPrivateBalance" : "互换仅适用于公开的 {{ticker}}。您的资金目前是私密的，无法进行互换。",
+      "tezosUnrevealed" : "您的 Tezos 账户尚未激活。请在互换前发送小额 XTZ。",
+      "dotMinimumBalance" : "请在互换后保留最低 {{minValue}} DOT 的余额。",
+      "xlmMinimumBalance" : "请在互换后保留最低 {{minValue}} XLM 的余额。",
       "quoteUnavailable" : "无法从 {{provider}} 获取报价，请尝试其他资产或稍后再试。"
+    },
+    "details" : {
+      "notEnoughFees" : {
+        "title" : "{{ticker}} 不足",
+        "description" : "您的账户 {{account}} 余额不足，无法支付网络费用。"
+      },
+      "amountTooLow" : {
+        "title" : "{{ticker}} 所需的最低额度",
+        "description" : "报价所需的最低价值为 {{amount}} {{ticker}}"
+      },
+      "buy" : "买入 {{ticker}}"
     }
   },
   "actionMenuDialog" : {
@@ -11222,8 +11640,15 @@
       "currenciesUnavailable" : "我们无法加载可供您提取至的资产。请稍后重试。"
     }
   },
+  "perpsWithdrawSign" : {
+    "a11yTitle" : "提取签署"
+  },
   "perpsDepositSign" : {
     "a11yTitle" : "存款签署",
+    "genericError" : {
+      "title" : "出错了",
+      "description" : "请稍后重试或选择其他资产。"
+    },
     "terms" : "通过签署此交易，我接受 <termsLink>SwapKit by NEAR Intents 条款与条件</termsLink>"
   },
   "perpsTransactionSigned" : {
@@ -11234,6 +11659,17 @@
   "perpsTransactionStatus" : {
     "dialogTitle" : "交易详情",
     "title" : "为永续合约提供资金",
-    "currencies" : "{{sendTicker}} → {{receiveTicker}}"
+    "withdrawTitle" : "提取",
+    "currencies" : "{{sendTicker}} → {{receiveTicker}}",
+    "returnToPerps" : "返回永续合约 (Perps)"
+  },
+  "accountAnalytics" : {
+    "assets" : "资产筛选",
+    "accounts" : "账户筛选",
+    "allAssets" : "所有资产",
+    "allAccounts" : "所有账户",
+    "error" : "无法加载分析数据。请重试。",
+    "unavailable" : "该选择无可用数据。",
+    "noResults" : "无结果"
   }
 }

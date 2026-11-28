@@ -7,6 +7,7 @@ export interface SideBarViewModel {
   readonly earnLabel: string;
   readonly isCardDisabled: boolean;
   readonly isPayTabEnabled: boolean;
+  readonly isAgentsEnabled: boolean;
   readonly isAccountsDisabled: boolean;
   readonly handleCollapsedChange: (collapsed: boolean) => void;
   /** Current active sidebar value. Empty string when no item matches. */

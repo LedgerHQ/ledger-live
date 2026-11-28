@@ -177,10 +177,92 @@ export type GetTransactionStatusResponse = {
   toAccountId?: string;
   sentAmount?: string;
   receivedAmount?: string;
+  /** Atomic, in the sender main account currency. */
   feesAmount?: string;
+  /** Atomic, in the receiving account currency: fees taken from the payout (perps withdraw). */
+  payoutFeesAmount?: string;
   operationHash?: string;
   createdAt?: number;
   providerRequired?: boolean;
+};
+
+export const TRONIFY_IS_ENERGY_DELIVERED_METHOD = "custom.exchange.tronify.isEnergyDelivered";
+
+export type IsTronifyEnergyDeliveredParams = {
+  /** Wallet API id of the TRC-20 token account that sends the swap. */
+  fromAccountId: string;
+  /** Energy the transfer needs, as a positive integer decimal string. */
+  energyNeeded: string;
+};
+
+export type IsTronifyEnergyDeliveredResult = {
+  /**
+   * True once the energy available on the TRON account covers `energyNeeded`. It does not tie the
+   * energy to a rent order, and does not mean the swap is ready: the transfer can still owe TRX for
+   * bandwidth.
+   */
+  delivered: boolean;
+};
+
+export const TRONIFY_GET_QUOTE_METHOD = "custom.exchange.tronify.getQuote";
+export const TRONIFY_CREATE_RENT_RECORD_METHOD = "custom.exchange.tronify.createRentRecord";
+export const TRONIFY_UPLOAD_HASH_METHOD = "custom.exchange.tronify.uploadHash";
+
+/** The asset Tronify rent is paid in. */
+export type TronifyFeeAsset = {
+  type: string;
+  assetReference?: string;
+  unit: { name: string; code: string; magnitude: number };
+};
+
+/** The TRC-20 transfer the energy is rented for. */
+export type TronifyTransferParams = {
+  /** Wallet API id of the TRC-20 token account that sends the swap. */
+  fromAccountId: string;
+  /** The provider's pay-in address. */
+  recipient: string;
+  /** Amount sent, in the token's base units, as a positive integer decimal string. */
+  amount: string;
+};
+
+export type GetTronifyQuoteParams = TronifyTransferParams;
+
+export type GetTronifyQuoteResult = {
+  feeAsset: TronifyFeeAsset;
+  /** Rent, in `feeAsset` base units, as a decimal string. */
+  value: string;
+  /** The TRX burn the rent replaces, in sun, as a decimal string. */
+  originalValue: string;
+};
+
+export type CreateTronifyRentRecordParams = TronifyTransferParams & {
+  /** The quote `value` the user approved, in `feeAsset` base units. The order is bound to it. */
+  approvedFee: string;
+};
+
+export type CreateTronifyRentRecordResult = {
+  orderId: string;
+  /** Unsigned rent payment (`raw_data_hex`). Sign it with `transaction.signRaw` and
+   * `broadcast: false`: Tronify broadcasts it. */
+  rawTransaction: string;
+  /** `txID` of the rent payment. */
+  paymentTxId: string;
+  payCoinCode: string;
+  payCoinAmt: string;
+  /** Energy rented for the transfer, to pass to `isTronifyEnergyDelivered`. */
+  energyNeeded: string;
+};
+
+export type UploadTronifyHashParams = {
+  /** Same account as in `createTronifyRentRecord`. */
+  fromAccountId: string;
+  orderId: string;
+  /** `signedTransactionHex` returned by `transaction.signRaw`. */
+  signedTransactionHex: string;
+};
+
+export type UploadTronifyHashResult = {
+  paymentTxId: string;
 };
 
 export type TradeMethod = "fixed" | "float";

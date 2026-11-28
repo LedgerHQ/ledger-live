@@ -68,7 +68,6 @@ import {
 } from "./Screen/DeviceDeprecationScreen";
 import { DeviceModelId, getDeviceModel } from "@ledgerhq/devices";
 import { FlowName, getCurrencyName, getFlowName } from "./utils";
-import { rnBleTransportIdentifier, rnHidTransportIdentifier } from "@ledgerhq/live-dmk-mobile";
 import { useFeature } from "@features/platform-feature-flags";
 import { BootloaderDiscovered } from "LLM/features/OsUpdate/components/BootloaderDiscovered";
 
@@ -399,7 +398,7 @@ export function DeviceActionDefaultRendering<R, H extends Status, P>({
   if (llmNanoSDeprecation?.enabled) {
     const flowName = getFlowName(location, request);
     const isToDeprecate = [FlowName.send, FlowName.receive, FlowName.staking].includes(flowName);
-    if (currencyName == "Aptos" || currencyName == "Hedera") {
+    if (llmNanoSDeprecation.params?.currencies?.includes(currencyName)) {
       if (device?.modelId === DeviceModelId.nanoS && isToDeprecate) {
         return (
           <DeviceDeprecationScreen
@@ -716,16 +715,7 @@ export function DeviceActionDefaultRendering<R, H extends Status, P>({
 
   if (deviceInfo && deviceInfo.isBootloader) {
     if (isLdmkOsUpdatesEnabled && device) {
-      return (
-        <BootloaderDiscovered
-          device={{
-            id: device.deviceId,
-            name: device.deviceName ?? null,
-            deviceModelId: device.modelId,
-            transport: device.wired ? rnHidTransportIdentifier : rnBleTransportIdentifier,
-          }}
-        />
-      );
+      return <BootloaderDiscovered device={device} />;
     }
     return renderBootloaderStep({ onAutoRepair: onAutoRepair!, t });
   }

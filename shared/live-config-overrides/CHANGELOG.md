@@ -1,0 +1,25 @@
+# @shared/live-config-overrides
+
+## 0.3.0
+
+### Minor Changes
+
+- [#24958](https://github.com/LedgerHQ/ledger-live/pull/24958) [`d5ff357`](https://github.com/LedgerHQ/ledger-live/commit/d5ff357b5df4d890cd22574d1cabd96168d0aa84) Thanks [@ysitbon](https://github.com/ysitbon)! - Nest `liveConfigOverridesSelector` and `hasLiveConfigOverridesSelector` in the `liveConfigOverrides` slice
+
+## 0.3.0-next.0
+
+### Minor Changes
+
+- [#24958](https://github.com/LedgerHQ/ledger-live/pull/24958) [`d5ff357`](https://github.com/LedgerHQ/ledger-live/commit/d5ff357b5df4d890cd22574d1cabd96168d0aa84) Thanks [@ysitbon](https://github.com/ysitbon)! - Nest `liveConfigOverridesSelector` and `hasLiveConfigOverridesSelector` in the `liveConfigOverrides` slice
+
+## 0.2.0
+
+### Minor Changes
+
+- [#24415](https://github.com/LedgerHQ/ledger-live/pull/24415) [`4db45b9`](https://github.com/LedgerHQ/ledger-live/commit/4db45b933feabde39ce1bc98796e118eae10f47d) Thanks [@LucasWerey](https://github.com/LucasWerey)! - Add the coin-config DevTool on desktop and mobile to override LiveConfig values. The overrides slice moves to the new @shared/live-config-overrides package, and mobile now keeps the overrides across restarts
+
+## 0.2.0-next.0
+
+### Minor Changes
+
+- [#24415](https://github.com/LedgerHQ/ledger-live/pull/24415) [`4db45b9`](https://github.com/LedgerHQ/ledger-live/commit/4db45b933feabde39ce1bc98796e118eae10f47d) Thanks [@LucasWerey](https://github.com/LucasWerey)! - Add the coin-config DevTool on desktop and mobile to override LiveConfig values. The overrides slice moves to the new @shared/live-config-overrides package, and mobile now keeps the overrides across restarts

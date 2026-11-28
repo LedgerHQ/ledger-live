@@ -1,5 +1,12 @@
 import React from "react";
-import { TileButton } from "@ledgerhq/lumen-ui-react";
+import {
+  Card,
+  CardContent,
+  CardContentTitle,
+  CardHeader,
+  CardLeading,
+  type IconProps,
+} from "@ledgerhq/lumen-ui-react";
 import { ArrowUp, Check, Copy, PenEdit, Share, Trash } from "@ledgerhq/lumen-ui-react/symbols";
 import { useTranslation } from "@shared/i18n";
 
@@ -15,6 +22,48 @@ type ContactAddressDetailActionsProps = Readonly<{
   canDelete?: boolean;
 }>;
 
+type ActionCardProps = Readonly<{
+  icon: React.ComponentType<Omit<IconProps, "children">>;
+  label: string;
+  disabled?: boolean;
+  onClick?: () => void;
+  isDestructive?: boolean;
+  testId: string;
+}>;
+
+function ActionCard({
+  icon: Icon,
+  label,
+  disabled = false,
+  onClick,
+  isDestructive = false,
+  testId,
+}: ActionCardProps): React.ReactNode {
+  const destructiveClassName = isDestructive && !disabled ? "text-error" : undefined;
+
+  return (
+    <Card
+      type="interactive"
+      disabled={disabled}
+      onClick={onClick}
+      title={label}
+      className="min-w-0"
+      data-testid={testId}
+    >
+      <CardHeader>
+        <CardLeading className="min-w-0">
+          <Icon size={24} disabled={disabled} className={destructiveClassName} />
+          <CardContent className="min-w-0">
+            <CardContentTitle className={destructiveClassName ? "truncate text-error" : "truncate"}>
+              {label}
+            </CardContentTitle>
+          </CardContent>
+        </CardLeading>
+      </CardHeader>
+    </Card>
+  );
+}
+
 export function ContactAddressDetailActions({
   hasCopied,
   onCopy,
@@ -29,53 +78,43 @@ export function ContactAddressDetailActions({
   const { t } = useTranslation();
 
   return (
-    <div className={`grid w-full gap-8 ${onShare ? "grid-cols-5" : "grid-cols-4"}`}>
-      <TileButton
+    <div className="grid w-full grid-cols-2 gap-8">
+      <ActionCard
         icon={ArrowUp}
-        isFull
+        label={t("contacts.addressDetail.send")}
         disabled={!canSend}
         onClick={onSend}
-        data-testid="contacts-address-detail-send"
-      >
-        {t("contacts.addressDetail.send")}
-      </TileButton>
-      <TileButton
+        testId="contacts-address-detail-send"
+      />
+      <ActionCard
         icon={hasCopied ? Check : Copy}
+        label={hasCopied ? t("contacts.addressDetail.copied") : t("contacts.addressDetail.copy")}
         onClick={onCopy}
-        data-testid="contacts-address-detail-copy"
-        isFull
-      >
-        {hasCopied ? t("contacts.addressDetail.copied") : t("contacts.addressDetail.copy")}
-      </TileButton>
-      <TileButton
+        testId="contacts-address-detail-copy"
+      />
+      <ActionCard
         icon={PenEdit}
-        isFull
+        label={t("contacts.addressDetail.edit")}
         disabled={!canEdit}
         onClick={onEdit}
-        data-testid="contacts-address-detail-edit"
-      >
-        {t("contacts.addressDetail.edit")}
-      </TileButton>
-      {onShare ? (
-        <TileButton
-          icon={Share}
-          isFull
-          onClick={onShare}
-          data-testid="contacts-address-detail-share"
-        >
-          {t("contacts.addressDetail.share")}
-        </TileButton>
-      ) : null}
-      <TileButton
+        testId="contacts-address-detail-edit"
+      />
+      <ActionCard
         icon={Trash}
-        appearance="red"
-        data-testid="contacts-address-detail-delete"
-        isFull
+        label={t("contacts.addressDetail.delete")}
         disabled={!canDelete}
         onClick={onDelete}
-      >
-        {t("contacts.addressDetail.delete")}
-      </TileButton>
+        isDestructive
+        testId="contacts-address-detail-delete"
+      />
+      {onShare ? (
+        <ActionCard
+          icon={Share}
+          label={t("contacts.addressDetail.share")}
+          onClick={onShare}
+          testId="contacts-address-detail-share"
+        />
+      ) : null}
     </div>
   );
 }

@@ -1,6 +1,5 @@
 import BigNumber from "bignumber.js";
-import aleoConfig from "../config";
-import { getTestnetIntegConfig } from "../__tests__/fixtures/config.fixture";
+import aleoConfig, { aleoDefaults } from "../config";
 import {
   testnetViewKey,
   testnetPrivateRecord,
@@ -10,7 +9,7 @@ import { setupCalStore } from "../__tests__/helpers/cal";
 import { getPrivateBalance } from "./getPrivateBalance";
 
 describe("getPrivateBalance", () => {
-  const config = getTestnetIntegConfig();
+  const config = aleoDefaults.aleo_testnet;
 
   beforeAll(() => {
     setupCalStore();

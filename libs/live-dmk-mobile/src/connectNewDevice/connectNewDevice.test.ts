@@ -261,7 +261,10 @@ describe("mobile connectNewDevice", () => {
       mockserverIdentifier,
       "mock-id",
     );
-    const dmk = { connect: jest.fn(() => NEVER_RESOLVED) } as unknown as DeviceManagementKit;
+    const dmk = {
+      connect: jest.fn(() => NEVER_RESOLVED),
+      listConnectedDevices: jest.fn(() => []),
+    } as unknown as DeviceManagementKit;
     const { states, subscription } = setupTest({ dmk, isMockServerEnabled: true });
     const discoveringState = states[states.length - 1];
     if (discoveringState?.type !== ConnectNewDeviceUIStateTypes.Discovering) {

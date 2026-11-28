@@ -1,7 +1,7 @@
 import { z } from "zod";
 import { BigNumberStrSchema } from "@shared/schema-primitives";
-import { AccountUUIDSchema } from "@domain/entity-account-descriptor";
 import { CryptoOrTokenCurrencyIdSchema } from "@domain/entity-currency";
+import { AccountUUIDSchema } from "@domain/entity-account";
 
 /** A non-negative integer, in the asset's smallest unit. */
 export const AmountStrSchema = BigNumberStrSchema.refine(value => /^\d+$/.test(value), {

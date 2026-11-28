@@ -32,24 +32,18 @@ function AccessExistingWallet() {
   const dispatch = useDispatch();
   const navigation = useNavigation<NavigationProps["navigation"]>();
   const walletSyncFeatureFlag = useFeature("llmWalletSync");
-  const deviceOnboarding = useFeature("deviceOnboarding");
 
   const isWalletSyncEnabled = walletSyncFeatureFlag?.enabled;
-  const connectSeededDevice = Boolean(
-    deviceOnboarding?.enabled && deviceOnboarding.params?.connectSeededDevice,
-  );
   const [isDrawerVisible, setIsDrawerVisible] = useState(false);
 
   const connect = useCallback(() => {
     dispatch(setOnboardingType(OnboardingType.connect));
-
     navigation.navigate(ScreenName.OnboardingPairNew, {
       deviceModelId: undefined,
       showSeedWarning: false,
       fromAccessExistingWallet: true,
-      connectSeededDevice,
     });
-  }, [connectSeededDevice, dispatch, navigation]);
+  }, [dispatch, navigation]);
 
   const sync = useCallback(() => {
     navigation.navigate(ScreenName.OnboardingImportAccounts);

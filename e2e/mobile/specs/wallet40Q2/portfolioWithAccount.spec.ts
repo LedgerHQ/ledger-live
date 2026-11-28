@@ -1,6 +1,6 @@
 import { Team } from "@ledgerhq/live-e2e-shared/enum/Team";
 import { setTeamOwner } from "@e2e/helpers/allure/allure-helper";
-import { FF_LWM_WALLET_40_Q2, FF_NEW_SEND_FLOW_ENABLED } from "@e2e/utils/featureFlagUtils";
+import { FF_NEW_SEND_FLOW_ENABLED } from "@e2e/utils/featureFlagUtils";
 
 const testConfig = {
   tags: ["@NanoSP", "@LNS", "@NanoX", "@Stax", "@Flex", "@NanoGen5"],
@@ -16,14 +16,18 @@ describe("Portfolio with account", () => {
     await app.init({
       userdata: "skip-onboarding",
       speculosApp: CURRENCY.speculosApp,
-      featureFlags: { ...FF_LWM_WALLET_40_Q2, ...FF_NEW_SEND_FLOW_ENABLED },
+      featureFlags: FF_NEW_SEND_FLOW_ENABLED,
     });
     await app.mainNavigation.waitForWallet40Ready();
     await app.portfolio.addAccount();
     await app.addAccount.importWithYourLedger();
     await app.modularDrawer.selectCurrencyByTicker(TICKER);
     await app.modularDrawer.selectNetwork(CURRENCY.name);
-    await app.addAccount.addAccountAtIndex(ACCOUNT.accountName, CURRENCY.id, ACCOUNT.index);
+    await app.addAccount.addAccountAtIndex({
+      currencyName: ACCOUNT.accountName,
+      currencyId: CURRENCY.id,
+      index: ACCOUNT.index,
+    });
     await app.common.tapCloseWithConfirmationButton();
     await app.mainNavigation.tapWallet40Tab("home");
   });

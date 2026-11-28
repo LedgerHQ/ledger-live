@@ -51,7 +51,7 @@ The `import()` lives in the registry, not the host or shell — the bundler reso
 - `DEVTOOLS_ALLOWED_IMPORTS` and `DEVTOOLS_TYPE_ONLY_IMPORTS` set which `@devtools/*` package may import which.
 - `DEVTOOLS_LAZY_IMPORTS`: the registry reaches tools only through type imports and `import()`. A value import or `require()` of a tool in `@devtools/registry` fails, because the shell loads the registry eagerly.
 - `DEVTOOLS_HOST_APPS`, app rule: in Desktop and Mobile, only files under `src/mvvm/features/DevTools/` may import `@devtools/*`, type imports included.
-- `DEVTOOLS_HOST_APPS`, folder rule: a file outside `src/mvvm/features/DevTools/` may statically import only the folder's declared `entries`. Any other file of the folder is reachable only through `import()` or `lazy(() => import(...))`. Test files are exempt.
+- `DEVTOOLS_HOST_APPS`, folder rule: a file outside `src/mvvm/features/DevTools/` may reach only the folder's declared `entries`, through a static import, `import()` or `lazy(() => import(...))` alike. Test files are exempt.
 
 Lint cannot catch debug work written on a product path without a `@devtools/*` import, nor debug controls such as `setOverride`, which many legitimate debug screens use. Review catches those.
 

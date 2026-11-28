@@ -3,10 +3,7 @@ import { http, HttpResponse, server } from "@tests/server";
 import React from "react";
 import { ScreenName } from "~/const";
 import { State } from "~/reducers/types";
-import {
-  InitialRange,
-  LandingPagesNavigatorParamList,
-} from "~/components/RootNavigator/types/LandingPagesNavigator";
+import { LandingPagesNavigatorParamList } from "~/components/RootNavigator/types/LandingPagesNavigator";
 import { RouteProp } from "@react-navigation/core";
 import * as navigationModule from "@react-navigation/native";
 import { mockNavigation } from "../screens/LargeMoverLandingPage/fixtures/navigation";
@@ -26,7 +23,7 @@ const mockRoute: RouteProp<LandingPagesNavigatorParamList, ScreenName.LargeMover
   name: ScreenName.LargeMoverLandingPage,
   params: {
     ledgerIds: "bitcoin,ethereum",
-    initialRange: InitialRange.Day,
+    initialRange: "day",
   },
 };
 
@@ -59,7 +56,6 @@ const bitcoinMarket = (overrides: Record<string, unknown> = {}) => [
     allTimeLow: 50,
     allTimeHighDate: "2024-03-14T07:10:36.635Z",
     allTimeLowDate: "2013-07-06T00:00:00Z",
-    sparkline: [],
     updatedAt: "2024-05-15T14:48:15Z",
     ...overrides,
   },
@@ -241,7 +237,6 @@ describe("LargeMoverLandingPage Integration Tests", () => {
             allTimeLow: 50,
             allTimeHighDate: "2024-03-14T07:10:36.635Z",
             allTimeLowDate: "2013-07-06T00:00:00Z",
-            sparkline: [],
             updatedAt: "2024-05-15T14:48:15Z",
           },
         ]);

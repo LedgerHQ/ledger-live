@@ -1,7 +1,6 @@
 import { Team } from "@ledgerhq/live-e2e-shared/enum/Team";
 import { Currency } from "@ledgerhq/live-e2e-shared/enum/Currency";
 import { setTeamOwner } from "@e2e/helpers/allure/allure-helper";
-import { FF_LWM_WALLET_40_Q2 } from "@e2e/utils/featureFlagUtils";
 import { getFixtureAccountId, getFixtureTokenAccountId } from "@e2e/utils/fixtureAccounts";
 
 const TAGS = ["@NanoSP", "@LNS", "@NanoX", "@Stax", "@Flex", "@NanoGen5"];
@@ -10,6 +9,7 @@ const DAI_TICKER = Currency.POL_DAI.ticker;
 const USDT_TICKER = Currency.ETH_USDT.ticker;
 const USDT_ASSET_NAME = Currency.ETH_USDT.name;
 const POLYGON_DAI_ASSET_NAME = Currency.POL_DAI.name;
+const POLYGON_ACCOUNT_NAME = "Polygon 1";
 
 const DAI_ASSET_NAME = Currency.POL_DAI.aggregatedName!;
 const USDT_MARKET_ID = Currency.ETH_USDT.market!.id;
@@ -21,23 +21,30 @@ const POLYGON_DAI_TOKEN_ID = "polygon/erc20/(pos)_dai_stablecoin";
 
 // Read from the loaded userdata fixture so the ids always match the app's real
 // account ids, without hardcoding seed-derived addresses.
-const ETHEREUM_ACCOUNT_ID = getFixtureAccountId(WALLET_40_STABLECOINS_FIXTURE, Currency.ETH.id);
-const POLYGON_ACCOUNT_ID = getFixtureAccountId(WALLET_40_STABLECOINS_FIXTURE, Currency.POL.id);
-const POLYGON_DAI_ACCOUNT_ID = getFixtureTokenAccountId(
-  WALLET_40_STABLECOINS_FIXTURE,
-  Currency.POL.id,
-  POLYGON_DAI_TOKEN_ID,
-);
+const ETHEREUM_ACCOUNT_ID = getFixtureAccountId({
+  fixture: WALLET_40_STABLECOINS_FIXTURE,
+  currencyId: Currency.ETH.id,
+});
+const POLYGON_ACCOUNT_ID = getFixtureAccountId({
+  fixture: WALLET_40_STABLECOINS_FIXTURE,
+  currencyId: Currency.POL.id,
+});
+const POLYGON_DAI_ACCOUNT_ID = getFixtureTokenAccountId({
+  fixture: WALLET_40_STABLECOINS_FIXTURE,
+  parentCurrencyId: Currency.POL.id,
+  tokenId: POLYGON_DAI_TOKEN_ID,
+});
 
-// Reuse the shared Q2 Wallet 4.0 flags.
 // lazyOnboarding is forced off: leaving it on opened onboarding modals at startup that
 // broke this flow.
 const ASSET_AGGREGATION_FEATURE_FLAGS = {
   lwmWallet40: {
-    ...FF_LWM_WALLET_40_Q2.lwmWallet40,
+    enabled: true,
     params: {
-      ...FF_LWM_WALLET_40_Q2.lwmWallet40.params,
       lazyOnboarding: false,
+      brazePlacement: true,
+      earnUpselling: true,
+      earnSimulator: true,
     },
   },
 };
@@ -67,7 +74,13 @@ const ensurePortfolioReady = async () => {
   await app.mainNavigation.waitForWallet40Ready();
 };
 
-const openStablecoinAssetDetail = async (assetName: string, ticker: string) => {
+type StablecoinAssetOptions = {
+  assetName: string;
+  ticker: string;
+};
+
+const openStablecoinAssetDetail = async (options: StablecoinAssetOptions) => {
+  const { assetName, ticker } = options;
   if (!(await app.portfolio.isStablecoinListPageVisible())) {
     await ensurePortfolioReady();
     await app.portfolio.openStablecoinsListW40();
@@ -85,7 +98,7 @@ const ensureDaiAssetDetail = async () => {
     return;
   }
 
-  await openStablecoinAssetDetail(DAI_ASSET_NAME, DAI_TICKER);
+  await openStablecoinAssetDetail({ assetName: DAI_ASSET_NAME, ticker: DAI_TICKER });
 };
 
 setTeamOwner(Team.WALLET_XP);
@@ -154,15 +167,14 @@ describe("Asset aggregation", () => {
     await ensureDaiAssetDetail();
     await app.assetDetail.openHoldingAddress(POLYGON_ACCOUNT_ID);
 
-    await app.account.waitAndVerifyAccountName(POLYGON_DAI_ASSET_NAME);
-    await detoxExpect(getElementByText("POLYGON 1")).toBeVisible();
-    const accountAddressLabel =
-      await app.account.getVisibleAccountAddressLabel(POLYGON_DAI_ACCOUNT_ID);
-    const polygonDaiAddress = getAddressFromAccountId(POLYGON_DAI_ACCOUNT_ID);
-    expect(accountAddressLabel.toLowerCase()).toContain(
-      polygonDaiAddress.slice(2, 5).toLowerCase(),
-    );
-    expect(accountAddressLabel.toLowerCase()).toContain(polygonDaiAddress.slice(-4).toLowerCase());
+    await app.account.waitAndVerifyTokenAccountName({
+      tokenName: POLYGON_DAI_ASSET_NAME,
+      parentAccountName: POLYGON_ACCOUNT_NAME,
+    });
+    await app.account.expectAccountAddressLabel({
+      accountId: POLYGON_DAI_ACCOUNT_ID,
+      address: getAddressFromAccountId(POLYGON_DAI_ACCOUNT_ID),
+    });
     await app.account.expectAccountBalanceVisible(POLYGON_DAI_ACCOUNT_ID);
     await app.account.expectReceiveAndSendActionsVisible();
     await app.account.expectOperationHistoryVisible(POLYGON_DAI_ACCOUNT_ID);
@@ -172,16 +184,16 @@ describe("Asset aggregation", () => {
   $TmsLink("B2CQA-5533");
   it(`[${Currency.ETH_USDT.testLabel}] - Star an asset and filter the market list by starred`, async () => {
     // DAI is intentionally not used here because its Asset Detail favorite flow is currently broken.
-    await openStablecoinAssetDetail(USDT_ASSET_NAME, USDT_TICKER);
+    await openStablecoinAssetDetail({ assetName: USDT_ASSET_NAME, ticker: USDT_TICKER });
     await app.assetDetail.addToFavorites();
 
     await app.market.openViaDeeplink();
     await app.market.expectMarketScreenVisible();
     await app.market.filterStarredAssetsOnMarketScreen();
-    const isStarredAssetListed = await app.market.isMarketScreenItemVisible(
-      USDT_MARKET_ID,
-      USDT_MARKET_NAME,
-    );
+    const isStarredAssetListed = await app.market.isMarketScreenItemVisible({
+      marketId: USDT_MARKET_ID,
+      title: USDT_MARKET_NAME,
+    });
     expect(isStarredAssetListed).toBe(true);
   });
 });

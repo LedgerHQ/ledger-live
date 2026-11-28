@@ -3,6 +3,11 @@ import { Account } from "@ledgerhq/live-e2e-shared/enum/Account";
 import { byId } from "@e2e/helpers/elements/native";
 import { waitForWebviewUrl, webById, webByXPath } from "@e2e/helpers/elements/web";
 
+type SwapToEarnDescriptionOptions = {
+  fromTicker: string;
+  toTicker: string;
+};
+
 export default class EarnV2DashboardPage {
   // Webview locators (shared earn web app v2)
   private readonly footerDisclaimer = webById("footer-disclaimer");
@@ -206,7 +211,7 @@ export default class EarnV2DashboardPage {
     for (const key of amount) {
       await this.customKeyboardKey(key).tap();
     }
-    jestExpect(await this.ethAmountInput.getValue()).toBe(amount);
+    await this.ethAmountInput.expectValue(amount);
   }
 
   @Step("Select another funding account {{{0.accountName}}}")
@@ -215,18 +220,17 @@ export default class EarnV2DashboardPage {
     await app.modularDrawer.selectAssetAndAccount(account);
   }
 
-  @Step("Verify swap-to-earn copy from {{{0}}} to {{{1}}}")
-  async verifySwapToEarnDescription(fromTicker: string, toTicker: string) {
-    const text = await this.swapDescription.getText();
-    jestExpect(text).toContain(fromTicker);
-    jestExpect(text).toContain(toTicker);
+  @Step("Verify swap-to-earn copy from {{{0.fromTicker}}} to {{{0.toTicker}}}")
+  async verifySwapToEarnDescription(options: SwapToEarnDescriptionOptions) {
+    const { fromTicker, toTicker } = options;
+    await this.swapDescription.expectText(fromTicker, { containing: true });
+    await this.swapDescription.expectText(toTicker, { containing: true });
   }
 
   @Step("Continue to swap")
   async continueToSwap() {
     await this.amountContinueCta.waitEnabled();
-    const label = await this.amountContinueCta.getText();
-    jestExpect(label).toContain("Go to swap");
+    await this.amountContinueCta.expectText("Go to swap", { containing: true });
     await this.amountContinueCta.tap();
     await app.swapLiveApp.expectSwapLiveAppForm();
   }

@@ -22,6 +22,7 @@ import {
   buildEnergyRentRequest,
 } from "../logic";
 import { TRONIFY_FEE_OPTION_ID } from ".";
+import { findBlock, getLastBlock } from "../network";
 
 jest.mock("../logic", () => ({
   buildEnergyRentRequest: jest.fn(),
@@ -44,8 +45,12 @@ const mockListFeeOptions = jest.mocked(listFeeOptions);
 
 jest.mock("../network", () => ({
   defaultFetchParams: { minTimestamp: 0 },
-  getBlock: jest.fn().mockResolvedValue({ time: new Date(0) }),
+  findBlock: jest.fn().mockResolvedValue({ time: new Date(0) }),
+  getLastBlock: jest.fn(),
 }));
+
+const mockFindBlock = jest.mocked(findBlock);
+const mockGetLastBlock = jest.mocked(getLastBlock);
 
 describe("createApi", () => {
   it("omits the capabilities the chain has none of", () => {
@@ -169,6 +174,71 @@ describe("createApi", () => {
       minTimestamp: 0,
       order: "asc",
       cursor: undefined,
+    });
+  });
+
+  describe("listOperations minHeight lookup", () => {
+    const api = () => withDefaults(createApi());
+
+    it("starts from the timestamp of the minHeight block", async () => {
+      mockFindBlock.mockResolvedValueOnce({ height: 14, hash: "h", time: new Date(5_000) });
+      await api().listOperations(context, "address", { minHeight: 14 });
+
+      expect(mockFindBlock).toHaveBeenCalledWith(context.logger, mockTronConfig, 14);
+      expect(listOperations).toHaveBeenCalledWith(
+        context.logger,
+        mockTronConfig,
+        "address",
+        expect.objectContaining({ minTimestamp: 5_000 }),
+      );
+    });
+
+    it("fails the call on a transport failure instead of walking from timestamp 0", async () => {
+      mockFindBlock.mockRejectedValueOnce(new Error("timeout of 60000ms exceeded"));
+
+      await expect(api().listOperations(context, "address", { minHeight: 14 })).rejects.toThrow(
+        "timeout of 60000ms exceeded",
+      );
+      expect(listOperations).not.toHaveBeenCalled();
+    });
+
+    it("starts just after the chain tip when the minHeight block is not produced yet", async () => {
+      mockFindBlock.mockResolvedValueOnce(null);
+      mockGetLastBlock.mockResolvedValueOnce({ height: 13, hash: "tip", time: new Date(9_000) });
+      await api().listOperations(context, "address", { minHeight: 14 });
+
+      expect(listOperations).toHaveBeenCalledWith(
+        context.logger,
+        mockTronConfig,
+        "address",
+        expect.objectContaining({ minTimestamp: 9_001 }),
+      );
+    });
+
+    it("looks the block up again when the tip reached minHeight in the meantime", async () => {
+      mockFindBlock
+        .mockResolvedValueOnce(null)
+        .mockResolvedValueOnce({ height: 14, hash: "h", time: new Date(12_000) });
+      mockGetLastBlock.mockResolvedValueOnce({ height: 15, hash: "tip", time: new Date(15_000) });
+      await api().listOperations(context, "address", { minHeight: 14 });
+
+      expect(mockFindBlock).toHaveBeenCalledTimes(2);
+      expect(listOperations).toHaveBeenCalledWith(
+        context.logger,
+        mockTronConfig,
+        "address",
+        expect.objectContaining({ minTimestamp: 12_000 }),
+      );
+    });
+
+    it("fails the call when the tip lookup fails", async () => {
+      mockFindBlock.mockResolvedValueOnce(null);
+      mockGetLastBlock.mockRejectedValueOnce(new Error("network down"));
+
+      await expect(api().listOperations(context, "address", { minHeight: 14 })).rejects.toThrow(
+        "network down",
+      );
+      expect(listOperations).not.toHaveBeenCalled();
     });
   });
 
@@ -309,7 +379,7 @@ test("createSponsoredSendApi exposes the energy-rent seam methods", () => {
   expect(seam).toMatchObject({
     feeOptionId: TRONIFY_FEE_OPTION_ID,
     providerName: "Tronify",
-    providerTermsUrl: "https://www.tronify.io/#/Terms?sourceFlag=tronify",
+    providerTermsUrl: "https://www.tronify.io/#/Terms",
     waivesErrorKeys: ["gasLimit"],
     waivesWarningKeys: ["amount"],
   });

@@ -3,6 +3,7 @@ import type {
   TransactionIntent,
 } from "@ledgerhq/coin-module-framework/api/index";
 import * as nearAPI from "near-api-js";
+import { nearDefaults } from "../config";
 import { combine } from "../logic/combine";
 import { getActionCosts } from "../network/protocolConfig";
 import { createMockNearContext } from "../test/context";
@@ -15,20 +16,9 @@ import { createApi } from "./index";
  * (a real access-key nonce and block hash) but the signed payload is thrown away, and the signature
  * is a dummy, so it could not be accepted anyway.
  */
-const NODE = "https://near.coin.ledger.com/node";
-const INDEXER = "https://near-indexer.coin.ledger.com";
-
-const config = {
-  status: { type: "active" as const },
-  name: "NEAR",
-  unit: { name: "NEAR", code: "NEAR", magnitude: 24 },
-  infra: {
-    API_NEAR_PRIVATE_NODE: NODE,
-    API_NEAR_PUBLIC_NODE: "https://rpc.mainnet.near.org",
-    API_NEAR_INDEXER: "https://near.coin.ledger.com/indexer",
-    API_NEARBLOCKS_INDEXER: INDEXER,
-  },
-};
+const config = nearDefaults.near;
+const NODE = config.infra.API_NEAR_PRIVATE_NODE;
+const INDEXER = config.infra.API_NEARBLOCKS_INDEXER;
 
 const ACCOUNT_WITH_HISTORY = "nearkat.near";
 const DELEGATOR = "c351fce3fadaff7902f04aefcc5f519c87923a734ba5c0867f690d226a33c0a1";
@@ -107,6 +97,62 @@ describe("CoinModuleApi (integration)", () => {
       // The node answers with an UNKNOWN_BLOCK error rather than a header.
       await expect(api.getBlockInfo(context, 999_999_999_999)).rejects.toThrow("Server error");
     });
+
+    describe("getBlock", () => {
+      it("reads a recent block with its transactions, fees and fee payer", async () => {
+        const head = await api.lastBlock(context);
+        const height = head.height - 30;
+
+        const block = await api.getBlock(context, height);
+
+        expect(block.info.height).toBe(height);
+        expect(block.info.hash).toMatch(/^[1-9A-HJ-NP-Za-km-z]{43,44}$/);
+        expect(block.info.time.getTime()).toBeGreaterThan(0);
+        expect(block.transactions.length).toBeGreaterThan(0);
+        block.transactions.forEach(transaction => {
+          expect(transaction.hash).toMatch(/^[1-9A-HJ-NP-Za-km-z]{43,44}$/);
+          expect(transaction.fees).toBeGreaterThan(0n);
+          expect(transaction.feesPayer).toMatch(/\S/);
+        });
+      });
+
+      it("credits a pool withdrawal executed in a later block, beyond the node retention", async () => {
+        const block = await api.getBlock(context, 224_610_787);
+
+        const withdrawal = block.transactions.find(
+          transaction => transaction.hash === "59YRW55QZmZLErFeoqt4gDSpqURKe99G742vZUicz952",
+        );
+
+        expect(withdrawal?.failed).toBe(false);
+        expect(withdrawal?.operations).toContainEqual({
+          type: "transfer",
+          address: "eec102b30e72e579de3d01074465566351f3f727ec89338ed26e77099ab7a2db",
+          peer: "figment.poolv1.near",
+          asset: { type: "native" },
+          amount: 11_738_394_515_000_000_000_000_000_000n,
+        });
+      });
+
+      it("credits the beneficiary of a deleted account", async () => {
+        const block = await api.getBlock(context, 224_708_916);
+
+        const deletion = block.transactions.find(
+          transaction => transaction.hash === "CLDzgmyKqjhjMU9D76PFX82L7gBEYZtNsXGVaCY19ACE",
+        );
+
+        expect(deletion?.operations).toContainEqual({
+          type: "transfer",
+          address: "ce8d9c676e91d0587c7dc91fb0a5cc43feb27a189835398230554672e578469f",
+          peer: "71f7756d867f66131319fab7a55283fbd5e80368a59f5838cf1466029b6ae753",
+          asset: { type: "native" },
+          amount: 51_196_244_041_946_800_000_000n,
+        });
+      });
+
+      it("rejects a height the chain cannot have", async () => {
+        await expect(api.getBlock(context, 999_999_999_999)).rejects.toThrow("is not indexed");
+      });
+    });
   });
 
   describe("balances", () => {
@@ -128,6 +174,7 @@ describe("CoinModuleApi (integration)", () => {
       expect(stakes.length).toBeGreaterThan(0);
       stakes.forEach(balance => {
         expect(balance.value).toBe(balance.stake!.amount);
+        expect(balance.locked).toBe(balance.stake!.amount);
         expect(VALID_STAKE_STATES).toContain(balance.stake!.state);
         expect(balance.stake!.delegate).toMatch(/\S/);
       });
@@ -146,7 +193,7 @@ describe("CoinModuleApi (integration)", () => {
     it("rejects balance options it does not implement", async () => {
       await expect(
         api.getBalance(context, ACCOUNT_WITH_HISTORY, { includeAssets: async () => true }),
-      ).rejects.toThrow("getBalance does not support the options parameter");
+      ).rejects.toThrow("getBalance does not support the asset options");
     });
   });
 
@@ -354,6 +401,169 @@ describe("CoinModuleApi (integration)", () => {
       );
 
       expect(result.errors.recipient?.name).toBe("NearNewNamedAccountError");
+    });
+
+    describe("validateIntent against live chain state", () => {
+      const UNKNOWN_IMPLICIT = "9f3a1c5e7b2d4f6081a3c5e7092b4d6f8a1c3e5b7d9f0a2c4e6b8d0f1a3c5e7b";
+      const ABOVE_ANY_BALANCE = 10n ** 36n;
+      const ONE_NEAR = 10n ** 24n;
+      const ANY_FEE = { value: 1n };
+
+      const stakingIntent = (
+        mode: "stake" | "unstake" | "withdraw",
+        overrides: Partial<StakingTransactionIntent> = {},
+      ): StakingTransactionIntent =>
+        ({
+          ...sendIntent(),
+          intentType: "staking",
+          type: mode,
+          mode,
+          valAddress: "astro-stakers.poolv1.near",
+          amount: ONE_NEAR,
+          ...overrides,
+        }) as StakingTransactionIntent;
+
+      it("warns that an unknown implicit recipient will be created by the transfer", async () => {
+        const balances = await api.getBalance(context, ACCOUNT_WITH_HISTORY);
+
+        const result = await api.validateIntent(
+          context,
+          sendIntent({ recipient: UNKNOWN_IMPLICIT, amount: ONE_NEAR }),
+          balances,
+          { customFees: ANY_FEE },
+        );
+
+        expect(result.errors).toEqual({});
+        expect(result.warnings.recipient?.name).toBe("NearNewAccountWarning");
+      });
+
+      it("rejects an amount below the activation cost of an unknown implicit recipient", async () => {
+        const balances = await api.getBalance(context, ACCOUNT_WITH_HISTORY);
+
+        const result = await api.validateIntent(
+          context,
+          sendIntent({ recipient: UNKNOWN_IMPLICIT, amount: 1_000n }),
+          balances,
+          { customFees: ANY_FEE },
+        );
+
+        expect(result.errors.amount?.name).toBe("NearActivationFeeNotCovered");
+      });
+
+      it("accepts a transfer to an account that exists without any warning", async () => {
+        const balances = await api.getBalance(context, ACCOUNT_WITH_HISTORY);
+
+        const result = await api.validateIntent(
+          context,
+          sendIntent({ recipient: DELEGATOR }),
+          balances,
+          { customFees: ANY_FEE },
+        );
+
+        expect(result.errors).toEqual({});
+        expect(result.warnings).toEqual({});
+      });
+
+      it("warns when the recipient is the sender", async () => {
+        const balances = await api.getBalance(context, ACCOUNT_WITH_HISTORY);
+
+        const result = await api.validateIntent(
+          context,
+          sendIntent({ recipient: ACCOUNT_WITH_HISTORY }),
+          balances,
+          { customFees: ANY_FEE },
+        );
+
+        expect(result.warnings.recipient?.name).toBe(
+          "InvalidAddressBecauseDestinationIsAlsoSource",
+        );
+      });
+
+      it("rejects an amount above the live spendable balance", async () => {
+        const balances = await api.getBalance(context, ACCOUNT_WITH_HISTORY);
+
+        const result = await api.validateIntent(
+          context,
+          sendIntent({ amount: ABOVE_ANY_BALANCE }),
+          balances,
+          { customFees: ANY_FEE },
+        );
+
+        expect(result.errors.amount?.name).toBe("NotEnoughBalance");
+      });
+
+      it("recommends unstaking first when sending everything from a delegating account", async () => {
+        const balances = await api.getBalance(context, DELEGATOR);
+
+        const result = await api.validateIntent(
+          context,
+          sendIntent({ sender: DELEGATOR, recipient: ACCOUNT_WITH_HISTORY, useAllAmount: true }),
+          balances,
+          { customFees: ANY_FEE },
+        );
+
+        expect(result.warnings.amount?.name).toBe("NearRecommendUnstake");
+      });
+
+      it("still finds the delegation when the balances carry no staking entries", async () => {
+        const balances = (await api.getBalance(context, DELEGATOR)).filter(
+          balance => balance.stake === undefined,
+        );
+
+        const result = await api.validateIntent(
+          context,
+          sendIntent({ sender: DELEGATOR, recipient: ACCOUNT_WITH_HISTORY, useAllAmount: true }),
+          balances,
+          { customFees: ANY_FEE },
+        );
+
+        expect(result.warnings.amount?.name).toBe("NearRecommendUnstake");
+      });
+
+      it("rejects staking below the staking threshold", async () => {
+        const balances = await api.getBalance(context, ACCOUNT_WITH_HISTORY);
+
+        const result = await api.validateIntent(
+          context,
+          stakingIntent("stake", { amount: 1n }),
+          balances,
+          { customFees: ANY_FEE },
+        );
+
+        expect(result.errors.amount?.name).toBe("NearStakingThresholdNotMet");
+      });
+
+      it("rejects unstaking more than the live delegated amount", async () => {
+        const balances = await api.getBalance(context, DELEGATOR);
+        const position = balances.find(balance => balance.stake?.state === "active");
+        expect(position?.stake?.delegate).toMatch(/\S/);
+
+        const result = await api.validateIntent(
+          context,
+          stakingIntent("unstake", {
+            sender: DELEGATOR,
+            valAddress: position!.stake!.delegate!,
+            amount: position!.stake!.amount + ONE_NEAR,
+          }),
+          balances,
+          { customFees: ANY_FEE },
+        );
+
+        expect(result.errors.amount?.name).toBe("NearNotEnoughStaked");
+      });
+
+      it("rejects withdrawing more than the live withdrawable amount", async () => {
+        const balances = await api.getBalance(context, DELEGATOR);
+
+        const result = await api.validateIntent(
+          context,
+          stakingIntent("withdraw", { sender: DELEGATOR, amount: ABOVE_ANY_BALANCE }),
+          balances,
+          { customFees: ANY_FEE },
+        );
+
+        expect(result.errors.amount?.name).toBe("NearNotEnoughAvailable");
+      });
     });
 
     it("validates address formats", async () => {

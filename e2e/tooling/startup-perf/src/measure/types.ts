@@ -1,0 +1,52 @@
+// What the measurement's modules pass each other.
+export interface RunResult {
+  failed: boolean;
+  stdout: string;
+  stderr: string;
+}
+
+/** Runs the accounts snapshot's flows (src/snapshot/run.ts). */
+export interface Maestro {
+  invoke(options: {
+    device: string;
+    command: string;
+    args?: string[];
+    timeoutMs: number;
+  }): Promise<RunResult>;
+}
+
+/** What run.ts needs from a device platform: android.ts and ios.ts implement it. */
+export interface Platform {
+  install(device: string, app: string): Promise<void>;
+  stop(device: string): Promise<void>;
+  /** Stops Maestro's on-device driver, which the snapshot's flow leaves running. */
+  stopDriver(device: string): Promise<void>;
+  /** Launches the app, with the launch arguments react-native-launch-arguments reads, if any. */
+  launch(
+    device: string,
+    launchArgs?: Record<string, string | number>,
+  ): Promise<{ amStartMs?: number | null }>;
+  /** Writes files, by name, into the storage directory of the app, which must not be running. */
+  writeStorage(device: string, files: Record<string, Buffer>): Promise<void>;
+  /** A file of the app's storage directory, or null when there is none. */
+  readStorage(device: string, name: string): Promise<Buffer | null>;
+  ensureScreenOn(device: string): Promise<unknown>;
+  /** The package whose ANR or crash dialog has the focus, if any. */
+  blockingDialog(device: string): Promise<string | null>;
+  clearDialogs(device: string): Promise<string[]>;
+  /** Freezes the device for the other one's launch; false when the platform can't. */
+  pause(device: string): Promise<boolean>;
+  resume(device: string): Promise<void>;
+  pid(device: string): Promise<number | null>;
+  /** What the JavaScript of the app process `pid` wrote to the device log, its lines with `text`. */
+  jsLog(device: string, pid: number, text: string): Promise<string>;
+  diagnostics(device: string, file: string): Promise<void>;
+}
+
+/** The userdata files of a scenario, merged. */
+export interface Userdata {
+  names: string[];
+  settings: Record<string, unknown>;
+  accounts: Array<{ data?: { id?: string }; version?: number }>;
+  postOnboarding?: unknown;
+}

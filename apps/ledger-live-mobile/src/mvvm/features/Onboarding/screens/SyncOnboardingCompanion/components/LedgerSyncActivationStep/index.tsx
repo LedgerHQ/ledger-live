@@ -21,6 +21,7 @@ const View = ({
   handleDrawerClose,
   handleSyncOpenFromDrawer,
   handleSkip,
+  deviceIntentStepElement,
 }: LedgerSyncActivationStepViewProps) => {
   const { t } = useTranslation();
 
@@ -59,6 +60,7 @@ const View = ({
         skipSync={handleSkip}
         seedConfiguration={analyticsSeedConfiguration}
       />
+      {deviceIntentStepElement}
     </>
   );
 };

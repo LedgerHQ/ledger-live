@@ -5,7 +5,7 @@ import { JsonFormatter } from "./json";
 import type { Balance, DiscoveredAccount, AccountDescriptor } from "../models";
 import { BalanceSchema, OperationSchema } from "../models";
 import { XPUB, ETH_ADDR } from "../../shared/accountDescriptor/test-fixtures";
-import { NetworkIdSchema } from "../../shared/accountDescriptor";
+import { DerivationPathSchema, NetworkIdSchema } from "../../shared/accountDescriptor";
 import { USDT_TOKEN_INFO, USDT_TOKEN_JSON } from "../../testing/cal-fixtures";
 import { colors } from "../../shared/ui";
 
@@ -35,8 +35,8 @@ const btcDiscovered: DiscoveredAccount = {
     version: "2",
     type: "utxo",
     network: NetworkIdSchema.parse("bitcoin"),
-    xpub: XPUB,
-    path: "m/84h/0h/0h",
+    key: XPUB,
+    path: DerivationPathSchema.parse("m/84h/0h/0h"),
   },
   freshAddress: "bc1qexample",
   label: "bitcoin-native-1",
@@ -48,8 +48,8 @@ const ethDiscovered: DiscoveredAccount = {
     version: "2",
     type: "address",
     network: NetworkIdSchema.parse("ethereum"),
-    address: ETH_ADDR,
-    path: "m/44h/60h/0h/0/0",
+    key: ETH_ADDR,
+    path: DerivationPathSchema.parse("m/44h/60h/0h/0/0"),
   },
   freshAddress: ETH_ADDR,
   label: "ethereum-1",

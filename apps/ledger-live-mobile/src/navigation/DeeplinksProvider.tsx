@@ -1,6 +1,6 @@
 import { track } from "@shared/analytics";
 import React, { useMemo, useEffect, useRef } from "react";
-import { useSelector, useDispatch } from "~/context/hooks";
+import { useSelector, useDispatch, useStore } from "~/context/hooks";
 import { Linking, View, StyleSheet } from "react-native";
 import {
   getStateFromPath,
@@ -88,8 +88,28 @@ function isWalletConnectLink(url: string) {
   );
 }
 
+const SYNC_ONBOARDING_DEEP_LINK_PATH = "sync-onboarding";
+
+const deviceOnboardingSyncScreenConfig = {
+  [NavigatorName.DeviceOnboarding]: {
+    screens: {
+      [ScreenName.DeviceOnboardingConnect]: SYNC_ONBOARDING_DEEP_LINK_PATH,
+    },
+  },
+};
+
+export type LinkingOptionsParams = {
+  isDeviceOnboardingEnabled?: boolean;
+};
+
+export type OnboardingLinkingOptionsParams = LinkingOptionsParams & {
+  acceptedTermsOfUse: boolean;
+};
+
 // DeepLinking
-const linkingOptions = () => ({
+export const linkingOptions = ({
+  isDeviceOnboardingEnabled = false,
+}: LinkingOptionsParams = {}) => ({
   async getInitialURL() {
     const url = await Linking.getInitialURL();
     if (url) {
@@ -137,7 +157,9 @@ const linkingOptions = () => ({
     "https://ledger-staging.go.link",
   ],
   config: {
+    ...(isDeviceOnboardingEnabled ? { initialRouteName: NavigatorName.Base } : {}),
     screens: {
+      ...(isDeviceOnboardingEnabled ? deviceOnboardingSyncScreenConfig : {}),
       [NavigatorName.Base]: {
         initialRouteName: NavigatorName.Main,
         screens: {
@@ -153,7 +175,11 @@ const linkingOptions = () => ({
 
           [ScreenName.PostBuyDeviceScreen]: "hw-purchase-success",
 
-          [ScreenName.BleDevicePairingFlow]: "sync-onboarding",
+          ...(!isDeviceOnboardingEnabled
+            ? {
+                [ScreenName.BleDevicePairingFlow]: SYNC_ONBOARDING_DEEP_LINK_PATH,
+              }
+            : {}),
 
           [ScreenName.RedirectToOnboardingRecoverFlow]: "recover-restore-flow",
 
@@ -235,34 +261,37 @@ const linkingOptions = () => ({
             },
           },
 
-          [NavigatorName.WalletSync]: {
-            screens: {
-              [ScreenName.LedgerSyncDeepLinkHandler]: "ledgersync",
-            },
-          },
+          [ScreenName.LedgerSyncDeepLinkHandler]: "ledgersync",
         },
       },
     },
   },
 });
 
-const getOnboardingLinkingOptions = (acceptedTermsOfUse: boolean) => ({
+export const getOnboardingLinkingOptions = ({
+  acceptedTermsOfUse,
+  isDeviceOnboardingEnabled = false,
+}: OnboardingLinkingOptionsParams) => ({
   ...linkingOptions(),
   config: {
     initialRouteName: NavigatorName.BaseOnboarding,
     screens: !acceptedTermsOfUse
       ? {}
       : {
-          [NavigatorName.BaseOnboarding]: {
-            screens: {
-              [NavigatorName.Onboarding]: {
-                initialRouteName: ScreenName.OnboardingWelcome,
-                screens: {
-                  [ScreenName.OnboardingBleDevicePairingFlow]: "sync-onboarding",
+          ...(isDeviceOnboardingEnabled
+            ? deviceOnboardingSyncScreenConfig
+            : {
+                [NavigatorName.BaseOnboarding]: {
+                  screens: {
+                    [NavigatorName.Onboarding]: {
+                      initialRouteName: ScreenName.OnboardingWelcome,
+                      screens: {
+                        [ScreenName.OnboardingBleDevicePairingFlow]: SYNC_ONBOARDING_DEEP_LINK_PATH,
+                      },
+                    },
+                  },
                 },
-              },
-            },
-          },
+              }),
           [NavigatorName.Base]: {
             screens: {
               [ScreenName.PostBuyDeviceScreen]: "hw-purchase-success",
@@ -314,6 +343,7 @@ export const DeeplinksProvider = ({
   logStartupEvent("DeeplinksProvider render");
 
   const dispatch = useDispatch();
+  const store = useStore();
   const triggeredAppStartRef = useRef(true);
   const hasCompletedOnboarding = useSelector(hasCompletedOnboardingSelector);
 
@@ -327,7 +357,6 @@ export const DeeplinksProvider = ({
   // Can be either true, false or null, meaning we don't know yet
   const userAcceptedTerms = useGeneralTermsAccepted();
   const buySellUiFlag = useFeature("buySellUi");
-  const llmAccountListUI = useFeature("llmAccountListUI");
   const genericAwarenessModalFlag = useFeature("lwmGenericAwarenessModal");
 
   const web3hubFlag = useFeature("web3hub");
@@ -336,18 +365,18 @@ export const DeeplinksProvider = ({
   const lwmPayTabFlag = useFeature("lwmPayTab");
   const lwmContactsFlag = useFeature("lwmContacts");
   const predictionsFlag = useFeature("ptxPredictionsLiveAppMobile");
+  const deviceOnboardingFlag = useFeature("deviceOnboarding");
 
   const buySellUiManifestId = buySellUiFlag?.params?.manifestId;
   const predictionsManifestId = predictionsFlag?.params?.manifest_id;
+  // Only the master toggle here: seeded or unseeded is decided later, once the device is read.
+  const isDeviceOnboardingEnabled = Boolean(deviceOnboardingFlag?.enabled);
 
   // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
   const theme = themes[resolvedTheme] as ReactNavigation.Theme;
-  const AccountsListScreenName = llmAccountListUI?.enabled
-    ? ScreenName.AccountsList
-    : ScreenName.Accounts;
 
   const linking = useMemo<LinkingOptions<ReactNavigation.RootParamList>>(() => {
-    const options = linkingOptions();
+    const options = linkingOptions({ isDeviceOnboardingEnabled });
     return (
       // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
       {
@@ -380,21 +409,19 @@ export const DeeplinksProvider = ({
                           }),
 
                       /** "ledgerlive://assets will open assets screen. */
-                      ...(llmAccountListUI?.enabled && {
-                        [NavigatorName.Assets]: {
-                          screens: {
-                            /**
-                             * @params ?showHeader: boolean
-                             * @params ?isSyncEnabled: boolean
-                             * @params ?sourceScreenName: string
-                             * ie: "ledgerlive://assets?showHeader=true will open assets screen with header
-                             * ie "ledgerlive://assets?isSyncEnabled=true will open assets screen with sync enabled
-                             * ie "ledgerlive://assets?sourceScreenName=Portfolio will open assets screen with source screen name Portfolio for tracking inside the screen
-                             */
-                            [ScreenName.AssetsList]: "assets",
-                          },
+                      [NavigatorName.Assets]: {
+                        screens: {
+                          /**
+                           * @params ?showHeader: boolean
+                           * @params ?isSyncEnabled: boolean
+                           * @params ?sourceScreenName: string
+                           * ie: "ledgerlive://assets?showHeader=true will open assets screen with header
+                           * ie "ledgerlive://assets?isSyncEnabled=true will open assets screen with sync enabled
+                           * ie "ledgerlive://assets?sourceScreenName=Portfolio will open assets screen with source screen name Portfolio for tracking inside the screen
+                           */
+                          [ScreenName.AssetsList]: "assets",
                         },
-                      }),
+                      },
                       /**
                        * ie: "ledgerlive://perps" -> will redirect to the perps page
                        */
@@ -447,16 +474,6 @@ export const DeeplinksProvider = ({
 
                           [NavigatorName.Portfolio]: {
                             screens: {
-                              ...(!llmAccountListUI?.enabled && {
-                                [NavigatorName.PortfolioAccounts]: {
-                                  screens: {
-                                    /**
-                                     * "ledgerlive://accounts" opens the main portfolio screen of accounts.
-                                     */
-                                    [ScreenName.Accounts]: "accounts",
-                                  },
-                                },
-                              }),
                               [ScreenName.Portfolio]: "portfolio",
                             },
                           },
@@ -543,7 +560,6 @@ export const DeeplinksProvider = ({
                            * "ledgerlive://accounts" opens the main portfolio screen of accounts.
                            */
                           /**
-                           * if llmAccountListUI is enabled
                            * @params ?showHeader: boolean
                            * @params ?canAddAccount: boolean
                            * @params ?isSyncEnabled: boolean
@@ -553,7 +569,7 @@ export const DeeplinksProvider = ({
                            * ie "ledgerlive://accounts?isSyncEnabled=true will open accounts screen with sync enabled
                            * ie "ledgerlive://accounts?sourceScreenName=Portfolio will open accounts screen with source screen name Portfolio for tracking inside the screen
                            */
-                          [AccountsListScreenName]: "accounts",
+                          [ScreenName.AccountsList]: "accounts",
                           /**
                            * @params ?currency: string
                            * @params ?address: string
@@ -578,7 +594,10 @@ export const DeeplinksProvider = ({
                 },
               },
             }
-          : getOnboardingLinkingOptions(!!userAcceptedTerms)),
+          : getOnboardingLinkingOptions({
+              acceptedTermsOfUse: !!userAcceptedTerms,
+              isDeviceOnboardingEnabled,
+            })),
         subscribe(listener) {
           const sub = Linking.addEventListener("url", ({ url }) => {
             // Track deeplink session when app comes from background
@@ -707,7 +726,13 @@ export const DeeplinksProvider = ({
 
           // Handle modular drawer deeplinks (receive & add-account)
           if (hostname === "receive" || hostname === "add-account") {
-            return handleModularDrawerDeeplink(hostname, searchParams, dispatch, config);
+            return handleModularDrawerDeeplink(
+              hostname,
+              searchParams,
+              dispatch,
+              config,
+              store.getState,
+            );
           }
 
           if (hostname === "paytab" && !lwmPayTabFlag?.enabled) {
@@ -899,12 +924,11 @@ export const DeeplinksProvider = ({
     );
   }, [
     hasCompletedOnboarding,
-    llmAccountListUI?.enabled,
-    AccountsListScreenName,
     userAcceptedTerms,
     onDeeplinkReceived,
     buySellUiManifestId,
     dispatch,
+    store,
     liveAppProviderInitialized,
     manifests,
     localManifests,
@@ -916,6 +940,7 @@ export const DeeplinksProvider = ({
     lwmBackupHubFlag?.enabled,
     lwmPayTabFlag?.enabled,
     lwmContactsFlag?.enabled,
+    isDeviceOnboardingEnabled,
   ]);
   const [isReady, setIsReady] = React.useState(false);
   const [isNavigationContainerReady, setIsNavigationContainerReady] = React.useState(false);

@@ -82,7 +82,7 @@ describe("fetchNominations", () => {
 
     expect(result).toEqual({
       submittedIn: "submittedIn",
-      targets: [{ address: "target1", value: "100", status: "active" }],
+      targets: [{ address: "target1", value: "100", status: "active", isRegistered: false }],
     });
   });
 
@@ -107,7 +107,38 @@ describe("fetchNominations", () => {
 
     expect(result).toEqual({
       submittedIn: "submittedIn",
-      targets: [{ address: "stash1", value: "0", status: "waiting" }],
+      targets: [{ address: "stash1", value: "0", status: "waiting", isRegistered: true }],
     });
+  });
+
+  it("should keep the exposure-derived status and flag a target that is no longer a registered validator", async () => {
+    const mockTargets = [{ toString: () => "target1" }];
+    const mockNominationsOpt = {
+      isNone: false,
+      unwrap: () => ({ targets: mockTargets, submittedIn: "submittedIn" }),
+    };
+    const mockStashes = [{ toString: () => "stash2" }];
+    const mockExposure = [{ isNone: false, toJSON: () => ({ pageCount: 1 }) }];
+    const mockNominators = {
+      unwrap: () => ({
+        others: [{ who: { toString: () => mockAddress }, value: { toString: () => "100" } }],
+      }),
+    };
+
+    api.rpc.chain.getFinalizedHead.mockResolvedValue("mockHash");
+    api.query.staking.activeEra.at.mockResolvedValue({
+      isNone: false,
+      unwrap: () => ({ index: "activeEra" }),
+    });
+    api.query.staking.nominators.at.mockResolvedValue(mockNominationsOpt);
+    api.derive.staking.stashes.mockResolvedValue(mockStashes);
+    api.query.staking.erasStakersOverview.multi.mockResolvedValue(mockExposure);
+    api.query.staking.erasStakersPaged.mockResolvedValue(mockNominators);
+
+    const result = await fetchNominations(polkadotMainnetConfigValue, mockAddress);
+
+    expect(result.targets).toEqual([
+      { address: "target1", value: "100", status: "active", isRegistered: false },
+    ]);
   });
 });

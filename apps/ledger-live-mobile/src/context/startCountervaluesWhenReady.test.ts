@@ -1,9 +1,15 @@
 import { configureStore, type UnknownAction } from "@reduxjs/toolkit";
 import { startCountervaluesSync } from "@features/platform-market-countervalues";
 import { featureFlagsReducer, setRemoteFlagsReady } from "@shared/feature-flags";
+import { startupEvents } from "LLM/utils/logStartupTime";
 import { startCountervaluesWhenReady } from "./startCountervaluesWhenReady";
 
 const savedState = { status: {} };
+
+let mockAppAvailabilitySettled = true;
+jest.mock("@features/flow-app-availability", () => ({
+  selectAppAvailabilitySettled: () => mockAppAvailabilitySettled,
+}));
 
 function createStore() {
   const store = configureStore({ reducer: { featureFlags: featureFlagsReducer } });
@@ -44,6 +50,7 @@ function deferred() {
 describe("startCountervaluesWhenReady", () => {
   beforeEach(() => {
     jest.useFakeTimers();
+    mockAppAvailabilitySettled = true;
   });
 
   afterEach(() => {
@@ -78,6 +85,37 @@ describe("startCountervaluesWhenReady", () => {
     expect(starts).toHaveLength(1);
   });
 
+  it("should wait for the OFAC check when the currencies and the remote flags are ready first", async () => {
+    mockAppAvailabilitySettled = false;
+    const { store, appStore, starts } = createStore();
+    store.dispatch(setRemoteFlagsReady());
+
+    void startCountervaluesWhenReady(appStore, savedState, Promise.resolve());
+    await jest.advanceTimersByTimeAsync(0);
+    expect(starts).toHaveLength(0);
+
+    mockAppAvailabilitySettled = true;
+    store.dispatch({ type: "test/storeChanged" });
+    await jest.advanceTimersByTimeAsync(0);
+
+    expect(starts).toHaveLength(1);
+  });
+
+  it("should start after a second when the OFAC check never settles", async () => {
+    mockAppAvailabilitySettled = false;
+    const { store, appStore, subscriptions, starts } = createStore();
+    store.dispatch(setRemoteFlagsReady());
+
+    void startCountervaluesWhenReady(appStore, savedState, Promise.resolve());
+    await jest.advanceTimersByTimeAsync(999);
+    expect(starts).toHaveLength(0);
+
+    await jest.advanceTimersByTimeAsync(1);
+
+    expect(starts).toHaveLength(1);
+    expect(subscriptions.active).toBe(0);
+  });
+
   it("counts a failed hydration as hydrated", async () => {
     const { store, appStore, starts } = createStore();
     store.dispatch(setRemoteFlagsReady());
@@ -86,6 +124,16 @@ describe("startCountervaluesWhenReady", () => {
     await jest.advanceTimersByTimeAsync(0);
 
     expect(starts).toHaveLength(1);
+  });
+
+  it("logs a startup event when it starts the sync", async () => {
+    startupEvents.splice(0);
+    const { store, appStore } = createStore();
+    store.dispatch(setRemoteFlagsReady());
+
+    await startCountervaluesWhenReady(appStore, savedState, Promise.resolve());
+
+    expect(startupEvents.map(e => e.event)).toEqual(["Countervalues sync started"]);
   });
 
   it("clears its timer and its subscription when readiness wins", async () => {

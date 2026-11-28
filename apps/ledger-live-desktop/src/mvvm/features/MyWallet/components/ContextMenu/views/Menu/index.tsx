@@ -4,6 +4,7 @@ import TopBar from "../../../TopBar";
 import { ActionsList } from "../../../ActionsList";
 import { MyLedger } from "../../../MyLedger";
 import { Explore } from "../../../Explore";
+import { ManageAgentsButton } from "../../../ManageAgentsButton";
 import { useMenuViewModel } from "./useMenuViewModel";
 
 export function MenuView() {
@@ -16,6 +17,7 @@ export function MenuView() {
         <ActionsList onRecoverClick={onRecoverClick} />
         <div className="flex flex-col gap-12">
           <ContactsButton />
+          <ManageAgentsButton />
           <MyLedger />
           <Explore />
         </div>

@@ -5,7 +5,9 @@ import { accountsSelector } from "~/renderer/reducers/accounts";
 import OperationRow from "./OperationRow";
 import { isSwapOperationPending } from "@ledgerhq/live-common/exchange/swap/index";
 import getCompleteSwapHistory from "@ledgerhq/live-common/exchange/swap/getCompleteSwapHistory";
-import updateAccountSwapStatus from "@ledgerhq/live-common/exchange/swap/updateAccountSwapStatus";
+import updateAccountSwapStatus, {
+  hasSwapsAwaitingPayoutHash,
+} from "@ledgerhq/live-common/exchange/swap/updateAccountSwapStatus";
 import { MappedSwapOperation, SwapHistorySection } from "@ledgerhq/live-common/exchange/swap/types";
 import { flattenAccounts } from "@ledgerhq/live-common/account/index";
 import { mappedSwapOperationsToCSV } from "@ledgerhq/live-common/exchange/swap/csvExport";
@@ -117,7 +119,8 @@ const History = () => {
     return false;
   }, [mappedSwapOperations]);
   useInterval(() => {
-    if (hasPendingSwapOperations) {
+    // A perps withdraw waiting for its payout tx hash is not shown yet, but still needs polling.
+    if (hasPendingSwapOperations || hasSwapsAwaitingPayoutHash(flattenAccounts(accounts))) {
       updateSwapStatus();
     }
   }, 10000);

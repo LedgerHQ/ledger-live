@@ -3,26 +3,43 @@ import {
   FeeNotLoaded,
   FeeTooHigh,
   InvalidAddress,
+  InvalidTransactionError,
+  NotEnoughBalance,
   NotEnoughBalanceBecauseDestinationNotCreated,
   NotEnoughSpendableBalance,
   RecipientRequired,
 } from "@ledgerhq/ledger-wallet-framework/errors";
 import BigNumber from "bignumber.js";
-import coinConfig from "../config";
+import { cantonDefaults, type CantonCoinConfig, type CantonContext } from "../config";
 import * as gateway from "../network/gateway";
-import { createMockCantonAccount } from "../test/fixtures";
+import { configOfCall, createMockCantonAccount } from "../test/fixtures";
 import { CantonAccount, TooManyUtxosCritical, TooManyUtxosWarning, Transaction } from "../types";
-import { TopologyChangeError } from "../types/errors";
+import { CantonInvalidConfigError, TopologyChangeError } from "../types/errors";
 import {
-  getTransactionStatus,
+  getTransactionStatus as getTransactionStatusWithContext,
   TO_MANY_UTXOS_CRITICAL_COUNT,
   TO_MANY_UTXOS_WARNING_COUNT,
 } from "./getTransactionStatus";
+import { prepareTransaction } from "./prepareTransaction";
 
-jest.mock("../config", () => ({ getCoinConfig: jest.fn() }));
-jest.mock("../network/gateway");
-const mockCoinConfig = jest.mocked(coinConfig);
+jest.mock("../network/gateway", () => ({
+  ...jest.requireActual("../network/gateway"),
+  isTopologyChangeRequiredCached: jest.fn(),
+}));
 const mockedGateway = gateway as jest.Mocked<typeof gateway>;
+
+// Without the shipped `fee: 0`, so fees follow the tier schedule.
+const { fee: _fixedFee, ...tieredDefaults } = cantonDefaults.canton_network;
+const defaultConfig: CantonCoinConfig = {
+  ...tieredDefaults,
+  gatewayUrl: "https://canton-gateway.example.com",
+  nodeId: "test-node",
+  minReserve: 100,
+};
+let mockConfig: CantonCoinConfig = defaultConfig;
+const mockContext: CantonContext = { config: async () => mockConfig, logger: () => {} };
+const getTransactionStatus = (account: CantonAccount, transaction: Transaction) =>
+  getTransactionStatusWithContext(mockContext, account, transaction);
 
 describe("getTransactionStatus", () => {
   const mockAccount: CantonAccount = {
@@ -41,17 +58,29 @@ describe("getTransactionStatus", () => {
       },
     },
   };
+  const withTokenAccount = (spendableBalance: number): CantonAccount => ({
+    ...mockAccount,
+    subAccounts: [
+      {
+        type: "TokenAccount",
+        id: "token-sub-account",
+        spendableBalance: new BigNumber(spendableBalance),
+      } as NonNullable<CantonAccount["subAccounts"]>[number],
+    ],
+  });
+  const accountWithUtxoCounts = (instrumentUtxoCounts: Record<string, number>): CantonAccount => ({
+    ...mockAccount,
+    cantonResources: { ...mockAccount.cantonResources, instrumentUtxoCounts },
+  });
+  const accountWith = (balance: number, minReserve: number): CantonAccount => ({
+    ...mockAccount,
+    balance: new BigNumber(balance),
+    spendableBalance: BigNumber.max(0, new BigNumber(balance).minus(minReserve)),
+  });
 
   beforeEach(() => {
     jest.clearAllMocks();
-    mockCoinConfig.getCoinConfig.mockReturnValue({
-      minReserve: 100,
-      networkType: "mainnet",
-      status: { type: "active" },
-      name: "Canton Network",
-      unit: { name: "cc", code: "CC", magnitude: 38 },
-      nativeInstrumentId: "Amulet",
-    });
+    mockConfig = defaultConfig;
     mockedGateway.isTopologyChangeRequiredCached.mockResolvedValue(false);
   });
 
@@ -122,7 +151,7 @@ describe("getTransactionStatus", () => {
       const transaction: Transaction = {
         family: "canton",
         amount: mockAccount.balance
-          .minus(new BigNumber(String(mockCoinConfig.getCoinConfig().minReserve ?? 0)))
+          .minus(new BigNumber(String(mockConfig.minReserve ?? 0)))
           .plus(1),
         recipient: "valid::11111111111111111111111111111111111111111111111111111111111111111111",
         fee: new BigNumber(10),
@@ -137,7 +166,7 @@ describe("getTransactionStatus", () => {
     it("should return NotEnoughBalanceBecauseDestinationNotCreated error when amount is below reserve", async () => {
       const transaction: Transaction = {
         family: "canton",
-        amount: new BigNumber(String(mockCoinConfig.getCoinConfig().minReserve ?? 0)).minus(1),
+        amount: new BigNumber(String(mockConfig.minReserve ?? 0)).minus(1),
         recipient: "valid::11111111111111111111111111111111111111111111111111111111111111111111",
         fee: new BigNumber(10),
         tokenId: "",
@@ -223,14 +252,7 @@ describe("getTransactionStatus", () => {
 
   describe("amount validation", () => {
     it("should return AmountRequired error when amount is zero", async () => {
-      mockCoinConfig.getCoinConfig.mockReturnValue({
-        minReserve: 0,
-        networkType: "mainnet",
-        status: { type: "active" },
-        name: "Canton Network",
-        unit: { name: "cc", code: "CC", magnitude: 38 },
-        nativeInstrumentId: "Amulet",
-      });
+      mockConfig = { ...defaultConfig, minReserve: 0 };
 
       const transaction: Transaction = {
         family: "canton",
@@ -257,6 +279,79 @@ describe("getTransactionStatus", () => {
       const result = await getTransactionStatus(mockAccount, transaction);
 
       expect(result.errors.amount).toBeUndefined();
+    });
+  });
+
+  describe("Send max", () => {
+    const fee = new BigNumber(10);
+    const sendMax = (amount: BigNumber): Transaction => ({
+      family: "canton",
+      amount,
+      useAllAmount: true,
+      recipient: "valid::11111111111111111111111111111111111111111111111111111111111111111111",
+      fee,
+      tokenId: "",
+    });
+    const statusOfSendMax = async (spendable: BigNumber) => {
+      mockConfig = { ...defaultConfig, minReserve: 0 };
+      const account = { ...mockAccount, balance: spendable, spendableBalance: spendable };
+      const prepared = await prepareTransaction(mockContext, account, sendMax(new BigNumber(0)));
+      return getTransactionStatus(account, prepared);
+    };
+    it("should return NotEnoughBalance when the fee leaves nothing to send", async () => {
+      mockConfig = { ...defaultConfig, minReserve: 0 };
+
+      const result = await getTransactionStatus(accountWith(5, 0), sendMax(new BigNumber(0)));
+
+      expect(result.errors.amount).toBeInstanceOf(NotEnoughBalance);
+    });
+
+    it.each([0, 100])(
+      "should accept the spendable balance minus the fee with a reserve of %i",
+      async minReserve => {
+        mockConfig = { ...defaultConfig, minReserve };
+        const account = accountWith(1000, minReserve);
+
+        const result = await getTransactionStatus(
+          account,
+          sendMax(account.spendableBalance.minus(fee)),
+        );
+
+        expect(result.errors).toEqual({});
+      },
+    );
+
+    it("should keep refusing a maximum below the reserve a new recipient needs", async () => {
+      const account = accountWith(150, 100);
+
+      const result = await getTransactionStatus(
+        account,
+        sendMax(account.spendableBalance.minus(fee)),
+      );
+
+      expect(result.errors.amount).toBeInstanceOf(NotEnoughBalanceBecauseDestinationNotCreated);
+    });
+
+    describe("prepared with the tiered fee", () => {
+      const CC = new BigNumber(10).pow(38);
+
+      it("should send a positive amount from 1.01 CC, warning that the fee is high", async () => {
+        const result = await statusOfSendMax(CC.times(1.01));
+
+        expect(result.amount.gt(0)).toBe(true);
+        expect(result.errors).toEqual({});
+        expect(result.warnings.feeTooHigh).toBeInstanceOf(FeeTooHigh);
+      });
+
+      it.each([
+        ["1 CC", CC],
+        ["0.5 CC", CC.div(2)],
+      ])("should return NotEnoughBalance from %s", async (_, spendable) => {
+        const result = await statusOfSendMax(spendable);
+
+        expect(result.amount).toEqual(new BigNumber(0));
+        expect(result.errors.amount).toBeInstanceOf(NotEnoughBalance);
+      });
     });
   });
 
@@ -394,9 +489,113 @@ describe("getTransactionStatus", () => {
       expect(result.warnings.tooManyUtxos).toBeUndefined();
       expect(result.errors.utxoCount).toBeUndefined();
     });
+
+    describe("token sends", () => {
+      const tokenId = "USDCx";
+      const instrumentAdmin = "issuer::1220";
+      const tokenTransaction: Transaction = {
+        family: "canton",
+        amount: new BigNumber(50),
+        recipient: "valid::11111111111111111111111111111111111111111111111111111111111111111111",
+        fee: new BigNumber(10),
+        tokenId,
+        instrumentAdmin,
+        subAccountId: "token-sub-account",
+      };
+
+      it.each([
+        { count: TO_MANY_UTXOS_WARNING_COUNT + 1, expected: TooManyUtxosWarning },
+        { count: TO_MANY_UTXOS_CRITICAL_COUNT, expected: TooManyUtxosWarning },
+        { count: TO_MANY_UTXOS_CRITICAL_COUNT + 1, expected: TooManyUtxosCritical },
+      ])(
+        "reports $expected.name for $count UTXOs keyed the way sync stores them",
+        async ({ count, expected }) => {
+          const account = accountWithUtxoCounts({
+            [gateway.getKey(tokenId, instrumentAdmin)]: count,
+          });
+
+          const result = await getTransactionStatus(account, tokenTransaction);
+
+          expect(result.warnings.tooManyUtxos).toBeInstanceOf(expected);
+        },
+      );
+
+      it("reports nothing at exactly the warning count", async () => {
+        const account = accountWithUtxoCounts({
+          [gateway.getKey(tokenId, instrumentAdmin)]: TO_MANY_UTXOS_WARNING_COUNT,
+        });
+
+        const result = await getTransactionStatus(account, tokenTransaction);
+
+        expect(result.warnings.tooManyUtxos).toBeUndefined();
+      });
+
+      it("ignores the counts of the same id under another admin and of the native instrument", async () => {
+        const account = accountWithUtxoCounts({
+          [gateway.getKey(tokenId, "other-issuer::1220")]: TO_MANY_UTXOS_CRITICAL_COUNT + 1,
+          Amulet: TO_MANY_UTXOS_CRITICAL_COUNT + 1,
+        });
+
+        const result = await getTransactionStatus(account, tokenTransaction);
+
+        expect(result.warnings.tooManyUtxos).toBeUndefined();
+      });
+
+      it.each([
+        ["without token accounts", { ...mockAccount, subAccounts: undefined }],
+        ["with no token account", { ...mockAccount, subAccounts: [] }],
+        [
+          "holding another token account",
+          {
+            ...mockAccount,
+            subAccounts: [{ ...withTokenAccount(1_000).subAccounts?.[0], id: "other-token" }],
+          },
+        ],
+      ])("blocks the send when its token account is gone, the account %s", async (_, account) => {
+        const result = await getTransactionStatus(account as CantonAccount, tokenTransaction);
+
+        expect(result.errors.amount).toBeInstanceOf(InvalidTransactionError);
+      });
+
+      it("blocks a Send max whose token account is gone as an invalid send", async () => {
+        const result = await getTransactionStatus(
+          { ...mockAccount, subAccounts: [] },
+          { ...tokenTransaction, amount: new BigNumber(0), useAllAmount: true },
+        );
+
+        expect(result.errors.amount).toBeInstanceOf(InvalidTransactionError);
+      });
+
+      it("checks the amount against its token account", async () => {
+        expect((await getTransactionStatus(withTokenAccount(50), tokenTransaction)).errors).toEqual(
+          {},
+        );
+        expect(
+          (await getTransactionStatus(withTokenAccount(49), tokenTransaction)).errors.amount,
+        ).toBeInstanceOf(NotEnoughBalance);
+      });
+    });
   });
 
   describe("topology validation", () => {
+    it("should reject when the topology check finds an invalid config", async () => {
+      const accountWithPartyId: CantonAccount = { ...mockAccount, xpub: "test-party-id" };
+      mockedGateway.isTopologyChangeRequiredCached.mockRejectedValue(
+        new CantonInvalidConfigError("canton: coin config gateway.topologyCacheTtlMs"),
+      );
+      const transaction: Transaction = {
+        family: "canton",
+        amount: new BigNumber(100),
+        recipient: "valid::11111111111111111111111111111111111111111111111111111111111111111111",
+        fee: new BigNumber(10),
+        tokenId: "",
+      };
+
+      await expect(getTransactionStatus(accountWithPartyId, transaction)).rejects.toThrow(
+        CantonInvalidConfigError,
+      );
+    });
+
     it("should return TopologyChangeError when isTopologyChangeRequiredCached returns true", async () => {
       // GIVEN
       const accountWithPartyId: CantonAccount = {
@@ -419,9 +618,12 @@ describe("getTransactionStatus", () => {
       // THEN
       expect(result.errors.topologyChange).toBeInstanceOf(TopologyChangeError);
       expect(mockedGateway.isTopologyChangeRequiredCached).toHaveBeenCalledWith(
-        accountWithPartyId.currency,
+        expect.anything(),
         "test-public-key",
       );
+      await expect(
+        configOfCall(mockedGateway.isTopologyChangeRequiredCached.mock.calls[0]),
+      ).resolves.toBe(mockConfig);
     });
 
     it("should not return topology error when isTopologyChangeRequiredCached returns false", async () => {
@@ -446,9 +648,12 @@ describe("getTransactionStatus", () => {
       // THEN
       expect(result.errors.topologyChange).toBeUndefined();
       expect(mockedGateway.isTopologyChangeRequiredCached).toHaveBeenCalledWith(
-        accountWithPartyId.currency,
+        expect.anything(),
         "test-public-key",
       );
+      await expect(
+        configOfCall(mockedGateway.isTopologyChangeRequiredCached.mock.calls[0]),
+      ).resolves.toBe(mockConfig);
     });
 
     it("should not return topology error when isTopologyChangeRequiredCached throws an error", async () => {
@@ -473,9 +678,12 @@ describe("getTransactionStatus", () => {
       // THEN
       expect(result.errors.topologyChange).toBeUndefined();
       expect(mockedGateway.isTopologyChangeRequiredCached).toHaveBeenCalledWith(
-        accountWithPartyId.currency,
+        expect.anything(),
         "test-public-key",
       );
+      await expect(
+        configOfCall(mockedGateway.isTopologyChangeRequiredCached.mock.calls[0]),
+      ).resolves.toBe(mockConfig);
     });
   });
 });

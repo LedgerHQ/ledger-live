@@ -49,6 +49,15 @@ NU6 = 2
 "NU6.1" = 2
 "NU6.2" = 2
 "NU6.3" = 2
+# NU7 is left unscheduled (zebra's Regtest default) unless regtestNode.ts is
+# given an activation height, which replaces the placeholder below with
+# `NU7 = <height>` (an empty string otherwise). The heights above are the
+# canonical regtest set @ledgerhq/zcash-utils assumes (NU7 unscheduled): a
+# test that schedules NU7 must hand the same height to the builder, see
+# zcashClientTestSeam.ts. Only activation heights are set here; ZIP 218's
+# block-rate constants are zebra's own and are not overridden (see the
+# README's ZIP 218 section).
+{{NU7_ACTIVATION}}
 
 [rpc]
 listen_addr = "0.0.0.0:18232"

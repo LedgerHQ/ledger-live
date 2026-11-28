@@ -1,6 +1,6 @@
 {
   "name": "@features/platform-account-source-coin-module",
-  "version": "0.1.0",
+  "version": "0.4.0",
   "private": true,
   "description": "The account data source that reads coin modules directly, without the generic coin framework layer",
   "main": "src/index.ts",
@@ -25,10 +25,14 @@
     "@domain/entity-account-data": "workspace:*",
     "@domain/entity-account-descriptor": "workspace:*",
     "@domain/entity-account-operation": "workspace:*",
+    "@domain/entity-account-status": "workspace:*",
+    "@domain/entity-network": "workspace:*",
     "@ledgerhq/coin-module-framework": "catalog:"
   },
   "devDependencies": {
+    "@domain/entity-account": "workspace:*",
     "@domain/entity-currency": "workspace:*",
+    "@domain/entity-derivation": "workspace:*",
     "@ledgerhq/test-quarantine": "workspace:*",
     "@support/jest": "workspace:*",
     "@swc/core": "catalog:",

@@ -16,6 +16,18 @@ import {
   type GetQuotesWireArgs,
   type GetTransactionStatusResponse,
   type GetTransactionStatusWireArgs,
+  type IsTronifyEnergyDeliveredParams,
+  type IsTronifyEnergyDeliveredResult,
+  type GetTronifyQuoteParams,
+  type GetTronifyQuoteResult,
+  type CreateTronifyRentRecordParams,
+  type CreateTronifyRentRecordResult,
+  type UploadTronifyHashParams,
+  type UploadTronifyHashResult,
+  TRONIFY_IS_ENERGY_DELIVERED_METHOD,
+  TRONIFY_GET_QUOTE_METHOD,
+  TRONIFY_CREATE_RENT_RECORD_METHOD,
+  TRONIFY_UPLOAD_HASH_METHOD,
 } from "./types";
 
 export * from "./types";
@@ -200,7 +212,10 @@ export class ExchangeModule extends CustomModule {
    * Fetch swap quotes from the Ledger swap backend (via Wallet API host).
    */
   async getQuotes(params: GetQuotesWireArgs): Promise<GetQuotesResponse> {
-    return this.request<GetQuotesWireArgs, GetQuotesResponse>("custom.exchange.getQuotes", params);
+    return await this.request<GetQuotesWireArgs, GetQuotesResponse>(
+      "custom.exchange.getQuotes",
+      params,
+    );
   }
 
   /**
@@ -209,7 +224,7 @@ export class ExchangeModule extends CustomModule {
    * Result fields are additive; see {@link CustomSwapResult}.
    */
   async customSwap(params: CustomSwapParams): Promise<CustomSwapResult> {
-    return this.request<CustomSwapParams, CustomSwapResult>("custom.swap", params);
+    return await this.request<CustomSwapParams, CustomSwapResult>("custom.swap", params);
   }
 
   /**
@@ -218,8 +233,51 @@ export class ExchangeModule extends CustomModule {
   async getTransactionStatus(
     params: GetTransactionStatusWireArgs,
   ): Promise<GetTransactionStatusResponse> {
-    return this.request<GetTransactionStatusWireArgs, GetTransactionStatusResponse>(
+    return await this.request<GetTransactionStatusWireArgs, GetTransactionStatusResponse>(
       "custom.exchange.getTransactionStatus",
+      params,
+    );
+  }
+
+  /** Tronify rent for a TRC-20 transfer, next to the TRX burn it replaces. */
+  async getTronifyQuote(params: GetTronifyQuoteParams): Promise<GetTronifyQuoteResult> {
+    return await this.request<GetTronifyQuoteParams, GetTronifyQuoteResult>(
+      TRONIFY_GET_QUOTE_METHOD,
+      params,
+    );
+  }
+
+  /**
+   * Create the Tronify order and get its unsigned rent payment. Sign `rawTransaction` with
+   * `transaction.signRaw` and `broadcast: false`, then pass the result to `uploadTronifyHash`.
+   */
+  async createTronifyRentRecord(
+    params: CreateTronifyRentRecordParams,
+  ): Promise<CreateTronifyRentRecordResult> {
+    return await this.request<CreateTronifyRentRecordParams, CreateTronifyRentRecordResult>(
+      TRONIFY_CREATE_RENT_RECORD_METHOD,
+      params,
+    );
+  }
+
+  /** Send the signed rent payment to Tronify, which broadcasts it and delegates the energy. */
+  async uploadTronifyHash(params: UploadTronifyHashParams): Promise<UploadTronifyHashResult> {
+    return await this.request<UploadTronifyHashParams, UploadTronifyHashResult>(
+      TRONIFY_UPLOAD_HASH_METHOD,
+      params,
+    );
+  }
+
+  /**
+   * Whether the energy rented from Tronify has reached the TRON account. Poll it after
+   * `uploadHash` and before `completeSwap`. See {@link IsTronifyEnergyDeliveredResult} for what
+   * `delivered` does and does not guarantee.
+   */
+  async isTronifyEnergyDelivered(
+    params: IsTronifyEnergyDeliveredParams,
+  ): Promise<IsTronifyEnergyDeliveredResult> {
+    return await this.request<IsTronifyEnergyDeliveredParams, IsTronifyEnergyDeliveredResult>(
+      TRONIFY_IS_ENERGY_DELIVERED_METHOD,
       params,
     );
   }

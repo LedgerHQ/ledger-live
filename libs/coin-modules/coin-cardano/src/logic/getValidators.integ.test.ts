@@ -1,5 +1,7 @@
-import { cardanoTestnetCoinConfig as config } from "../fixtures/config";
+import { cardanoDefaults } from "../config";
 import { getValidators } from "./getValidators";
+
+const config = cardanoDefaults.cardano_testnet;
 
 describe("getValidators (integration)", () => {
   it("fetches stake pools from the Cardano testnet API and maps them to validators", async () => {

@@ -1,5 +1,5 @@
-import { computeAccountUUID } from "@domain/entity-account-descriptor";
 import { mockAddressAccountDescriptor } from "@domain/entity-account-descriptor/schema.mock";
+import { computeAccountUUID } from "@domain/entity-account/schema.mock";
 import {
   AccountReceiveSchema,
   AccountReceivesStateSchema,
@@ -66,6 +66,27 @@ describe("AccountReceiveSchema", () => {
       address: "t1transparent",
       shielded,
     });
+  });
+
+  it("should accept an address its senders can attach a tag to", () => {
+    expect(mockAccountReceive({ address: "r1", memo: { type: "tag" } })).toMatchObject({
+      memo: { type: "tag" },
+    });
+  });
+
+  it("should accept a memo on the shielded address alone", () => {
+    const receive = mockAccountReceive({
+      address: "t1",
+      shielded: { address: "u1", memo: { type: "text" } },
+    });
+    expect(receive.memo).toBeUndefined();
+    expect(receive.shielded).toMatchObject({ memo: { type: "text" } });
+  });
+
+  it("should reject a memo type it does not know", () => {
+    expect(
+      AccountReceiveSchema.safeParse({ address: "r1", memo: { type: "sometimes" } }).success,
+    ).toBe(false);
   });
 
   it("should accept an address the device cannot confirm", () => {

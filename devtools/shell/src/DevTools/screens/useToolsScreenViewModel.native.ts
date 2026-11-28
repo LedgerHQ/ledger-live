@@ -1,8 +1,9 @@
 import { useLayoutEffect, useMemo } from "react";
 import { type CatalogItem } from "../../components";
 import { toolIcon } from "../../toolConfig";
-import { useDevToolsShell } from "../../context";
-import { filterTools, toolsForCategory } from "../../utils";
+import type { Category, Tool } from "@devtools/registry";
+import { useDevToolsShell, type CategoryGroup } from "../../context/shellContext";
+import { filterTools } from "../../utils/toolsUtils";
 import type { ToolsScreenProps } from "../navigation";
 
 export interface ToolsScreenViewProps {
@@ -10,6 +11,10 @@ export interface ToolsScreenViewProps {
   query: string;
   onQueryChange: (query: string) => void;
   footer?: React.ReactNode;
+}
+
+function toolsForCategory(categories: CategoryGroup[], category: Category): Tool[] {
+  return categories.find(c => c.category === category)?.tools ?? [];
 }
 
 export function useToolsScreenViewModel({

@@ -1,16 +1,18 @@
+import { DerivationPathSchema } from "@domain/entity-derivation";
+import { NetworkIdSchema } from "@domain/entity-network";
 import { ETH_ADDR, SOL_ADDR, XPUB } from "./test-fixtures";
-import { AccountUUIDSchema, accountDescriptorKey, computeAccountUUID } from "./key";
-import { mockAddressAccountDescriptor } from "./schema.mock";
+
+const TON_PUBKEY = "86196cb40cd25e9e696bc808e3f2c074ce0b39f2a2a9d482a68eafef86e4a060";
+import { accountDescriptorKey } from "./key";
 import type { AccountDescriptor } from "./schema";
-import { NetworkIdSchema } from "./network";
 
 const utxo = (path: string, network = "bitcoin"): AccountDescriptor => ({
   purpose: "account",
   version: "2",
   type: "utxo",
   network: NetworkIdSchema.parse(network),
-  xpub: XPUB,
-  path,
+  key: XPUB,
+  path: DerivationPathSchema.parse(path),
 });
 
 const address = (addr: string, network = "ethereum"): AccountDescriptor => ({
@@ -18,8 +20,13 @@ const address = (addr: string, network = "ethereum"): AccountDescriptor => ({
   version: "2",
   type: "address",
   network: NetworkIdSchema.parse(network),
-  address: addr,
-  path: "m/44h/60h/0h/0/0",
+  key: addr,
+  path: DerivationPathSchema.parse("m/44h/60h/0h/0/0"),
+});
+
+const ton = (key: string): AccountDescriptor => ({
+  ...address(key, "ton"),
+  path: DerivationPathSchema.parse("m/44h/607h/0h/0h/0h/0h"),
 });
 
 describe("accountDescriptorKey", () => {
@@ -48,6 +55,12 @@ describe("accountDescriptorKey", () => {
     );
   });
 
+  it("collapses the case of a hex public key", () => {
+    expect(accountDescriptorKey(ton(TON_PUBKEY.toUpperCase()))).toBe(
+      accountDescriptorKey(ton(TON_PUBKEY)),
+    );
+  });
+
   it("separates different accounts", () => {
     expect(accountDescriptorKey(utxo("m/84h/0h/0h"))).not.toBe(
       accountDescriptorKey(utxo("m/84h/0h/1h")),
@@ -61,49 +74,19 @@ describe("accountDescriptorKey", () => {
   });
 });
 
-describe("computeAccountUUID", () => {
-  it("is stable for a known descriptor", () => {
-    expect(computeAccountUUID(utxo("m/84h/0h/0h"))).toBe("0fd543d7-5125-5f32-95c7-937d6a169ed4");
-  });
-
-  it.each<[AccountDescriptor, string, string]>([
+describe("persisted accountDescriptorKey", () => {
+  it.each<[AccountDescriptor, string]>([
     [
-      { ...address(ETH_ADDR, "Ethereum"), path: "m/44'/60'/0'/0/0" },
+      { ...address(ETH_ADDR, "Ethereum"), path: DerivationPathSchema.parse("m/44'/60'/0'/0/0") },
       `account:2:address:ethereum:${ETH_ADDR.toLowerCase()}:m/44h/60h/0h/0/0`,
-      "bf498ad6-dbff-5da0-834d-8f3870db2426",
     ],
     [
-      { ...address(SOL_ADDR, "solana"), path: "m/44h/501h/0h/0h" },
+      { ...address(SOL_ADDR, "solana"), path: DerivationPathSchema.parse("m/44h/501h/0h/0h") },
       `account:2:address:solana:${SOL_ADDR}:m/44h/501h/0h/0h`,
-      "900a3c3b-f896-5151-968e-8bdf9748d2eb",
     ],
-    [
-      { ...utxo("m/84h/0h/0h"), purpose: "mock" },
-      `mock:2:utxo:bitcoin:${XPUB}:m/84h/0h/0h`,
-      "ebb5087d-2b3d-5e15-9cfe-0d5a6f2d1aec",
-    ],
-    [
-      utxo("m/84H/1H/2H", "BITCOIN_TESTNET"),
-      `account:2:utxo:bitcoin_testnet:${XPUB}:m/84h/1h/2h`,
-      "70635ea8-643f-5857-ae57-bba062f6f694",
-    ],
-  ])("keeps the persisted key and uuid of %j", (descriptor, key, uuid) => {
+    [{ ...utxo("m/84h/0h/0h"), purpose: "mock" }, `mock:2:utxo:bitcoin:${XPUB}:m/84h/0h/0h`],
+    [utxo("m/84H/1H/2H", "BITCOIN_TESTNET"), `account:2:utxo:bitcoin_testnet:${XPUB}:m/84h/1h/2h`],
+  ])("keeps the persisted key of %j", (descriptor, key) => {
     expect(accountDescriptorKey(descriptor)).toBe(key);
-    expect(computeAccountUUID(descriptor)).toBe(uuid);
-  });
-
-  it("carries neither xpub nor address", () => {
-    expect(computeAccountUUID(address(ETH_ADDR))).not.toContain(
-      ETH_ADDR.slice(2, 10).toLowerCase(),
-    );
-  });
-});
-
-describe("AccountUUIDSchema", () => {
-  it("accepts a computed uuid and rejects a v4 uuid", () => {
-    expect(
-      AccountUUIDSchema.safeParse(computeAccountUUID(mockAddressAccountDescriptor())).success,
-    ).toBe(true);
-    expect(AccountUUIDSchema.safeParse("9b2f6d0e-3c4a-4d6b-8e1f-0a1b2c3d4e5f").success).toBe(false);
   });
 });

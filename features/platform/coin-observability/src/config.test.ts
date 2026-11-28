@@ -31,6 +31,7 @@ describe("toCoinObservabilityConfig", () => {
       syncPathSampleRate: 0.3,
       preparationSampleRate: 0.02,
       maxFailuresPerKey: 7,
+      methodTiers: {},
     });
   });
 
@@ -40,17 +41,44 @@ describe("toCoinObservabilityConfig", () => {
       syncPathSampleRate: DEFAULT_SYNC_PATH_SAMPLE_RATE,
       preparationSampleRate: DEFAULT_PREPARATION_SAMPLE_RATE,
       maxFailuresPerKey: DEFAULT_MAX_FAILURES_PER_KEY,
+      methodTiers: {},
     });
     expect(toCoinObservabilityConfig({ enabled: true, params: { maxFailuresPerKey: 0 } })).toEqual({
       includeSyncPath: true,
       syncPathSampleRate: DEFAULT_SYNC_PATH_SAMPLE_RATE,
       preparationSampleRate: DEFAULT_PREPARATION_SAMPLE_RATE,
       maxFailuresPerKey: 0,
+      methodTiers: {},
     });
     expect(
       toCoinObservabilityConfig({ enabled: true, params: { includeSyncPath: false } }),
     ).toMatchObject({ includeSyncPath: false });
   });
+
+  it("keeps the methodTiers entries that name a known tier", () => {
+    expect(
+      toCoinObservabilityConfig({
+        enabled: true,
+        params: {
+          methodTiers: {
+            craftTransactionData: "off",
+            getBalance: "preparation",
+            estimateFees: "never",
+            lastBlock: 1,
+          },
+        },
+      })?.methodTiers,
+    ).toEqual({ craftTransactionData: "off", getBalance: "preparation" });
+  });
+
+  it.each([null, "off", ["off"], 3])(
+    "ignores a methodTiers value that is not an object (%p)",
+    value => {
+      expect(
+        toCoinObservabilityConfig({ enabled: true, params: { methodTiers: value } })?.methodTiers,
+      ).toEqual({});
+    },
+  );
 });
 
 describe("coin observability config reader", () => {
@@ -89,6 +117,7 @@ describe("coinObservabilityConfigFor", () => {
       syncPathSampleRate: 0.2,
       preparationSampleRate: DEFAULT_PREPARATION_SAMPLE_RATE,
       maxFailuresPerKey: 3,
+      methodTiers: {},
     });
   });
 

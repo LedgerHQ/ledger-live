@@ -1,4 +1,3 @@
-import { getCurrentNearPreloadData } from "@ledgerhq/coin-near/preload";
 import { FIGMENT_NEAR_VALIDATOR_ADDRESS } from "@ledgerhq/coin-near/constants";
 import { canStake, canUnstake, getNearStakingPositions } from "@ledgerhq/coin-near/logic";
 import type { NearAccount, NearValidatorItem } from "@ledgerhq/coin-near/types";
@@ -11,20 +10,14 @@ export interface AccountBannerState {
 }
 
 /**
- * `knownValidators` lets the caller supply the list it already fetched through the generic API.
- * The generic bridge never runs `preload()`, so the legacy cache is empty under that route and the
- * banner would never find the Ledger validator; callers on the legacy route can omit the argument
- * and keep reading the preload cache.
+ * `validators` is the list the caller loaded for the staking screens (`useNearValidators`); while it
+ * is empty, the Ledger validator is unknown and the banner stays hidden.
  */
 export function getAccountBannerState(
   account: NearAccount,
-  knownValidators?: NearValidatorItem[],
+  validators: NearValidatorItem[],
 ): AccountBannerState {
   const delegations = getNearStakingPositions(account);
-
-  const validators = knownValidators?.length
-    ? knownValidators
-    : (getCurrentNearPreloadData()?.validators ?? []);
 
   const ledgerValidator = validators.find(
     validator => validator.validatorAddress === FIGMENT_NEAR_VALIDATOR_ADDRESS,

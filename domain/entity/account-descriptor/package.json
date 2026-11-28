@@ -1,8 +1,8 @@
 {
   "name": "@domain/entity-account-descriptor",
-  "version": "0.4.0",
+  "version": "0.7.0",
   "private": true,
-  "description": "AccountDescriptor entity: the account identity format shared with wallet-cli, its canonical key and AccountUUID",
+  "description": "AccountDescriptor entity: the account identity format shared with wallet-cli and its canonical key, read at the edges only",
   "main": "src/index.ts",
   "types": "src/index.ts",
   "exports": {
@@ -21,8 +21,8 @@
     "coverage": "jest --coverage"
   },
   "dependencies": {
-    "@domain/entity-currency-crypto": "workspace:*",
-    "uuid": "catalog:",
+    "@domain/entity-derivation": "workspace:*",
+    "@domain/entity-network": "workspace:*",
     "zod": "catalog:"
   },
   "devDependencies": {

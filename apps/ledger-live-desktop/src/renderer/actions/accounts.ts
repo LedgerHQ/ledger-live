@@ -5,8 +5,8 @@ import { getKey } from "~/renderer/storage";
 import { PasswordIncorrectError } from "@ledgerhq/live-common/errors";
 import { getDefaultAccountName, initFromUserData } from "@domain/entity-account-name";
 import { checkAccountSupported } from "@ledgerhq/live-common/account/index";
-import { initStarredFromIds } from "@domain/entity-starred-account";
 import { accountsSelector } from "~/renderer/reducers/accounts";
+import { importWalletState, type ExportedWalletState } from "~/renderer/reducers/wallet";
 import logger from "~/renderer/logger";
 import { ThunkResult } from "./types";
 
@@ -15,8 +15,9 @@ export const removeAccount = (payload: Account) => ({
   payload,
 });
 
+/** INIT_ACCOUNTS goes last so app.accounts is persisted with the wallet state's names. */
 export const initAccounts =
-  (data: [Account, AccountUserData][]): ThunkResult =>
+  (data: [Account, AccountUserData][], walletState?: ExportedWalletState): ThunkResult =>
   dispatch => {
     const supported = data.filter(([account]) => {
       const error = checkAccountSupported(account);
@@ -28,6 +29,10 @@ export const initAccounts =
     const accountsUserData = supported
       .filter(([account, userData]) => userData.name !== getDefaultAccountName(account))
       .map(([, userData]) => userData);
+    dispatch(initFromUserData(accountsUserData.map(({ id, name }) => ({ id, name }))));
+    if (walletState?.walletSyncState) {
+      dispatch(importWalletState(walletState));
+    }
     dispatch({
       type: "INIT_ACCOUNTS",
       payload: {
@@ -35,8 +40,6 @@ export const initAccounts =
         accountsUserData,
       },
     });
-    dispatch(initFromUserData(accountsUserData.map(({ id, name }) => ({ id, name }))));
-    dispatch(initStarredFromIds(supported.flatMap(([, userData]) => userData.starredIds)));
   };
 
 export const replaceAccounts = (accounts: Account[]) => ({
@@ -54,9 +57,12 @@ export const reorderAccounts =
 
 export const fetchAccounts =
   (): ThunkResult<Promise<void>> => async (dispatch, _getState, _extra) => {
-    const data = await getKey("app", "accounts", []);
+    const [data, walletState] = await Promise.all([
+      getKey("app", "accounts", []),
+      getKey("app", "wallet"),
+    ]);
     if (!data) throw new PasswordIncorrectError("app accounts seems to still be encrypted");
-    dispatch(initAccounts(data));
+    dispatch(initAccounts(data, walletState));
   };
 
 export type UpdateAccountAction = {

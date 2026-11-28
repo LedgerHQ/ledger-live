@@ -32,7 +32,7 @@ function adaptOp<T extends AssetInfo>(backendOp: Operation<T>): Operation<T> {
 
 const COIN_SERVICE_URL = "http://0.0.0.0:3000";
 
-const buildBroadcast = networkFamily =>
+const buildBroadcast = (networkFamily: string) =>
   async function broadcast(_context: Context<any>, signedOperation: string): Promise<string> {
     const { data } = await network<
       {
@@ -51,7 +51,7 @@ const buildBroadcast = networkFamily =>
     return data.transactionIdentifier;
   };
 
-const buildCombine = networkFamily =>
+const buildCombine = (networkFamily: string) =>
   async function combine(
     _context: Context<any>,
     tx: string,
@@ -75,7 +75,7 @@ const buildCombine = networkFamily =>
     return data.signedTransaction;
   };
 
-const buildEstimateFees = networkFamily =>
+const buildEstimateFees = (networkFamily: string) =>
   async function estimateFees(
     _context: Context<any>,
     intent: TransactionIntent<any>,
@@ -95,7 +95,7 @@ const buildEstimateFees = networkFamily =>
     };
   };
 
-const buildValidateIntent = networkFamily =>
+const buildValidateIntent = (networkFamily: string) =>
   async function validateIntent(
     _context: Context<any>,
     transaction: TransactionIntent,
@@ -145,7 +145,7 @@ const buildGetNextSequence = (networkFamily: string) =>
     return data;
   };
 
-const buildListOperations = networkFamily =>
+const buildListOperations = (networkFamily: string) =>
   async function listOperations(
     _context: Context<any>,
     address: string,
@@ -161,7 +161,7 @@ const buildListOperations = networkFamily =>
     return { items: data.operations.map(op => adaptOp(op)), next: undefined };
   };
 
-const buildLastBlock = networkFamily =>
+const buildLastBlock = (networkFamily: string) =>
   async function lastBlock(_context: Context<any>): Promise<BlockInfo> {
     const { data } = await network<any, unknown>({
       method: "GET",
@@ -174,7 +174,7 @@ const buildLastBlock = networkFamily =>
     };
   };
 
-const buildCraftTransaction = networkFamily =>
+const buildCraftTransaction = (networkFamily: string) =>
   async function craftTransaction(
     _context: Context<any>,
     intent: TransactionIntent<any>,

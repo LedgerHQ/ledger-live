@@ -1,8 +1,5 @@
 import type { PayCardStoredAttempt } from "../types";
 
-/** One key holds one attempt: the PKCE verifier the token exchange presents. */
-export const PKCE_ATTEMPT_KEY = "payCard.pkce.attempt";
-
 export function serializeAttempt(attempt: PayCardStoredAttempt): string {
   return JSON.stringify({ codeVerifier: attempt.codeVerifier });
 }

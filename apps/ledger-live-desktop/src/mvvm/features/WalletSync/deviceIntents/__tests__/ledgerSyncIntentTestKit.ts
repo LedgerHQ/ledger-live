@@ -1,11 +1,12 @@
 import { TRUSTCHAIN_APP_NAME } from "@ledgerhq/hw-ledger-key-ring-protocol";
 import { DeviceManagementKitBuilder, DeviceModelId } from "@ledgerhq/device-management-kit";
 import { createIntent, type DeviceConnectionResult } from "@features/platform-device-intent";
-import type {
-  AddMemberIntent,
-  AddMemberIntentInput,
-  RemoveMemberIntent,
-  RemoveMemberIntentInput,
+import {
+  createLedgerSyncResultOrder,
+  type AddMemberIntent,
+  type AddMemberIntentInput,
+  type RemoveMemberIntent,
+  type RemoveMemberIntentInput,
 } from "@features/platform-intent-wallet-sync";
 import type {
   MemberCredentials,
@@ -36,6 +37,7 @@ export function buildAddMemberIntent(): AddMemberIntent {
   const input: AddMemberIntentInput = {
     memberCredentials: MEMBER_CREDENTIALS,
     createSessionSdk: jest.fn(),
+    resultOrder: createLedgerSyncResultOrder(),
   };
   return createIntent(addMemberIntentLWDDefinition, input);
 }
@@ -46,6 +48,7 @@ export function buildRemoveMemberIntent(): RemoveMemberIntent {
     memberCredentials: MEMBER_CREDENTIALS,
     member: OTHER_MEMBER,
     createSessionSdk: jest.fn(),
+    resultOrder: createLedgerSyncResultOrder(),
   };
   return createIntent(removeMemberIntentLWDDefinition, input);
 }

@@ -54,10 +54,12 @@ type Actions<T extends Transaction = Transaction> =
       type: "onStatus";
       status: TransactionStatus;
       transaction: T;
+      sourceTransaction: T;
     }
   | {
       type: "onStatusError";
       error: Error;
+      sourceTransaction: T;
     }
   | {
       type: "setTransaction";
@@ -202,6 +204,7 @@ const reducer = <T extends Transaction = Transaction>(
     }
 
     case "onStatus":
+      if (action.sourceTransaction !== state.transaction) return state;
       return {
         ...state,
         errorStatus: null,
@@ -211,6 +214,7 @@ const reducer = <T extends Transaction = Transaction>(
       };
 
     case "onStatusError":
+      if (action.sourceTransaction !== state.transaction) return state;
       if (action.error === state.errorStatus) return state;
       return { ...state, errorStatus: action.error };
 
@@ -262,7 +266,7 @@ const useBridgeTransaction = <T extends Transaction = Transaction>(
   ] = useReducer(reducer as Reducer<T>, undefined, makeInit(bridge, optionalInit));
 
   const setAccount = useCallback(
-    async (account, parentAccount) => {
+    async (account: AccountLike, parentAccount: Account | null | undefined) => {
       const bridge = await getAccountBridge(account, parentAccount);
       dispatch({
         type: "setAccount",
@@ -281,7 +285,7 @@ const useBridgeTransaction = <T extends Transaction = Transaction>(
   );
 
   const setTransaction = useCallback(
-    transaction =>
+    (transaction: T) =>
       dispatch({
         type: "setTransaction",
         transaction,
@@ -289,7 +293,7 @@ const useBridgeTransaction = <T extends Transaction = Transaction>(
     [dispatch],
   );
   const updateTransaction = useCallback(
-    updater =>
+    (updater: (transaction: T) => T) =>
       dispatch({
         type: "updateTransaction",
         updater,
@@ -362,6 +366,7 @@ const useBridgeTransaction = <T extends Transaction = Transaction>(
               type: "onStatus",
               status,
               transaction: preparedTransaction,
+              sourceTransaction: transaction,
             });
           },
           e => {
@@ -370,6 +375,7 @@ const useBridgeTransaction = <T extends Transaction = Transaction>(
             dispatch({
               type: "onStatusError",
               error: e,
+              sourceTransaction: transaction,
             });
             log("useBridgeTransaction", "prepareTransaction failed " + String(e));
             // After X seconds of hanging in this error case, we try again

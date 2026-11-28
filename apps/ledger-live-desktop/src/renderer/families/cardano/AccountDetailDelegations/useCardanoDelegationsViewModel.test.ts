@@ -51,6 +51,16 @@ describe("useCardanoDelegationsViewModel", () => {
     expect(rows[0].actions.map(({ id }) => id)).toEqual(["redelegate", "undelegate"]);
   });
 
+  it("shows rewards below 0.0001 as <0.0001 with the exact amount in a tooltip", () => {
+    const { rows } = render(accountWith(delegated({ rewards: ADA(0.000099) })));
+
+    expect(rows[0].cells.rewards).toEqual({
+      value: "<0.0001 ADA",
+      tooltip: "0.000099 ADA",
+      sensitive: true,
+    });
+  });
+
   it("shows no row without a delegation", () => {
     expect(render(accountWith(undefined)).rows).toEqual([]);
   });

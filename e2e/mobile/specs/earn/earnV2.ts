@@ -3,10 +3,10 @@ import { Team } from "@ledgerhq/live-e2e-shared/enum/Team";
 import { setEnv } from "@shared/env";
 import { waitEarnReady } from "@e2e/bridge/server";
 import { setTeamOwner } from "@e2e/helpers/allure/allure-helper";
-import { FF_LWM_WALLET_40_Q2 } from "@e2e/utils/featureFlagUtils";
 
 import type { ApplicationOptions } from "@e2e/page/index";
 import type { PartialFeatures } from "@shared/feature-flags";
+import type { TestMetaOptions } from "@e2e/models/testOptions";
 
 setEnv("DISABLE_TRANSACTION_BROADCAST", true);
 
@@ -14,7 +14,6 @@ setEnv("DISABLE_TRANSACTION_BROADCAST", true);
 // https://ledgerhq.atlassian.net/browse/LIVE-35026
 const EARN_V2_FLAGS: PartialFeatures = {
   ptxEarnUi: { enabled: true, params: { value: "v2" } },
-  ...FF_LWM_WALLET_40_Q2,
 };
 
 // Pins the ETH deposit webview to the `basic_sorting` cohort (mirrors the desktop
@@ -55,6 +54,10 @@ const FF_STAKE_PROGRAMS_MODAL: PartialFeatures = {
 export type DepositScreen = "v1" | "v2";
 export type DepositV2Amount = { preset: "50" } | { value: string };
 
+type EarnTestOptions = TestMetaOptions & { account: Account };
+
+type EarnDepositTestOptions = EarnTestOptions & { depositScreen?: DepositScreen };
+
 const swapToEarnFlags = (depositScreen: DepositScreen): PartialFeatures => ({
   swapToEarn: { enabled: depositScreen === "v2" },
 });
@@ -87,7 +90,8 @@ async function beforeAllFunction(options: ApplicationOptions) {
 
 // --- User States ---
 
-export function runIceColdStartTest(account: Account, tmsLinks: string[], tags: string[]) {
+export function runIceColdStartTest(options: EarnTestOptions) {
+  const { account, tmsLinks, tags } = options;
   describe("Earn v2", () => {
     beforeAll(async () => {
       await beforeAllFunction({
@@ -109,12 +113,8 @@ export function runIceColdStartTest(account: Account, tmsLinks: string[], tags: 
   });
 }
 
-export function runColdStartTest(
-  account: Account,
-  tmsLinks: string[],
-  tags: string[],
-  depositScreen: DepositScreen = "v1",
-) {
+export function runColdStartTest(options: EarnDepositTestOptions) {
+  const { account, tmsLinks, tags, depositScreen = "v1" } = options;
   describe("Earn v2", () => {
     beforeAll(async () => {
       await beforeAllFunction({
@@ -145,7 +145,8 @@ export function runColdStartTest(
   });
 }
 
-export function runHotStartTest(account: Account, tmsLinks: string[], tags: string[]) {
+export function runHotStartTest(options: EarnTestOptions) {
+  const { account, tmsLinks, tags } = options;
   describe("Earn v2", () => {
     beforeAll(async () => {
       await beforeAllFunction({
@@ -175,7 +176,8 @@ export function runHotStartTest(account: Account, tmsLinks: string[], tags: stri
 
 // --- Navigation: CTA Flows ---
 
-export function runNativeStakingCTATest(account: Account, tmsLinks: string[], tags: string[]) {
+export function runNativeStakingCTATest(options: EarnTestOptions) {
+  const { account, tmsLinks, tags } = options;
   describe("Earn v2", () => {
     beforeAll(async () => {
       await beforeAllFunction({
@@ -198,12 +200,8 @@ export function runNativeStakingCTATest(account: Account, tmsLinks: string[], ta
   });
 }
 
-export function runScyStakingCTATest(
-  account: Account,
-  tmsLinks: string[],
-  tags: string[],
-  depositScreen: DepositScreen = "v1",
-) {
+export function runScyStakingCTATest(options: EarnDepositTestOptions) {
+  const { account, tmsLinks, tags, depositScreen = "v1" } = options;
   describe("Earn v2", () => {
     beforeAll(async () => {
       await beforeAllFunction({
@@ -232,14 +230,14 @@ export function runScyStakingCTATest(
 
 // --- Partner Dapp Flows ---
 
-export function runPartnerDappCTATest(
-  account: Account,
-  providerId: string,
-  dappUrlSubstring: string,
-  tmsLinks: string[],
-  tags: string[],
-  depositV2Amount?: DepositV2Amount,
-) {
+type PartnerDappCTATestOptions = EarnTestOptions & {
+  providerId: string;
+  dappUrlSubstring: string;
+  depositV2Amount?: DepositV2Amount;
+};
+
+export function runPartnerDappCTATest(options: PartnerDappCTATestOptions) {
+  const { account, providerId, dappUrlSubstring, tmsLinks, tags, depositV2Amount } = options;
   const depositScreen: DepositScreen = depositV2Amount ? "v2" : "v1";
   // ETH selects a provider in the deposit webview, which requires the category filter bar; pin its
   // cohort so that bar is guaranteed to render. Other tickers use the native staking drawer.
@@ -286,12 +284,10 @@ export function runPartnerDappCTATest(
   });
 }
 
-export function runPartnerDappPositionTest(
-  account: Account,
-  dappUrlSubstring: string,
-  tmsLinks: string[],
-  tags: string[],
-) {
+type PartnerDappPositionTestOptions = EarnTestOptions & { dappUrlSubstring: string };
+
+export function runPartnerDappPositionTest(options: PartnerDappPositionTestOptions) {
+  const { account, dappUrlSubstring, tmsLinks, tags } = options;
   describe("Earn v2", () => {
     beforeAll(async () => {
       await beforeAllFunction({
@@ -320,7 +316,8 @@ export function runPartnerDappPositionTest(
 
 // --- Position Row Flows ---
 
-export function runPositionToWithdrawalTest(account: Account, tmsLinks: string[], tags: string[]) {
+export function runPositionToWithdrawalTest(options: EarnTestOptions) {
+  const { account, tmsLinks, tags } = options;
   describe("Earn v2", () => {
     beforeAll(async () => {
       await beforeAllFunction({
@@ -350,12 +347,8 @@ export function runPositionToWithdrawalTest(account: Account, tmsLinks: string[]
 
 // --- Inline Add Account ---
 
-export function runInlineAddAccountTest(
-  account: Account,
-  tmsLinks: string[],
-  tags: string[],
-  depositScreen: DepositScreen = "v1",
-) {
+export function runInlineAddAccountTest(options: EarnDepositTestOptions) {
+  const { account, tmsLinks, tags, depositScreen = "v1" } = options;
   describe("Earn v2", () => {
     beforeAll(async () => {
       await beforeAllFunction({
@@ -373,11 +366,11 @@ export function runInlineAddAccountTest(
       await app.earnV2Dashboard.verifyAssetReadyToEarn(account.currency.ticker);
       await app.earnV2Dashboard.clickAssetEarnCta(account.currency.ticker);
       await app.modularDrawer.tapAddNewOrExistingAccountButtonMAD();
-      await app.addAccount.addAccountAtIndex(
-        `${account.currency.name} ${account.index + 1}`,
-        account.currency.id,
-        0,
-      );
+      await app.addAccount.addAccountAtIndex({
+        currencyName: `${account.currency.name} ${account.index + 1}`,
+        currencyId: account.currency.id,
+        index: 0,
+      });
 
       if (depositScreen === "v2") {
         await app.earnV2Dashboard.verifyV2DepositFlowVisible();
@@ -388,12 +381,10 @@ export function runInlineAddAccountTest(
   });
 }
 
-export function runSwapRedirectTest(
-  earnAccount: Account,
-  fundingAccount: Account,
-  tmsLinks: string[],
-  tags: string[],
-) {
+type SwapRedirectTestOptions = TestMetaOptions & { earnAccount: Account; fundingAccount: Account };
+
+export function runSwapRedirectTest(options: SwapRedirectTestOptions) {
+  const { earnAccount, fundingAccount, tmsLinks, tags } = options;
   describe("Earn v2", () => {
     const accountsToSeed = [earnAccount];
     // USDT is a token of ETH_1. Seed that parent as well when the earn account is the empty one.
@@ -431,10 +422,10 @@ export function runSwapRedirectTest(
       }
       await app.earnV2Dashboard.verifyV2DepositFlowVisible();
       await app.earnV2Dashboard.selectAnotherFundingAccount(fundingAccount);
-      await app.earnV2Dashboard.verifySwapToEarnDescription(
-        fundingAccount.currency.ticker,
-        earnAccount.currency.ticker,
-      );
+      await app.earnV2Dashboard.verifySwapToEarnDescription({
+        fromTicker: fundingAccount.currency.ticker,
+        toTicker: earnAccount.currency.ticker,
+      });
       await app.earnV2Dashboard.selectAmountPresetV2("50");
       await app.earnV2Dashboard.continueToSwap();
       await app.swapLiveApp.checkAssetFromMatchesAccount(fundingAccount);

@@ -77,7 +77,17 @@ export const accountNamesSlice = createSlice({
       },
     );
   },
+  selectors: {
+    accountNameSelector: (state, { accountId }: { accountId: string }): string | undefined =>
+      state.get(parseAnyAccountId(accountId)),
+    accountNameWithDefaultSelector: (state, account: AccountForName): string =>
+      state.get(parseAnyAccountId(account.id)) || getDefaultAccountName(account),
+  },
 });
 
 export const { setAccountName, bulkSetAccountNames, setNamesForAccounts, initFromUserData } =
   accountNamesSlice.actions;
+
+/** Bound to the slice state: callers pass the names map, wherever it is mounted. */
+export const { accountNameSelector, accountNameWithDefaultSelector } =
+  accountNamesSlice.getSelectors();

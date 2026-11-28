@@ -19,11 +19,6 @@ export const RANGE_TARGET_INTERVAL_MS: Record<RangeKey, number> = {
   all: 30 * DAY_MS,
 };
 
-export {
-  computeChartRangeChangePercentage,
-  isChartDerivedPriceChangeRange,
-} from "@ledgerhq/live-common/market/utils/chartRangeVariation";
-
 export function isRangeKey(value: string): value is RangeKey {
   return RANGE_KEY_SET.has(value);
 }

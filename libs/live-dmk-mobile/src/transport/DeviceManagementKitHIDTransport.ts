@@ -12,6 +12,7 @@ import { LocalTracer, TraceContext } from "@ledgerhq/logs";
 import { BehaviorSubject, Subscription, firstValueFrom } from "rxjs";
 import { first, tap, timeout } from "rxjs/operators";
 import { getDeviceManagementKit } from "../hooks/useDeviceManagementKit";
+import { buildUsbCompatDeviceId } from "./usbCompatDeviceId";
 
 export const activeDeviceSessionSubject = new BehaviorSubject<{
   transport: DeviceManagementKitHIDTransport;
@@ -33,40 +34,58 @@ export class DeviceManagementKitHIDTransport extends Transport {
     this.listenToDisconnect();
   }
 
+  /**
+   * A DMK flow can open a session without publishing it in `activeDeviceSessionSubject`.
+   * `exchange` reads that subject, so a reused session that is not published yet is published
+   * there. Like the connection below, it falls back to the first USB device: a phone has one USB
+   * port.
+   */
+  private static reuseConnectedSession(
+    deviceId: string,
+    dmk: DeviceManagementKit,
+  ): DeviceManagementKitHIDTransport | null {
+    const connectedUsbDevices = dmk
+      .listConnectedDevices()
+      .filter(device => device.transport === rnHidTransportIdentifier);
+    const matchingDevice =
+      connectedUsbDevices.find(device => buildUsbCompatDeviceId(device.id) === deviceId) ??
+      connectedUsbDevices[0];
+
+    if (!matchingDevice) {
+      tracer.trace("[open] no connected device to reuse", { deviceId });
+      return null;
+    }
+
+    const { sessionId } = matchingDevice;
+    tracer.trace("[open] reusing the session of a connected device", {
+      deviceId,
+      connectedDeviceId: matchingDevice.id,
+      sessionId,
+    });
+    const activeTransport = activeDeviceSessionSubject.value?.transport;
+    if (activeTransport?.sessionId === sessionId) {
+      return activeTransport;
+    }
+    const transport = new DeviceManagementKitHIDTransport(dmk, sessionId);
+    activeDeviceSessionSubject.next({ transport });
+    return transport;
+  }
+
   static async open(
     deviceId: string,
     timeoutMs?: number,
     _context?: TraceContext,
     dmk: DeviceManagementKit = getDeviceManagementKit(),
   ) {
-    const activeDeviceSession = activeDeviceSessionSubject.value;
-
     tracer.trace(`[open] called with deviceId: ${deviceId} and timeoutMs: ${timeoutMs}`);
 
     try {
-      if (activeDeviceSession) {
-        tracer.trace("[open] checking existing session", {
-          sessionId: activeDeviceSession.transport.sessionId,
-        });
-        const deviceSessionState = await firstValueFrom(
-          dmk.getDeviceSessionState({
-            sessionId: activeDeviceSession.transport.sessionId,
-          }),
-        );
-
-        const connectedDevice = dmk.getConnectedDevice({
-          sessionId: activeDeviceSession.transport.sessionId,
-        });
-        if (
-          connectedDevice.type === "USB" &&
-          deviceSessionState.deviceStatus !== DeviceStatus.NOT_CONNECTED
-        ) {
-          tracer.trace("[open] reusing existing session", {
-            sessionId: activeDeviceSession.transport.sessionId,
-          });
-          return activeDeviceSession.transport;
-        }
-        tracer.trace("[open] session not reusable");
+      const connectedTransport = DeviceManagementKitHIDTransport.reuseConnectedSession(
+        deviceId,
+        dmk,
+      );
+      if (connectedTransport) {
+        return connectedTransport;
       }
       tracer.trace(
         `[open] listening to available devices and connecting to first available device with timeoutMs: ${timeoutMs}`,

@@ -7,6 +7,7 @@ import {
 import type { CryptoCurrency } from "@domain/entity-currency-crypto";
 import { useFeature } from "@features/platform-feature-flags";
 import { useSelector } from "~/context/hooks";
+import { useTranslation } from "~/context/Locale";
 import byFamiliesOperationDetails from "~/generated/operationDetails";
 import { flattenAccountsSelector } from "~/reducers/accounts";
 import { localeSelector } from "~/reducers/settings";
@@ -24,6 +25,7 @@ export function useSwapTransactionStatusViewModel({
   const accounts = useSelector(flattenAccountsSelector);
   const locale = useSelector(localeSelector);
   const estimatedReceivedAmountFeature = useFeature("ptxSwapEstimatedReceivedAmount");
+  const { t } = useTranslation();
 
   const viewModel = useSwapTransactionStatusDisplayViewModel({
     params,
@@ -41,7 +43,10 @@ export function useSwapTransactionStatusViewModel({
       ? estimatedReceivedAmountFeature.params?.providers?.[viewModel.provider] === true
       : false);
 
-  return { ...viewModel, showReceivedAmountEstimated };
+  // A withdraw is titled as such wherever it is opened from, Swap History included.
+  const title = viewModel.isPerpsWithdraw ? t("perpsTransactionStatus.withdrawTitle") : undefined;
+
+  return { ...viewModel, title, showReceivedAmountEstimated };
 }
 
 export type SwapTransactionStatusViewModel = ReturnType<typeof useSwapTransactionStatusViewModel>;

@@ -41,7 +41,7 @@ import {
 import {
   resetReceiveVerifyHintSeen,
   selectHasSeenReceiveVerifyHint,
-} from "@features/flow-pay-request/state";
+} from "@features/flow-receive/state";
 import type { PayCardDetailsCss } from "@domain/api-card-management";
 import {
   resetPayCardLoginIntroSeen,

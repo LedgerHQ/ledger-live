@@ -2,11 +2,10 @@
   "targets": {
     "build": {
       "outputs": [
-        "{projectRoot}/react/**",
-        "{projectRoot}/native/**",
-        "{projectRoot}/reactLegacy/**",
-        "{projectRoot}/nativeLegacy/**",
-        "{projectRoot}/index.js"
+        "{projectRoot}/src/react/**",
+        "{projectRoot}/src/native/**",
+        "{projectRoot}/src/reactLegacy/**",
+        "{projectRoot}/src/nativeLegacy/**"
       ]
     }
   }

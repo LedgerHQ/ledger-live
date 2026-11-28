@@ -1,4 +1,57 @@
-import type { Account, TokenAccount } from "@ledgerhq/types-live";
+import type { Account, SwapOperation, TokenAccount } from "@ledgerhq/types-live";
+
+/**
+ * Whether the swap history changed in what is saved: a swap added or removed, or an existing one
+ * with a new status, final amount or anchoring operation (a perps withdraw gets its payout tx).
+ */
+function swapHistoryChanged(
+  prev: SwapOperation[] | undefined,
+  next: SwapOperation[] | undefined,
+): boolean {
+  if (prev === next) return false;
+  if ((prev?.length ?? 0) !== (next?.length ?? 0)) return true;
+  return (prev ?? []).some((p, i) => {
+    const n = next?.[i];
+    return (
+      !n ||
+      p.swapId !== n.swapId ||
+      p.status !== n.status ||
+      p.operationId !== n.operationId ||
+      p.finalAmount?.toString() !== n.finalAmount?.toString()
+    );
+  });
+}
+
+const CANTON_PERSISTED_KEYS = [
+  "nativeInstrumentAdmin",
+  "scanCheckpoint",
+  "replayTransactions",
+  "hash",
+  "height",
+];
+
+/** Canton: the DSO party that tells native CC offers apart, and where the history is read from. */
+const cantonPersistedResources = (account: Account): string | undefined =>
+  "cantonResources" in account
+    ? JSON.stringify(account.cantonResources, CANTON_PERSISTED_KEYS)
+    : undefined;
+
+/**
+ * As many operations, one replaced or re-read with a new fee or outcome: the counts do not tell, so
+ * the id and the two fields a re-read can change are compared by index. The same list, unchanged,
+ * is not walked.
+ */
+function operationsChanged(prev: Account, next: Account): boolean {
+  if (prev.operations === next.operations) return false;
+  return prev.operations.some((op, index) => {
+    const other = next.operations[index];
+    return (
+      op.id !== other?.id ||
+      op.hasFailed !== other.hasFailed ||
+      (op.fee !== other.fee && !op.fee?.eq(other.fee))
+    );
+  });
+}
 
 /**
  * Returns true when something that is persisted and user-visible (or structurally
@@ -24,8 +77,11 @@ export function accountPersistedStateChanged(prev: Account, next: Account): bool
     return true;
   }
 
+  if (operationsChanged(prev, next)) return true;
+
   // swap history
-  if ((prev.swapHistory?.length ?? 0) !== (next.swapHistory?.length ?? 0)) return true;
+  if (swapHistoryChanged(prev.swapHistory, next.swapHistory)) return true;
+  if ((prev.sellOperationIds?.length ?? 0) !== (next.sellOperationIds?.length ?? 0)) return true;
 
   // zcash private info (or any account with privateInfo)
   const prevPrivateInfo =
@@ -55,6 +111,8 @@ export function accountPersistedStateChanged(prev: Account, next: Account): bool
     if ((prevPrivateInfo.transactions?.length ?? 0) !== (nextPrivateInfo.transactions?.length ?? 0))
       return true;
   }
+
+  if (cantonPersistedResources(prev) !== cantonPersistedResources(next)) return true;
 
   // sub accounts
   if ((prev.subAccounts?.length ?? 0) !== (next.subAccounts?.length ?? 0)) return true;
@@ -90,6 +148,8 @@ function tokenAccountPersistedStateChanged(prev: TokenAccount, next: TokenAccoun
   return (
     prev.id !== next.id ||
     !prev.balance.eq(next.balance) ||
-    prev.operationsCount !== next.operationsCount
+    prev.operationsCount !== next.operationsCount ||
+    // As for main accounts: swaps recorded on a token account (e.g. a perps withdraw) are saved.
+    swapHistoryChanged(prev.swapHistory, next.swapHistory)
   );
 }

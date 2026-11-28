@@ -97,6 +97,28 @@ describe("SideBar", () => {
       expect(screen.queryByText("Card")).not.toBeInTheDocument();
     });
 
+    it("should render Agents when the agentIntent nav bar entry point is on", () => {
+      renderSideBarWithRoute(
+        "/",
+        withFeatureFlags({
+          agentIntent: { enabled: true, params: { navBar: true, profile: false } },
+        }),
+      );
+
+      expect(screen.getByText("Agents")).toBeVisible();
+    });
+
+    it("should not render Agents when only the profile entry point is on", () => {
+      renderSideBarWithRoute(
+        "/",
+        withFeatureFlags({
+          agentIntent: { enabled: true, params: { navBar: false, profile: true } },
+        }),
+      );
+
+      expect(screen.queryByText("Agents")).not.toBeInTheDocument();
+    });
+
     it("should render Card instead of Pay when lwdPayTab is disabled", () => {
       renderSideBarWithRoute("/");
 
